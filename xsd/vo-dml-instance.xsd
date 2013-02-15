@@ -24,6 +24,19 @@
 
   <!-- +++++++++++++++++++ Begin of 'UTYPE section' +++++++++++++++++++ -->
 
+  <xsd:simpleType name="UTYPE">
+    <xsd:annotation>
+      <xsd:documentation>
+      This simpleType allows concatenation of vo-dml:UTYPE-sThis in contrast to the normalized version in vo-dml-instance_utype_normalized.xsd
+      TBD define the pattern, is the one below correct?
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+    <xsd:pattern value="([a-zA-Z0-9/:.])+(['+']{1}([a-zA-Z0-9/:.])+)*"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+  
   <xsd:complexType name="Instance">
     <xsd:sequence>
       <xsd:element name="model" type="Model" minOccurs="1" maxOccurs="unbounded"/>
@@ -40,7 +53,7 @@
 
   <xsd:complexType name="Object">
     <xsd:sequence>
-    <xsd:element name="utype" type="vo-dml:UTYPE"/>
+    <xsd:element name="utype" type="UTYPE"/>
     <xsd:element name="id" type="ObjectId"/>
     <xsd:element name="attribute" type="Attribute" minOccurs="0" maxOccurs="unbounded"/>
     <xsd:element name="collection-element" type="Collection" minOccurs="0" maxOccurs="unbounded"/>
