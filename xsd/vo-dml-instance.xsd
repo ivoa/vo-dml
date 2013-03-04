@@ -2,12 +2,9 @@
 <xsd:schema 
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
 	xmlns="http://volute.googlecode.com/dm/vo-dml-instance/v0.x" 
-	xmlns:vo-dml="http://volute.googlecode.com/dm/vo-dml/v0.9" 
 	targetNamespace="http://volute.googlecode.com/dm/vo-dml-instance/v0.x" 
 	attributeFormDefault="unqualified"
 	elementFormDefault="unqualified">
-   <xsd:import namespace="http://volute.googlecode.com/dm/vo-dml/v0.9"
-               schemaLocation="http://volute.googlecode.com/svn/trunk/projects/dm/vo-dml/xsd/vo-dml.xsd"/>
 
   <xsd:annotation>
     <xsd:documentation>
@@ -39,12 +36,12 @@
   
   <xsd:complexType name="Instance">
     <xsd:sequence>
-      <xsd:element name="model" type="Model" minOccurs="1" maxOccurs="unbounded"/>
+      <xsd:element name="model" type="ModelLocation" minOccurs="1" maxOccurs="unbounded"/>
       <xsd:element name="object" type="Object" minOccurs="0" maxOccurs="unbounded"/>
 	</xsd:sequence>  
   </xsd:complexType>
 
-  <xsd:complexType name="Model">
+  <xsd:complexType name="ModelLocation">
     <xsd:sequence>
       <xsd:element name="model-location" type="xsd:anyURI"/>
       <xsd:element name="utype-prefix" type="xsd:string"/>
@@ -87,8 +84,8 @@
 
   <xsd:complexType name="Attribute" abstract="true">
     <xsd:sequence>
-      <xsd:element name="utype" type="vo-dml:UTYPE"/>
-      <xsd:element name="datatype" type="vo-dml:UTYPE" minOccurs="0">
+      <xsd:element name="utype" type="UTYPE"/>
+      <xsd:element name="datatype" type="UTYPE" minOccurs="0">
         <xsd:annotation>
           <xsd:documentation>
           IF the datatype of the value given to an attribute is a sub-type of the dataty[pe declared on the attribute,
@@ -123,7 +120,7 @@
 
   <xsd:complexType name="Collection">
     <xsd:sequence>
-      <xsd:element name="utype" type="vo-dml:UTYPE">
+      <xsd:element name="utype" type="UTYPE">
         <xsd:annotation>
           <xsd:documentation>
           The utype of the Collection definition.
@@ -142,7 +139,7 @@
 
   <xsd:complexType name="Reference">
     <xsd:sequence>
-      <xsd:element name="utype" type="vo-dml:UTYPE"/>
+      <xsd:element name="utype" type="UTYPE"/>
       <xsd:element name="object-doc" type="xsd:anyURI" minOccurs="0">
         <xsd:annotation>
           <xsd:documentation>
