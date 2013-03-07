@@ -8,7 +8,7 @@ targetNamespace="http://volute.googlecode.com/dm/vo-dml-mapping/v0.9" attributeF
   </xsd:documentation>
 </xsd:annotation>
 
-<xsd:complexType name="Models">
+<xsd:complexType name="MappedModels">
   <xsd:sequence>
   <xsd:element name="model" type="ModelMapping" minOccurs="0" maxOccurs="unbounded"/>
   </xsd:sequence>
@@ -53,6 +53,8 @@ targetNamespace="http://volute.googlecode.com/dm/vo-dml-mapping/v0.9" attributeF
     </xsd:pattern>
   </xsd:restriction>
 </xsd:simpleType>  
+
+<xsd:element name="mappedModels" type="MappedModels"/>
 
 
 
