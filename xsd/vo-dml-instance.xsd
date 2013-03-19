@@ -29,7 +29,7 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-    <xsd:pattern value="([a-zA-Z0-9/:.])+(['+']{1}([a-zA-Z0-9/:.])+)*"></xsd:pattern>
+    <xsd:pattern value="([a-zA-Z0-9/:._])+(['+']{1}([a-zA-Z0-9/:.])+)*"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
   
@@ -38,30 +38,39 @@
     <xsd:sequence>
       <xsd:element name="model" type="ModelLocation" minOccurs="1" maxOccurs="unbounded"/>
       <xsd:element name="object" type="Object" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="dataObject" type="DataObject" minOccurs="0" maxOccurs="unbounded"/>
 	</xsd:sequence>  
   </xsd:complexType>
 
   <xsd:complexType name="ModelLocation">
+    <xsd:annotation>
+      <xsd:documentation>
+      This class describes the location of a data model's VO-DML and HTML documents.
+      Note, these should eventually be derived form an appropriate Registry entry.
+      Can also give include the prefix to be used in a particular instantiation document.
+      </xsd:documentation>
+    </xsd:annotation>
     <xsd:sequence>
-      <xsd:element name="model-location" type="xsd:anyURI"/>
-      <xsd:element name="utype-prefix" type="xsd:string"/>
+      <xsd:element name="vodmlURL" type="xsd:anyURI"/>
+      <xsd:element name="documentationURL" type="xsd:anyURI" minOccurs="0"/>
+      <xsd:element name="utypePrefix" type="xsd:string"/>
     </xsd:sequence>
   </xsd:complexType>
 
   <xsd:complexType name="Object">
     <xsd:sequence>
-    <xsd:element name="utype" type="UTYPE"/>
-    <xsd:element name="id" type="ObjectId"/>
+    <xsd:element name="identifier" type="ObjectId" minOccurs="0"/>
     <xsd:element name="attribute" type="Attribute" minOccurs="0" maxOccurs="unbounded"/>
-    <xsd:element name="collection-element" type="Collection" minOccurs="0" maxOccurs="unbounded"/>
+    <xsd:element name="collection" type="Collection" minOccurs="0" maxOccurs="unbounded"/>
     <xsd:element name="reference" type="Reference" minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
+    <xsd:attribute name="utype" type="UTYPE"/>
   </xsd:complexType>
 
   <xsd:complexType name="ObjectId">
     <xsd:annotation>
       <xsd:documentation>
-      Wrapper type for an Object Identifier.
+      Wrapper type for an Object Identifier. Here a simple list of fields.
       Allows one to generalise this ObjectId without needing to redefine the usage of that concept.
       For example could allow us to have various types of identifiers.
       Or to add links to one or more remote instances of this same object, say in a database,
@@ -71,51 +80,35 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
-      <xsd:element name="uri-id" type="xsd:anyURI">
-      <xsd:annotation>
-      <xsd:documentation>
-      Fundamental identifying element that must be unique in this document.
-      Could be simply a string. Must have a uniqueness constraint added.
-      </xsd:documentation>
-      </xsd:annotation>
-      </xsd:element>
+      <xsd:element name="field" type="xsd:string" maxOccurs="unbounded"/>
     </xsd:sequence>
   </xsd:complexType>
 
-  <xsd:complexType name="Attribute" abstract="true">
+  <xsd:complexType name="Attribute" >
     <xsd:sequence>
-      <xsd:element name="utype" type="UTYPE"/>
-      <xsd:element name="datatype" type="UTYPE" minOccurs="0">
-        <xsd:annotation>
-          <xsd:documentation>
-          IF the datatype of the value given to an attribute is a sub-type of the dataty[pe declared on the attribute,
-          This element MUST be used to point at the actual type.
-          This is similar/equivalent to the xsi:type mechanism to indicate subclasses in XML documents.
-          If this element is not provided, the declared type is assumed.
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:element>
+      <xsd:choice minOccurs="0">
+        <xsd:element name="primitiveValue" type="PrimitiveValue"/>
+        <xsd:element name="dataObject" type="DataObject"/>
+      </xsd:choice>
     </xsd:sequence>
+    <xsd:attribute name="utype" type="UTYPE" use="required"/>
+    <xsd:attribute name="name" type="xsd:string"/>
+    <xsd:attribute name="type" type="UTYPE" use="optional"/>
   </xsd:complexType>
 
-  <xsd:complexType name="AtomicAttribute">
-    <xsd:complexContent >
-      <xsd:extension base="Attribute">
-        <xsd:sequence>
-          <xsd:element name="value" type="xsd:string"/>
-        </xsd:sequence>
-      </xsd:extension>
-    </xsd:complexContent>
+  <xsd:complexType name="DataObject">
+     <xsd:sequence>
+       <xsd:element name="attribute" type="Attribute" maxOccurs="unbounded"/>
+     </xsd:sequence>
+     <xsd:attribute name="utype" type="UTYPE" use="required"/>
   </xsd:complexType>
 
-  <xsd:complexType name="StructuredAttribute">
-    <xsd:complexContent >
-      <xsd:extension base="Attribute">
-        <xsd:sequence>
-          <xsd:element name="attribute" type="Attribute" maxOccurs="unbounded"/>
-        </xsd:sequence>
-      </xsd:extension>
-    </xsd:complexContent>
+  <xsd:complexType name="PrimitiveValue" mixed="true">
+    <xsd:simpleContent>
+    <xsd:extension base="xsd:string">
+    <xsd:attribute name="utype" type="UTYPE"/>
+    </xsd:extension>
+    </xsd:simpleContent>
   </xsd:complexType>
 
   <xsd:complexType name="Collection">
