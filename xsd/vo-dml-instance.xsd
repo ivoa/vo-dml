@@ -61,8 +61,9 @@
     <xsd:sequence>
     <xsd:element name="identifier" type="ObjectId" minOccurs="0"/>
     <xsd:element name="attribute" type="Attribute" minOccurs="0" maxOccurs="unbounded"/>
-    <xsd:element name="collection" type="Collection" minOccurs="0" maxOccurs="unbounded"/>
     <xsd:element name="reference" type="Reference" minOccurs="0" maxOccurs="unbounded"/>
+    <xsd:element name="container" type="Reference" minOccurs="0" maxOccurs="1"/>
+    <xsd:element name="collection" type="Collection" minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
     <xsd:attribute name="utype" type="UTYPE"/>
   </xsd:complexType>
@@ -70,19 +71,39 @@
   <xsd:complexType name="ObjectId">
     <xsd:annotation>
       <xsd:documentation>
-      Wrapper type for an Object Identifier. Here a simple list of fields.
-      Allows one to generalise this ObjectId without needing to redefine the usage of that concept.
-      For example could allow us to have various types of identifiers.
-      Or to add links to one or more remote instances of this same object, say in a database,
-      or an XML document based on some mapping of the data model to XML schema.
-      All these other elements should have minOccurs="0". For it should not be necessary to use these other
-      elements in the ObjectId that is used inside the Reference type.
+      Wrapper type for an Object Identifier. 
+      Consists of a transientID, which is a long and acts as a key (see below).
+      It also contains a publisherDID, and an externalID, which is a URL, possibly pointing into a registry.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="transientID" type="xsd:string" minOccurs="1"/>
+      <xsd:element name="publisherDID" type="CustomId" minOccurs="0"/> 
+      <xsd:element name="altID" type="AltId" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="CustomId">
+    <xsd:annotation>
+      <xsd:documentation>
+      Wrapper type for a custom identifier, modelled simply as a collection of fields of string type.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
       <xsd:element name="field" type="xsd:string" maxOccurs="unbounded"/>
     </xsd:sequence>
   </xsd:complexType>
+
+  <xsd:complexType name="AltId">
+    <xsd:complexContent>
+      <xsd:extension base="CustomId">
+      <xsd:sequence>
+      <xsd:element name="source" type="xsd:string" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
 
   <xsd:complexType name="Attribute" >
     <xsd:sequence>
@@ -98,7 +119,8 @@
 
   <xsd:complexType name="DataObject">
      <xsd:sequence>
-       <xsd:element name="attribute" type="Attribute" maxOccurs="unbounded"/>
+       <xsd:element name="attribute" type="Attribute" minOccurs="0" maxOccurs="unbounded"/>
+       <xsd:element name="reference" type="Reference" minOccurs="0" maxOccurs="unbounded"/>
      </xsd:sequence>
      <xsd:attribute name="utype" type="UTYPE" use="required"/>
   </xsd:complexType>
@@ -113,13 +135,6 @@
 
   <xsd:complexType name="Collection">
     <xsd:sequence>
-      <xsd:element name="utype" type="UTYPE">
-        <xsd:annotation>
-          <xsd:documentation>
-          The utype of the Collection definition.
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:element>
       <xsd:element name="object" type="Object" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:documentation>
@@ -128,11 +143,12 @@
         </xsd:annotation>
       </xsd:element>
     </xsd:sequence>
+    <xsd:attribute name="utype" type="UTYPE" use="required"/>
+    <xsd:attribute name="name" type="xsd:string" use="required"/>
   </xsd:complexType>
 
   <xsd:complexType name="Reference">
     <xsd:sequence>
-      <xsd:element name="utype" type="UTYPE"/>
       <xsd:element name="object-doc" type="xsd:anyURI" minOccurs="0">
         <xsd:annotation>
           <xsd:documentation>
@@ -141,7 +157,7 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="ref-id" type="ObjectId">
+      <xsd:element name="identifier" type="ObjectId" minOccurs="0">
         <xsd:annotation>
           <xsd:documentation>
           The id of the referenced object in the document indicated by object-doc.
@@ -150,8 +166,10 @@
         </xsd:annotation>
       </xsd:element>
     </xsd:sequence>
+     <xsd:attribute name="utype" type="UTYPE" use="required"/>
+     <xsd:attribute name="name" type="xsd:string" use="optional"/>
+     <xsd:attribute name="type" type="UTYPE" use="required"/>
   </xsd:complexType>
-
 
   <xsd:element name="instance" type="Instance">
     <xsd:unique name="unique-ids">
