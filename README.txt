@@ -1,3 +1,7 @@
+UNDER REVISION (GL 2013-03-26)
+------------------------------
+
+
 This project contains a definition of a VO Data Modelling Language, VO-DML.
 The folder structure is as follows:
 
@@ -9,14 +13,14 @@ as well as generating HTML and utype-s from the vo-dml representation.
 See the file itself for explanation of its targets!
 
 - ./build.properties
-Simple properties file read by build.xml to decide which target model to generate from.
-This file MUST define an 'input' property that should identify a folder with a data model inside of it.
-It MAY define the 'graphviz.path' property that MUST point to a dot.exe application.
-If this property is defined, an XSLT script will use GraphViz to generate a diagram from the model,
-which is used by the generated HTML document.
+See documentation inside the file
 
 -./doc/
-Folder containing documents decribing VO-DML and its mapping to VOTable and use for UTYPE effort.
+Folder containing documents decribing VO-DML and its possible mapping to VOTable and use for UTYPE effort.
+
+-./doc/examples/
+Folder containing some example VOTable documents with various types of UTYPE based annotation.
+Also files containing object instantiations derived from such VOTable files. 
 
 - ./models/
 Folder containing specific IVOA models in VO-DML form together with generated HTML documentation.
@@ -59,7 +63,7 @@ A special model containing definitions for most common primitive types.
 Advise to be used by all other models as their main source for such primitive types.
 
 - ./uml/
-Contains various UML representations.
+Contains a UML profile that must be used by all UML representation in models/.
 
 - ./uml/IVOA UML Profile v-3.xml
 A MagicDraw UML profile that can be used inside of a MagicDraw data model.
@@ -75,6 +79,15 @@ Contains an XML schema defining the structure of the VO-DML representation of a 
 - ./xsd/vo-dml.sch.xml
 This file defines a Schematron schema containing validity rules that are hard or impossible to express in XML schema.
 Used by the build.xml's 'validate_vo-dml' target.
+
+- ./xsd/vo-dml-instance.xsd
+Contains an XML schema defining the structure of basic instantiations of VO-DML data models.
+
+- ./xsd/vo-dml.mapping.xsd
+Contains an XML schema defining the structure of the mapping file used by XSLT processor and 
+various Java classes used for manipulating models and their instances.
+
+
 
 - ./xslt/
 This folder contains various XSLT scripts used in generating various artefacts.
@@ -112,10 +125,6 @@ The @id attribute is NOT required, maybe we should remove it from vo-dml.xsd
 - ./xslt/utype.xsl
 A utyility XSLT script containing some templates used in generating utypes from the vo-dml rep.
 
-- ./xslt/vo-dml2modelproxy.xsl
-an XSLT script that takes a vo-dml model and generates a model proxy file.
-PLEASE IGNORE FOR NOW as its use very much depends on an assumed structure of imported models in vo-dml that 
-should be discussed further.
 
 - ./xslt/vo-dml2html.xsl
 XSLT script that generates a default HMTL document from a vo-dml representation.
@@ -123,6 +132,7 @@ Is completely cross linked, contains all element (should at least).
 Each element has an <a name="[utype]"> anchor in front of its definition.
 This is assumed in the HTML generation when links to external models are created.
 TODO expand on this description.
+CAN include a table with possible paths. NOTE do not do that for STC!!!
 
 - ./xslt/vo-dml2gvd.xsl
 An XSLT script used to generate a so called GVD file that describe a model diagram from the vo-dml representation
@@ -131,3 +141,8 @@ This file is used by GraphViz to generate an image for the model.
 It also (in the build.xml's run_vo-dml2gvd target) generates a map of the image
 that is inserted into the HTML to create a cross linking between diagram and data model element in the HTML document.
 
+- ./xslt/vo-dml2pojo.xsl
+Generates "perfectly ordinary java" class definitions based on the models and the mapping_file.xml.
+Have a deepToString method for serializing the objects to an XML format compatible with ./xsd/vo-dml-instance.xml.
+Have generic property getters and setters ...
+TBC
