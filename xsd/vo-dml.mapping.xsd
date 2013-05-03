@@ -17,7 +17,7 @@ targetNamespace="http://volute.googlecode.com/dm/vo-dml-mapping/v0.9" attributeF
 <xsd:complexType name="ModelMapping">
   <xsd:sequence>
   <xsd:element name="name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-  <xsd:element name="utype" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+  <xsd:element name="prefix" type="xsd:string" minOccurs="1" maxOccurs="1"/>
   <xsd:element name="file" type="xsd:string" minOccurs="0" maxOccurs="1"/>
   <xsd:element name="url" type="xsd:anyURI" minOccurs="0" maxOccurs="1"/>
   <xsd:element name="java-package" type="JavaName" minOccurs="0" maxOccurs="1"/>
@@ -29,7 +29,7 @@ targetNamespace="http://volute.googlecode.com/dm/vo-dml-mapping/v0.9" attributeF
 
 <xsd:complexType name="TypeMapping">
   <xsd:sequence>
-    <xsd:element name="utype" type="xsd:string" minOccurs="1"/>
+    <xsd:element name="vodml-id" type="xsd:string" minOccurs="1"/>
     <xsd:element name="java-type" type="JavaName" minOccurs="0"/>
     <xsd:element name="xsd-type" type="xsd:string" minOccurs="0">
       <xsd:annotation>
