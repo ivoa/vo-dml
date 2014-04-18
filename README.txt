@@ -1,8 +1,8 @@
-UNDER REVISION (GL 2013-03-26)
+UNDER CONSTRUCTION (GL 2014-04-14)
 ------------------------------
 
-
-This project contains a definition of a VO Data Modelling Language, VO-DML.
+This project contains a definition of a VO Data Modelling Language, VO-DML, 
+models built accoring to the language and various scripts to validate these and build derived data products from them.
 The folder structure is as follows:
 
 <root>
@@ -10,13 +10,13 @@ The folder structure is as follows:
 - ./build.xml
 ant build file with targets used for generating a vo-dml representation of a particular type of model XMI file, 
 as well as generating HTML and utype-s from the vo-dml representation.
-See the file itself for explanation of its targets!
+See the end of this file for an explanation of the main ant targets.
 
 - ./build.properties
-See documentation inside the file
+See documentation inside the file and the description of build.xml at the end of this file.
 
 -./doc/
-Folder containing documents decribing VO-DML and its possible mapping to VOTable and use for UTYPE effort.
+Folder containing VO-DML and UTYPE specifications, as well as some earlier document mainly created during the utype tiger team.
 
 -./doc/examples/
 Folder containing some example VOTable documents with various types of UTYPE based annotation.
@@ -26,28 +26,27 @@ Also files containing object instantiations derived from such VOTable files.
 Folder containing specific IVOA models in VO-DML form together with generated HTML documentation.
 Each model has its own folder.
 
-Most (all) models are derived from an XMI file, contained in the model specific folder. 
-All MUST contain a file called vo-dml.properties.
-This file MUST contain a property named 'dm.filename.prefix'.
-This prefix is assumed for all official data model documents.
-First of all <dm.filename.prefix>.vo-dml.xml gives the name of the VO-DML representation of the model.
-This is used as source for generation from the vo-dml rep to for example HTML.
-It is used as target if one generates the vo-dml rep. from a UML/XMI representation.
+Most models are derived from an XMI file, contained in the model specific folder. 
+Each folder MUST contain a file called vo-dml.properties so that the ant tasks can use it.
+This file MUST contain a property named 'dm.filename.prefix', which governs the names of all generated files:
+ <dm.filename.prefix>.vo-dml.xml gives the name of the VO-DML representation of the model.
+This is used as source for generation from the vo-dml/xml rep to for example HTML.
+It is used as target if one generates the vo-dml/xml. from a UML/XMI representation.
 
-All model subfolders in SVN SHOULD contain the vo-dml representation generated from the XMI. 
-All SHOULD contain an HTML documentation file named <dm.filename.prefix>.html derived from the vo-dml file.
-Most (all) contain a <dm.filename.prefix>.png file containing a diagram of the model derived from the vo-dml file using GraphViz.
+All sub-folders of model/  SHOULD contain the vo-dml/xml representation generated from the XMI or written by hand. 
+All SHOULD contain an HTML documentation file named <dm.filename.prefix>.html derived from the vo-dml/xml file.
+Most (all) contain a <dm.filename.prefix>.png file containing a diagram of the model derived from the vo-dml/xml file using GraphViz.
 This image is used inside the HTML file. 
 
-IF one wants to generate the vo-dml rep from an XMI version of the model, the vo-dml.properties file MUST contain
-a 'xmi.source' property, which must give the name of the XMI file. This name assumed to be relative to the folder.
-Note, this name is NOT assumed to be named <dm.filename.prefix>.xml or so!
+IF one wants to generate the vo-dml/xml from an XMI version of the model, the vo-dml.properties file MUST contain
+a 'xmi.source' property, which must give the name of the XMI file. This name is assumed to be relative to the folder.
+Note, this name is NOT assumed to be named <dm.filename.prefix>.xml!
 Some folders contain a ...-UML.png file. This is an image containing a diagram obtained from the 
 MagicDraw CE 12.1 tool with which the XMI file was created.
 
-The vo-dml.properties file MAY define a property named 'html.preamble'. If not null this should identify a file containing
+The vo-dml.properties file MAY define a property named 'html.preamble'. If this value is set it should identify a file containing
 an HTML snippet (form TBD) that will be inserted at a certain part of the generated HTML documentation.
-It allows some customization of the data model documentaiton. Was used by SimDM effort. 
+It allows some customization of the data model documentation. Was used by SimDM effort. 
 None of the current models have a preamble.
 
 ./models/ivoa_wg.css
@@ -58,20 +57,22 @@ Put here in SVN so that a relative link can be given to it from the generated HT
 A CSS file used by generated HTML documents.
 Put here in SVN so that a relative link can be given to it from the generated HTML.
 
-- ./models/profile
-A special model containing definitions for most common primitive types.
-Advise to be used by all other models as their main source for such primitive types.
+- ./models/ivoa
+A special model containing definitions for most common primitive types as well as for quantity.
+SHOULD be used by all other models as their main source for such primitive types.
 
 - ./uml/
-Contains a UML profile that must be used by all UML representation in models/.
+Contains a UML profile that should be used by all MagicDraw CE 12.1 UML representation in models/ if they should be compiled using the
+xmi2vo-dml.xsl script.
 
 - ./uml/IVOA UML Profile v-3.xml
 A MagicDraw UML profile that can be used inside of a MagicDraw data model.
-Best start is to use a template model that is TBD
+Best start for creating a new UML model that can be used as source for the xmi2vo-dml.xsl script 
+however is to use a template model in ./models/template 
 
 
 - ./xsd/
-Contains XML definitions.
+Contains XML schema and Schematron file defining the formal VO-DML/XML representation.
 
 - ./xsd/vo-dml.xsd
 Contains an XML schema defining the structure of the VO-DML representation of a data model.
@@ -102,25 +103,23 @@ TODO The details of the MagicDraw modelling must be documented in (much) more de
 BUT note that it is NOT required to use UML, it is just one method to produce a vo-dml representation which is the
 real core of the data model and the sole source of all further products.
 
-Note. This script assigns utype-s to all model elements based on the XMI-id used for the element in the XMI model.
-These are random strings, and have no structure. This script does NOT generate the more readable utype-s.
-This script assigns this same ID string to the @id attribute of the <identifier> element containing the <utype> element.
-All <utyperef> elements will use this same string to identify the referenced utype.
-See below in the description of the generate-utypes4vo-dml.xsl script how these utype and utyperef elements are updated
-with the human readable utype strings.
+Note. This script assigns a vodml-id to all model elements based on the XMI-id used for the element in the XMI model.
+These are random strings, and have no structure. This script does NOT generate the more readable vodml-id values.
+This script assigns this same ID string to the @id attribute of the <identifier> element containing the <vodml-id> element.
+All <utype> elements will use this same string to identify the referenced <vodml-id>.
+The more readable path expressions for the vodml-id elements is generated by the generate-utypes4vo-dml.xsl script.
+See below how that works.
 
 - ./xslt/common.xsl
 XSLT script containing some common templates used by other scripts.
 
 - ./xslt/generate-utypes4vo-dml.xsl
-XSLT script that generates human readable utype-s for a vo-dml diagram and updates utyperef-s to use the proper
-These currently still follow the UTYPE syntax propsed in the SimDM model, and in the "original" UTYPEs document.
-Its main role is to produce a human readable, guaranteed unique set of utypes that 
-Is currently used in the build.xml's run_xmi2vo-dml target to update the utype-s using the opaque @id strings.
-Since one may define a utype explicitly in XMI and the derived the vo-dml model, only those utypes are updated for which the 
-utype value is equal to the value of the @id attribute in the containing <identifier> element.
-
-The @id attribute is NOT required, maybe we should remove it from vo-dml.xsd
+XSLT script that generates human readable values for the <vodml-id> elements for a vo-dml diagram and updates <utype> values accordingly.
+These follow the path syntax defined in appendix D of the VO-DMl spec, which itself is based on the UTYPE syntax proposed 
+in the SimDM model, and in the "original" UTYPEs document.
+Its main role is to produce a human readable value that are guaranteed unique within the context of a <model> element. 
+This value is generated only for <vodml-id> elements that have an @id attribute that has the same value as the element itself.
+This is to avoid updating <vodml-id> elements that have an explicitly defined value defined e.g. in the original UML/XMI model.
 
 - ./xslt/utype.xsl
 A utyility XSLT script containing some templates used in generating utypes from the vo-dml rep.
@@ -146,3 +145,14 @@ Generates "perfectly ordinary java" class definitions based on the models and th
 Have a deepToString method for serializing the objects to an XML format compatible with ./xsd/vo-dml-instance.xml.
 Have generic property getters and setters ...
 TBC
+- HOW TO compile.
+Need to generate java code for ivoa model, move this to source before calling ant compile, as custom java/src classes need it.
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++++++++++++++  How to use build.xml and description of its targets  +++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+1. check out complete vo-dml project from SVN. URL = ... TBD
+2. ensure one has ant installed. version should be at least ... TBD
+3. configure build.properties file according to description in SVN version.
+4. if one has an XMI file built according ot one of the supported profiles (see below), run the 
+   corresponding run_xmi2vo-dml_[XMI-spec] target. If so one MUST have an xmi.
