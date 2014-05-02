@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns:xml="http://www.w3.org/XML/1998/namespace"
+            xmlns:vo-dml="http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1"
+            targetNamespace="http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1">
+
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+
+   <xsd:annotation>
+      <xsd:documentation>
+        Edited by Gerard Lemson and Laurent Bourgès.
+        
+        Updated : 13/05/2008 :
+          Laurent : added Identity complexType to store all flavor for objectType identifiers :
+
+        Updated : 11/08/2008 :
+          Laurent : Identity and Reference identifiers are now attributes
+          
+        UPdated: 2/05/2014
+          Gerard : Copied for use in VO-DML. New targetNamespace, new location. 
+
+        </xsd:documentation>
+   </xsd:annotation>
+
+
+
+
+  <xsd:complexType name="Identity">
+    <xsd:annotation>
+      <xsd:documentation>
+        This class contains all flavor for objectType identifiers : &lt;br/&gt;
+          - primary key value : numeric &lt;br/&gt;
+          - string id : string for XML ID / IDREF standard mechanism in xml schemas &lt;br/&gt;
+          - string URI : URI format for external references
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute name="id" type="xsd:long" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          Represents an id for the containing element in the database where the document is stored.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="ivoId" type="xsd:anyURI" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+        Represents the ID of the object in the IVO context.
+        Should be globally unique.
+        Maybe type should be IVOIdentifier.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="xmlId" type="xsd:ID" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+        Represents a local ID in the XML document. 
+        Useful when inserting a new, purely transient resource in a SimDB.  
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="publisherDID" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+        Represents an identifier assigned by the publisher, no restrictions on it are assumed, though in the future
+        the dataype may be restricted.  
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+
+
+
+  <xsd:complexType name="MetadataObject" abstract="true">
+    <xsd:sequence>
+      <xsd:element name="id" type="xsd:long" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>
+            Represents an id in the database where the document is stored.
+            All complex types eventually inherit from this type. 
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="identity" type="vo-dml:Identity" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>
+            Represents a full identity object identifying this object. 
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute ref="xml:base"/> 
+  </xsd:complexType>
+
+
+  <xsd:complexType name="Reference">
+    <xsd:annotation>
+      <xsd:documentation>
+        This class defines a reference (close to Identity class) as it contains both xmlId 
+            and ivoId and publisherDID identifiers : &lt;br/&gt;
+        It also allows one to indirectly reference fragments of objects using a nested referecne
+        that follows the containment hierarchy upwards.
+      </xsd:documentation>
+    </xsd:annotation>
+<!-- Removed the fragment reference again, as it is too complex for now
+Instead we try an approach based on views/representations of the model -->
+<!-- 
+    <xsd:sequence>
+      <xsd:element name="fragment" type="FragmentReference" minOccurs="0"/>
+    </xsd:sequence>
+ -->
+    <xsd:attribute name="ivoId" type="xsd:anyURI">
+      <xsd:annotation>
+        <xsd:documentation>
+          Represents the ID of the object in the IVO context.
+          Should be globally unique.
+          Maybe type should be IVOIdentifier.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="publisherDID" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation>
+          Represents the ID of the object in the IVO context.
+          Should be globally unique.
+          Maybe type should be IVOIdentifier.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="xmlId" type="xsd:IDREF">
+      <xsd:annotation>
+        <xsd:documentation>
+        Represents a reference to an element in the same XML document. 
+        Useful when inserting a new, purely transient resource in a SimDB.  
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:complexType name="FragmentReference">
+    <xsd:annotation>
+      <xsd:documentation>
+        Indicates an indirect reference to an object.
+        Uses less direct means than the ivoId or publisherDID, which are unique, to identify a referenced object.
+        Example, can use a reference to a container, an indication of the colleciton on the container
+        plus a restriction on a property of the contained object which is constrained to be uniqueInCollection.
+        Note, the reference to the container could be built up the same way.
+        NB This concept has similarities to the UFI concept [TBD add ref to that].
+        TBD "Is" a FragmentReference "a" Reference? I.e. should FragmentReference be an xsd:extension Reference?
+          PRO: Removes one level in hierarchy, as a reference need not have a nested &lt;fragment&gt;
+          PRO: Conceptually, a fragment reference indedd is-a" reference.
+          CON: This concept is introduce to make a user's life easier, forcing them to use xmi:type reduces that usability.
+        TBD: Consider a string version of this nesting, iso this element hierarchy.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="container" type="vo-dml:Reference" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>
+            Reference to the container of the referenced fragment. 
+            Note, this can be null, therefore a fragment reference can not be used to refer to a root entity object!
+            
+            TBD do we need that constraint? Or can we release it and simply rely on the fragment identification to work with null
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="collection" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          The name of the collection on the container which contains the referenced object. 
+          TBD Decide whether we need this element. 
+              Can we infer it from the actual reference that contains this fragment?
+              Does that rely on an type only having 1 collection of a given type?
+              Does it rely on a type being the target of at most one collection (i.e., have at most one container?) 
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute> 
+    <xsd:attribute name="property" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>
+          The name of the property that is used to restrict the fragment.
+          NB this may be one of the ID-s defined in the Identity complexType!
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="value" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>
+          The value of the property that is used to restrict the fragment.
+          It's datatype is supposed to be of any type here. 
+          Q: We use string as an attribute. Do we need something this general? anySimpleType/anyType?
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+
+</xsd:schema>
