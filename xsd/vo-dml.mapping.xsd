@@ -1,5 +1,5 @@
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://volute.googlecode.com/dm/vo-dml-mapping/v0.9" 
-targetNamespace="http://volute.googlecode.com/dm/vo-dml-mapping/v0.9" attributeFormDefault="unqualified"
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://volute.g-vo.org/dm/vo-dml-mapping/v0.9" 
+targetNamespace="http://volute.g-vo.org/dm/vo-dml-mapping/v0.9" attributeFormDefault="unqualified"
   elementFormDefault="unqualified">
 
 <xsd:annotation>
