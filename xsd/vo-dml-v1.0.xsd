@@ -857,9 +857,15 @@ TBD continue based on VO-DML specification document.
       In terms of OCL, VO-DML COnstraint-s are invariants of a Type.
       </xsd:documentation>
     </xsd:annotation>
-    <xsd:complexContent>
-    <xsd:extension base="ReferableElement"></xsd:extension>
-    </xsd:complexContent>
+    <xsd:sequence>
+      <xsd:element name="description" type="xsd:string" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>
+          A natural language description of the constraint.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
     </xsd:complexType>
     
     
