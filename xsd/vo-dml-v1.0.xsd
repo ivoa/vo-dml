@@ -883,7 +883,7 @@ TBD continue based on VO-DML specification document.
     <xsd:complexContent>
     <xsd:extension base="Constraint">
       <xsd:sequence>
-        <xsd:element name="subsettedRole" type="ElementRef"> 
+        <xsd:element name="role" type="ElementRef"> 
           <xsd:annotation>
             <xsd:documentation>
             VODMLREF identifying the constrained Role.
