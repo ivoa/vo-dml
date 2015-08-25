@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns="http://volute.googlecode.com/dm/vo-dml/v0.9"
-            targetNamespace="http://volute.googlecode.com/dm/vo-dml/v0.9"
+            xmlns="http://www.ivoa.net/xml/VODML/v1.0"
+            targetNamespace="http://www.ivoa.net/xml/VODML/v1.0"
             attributeFormDefault="unqualified" elementFormDefault="unqualified">
 
   <xsd:annotation>
@@ -863,7 +863,7 @@ TBD continue based on VO-DML specification document.
     </xsd:complexType>
     
     
-    <xsd:complexType name="RoleConstraint">
+    <xsd:complexType name="SubsettedRole">
         <xsd:annotation>
       <xsd:documentation>
       Constraint represents rules that instances of Type-s must obey to be valid.  
@@ -877,7 +877,7 @@ TBD continue based on VO-DML specification document.
     <xsd:complexContent>
     <xsd:extension base="Constraint">
       <xsd:sequence>
-        <xsd:element name="constrainedRole" type="ElementRef"> 
+        <xsd:element name="subsettedRole" type="ElementRef"> 
           <xsd:annotation>
             <xsd:documentation>
             VODMLREF identifying the constrained Role.
@@ -885,7 +885,7 @@ TBD continue based on VO-DML specification document.
             </xsd:documentation>
           </xsd:annotation>
         </xsd:element>
-        <xsd:element name="subsets" type="ElementRef" minOccurs="0">
+        <xsd:element name="datatype" type="ElementRef" minOccurs="0">
           <xsd:annotation>
             <xsd:documentation>
             Pointer to datatype that the constrained Role must take.
