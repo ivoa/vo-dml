@@ -19,9 +19,9 @@
     </xsd:documentation>
   </xsd:annotation>
 
-  <!-- +++++++++++++++++++ Begin of 'UTYPE section' +++++++++++++++++++ -->
+  <!-- +++++++++++++++++++ Begin of 'VODMLREF section' +++++++++++++++++++ -->
 
-  <xsd:simpleType name="UTYPE">
+  <xsd:simpleType name="VODMLREF">
     <xsd:annotation>
       <xsd:documentation>
       This simpleType allows concatenation of vo-dml:UTYPE-sThis in contrast to the normalized version in vo-dml-instance_utype_normalized.xsd
@@ -53,7 +53,7 @@
     <xsd:sequence>
       <xsd:element name="vodmlURL" type="xsd:anyURI"/>
       <xsd:element name="documentationURL" type="xsd:anyURI" minOccurs="0"/>
-      <xsd:element name="utypePrefix" type="xsd:string"/>
+      <xsd:element name="vodmlrefPrefix" type="xsd:string"/>
     </xsd:sequence>
   </xsd:complexType>
 
@@ -65,7 +65,7 @@
     <xsd:element name="container" type="Reference" minOccurs="0" maxOccurs="1"/>
     <xsd:element name="collection" type="Collection" minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
-    <xsd:attribute name="utype" type="UTYPE"/>
+    <xsd:attribute name="vodmlRef" type="VODMLREF"/>
   </xsd:complexType>
 
   <xsd:complexType name="ObjectId">
@@ -112,9 +112,9 @@
         <xsd:element name="dataObject" type="DataObject"/>
       </xsd:choice>
     </xsd:sequence>
-    <xsd:attribute name="utype" type="UTYPE" use="required"/>
+    <xsd:attribute name="vodmlRef" type="VODMLREF" use="required"/>
     <xsd:attribute name="name" type="xsd:string"/>
-    <xsd:attribute name="type" type="UTYPE" use="optional"/>
+    <xsd:attribute name="type" type="VODMLREF" use="optional"/>
   </xsd:complexType>
 
   <xsd:complexType name="DataObject">
@@ -122,13 +122,13 @@
        <xsd:element name="attribute" type="Attribute" minOccurs="0" maxOccurs="unbounded"/>
        <xsd:element name="reference" type="Reference" minOccurs="0" maxOccurs="unbounded"/>
      </xsd:sequence>
-     <xsd:attribute name="utype" type="UTYPE" use="required"/>
+     <xsd:attribute name="vodmlRef" type="VODMLREF" use="required"/>
   </xsd:complexType>
 
   <xsd:complexType name="PrimitiveValue" mixed="true">
     <xsd:simpleContent>
     <xsd:extension base="xsd:string">
-    <xsd:attribute name="utype" type="UTYPE"/>
+    <xsd:attribute name="vodmlRef" type="VODMLREF"/>
     </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>
@@ -143,7 +143,7 @@
         </xsd:annotation>
       </xsd:element>
     </xsd:sequence>
-    <xsd:attribute name="utype" type="UTYPE" use="required"/>
+    <xsd:attribute name="vomdmlRef" type="VODMLREF" use="required"/>
     <xsd:attribute name="name" type="xsd:string" use="required"/>
   </xsd:complexType>
 
@@ -166,9 +166,9 @@
         </xsd:annotation>
       </xsd:element>
     </xsd:sequence>
-     <xsd:attribute name="utype" type="UTYPE" use="required"/>
+     <xsd:attribute name="vodmlRef" type="VODMLREF" use="required"/>
      <xsd:attribute name="name" type="xsd:string" use="optional"/>
-     <xsd:attribute name="type" type="UTYPE" use="required"/>
+     <xsd:attribute name="type" type="VODMLREF" use="required"/>
   </xsd:complexType>
 
   <xsd:element name="instance" type="Instance">

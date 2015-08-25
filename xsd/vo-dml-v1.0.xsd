@@ -82,6 +82,25 @@ TBD continue based on VO-DML specification document.
       </xsd:restriction>
   </xsd:simpleType>
 
+  <xsd:simpleType name="VODMLName">
+    <xsd:annotation>
+      <xsd:documentation>
+        Type used to restrict valid values for prefixes.
+        TBD We could use an xsd:NCName for this.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string"> <!-- xsd:NCName ? -->
+      <xsd:pattern value="[a-zA-Z_][\w_]*">
+        <xsd:annotation>
+          <xsd:documentation>
+            A model name MUST NOT contain a semicolon.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+
   <xsd:complexType name="ReferableElement" abstract="true">
     <xsd:annotation>
       <xsd:documentation>
@@ -105,18 +124,13 @@ TBD continue based on VO-DML specification document.
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="name" minOccurs="1" >
+      <xsd:element name="name" type="VODMLName" minOccurs="1" >
         <xsd:annotation>
           <xsd:documentation>
             The name of the model element. 
             MUST NOT be an empty string.
           </xsd:documentation>
         </xsd:annotation>
-        <xsd:simpleType>
-          <xsd:restriction base="xsd:NCName">
-            <xsd:minLength value="1"/>
-          </xsd:restriction>
-        </xsd:simpleType>
       </xsd:element>
       <xsd:element name="description" type="xsd:string" minOccurs="0">
         <xsd:annotation>
@@ -661,22 +675,19 @@ TBD continue based on VO-DML specification document.
     <xsd:complexContent>
       <xsd:extension base="Role">
         <xsd:sequence>
-          <xsd:element name="skosconcept" type="SKOSConcept" minOccurs="0">
+          <xsd:element name="semanticconcept" type="SemanticConcept" minOccurs="0">
             <xsd:annotation>
               <xsd:documentation>
-                It is possible to assign a SKOSConcept to an attribute definition.
-                This means that the values of the attribute have to comply with the definition of the SKOSConcept.
-                This can be done in two manners. Either the SKOSConcept
-                gives a link to a SKOS vocabulary, in which case the value must be a
+                It is possible to assign a SEmanticConcept to an attribute definition.
+                This means that the values of the attribute have to comply with the definition of the 
+                SemanticConcept.
+                This can be done in two manners. Either the SemanticConcept
+                gives a link to a semantic vocabulary, in which case the value must be a
                 concept defined in that vocabulary.
-                Or it defines a broadest SKOS concept, in which case the value must be a SKOS concept that is explicitly
+                Or it defines a topConcept, in which case the value must be a  concept that is explicitly
                 declared to be (narrower than)
                 that concept, or a concept that is narrower than that concept.
-                The latter definition allows custom SKOS vocabularies to be used.
-                TBD it must be decided HOW the SKOS concept are to be represented as values.
-                By URI? By preferredLabel/en [??] as
-                defined in the vocabulary?
-                Maybe this needs to be part of the SKOSConcept definition.
+                FOr details on the interpretation see the VO-DML document.
               </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
@@ -687,19 +698,19 @@ TBD continue based on VO-DML specification document.
 
 
 
-  <xsd:complexType name="SKOSConcept">
+  <xsd:complexType name="SemanticConcept">
     <xsd:annotation>
       <xsd:documentation>
         Type used to indicate on attributes that they take values representing a concept defined in
-        an identified SKOS vocabulary, and/or restricted by being narrower than an
-        identified "broadest" concept.
+        an identified semantic vocabulary (SKOS or RDFS), and/or restricted by being narrower/more specific than an
+        identified "top" concept.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
-      <xsd:element name="broadestSKOSConcept" type="xsd:anyURI" minOccurs="0">
+      <xsd:element name="topConcept" type="xsd:anyURI" minOccurs="0">
         <xsd:annotation>
           <xsd:documentation>
-            A URI identifiying a SKOS concept that corresponds to the concept in the model.
+            A URI identifiying a semntic concept that corresponds to the concept in the model.
             Values of a corresponding attributes must be URI-s identifiying objects that are narrower
             than the identified concept. This attribute may be null as
             certain vocabularies may not have a
@@ -709,7 +720,7 @@ TBD continue based on VO-DML specification document.
       <xsd:element name="vocabularyURI" type="xsd:anyURI" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
           <xsd:documentation>
-            If no broadestSKOSConcept is defined, one or more explicit vocabularies can be provided from which the
+            If no topConcept is defined, one or more explicit vocabularies can be provided from which the
             value must be obtained.
           </xsd:documentation>
         </xsd:annotation>
@@ -815,6 +826,7 @@ TBD continue based on VO-DML specification document.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
+      <xsd:choice>
       <xsd:element name="minOccurs" type="xsd:nonNegativeInteger" default="1">
         <xsd:annotation>
           <xsd:documentation>
@@ -822,6 +834,7 @@ TBD continue based on VO-DML specification document.
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
+			</xsd:choice>
       <xsd:element name="maxOccurs" type="xsd:int" default="1">
         <xsd:annotation>
           <xsd:documentation>
@@ -837,7 +850,7 @@ TBD continue based on VO-DML specification document.
         <xsd:annotation>
       <xsd:documentation>
       Constraint represents rules that instances of Type-s must obey to be valid.  
-      A Constraint is a referable element. Its description element describes the constrait in English.
+      A Constraint is a referable element. Its description element describes the constraint in English.
       In future versions of the language extra elements may be added that give a more formal
       definition of the constraint. In particular we may add expressions in a language
       such as OCL or subset thereof tuned to VO-DML.
@@ -848,9 +861,104 @@ TBD continue based on VO-DML specification document.
     <xsd:extension base="ReferableElement"></xsd:extension>
     </xsd:complexContent>
     </xsd:complexType>
-
-
-
+    
+    
+    <xsd:complexType name="RoleConstraint">
+        <xsd:annotation>
+      <xsd:documentation>
+      Constraint represents rules that instances of Type-s must obey to be valid.  
+      A Constraint is a referable element. Its description element describes the constraint in English.
+      In future versions of the language extra elements may be added that give a more formal
+      definition of the constraint. In particular we may add expressions in a language
+      such as OCL or subset thereof tuned to VO-DML.
+      In terms of OCL, VO-DML COnstraint-s are invariants of a Type.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+    <xsd:extension base="Constraint">
+      <xsd:sequence>
+        <xsd:element name="constrainedRole" type="ElementRef"> 
+          <xsd:annotation>
+            <xsd:documentation>
+            VODMLREF identifying the constrained Role.
+            This role MUST be available to the type containing this constraint.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="subsets" type="ElementRef" minOccurs="0">
+          <xsd:annotation>
+            <xsd:documentation>
+            Pointer to datatype that the constrained Role must take.
+            This datatype MUST be a sub-type of the declared datatype of the constrained Role.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="semanticconcept" type="SemanticConcept" minOccurs="0">
+          <xsd:annotation>
+            <xsd:documentation>
+						Maybe the super type has not defined a semantic concept for the Role, but 
+						the subtype needs that. This attribute allows this assignment. But alse when 
+						the Role on the super-type already has a semanticconcept with a topConcept 
+						defined on it, the subtype may restrict the values to a narrower concept than 
+						that assigned to it on the super-type.             
+				    </xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:extension>
+    </xsd:complexContent>
+    
+    </xsd:complexType>
+<!-- 
+The following, commented-out type definition is a proposal for an alternative way to define subsetting of roles.
+It allows one to refine certain properties of an inherited role, without requiring a re-definition of the role itself.
+The latter would lead to extra constraints on this role (e.g. name must not chnage) and a new vodml-id for the inherited role,
+complicating interpretations, especially of "naive" clients as defined in the mapping document.
+ -->
+ <!-- 
+  <xsd:complexType name="SubsettingConstraint">
+    <xsd:annotation>
+      <xsd:documentation>
+      Implementation of the UML "subsets" concept as a special type of constraint.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+    <xsd:extension base="Constraint">
+    	<xsd:annotation>
+    		<xsd:documentation>
+    		The inherited description element of a SubsettingConstraint MAY be used to define custom cnstraints on the role.
+    		IF not empty, "self" in the expression now refers to the Role on the instance, NOT the instance itself!
+		    </xsd:documentation>
+    	</xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="overrides" type="VODMLREF" minOccurs="1">
+        <xsd:annotation>
+          <xsd:documentation>
+            Identifies the role that is overridden. MUST identify a role inherited from a super type.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="datatype" type="VODMLREF" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>
+            IF the subsetting constrains the role to a sub-type of the dattaype of the subseted ROle,
+            This element identifies this subtype. May be null if another feature is overriden.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="multiplicity" type="Multiplicity" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>
+            IF the subsetting constrains the role to a sub-type of the dattaype of the subseted ROle,
+            This element identifies this subtype. May be null if another feature is overriden.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+    </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+ -->
   <!-- Begin of element declaration(s) -->
   <xsd:element name="model" type="Model">
     <xsd:annotation>
