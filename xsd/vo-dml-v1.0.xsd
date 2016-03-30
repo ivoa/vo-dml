@@ -43,7 +43,7 @@ TBD continue based on VO-DML specification document.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base="xsd:string"> <!-- xsd:NCName ? -->
-      <xsd:pattern value="[\w_-]+">
+      <xsd:pattern value="[a-zA-Z][\w_-]*">
         <xsd:annotation>
           <xsd:documentation>
             A model name MUST NOT contain a semicolon.
@@ -70,7 +70,7 @@ TBD continue based on VO-DML specification document.
         <xsd:documentation>
           A restriction on the valid strings that make this a valid reference to a referencable element.
             Consists of a prefix that should follow the ModelPrefix restriction
-            and a identifier that should follow the ElementID restriction,
+            and a identifier that should follow the VODMLID restriction,
           separated from each other by a colon.
         </xsd:documentation>
         <xsd:documentation>
@@ -78,7 +78,7 @@ TBD continue based on VO-DML specification document.
           MUST be [Prefix ':' VODMLID].
         </xsd:documentation>
       </xsd:annotation>
-          <xsd:pattern value="[\w_-]+:[\w_\-/\./*]+"/>
+          <xsd:pattern value="[\w_-]+:[\w-/\._]+"/>
       </xsd:restriction>
   </xsd:simpleType>
 
