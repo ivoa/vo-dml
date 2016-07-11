@@ -31,7 +31,7 @@ TBD continue based on VO-DML specification document.
         Requirements on the format are: 1) use in XML document 2) use as fragment in URI
         </xsd:documentation>
       </xsd:annotation>
-          <xsd:pattern value="[\w\._-]+"/>
+          <xsd:pattern value="[\w\._\-]+"/>
       </xsd:restriction>
   </xsd:simpleType>
 
@@ -43,7 +43,7 @@ TBD continue based on VO-DML specification document.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base="xsd:string"> <!-- xsd:NCName ? -->
-      <xsd:pattern value="[a-zA-Z][\w_-]*">
+      <xsd:pattern value="[a-zA-Z][\w_\-]*">
         <xsd:annotation>
           <xsd:documentation>
             A model name MUST NOT contain a semicolon.
@@ -78,7 +78,7 @@ TBD continue based on VO-DML specification document.
           MUST be [Prefix ':' VODMLID].
         </xsd:documentation>
       </xsd:annotation>
-          <xsd:pattern value="[\w_-]+:[\w-/\._]+"/>
+          <xsd:pattern value="[\w_\-]+:[\w\-/\._]+"/>
       </xsd:restriction>
   </xsd:simpleType>
 
@@ -678,7 +678,7 @@ TBD continue based on VO-DML specification document.
           <xsd:element name="semanticconcept" type="SemanticConcept" minOccurs="0">
             <xsd:annotation>
               <xsd:documentation>
-                It is possible to assign a SEmanticConcept to an attribute definition.
+                It is possible to assign a SemanticConcept to an attribute definition.
                 This means that the values of the attribute have to comply with the definition of the 
                 SemanticConcept.
                 This can be done in two manners. Either the SemanticConcept
