@@ -827,7 +827,7 @@ TBD continue based on VO-DML specification document.
     </xsd:annotation>
     <xsd:sequence>
       <xsd:choice>
-      <xsd:element name="minOccurs" type="xsd:nonNegativeInteger" default="1">
+      <xsd:element name="minOccurs" type="xsd:nonNegativeInteger" default="0">
         <xsd:annotation>
           <xsd:documentation>
           Lower bound on number of instances/values.
