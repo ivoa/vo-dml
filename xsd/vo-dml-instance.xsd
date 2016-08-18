@@ -24,7 +24,7 @@
   <xsd:simpleType name="VODMLREF">
     <xsd:annotation>
       <xsd:documentation>
-      This simpleType allows concatenation of vo-dml:UTYPE-sThis in contrast to the normalized version in vo-dml-instance_utype_normalized.xsd
+      This simpleType allows concatenation of vo-dml:VODMLREF-s.
       TBD define the pattern, is the one below correct?
       </xsd:documentation>
     </xsd:annotation>
