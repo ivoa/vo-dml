@@ -31,7 +31,7 @@ TBD continue based on VO-DML specification document.
         Requirements on the format are: 1) use in XML document 2) use as fragment in URI
         </xsd:documentation>
       </xsd:annotation>
-          <xsd:pattern value="[\w\._\-]+"/>
+          <xsd:pattern value="[a-zA-Z][a-zA-Z0-9\._]*"/>
       </xsd:restriction>
   </xsd:simpleType>
 
@@ -43,7 +43,7 @@ TBD continue based on VO-DML specification document.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base="xsd:string"> <!-- xsd:NCName ? -->
-      <xsd:pattern value="[a-zA-Z][\w_\-]*">
+      <xsd:pattern value="[a-zA-Z][a-zA-Z0-9_]*">
         <xsd:annotation>
           <xsd:documentation>
             A model name MUST NOT contain a semicolon.
@@ -78,7 +78,7 @@ TBD continue based on VO-DML specification document.
           MUST be [Prefix ':' VODMLID].
         </xsd:documentation>
       </xsd:annotation>
-          <xsd:pattern value="[\w_\-]+:[\w\-/\._]+"/>
+          <xsd:pattern value="[a-zA-Z][a-zA-Z0-9\._\-]+:[a-zA-Z][a-zA-Z0-9\._]*"/>
       </xsd:restriction>
   </xsd:simpleType>
 
@@ -90,7 +90,7 @@ TBD continue based on VO-DML specification document.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base="xsd:string"> <!-- xsd:NCName ? -->
-      <xsd:pattern value="[a-zA-Z_][\w_]*">
+      <xsd:pattern value="[a-zA-Z_][a-zA-Z0-9_]*">
         <xsd:annotation>
           <xsd:documentation>
             A model name MUST NOT contain a semicolon.
