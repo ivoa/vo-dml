@@ -467,9 +467,8 @@ TBD continue based on VO-DML specification document.
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:element>
-
         </xsd:sequence>
-        <xsd:attribute name="abstract" type="xsd:boolean" default="false" use="optional" />
+        <xsd:attribute name="abstract" type="xsd:boolean" use="optional" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
