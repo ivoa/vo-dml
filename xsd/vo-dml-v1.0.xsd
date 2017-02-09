@@ -205,6 +205,13 @@ TBD continue based on VO-DML specification document.
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:element>
+            <xsd:element name="identifier" type="xsd:string" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The IVO Identifier of this model if it applies.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
             <xsd:element name="title" type="xsd:string" minOccurs="1" maxOccurs="1">
                 <xsd:annotation>
           <xsd:documentation>
@@ -327,6 +334,13 @@ TBD continue based on VO-DML specification document.
                 </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
+            <xsd:element name="identifier" type="xsd:string" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The IVO Identifier of the imported model if it applies.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
         <xsd:element name="version" type="xsd:string" minOccurs="0">
             <xsd:annotation>
                 <xsd:documentation>
@@ -826,7 +840,7 @@ TBD continue based on VO-DML specification document.
     </xsd:annotation>
     <xsd:sequence>
       <xsd:choice>
-      <xsd:element name="minOccurs" type="xsd:nonNegativeInteger" default="0">
+      <xsd:element name="minOccurs" type="xsd:nonNegativeInteger">
         <xsd:annotation>
           <xsd:documentation>
           Lower bound on number of instances/values.
@@ -834,7 +848,7 @@ TBD continue based on VO-DML specification document.
         </xsd:annotation>
       </xsd:element>
 			</xsd:choice>
-      <xsd:element name="maxOccurs" type="xsd:int" default="1">
+      <xsd:element name="maxOccurs" type="xsd:int">
         <xsd:annotation>
           <xsd:documentation>
           When negative, unbounded.
