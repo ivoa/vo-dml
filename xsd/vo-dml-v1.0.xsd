@@ -208,7 +208,12 @@ TBD continue based on VO-DML specification document.
             <xsd:element name="identifier" type="xsd:string" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation>
-                        The IVO Identifier of this model if it applies.
+                        A string holding the identifier by which the model is registered in an 
+                        IVOA compatible registry. Its structure must therefore conform to the IVOA Identifier 
+                        specification in http://www.ivoa.net/documents/IVOAIdentifiers/. 
+                        If the model is an IVOA standard, the naming authority for the identifier should be the 
+                        IVOA DM working group. 
+
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:element>
@@ -337,7 +342,8 @@ TBD continue based on VO-DML specification document.
             <xsd:element name="identifier" type="xsd:string" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation>
-                        The IVO Identifier of the imported model if it applies.
+                        A string holding the identifier by which the imported model is registered in an 
+                        IVOA compatible registry. Must be the same value as the 'identifier' of the imported model.
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:element>
