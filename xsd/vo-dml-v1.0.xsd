@@ -654,28 +654,6 @@ TBD continue based on VO-DML specification document.
               </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
-          <xsd:element name="subsets" type="ElementRef" minOccurs="0">
-            <xsd:annotation>
-              <xsd:documentation>
-                Represents the UML subsetted property. Indicates that a particular relation refines the definition
-                of another relation. ONly a relation inherited form a base class can
-                be subsetted. Typical usage is
-                that the base class has a
-                relation to a class A, and the subclass refines this to indicating that
-                the relation should be to a subclass of A.
-
-                The value should identify the subsetted property.
-                TBD IF we are going to use utype-s to refer to elements also inside this
-                document, we should use an
-                appropriate keyref
-              </xsd:documentation>
-              <xsd:documentation>
-                TBD this is a somewhat abstract, but very useful modeling concept.
-                It implements a very common modeling design pattern.
-                It exists in UML2.
-              </xsd:documentation>
-            </xsd:annotation>
-          </xsd:element>
         </xsd:sequence>
       </xsd:extension>
     </xsd:complexContent>
