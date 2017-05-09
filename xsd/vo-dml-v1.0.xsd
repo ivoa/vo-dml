@@ -217,6 +217,15 @@ TBD continue based on VO-DML specification document.
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:element>
+            <xsd:element name="uri" type="xsd:anyURI" minOccurs="1" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>
+                Each model has an associated model URI that MUST be used to reference it, for example in ModelImports 
+                or in VOTable annotations. 
+                Dereferencing the model URI and following redirects yields the latest VO-DML for the data model
+                </xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
             <xsd:element name="title" type="xsd:string" minOccurs="1" maxOccurs="1">
                 <xsd:annotation>
           <xsd:documentation>
