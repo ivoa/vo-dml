@@ -1,0 +1,176 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix ivoa: <http://www.ivoa.net/vo-dml/models/ivoa#>.
+
+
+ivoa:Identity a rdfs:Class; 
+    rdfs:label "Identity"@en;
+    rdfs:comment "This datatype represents an identifier for an object in the data model. It consists of 3 attributes that each are assumed to work in a particular context or representation of a data model instance."@en;
+    .
+
+ivoa:Identity.id a rdf:Property; 
+    rdfs:label "id"@en;
+    rdfs:comment "The id attribute is assumed to represent an object in a database storing instances of the data model."@en;
+    rdfs:domain ivoa:Identity;
+    rdfs:range ivoa:integer;
+    .
+
+ivoa:Identity.xmlId a rdf:Property; 
+    rdfs:label "xmlId"@en;
+    rdfs:comment "This attribute is used to support identifing of and referring to an object in an XML document using the ID/IDREF mechanism."@en;
+    rdfs:domain ivoa:Identity;
+    rdfs:range ivoa:string;
+    .
+
+ivoa:Identity.ivoId a rdf:Property; 
+    rdfs:label "ivoId"@en;
+    rdfs:comment "The ivoId attribute is assumed to represent an object in a database following the design of the data model and accessible through a standardised registration and discovery protocols. It is assumed to be unique within the IVOA and its format follows (a generalisation of) the IVO Resource Identifier standard (see http://www.ivoa.net/Documents/REC/Identifiers/Identifiers-20070302.html). Since the ivoId is assumed to represent the resource as registered in a standard database for the data model, it is assumed to be allocated by such a database service. This is in contrast to the use of the IVO Identifier in resource registries, where the id is assumed to be allocated by the publisher. We have the publisherDID attribute for that purpose. Also in contrast to that usage is the fact that each object in the model is assigned this identifier, not only the root resources. We suggest as algorithm for assigning these ivoId to use as root the ivoId of the registered database service, and to append to this a # then the UTYPE of the element and finally its id attribute, separetd from the UTYPE by a forward slash."@en;
+    rdfs:domain ivoa:Identity;
+    rdfs:range ivoa:anyURI;
+    .
+
+ivoa:Identity.publisherDID a rdf:Property; 
+    rdfs:label "publisherDID"@en;
+    rdfs:comment "This attribute identifies an element in the context of the publisher.  It is supposed to be unique in the IVO context and should likely be constrained to have the publisher's authority IVO id. This may need to be rediscussed when protocols for accessing a database built around a data model are to be designed."@en;
+    rdfs:domain ivoa:Identity;
+    rdfs:range ivoa:anyURI;
+    .
+
+ivoa:anyURI a rdfs:Class; 
+    rdfs:label "anyURI"@en;
+    rdfs:comment "Represents a URI in the same way as the datatype of the same nam in XML Schema is used."@en;
+    .
+
+ivoa:duration a rdfs:Class; 
+    rdfs:label "duration"@en;
+    rdfs:comment "Represents an interval of time from beginning to end. Is not equivalent to a simple real value indicating the number of seconds (for example). In general a custom mapping to a particular serialisation context must be provided."@en;
+    .
+
+ivoa:decimal a rdfs:Class; 
+    rdfs:label "decimal"@en;
+    rdfs:comment "Represents a decimal number with exact significance such as used to denote monetary values."@en;
+    .
+
+ivoa:boolean a rdfs:Class; 
+    rdfs:label "boolean"@en;
+    rdfs:comment "The standard boolean, having values true or false."@en;
+    .
+
+ivoa:real a rdfs:Class; 
+    rdfs:label "real"@en;
+    rdfs:comment "A real number (from R)."@en;
+    .
+
+ivoa:nonnegativeInteger a rdfs:Class; 
+    rdfs:label "nonnegativeInteger"@en;
+    rdfs:comment "An integer number from N, therefore greater than or equal to 0."@en;
+    .
+
+ivoa:rational a rdfs:Class; 
+    rdfs:label "rational"@en;
+    rdfs:comment "A rational number from Q, represented by two integers, a numerator and a denominator. A native mapping to a serialisation context does in general not exists."@en;
+    .
+
+ivoa:datetime a rdfs:Class; 
+    rdfs:label "datetime"@en;
+    rdfs:comment "Represents a moment in time using a date+timestamp. Coordinate reference systems must be defined by the context serialisation."@en;
+    .
+
+ivoa:string a rdfs:Class; 
+    rdfs:label "string"@en;
+    rdfs:comment "A string, represented as an array of characters treated as a single, primitive value. Ala Java, a string can not be updated, that is any update leads to a different string. However in contrast to Java we assume that two strings that are identical in all their constitutent characters are the same. I.e. string has value type semantics."@en;
+    .
+
+ivoa:integer a rdfs:Class; 
+    rdfs:label "integer"@en;
+    rdfs:comment "An integer number (from Z)."@en;
+    .
+
+ivoa:complex a rdfs:Class; 
+    rdfs:label "complex"@en;
+    rdfs:comment "Represents a complex number, consisting of a real and imaginary component, both of which are reals. Note that in many contexts there is no native mapping for this type and it must be treated with a custom mapping."@en;
+    .
+
+ivoa:quantity.AtomicValue a rdfs:Class; 
+    rdfs:label "AtomicValue"@en;
+    rdfs:comment "TODO : Missing description : please, update your UML model asap."@en;
+    .
+
+ivoa:quantity.AtomicValue.ucd a rdf:Property; 
+    rdfs:label "ucd"@en;
+    rdfs:comment "This attribute should hold on to a valid UCD. For that purpose the attribute isa skosconcept, but a proper SKOS vocabulary for UCDs would be required to formalize this further."@en;
+    rdfs:domain ivoa:quantity.AtomicValue;
+    rdfs:range ivoa:string;
+    .
+
+ivoa:quantity.BooleanValue a rdfs:Class; 
+    rdfs:label "BooleanValue"@en;
+    rdfs:comment "TODO : Missing description : please, update your UML model asap."@en;
+    rdfs:subClassOf ivoa:quantity.AtomicValue;
+    .
+
+ivoa:quantity.BooleanValue.value a rdf:Property; 
+    rdfs:label "value"@en;
+    rdfs:comment "TODO : Missing description : please, update your UML model asap."@en;
+    rdfs:domain ivoa:quantity.BooleanValue;
+    rdfs:range ivoa:boolean;
+    .
+
+ivoa:quantity.IntegerQuantity a rdfs:Class; 
+    rdfs:label "IntegerQuantity"@en;
+    rdfs:comment "TODO : Missing description : please, update your UML model asap."@en;
+    rdfs:subClassOf ivoa:quantity.Quantity;
+    .
+
+ivoa:quantity.IntegerQuantity.value a rdf:Property; 
+    rdfs:label "value"@en;
+    rdfs:comment "TODO : Missing description : please, update your UML model asap."@en;
+    rdfs:domain ivoa:quantity.IntegerQuantity;
+    rdfs:range ivoa:integer;
+    .
+
+ivoa:quantity.Quantity a rdfs:Class; 
+    rdfs:label "Quantity"@en;
+    rdfs:comment "Meant to represent the value of a numerical physical quantity.  May be integer, what units can apply there?"@en;
+    rdfs:subClassOf ivoa:quantity.AtomicValue;
+    .
+
+ivoa:quantity.Quantity.unit a rdf:Property; 
+    rdfs:label "unit"@en;
+    rdfs:comment "TODO : Missing description : please, update your UML model asap."@en;
+    rdfs:domain ivoa:quantity.Quantity;
+    rdfs:range ivoa:quantity.Unit;
+    .
+
+ivoa:quantity.RealQuantity a rdfs:Class; 
+    rdfs:label "RealQuantity"@en;
+    rdfs:comment "TODO : Missing description : please, update your UML model asap."@en;
+    rdfs:subClassOf ivoa:quantity.Quantity;
+    .
+
+ivoa:quantity.RealQuantity.value a rdf:Property; 
+    rdfs:label "value"@en;
+    rdfs:comment "TODO : Missing description : please, update your UML model asap."@en;
+    rdfs:domain ivoa:quantity.RealQuantity;
+    rdfs:range ivoa:real;
+    .
+
+ivoa:quantity.StringValue a rdfs:Class; 
+    rdfs:label "StringValue"@en;
+    rdfs:comment "TODO : Missing description : please, update your UML model asap."@en;
+    rdfs:subClassOf ivoa:quantity.AtomicValue;
+    .
+
+ivoa:quantity.StringValue.value a rdf:Property; 
+    rdfs:label "value"@en;
+    rdfs:comment "TODO : Missing description : please, update your UML model asap."@en;
+    rdfs:domain ivoa:quantity.StringValue;
+    rdfs:range ivoa:string;
+    .
+
+ivoa:quantity.Unit a rdfs:Class; 
+    rdfs:label "Unit"@en;
+    rdfs:comment "Must conform to definition of unit in VOUnit spec."@en;
+    rdfs:subClassOf ivoa:string;
+    .
+

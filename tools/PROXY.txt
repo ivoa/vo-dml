@@ -1,0 +1,3 @@
+If you use an HTTP proxy, then use the following ANT environment variable:
+#export ANT_OPTS="-Dhttp.proxyHost=www-cache.ujf-grenoble.fr -Dhttp.proxyPort=3128"
+export ANT_OPTS="-Dhttp.proxyHost=PROXY_HOST -Dhttp.proxyPort=PROXY_PORT"

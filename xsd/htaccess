@@ -1,0 +1,17 @@
+  # sample .htaccess file for serving VO-DML
+  #
+  # This redirects the major version (the model URI) to the configured
+  # (should be latest) minor version XSD file
+
+  RewriteEngine On
+  # Base relative to http://www.ivoa.net
+  RewriteBase /xml/
+  
+  # VO-DML schema
+  RewriteRule ^vo-dml-v1.xsd$     vo-dml-v1.0.xsd     [R=303]  
+  # VO-DML schematron
+  RewriteRule ^vo-dml-v1.sch.xml$ vo-dml-v1.0.sch.xml [R=303]
+  # IVOA Model
+  RewriteRule ^IVOA-v1.vo-dml.xml$ IVOA-v1.0.vo-dml.xml [R=303]  
+  # version free name to keep compliant with old references
+  RewriteRule ^IVOA.vo-dml.xml$    IVOA-v1.0.vo-dml.xml [R=303]  

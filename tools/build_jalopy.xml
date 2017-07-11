@@ -1,0 +1,91 @@
+<!-- 
+    build_java.xml file : specific targets for java code
+-->  
+
+<!-- jalopy code formatter configuration -->
+<property name="jalopyConvention" location="${libs}/jalopy/jalopy-java-laurent.xml" />
+<property name="jalopyConvention_1.5c3" location="${libs}/jalopy/jalopy-java-laurent_1.5c3.xml" />
+<property name="jalopyConvention_1.5c3_skipJavaDoc" location="${libs}/jalopy/jalopy-java-laurent_1.5c3_skipJavaDoc.xml" />
+
+
+<!-- up to date checks -->
+
+<!-- target format : formats all generated java sources -->
+<target name="format" depends="buildFormatter">
+  <!-- 
+      Invokes Jalopy as follows:
+
+      - All formatted files will have unix fileformat (\n)
+      - Load your code convention from the given url
+      - Override the convention to use loglevel "info"
+      - Override the convention to use 2 threads
+      - The import optimization feature will work (if enabled in the active
+        convention), because a classpath reference is specified
+
+        Don't forget to setup an include pattern as Jalopy truly expects
+        valid Java source files as input!
+  -->
+
+  <java classname="org.ivoa.jalopy.Formatter" dir="${libs}/jalopy/bin" 
+        fork="true" failonerror="true">
+    <jvmarg value="-Xms32m"/>
+    <jvmarg value="-Xmx64m"/>
+
+    <arg value="${sources.gen}/src"/>
+    <arg value="${jalopyConvention}"/>
+    
+    <classpath>
+      <pathelement location="${libs}/log4j-1.2.16.jar" />
+      <pathelement location="${libs}/jalopy/bin"/>
+      <!-- use gerard patched 1.5.b1 version (enum problem present) -->
+      <pathelement location="${libs}/jalopy/lib/jalopy-1.5b1.jar"/>
+    </classpath>
+    
+   </java>
+
+</target>
+
+<target name="buildFormatter" unless="build.formatter.notRequired">
+  <!--
+      Note : formatting causes problems with annotations for enumerations but allows people to read code ...
+      Workaround : compile first then formats for read only purposes.
+  -->
+    <mkdir dir="${libs}/jalopy/bin"/>
+    <javac sourcepath="" srcdir="${libs}/jalopy/src" destdir="${libs}/jalopy/bin" listfiles="false"
+         fork="true" verbose="false" encoding="UTF-8"
+         debug="on" deprecation="on" optimize="on" casesensitive="true"
+         source="1.5" target="1.5"
+         includeantruntime="false" >
+
+        <classpath>
+          <pathelement location="${libs}/jalopy/lib/jalopy-1.5b1.jar"/>
+          <pathelement location="${libs}/log4j-1.2.16.jar" />
+        </classpath>
+
+        <include name="**/*.java"/>
+    </javac>
+</target>
+
+
+
+
+<!-- target jalopyPreferences : launches jalopy preferences application  -->
+<target name="jalopyPrefs">
+
+  <java classname="Preferences" dir="${libs}/jalopy"
+        fork="true" failonerror="true">
+    <jvmarg value="-Xms32m"/>
+    <jvmarg value="-Xmx64m"/>
+
+    <classpath>
+      <pathelement location="${libs}/log4j-1.2.16.jar" />
+      <!-- use standard 1.5.c3 version (no enum problem present) -->
+      <pathelement location="${libs}/jalopy/lib/jalopy.jar"/>
+    </classpath>
+
+   </java>
+
+</target>
+
+
+<!-- end of build_jalopy.xml -->  
