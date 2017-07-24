@@ -39,7 +39,21 @@
       <xs:complexContent>
          <xs:extension base="vr:Resource">
             <xs:sequence>
- 
+
+              <xs:element name="capability" type="vr:Capability" 
+                          minOccurs="0" maxOccurs="unbounded">
+                 <xs:annotation>
+                    <xs:documentation>
+                       a description of a capability in connection
+                       with the data model.
+                    </xs:documentation>
+                    <xs:documentation>
+                       This could include validators, online converters,
+                       or similar facilities.
+                    </xs:documentation>
+                 </xs:annotation>
+              </xs:element>
+
               <xs:element name="dm-prefix" type="xs:string" 
                   minOccurs="1" maxOccurs="1">
                 <xs:annotation>
