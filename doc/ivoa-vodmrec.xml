@@ -76,6 +76,12 @@ standard -->
     <referenceURL>http://ivoa.net/documents/VODML/</referenceURL>
     <type>Other</type>
   	<contentLevel>Research</contentLevel>
+  	<relationship>
+  		<relationshipType>isSupplementTo</relationshipType>
+  		<relatedResource ivo-id="ivo://ivoa.net/std/VODML"
+  			>VO-DML: a consistent modeling language for IVOA data 
+  			models</relatedResource>
+  	</relationship>
   </content>
 
   <dm-prefix>ivoa</dm-prefix>
