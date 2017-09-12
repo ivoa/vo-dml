@@ -149,7 +149,7 @@ Generates "perfectly ordinary java" class definitions based on the models and th
 Have a deepToString method for serializing the objects to an XML format compatible with ./xsd/vo-dml-instance.xml.
 Have generic property getters and setters ...
 TBC
-
+${models}
 - HOW TO compile.
 Need to generate java code for ivoa model, move this to source before calling ant compile, as custom java/src classes need it.
 
