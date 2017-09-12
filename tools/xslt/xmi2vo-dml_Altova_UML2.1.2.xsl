@@ -1,7 +1,12 @@
-<!-- This style sheet transforms a UML model, expressed in XMI, into the basic VO-DML representation. That representation follows the schema in ./xsd/vo-dml.xsd, without the expansion fields. The document follows 
-  the "basic" vo-dml representation, i.e. one directly representing the UML profile's concepts. It uses the XMI-Ids for utype. Using the generate_utypes.xsl script these can be replaced with UTYPE-s according 
-  to any desired generaiton algorithm. 
-  XSLT is tested to work on XMI generated with MagicDraw Community Edition v12.1. -->
+<!-- This style sheet transforms a UML model, expressed in XMI, into the basic 
+     VO-DML representation. That representation follows the schema in 
+     ./xsd/vo-dml.xsd, without the expansion fields. The document follows 
+     the "basic" vo-dml representation, i.e. one directly representing the 
+     UML profile's concepts. It uses the XMI-Ids for utype. Using the 
+     generate_utypes.xsl script these can be replaced with UTYPE-s according 
+     to any desired generaiton algorithm. 
+
+     XSLT is tested to work on XMI generated with Altova UModel 2.1.2. -->
 <!DOCTYPE stylesheet [
 <!ENTITY cr "<xsl:text>
 </xsl:text>">
@@ -29,22 +34,26 @@
   <xsl:variable name="xmi_namespace" select="'http://schema.omg.org/spec/XMI/2.1'" />
   <xsl:variable name="uml_namespace" select="'http://schema.omg.org/spec/UML/2.1.2'" />
 
-  <xsl:param name="model_name"/> <!-- Altova seems to only allow 'Root' as model name and has no way to add stereotypes/tags-->
+ <!-- Altova seems to only allow 'Root' as model name and has no way to add stereotypes/tags-->
+ <xsl:param name="model_name"/>
 
 
-  <!-- main -->
+  <!-- ============================================================
+       Template: main                                              
+         Verifies compatibility of XMI flavor and begins conversion
+       ============================================================ -->
   <xsl:template match="/">
     <xsl:choose>
       <xsl:when test="namespace-uri(/*) != $xmi_namespace">
         <xsl:message>
-          ERROR Wrong namespace: this script can convert only XMI v2.1
+          ERROR Wrong namespace: this script only converts for <xsl:value-of select='$xmi_namespace'/>
+          Not <xsl:value-of select="namespace-uri(/*)"/>
         </xsl:message>
       </xsl:when>
       <xsl:when test="not(*/uml:Model)">
         <xsl:message>
           ERROR No uml:Model found. Possibly wrong version of uml namespace?
-          Should be
-          <xsl:value-of select="$uml_namespace" />
+          Should be <xsl:value-of select="$uml_namespace" />
         </xsl:message>
       </xsl:when>
       <xsl:otherwise>
@@ -54,7 +63,10 @@
   </xsl:template>
 
 
-  <!-- filters uml:Model : process only uml:Package nodes -->
+  <!-- ============================================================
+       Template:                                                   
+         Process uml:Model                                         
+       ============================================================ -->
   <xsl:template match="packagedElement[@xmi:type='uml:Model']">
     <xsl:comment>
       This XML document is generated without explicit xmlns specification
@@ -97,16 +109,15 @@
     </xsl:element>
   </xsl:template>
 
-<!-- +++++++++++++++++++++++++
-      add the model element attributes from the model stereotype
-     +++++++++++++++++++++++++ -->
+  <!-- ============================================================
+       Template: modelspec                                         
+         Generate Model specification elements                     
+       ============================================================ -->
   <xsl:template match="packagedElement[@xmi:type='uml:Model']" mode="model.tags">
     <xsl:variable name="xmiid" select="@xmi:id" />
-
-		<xsl:variable name="ast" 
-      select="./xmi:Extension[@extender='UModel']/appliedStereotype[@xmi:type='uml:StereotypeApplication']"/>
-	
+    <xsl:variable name="ast"   select="./xmi:Extension[@extender='UModel']/appliedStereotype[@xmi:type='uml:StereotypeApplication']"/>
     <xsl:if test="$ast">
+
       <xsl:element name="title">
         <xsl:call-template name="slotvalue">
           <xsl:with-param name="stereotype" select="'model'"/>
@@ -114,6 +125,7 @@
           <xsl:with-param name="ast" select="$ast"/>
         </xsl:call-template>
       </xsl:element>
+
       <xsl:variable name="authors">
         <xsl:call-template name="slotvalue">
           <xsl:with-param name="stereotype" select="'model'"/>
@@ -164,81 +176,56 @@
   </xsl:template>
 
 
-
-  <!-- filters uml:Package : process uml:DataType, uml:Enumeration, uml:Class nodes -->
+  <!-- ============================================================
+       Template:                                                   
+         Process uml:Package                                       
+          uml:DataType, uml:Enumeration, uml:Class nodes           
+       ============================================================ -->
   <xsl:template match="*[@xmi:type='uml:Package']">
 
     <!-- check if a name is defined -->
     <xsl:if test="count(@name) > 0 and not(starts-with(@name,'_'))">
-      <!-- explicitly process only datatypes, enumeration, class -->
+      <xsl:message>Generating package <xsl:value-of select="@name"/></xsl:message>
+
       &cr;&cr;
       <xsl:element name="package">
-<!-- 
-        <xsl:attribute name="id"><xsl:value-of select="@xmi:id"></xsl:value-of></xsl:attribute>
--->
         <xsl:apply-templates select="." mode="aselement" />
-<!-- 
-      <xsl:element name="name">
-        <xsl:value-of select="name" />
-      </xsl:element>
-      <xsl:call-template name="description">
-        <xsl:with-param name="ownedComment" select="./ownedComment" />
-      </xsl:call-template>
- -->
-     &cr;
-<!-- 
-        <xsl:if test="count(./*[@xmi:type='uml:Dependency']) > 0">
-          &cr;
-          <xsl:comment>
-            Dependencies
-          </xsl:comment>&cr;&cr;
-          <xsl:apply-templates select="./*[@xmi:type='uml:Dependency']" />
-        </xsl:if>
- -->
-          <xsl:apply-templates select="./*[@xmi:type='uml:PrimitiveType']" />
-          <xsl:apply-templates select="./*[@xmi:type='uml:Enumeration']" />
-          <xsl:apply-templates select="./*[@xmi:type='uml:DataType']" />
-          <xsl:apply-templates select="./*[@xmi:type='uml:Class']" />
 
+        &cr;<!-- explicitly process only datatypes, enumeration, class -->
+        <xsl:apply-templates select="./*[@xmi:type='uml:PrimitiveType']" />
+        <xsl:apply-templates select="./*[@xmi:type='uml:Enumeration']" />
+        <xsl:apply-templates select="./*[@xmi:type='uml:DataType']" />
+        <xsl:apply-templates select="./*[@xmi:type='uml:Class']" />
+	
+        <!-- process sub-packages -->
         <xsl:apply-templates select="./*[@xmi:type='uml:Package']" />
-
       </xsl:element>
       &cr;&cr;
     </xsl:if>
   </xsl:template>
 
 
-
-<!-- 
-  <xsl:template match="*[@xmi:type='uml:Dependency']">
-    <xsl:element name="depends">
-    <xsl:call-template name="asElementRef">
-    <xsl:with-param name="xmiidref" select="supplier/@xmi:idref" />
-    </xsl:call-template>
-    </xsl:element>
-  </xsl:template>
- -->
-
-
-
+  <!-- ============================================================
+       Template:                                                   
+         Process Class objects.                                    
+       ============================================================ -->
   <xsl:template match="*[@xmi:type='uml:Class']">
     <xsl:variable name="xmiid" select="@xmi:id" />
-
-    <!-- Check whether this class is in a tree that has a contained class to do so, find first root base class, then find for it whether anay of its children is contained, if so, this class is also NOT 
-      a root element -->
+    <!-- Check whether this class is in a tree that has a contained class
+	 to do so, find first root base class, then find for it whether 
+	 any of its children is contained, if so, this class is also NOT
+	 a root element -->
     <xsl:variable name="rootid">
       <xsl:call-template name="findRootId">
         <xsl:with-param name="xmiid" select="$xmiid" />
       </xsl:call-template>
     </xsl:variable>
-
+  
     <xsl:variable name="isContained">
       <xsl:apply-templates select="key('classid',$rootid)" mode="testrootelements">
         <xsl:with-param name="count" select="'0'" />
       </xsl:apply-templates>
     </xsl:variable>
-
-
 
     <xsl:element name="objectType">
       <xsl:if test="@isAbstract">
@@ -253,11 +240,15 @@
         <xsl:apply-templates select="*[@xmi:type='uml:Generalization']" />
       </xsl:if>
 
-      <xsl:apply-templates select="./ownedRule[@xmi:type='uml:Constraint']"  />
+      <!-- Constraints on this element-->
+      <xsl:apply-templates select="./ownedRule[@xmi:type='uml:Constraint' and ./constrainedElement[@xmi:idref=$xmiid]]" mode="elemConstraint" />
+      <!-- Subsets -->
       <xsl:apply-templates select=".//*[@xmi:type='uml:Property']" mode="roleConstraint"/>
-
-      <xsl:apply-templates select=".//*[@xmi:type='uml:Property' and not(association) and not(@aggregation) ]" mode="attributes" />
+      <!-- Attributes -->
+      <xsl:apply-templates select=".//*[@xmi:type='uml:Property' and not(association) and (not(@aggregation) or @aggregation='composite')]" mode="attributes" />
+      <!-- Compositions -->
       <xsl:apply-templates select=".//*[@xmi:type='uml:Property' and association and @aggregation='composite']" mode="compositions" />
+      <!-- References -->
       <xsl:apply-templates select=".//*[@xmi:type='uml:Property' and association and (not(@aggregation) or @aggregation='shared')]" mode="references" />
 
     </xsl:element>
@@ -265,8 +256,10 @@
   </xsl:template>
 
 
-
-
+  <!-- ============================================================
+       Template: 
+         Process PrimitiveType objects.
+       ============================================================ -->
   <xsl:template match="*[@xmi:type='uml:PrimitiveType']">
     <xsl:element name="primitiveType">
       <xsl:apply-templates select="." mode="aselement"/>
@@ -278,9 +271,13 @@
   </xsl:template>
 
 
-
-
+  <!-- ============================================================
+       Template: 
+         Process DataType objects.
+       ============================================================ -->
   <xsl:template match="*[@xmi:type='uml:DataType']">
+    <xsl:variable name="xmiid" select="@xmi:id" />
+
     <xsl:element name="dataType">
       <xsl:if test="@isAbstract">
         <xsl:attribute name="abstract">
@@ -293,29 +290,32 @@
         <xsl:apply-templates select="*[@xmi:type='uml:Generalization']" />
       </xsl:if>
       
-      <xsl:apply-templates select="./ownedRule[@xmi:type='uml:Constraint']"  />
+
+      <!-- Constraints on this element-->
+      <xsl:apply-templates select="./ownedRule[@xmi:type='uml:Constraint' and ./constrainedElement[@xmi:idref=$xmiid]]" mode="elemConstraint" />
+      <!-- Subsets     -->
       <xsl:apply-templates select=".//*[@xmi:type='uml:Property']" mode="roleConstraint"/>
-      
-      <xsl:apply-templates select=".//*[@xmi:type='uml:Property' and not(association)]" mode="attributes" />
+      <!-- Attributes -->
+      <xsl:apply-templates select=".//*[@xmi:type='uml:Property' and not(association) and (not(@aggregation) or @aggregation='composite')]" mode="attributes" />
+      <!-- References -->
       <xsl:apply-templates select=".//*[@xmi:type='uml:Property' and association and (not(@aggregation) or @aggregation='shared')]" mode="references" />
+
+      <!-- Compositions - NOT ALLOWED -->
+      <xsl:if test=".//*[@xmi:type='uml:Property' and association and @aggregation='composite']">
+        <xsl:message>
+          ERROR: VO-DML violation - Composition found in DataType <xsl:value-of select="@name"/>
+        </xsl:message>
+      </xsl:if>
 
     </xsl:element>
     &cr;&cr;
   </xsl:template>
 
 
-  <xsl:template match="ownedRule[@xmi:type='uml:Constraint']" >
-    <xsl:element name="constraint" >
-<!-- 
-      <xsl:apply-templates select="." mode="aselement" /> 
- -->
-      <xsl:element name="description">
-        <xsl:value-of select="./specification/@value"/>
-      </xsl:element>
-    </xsl:element>
-  </xsl:template>
-
-
+  <!-- ============================================================
+       Template: 
+         Process Generalization Element.
+       ============================================================ -->
   <xsl:template match="*[@xmi:type='uml:Generalization']">
     <xsl:element name="extends">
       <xsl:call-template name="asElementRef">
@@ -325,8 +325,10 @@
   </xsl:template>
 
 
-
-
+  <!-- ============================================================
+       Template: 
+         Process Enumeration Object.
+       ============================================================ -->
   <xsl:template match="*[@xmi:type='uml:Enumeration']">
     <xsl:element name="enumeration">
       <xsl:apply-templates select="." mode="aselement"/>
@@ -336,22 +338,21 @@
   </xsl:template>
 
 
-
-
+  <!-- ============================================================
+       Template: 
+         Process EnumerationLiteral Element.
+       ============================================================ -->
   <xsl:template match="*[@xmi:type='uml:EnumerationLiteral']">
     <xsl:element name="literal">
       <xsl:apply-templates select="." mode="aselement"/>
-<!-- 
-      <xsl:element name="value" >
-        <xsl:value-of select="@name" />
-      </xsl:element>
- -->
      </xsl:element>
   </xsl:template>
 
 
-
-
+  <!-- ============================================================
+       Template: 
+         Process Description Element.
+       ============================================================ -->
   <xsl:template name="description">
     <xsl:param name="ownedComment" />
     <xsl:element name="description">
@@ -367,49 +368,131 @@
   </xsl:template>
 
 
-
-
+  <!-- ============================================================
+       Template: 
+         Process Attribute Element.
+       ============================================================ -->
   <xsl:template match="*[@xmi:type='uml:Property']" mode="attributes">
-    <xsl:element name="attribute">
-      <xsl:apply-templates select="." mode="properties" />
-<!--       
-      <xsl:apply-templates select = "." mode="subsetsstereotype"/>
- -->
-      <xsl:call-template name="attributestereotype">
+
+    <!-- check if the property is subsetted -->
+    <xsl:variable name="isSubsetted">
+      <xsl:call-template name="checkSubsetted">
         <xsl:with-param name="xmiid" select="@xmi:id" />
       </xsl:call-template>
-      <xsl:call-template name="semanticconceptstereotype">
-        <xsl:with-param name="xmiid" select="@xmi:id" />
-      </xsl:call-template>
-    </xsl:element>
-  </xsl:template>
+    </xsl:variable>
 
-
-
-
-  <xsl:template match="*[@xmi:type='uml:Property']" mode="references">
-    <xsl:element name="reference">
-      <xsl:apply-templates select="." mode="properties" />
-    </xsl:element>
-  </xsl:template>
-
-
-
-
-  <xsl:template match="*[@xmi:type='uml:Property']" mode="compositions">
-    <xsl:variable name="xmiid" select="@xmi:id"/>
-    <xsl:element name="composition">
-      <xsl:apply-templates select="." mode="properties" />
-      <!-- check for isOrdered -->
-      <xsl:if test="./@isOrdered = 'true'">
-      <xsl:element name="isOrdered">
-        <xsl:value-of select="'true'"/>
+    <xsl:if test="$isSubsetted = 'False'">
+      <xsl:element name="attribute">
+	<xsl:apply-templates select="." mode="properties" />
+	<xsl:call-template name="attributestereotype">
+          <xsl:with-param name="xmiid" select="@xmi:id" />
+	</xsl:call-template>
+	<xsl:call-template name="semanticconceptstereotype">
+          <xsl:with-param name="xmiid" select="@xmi:id" />
+	</xsl:call-template>
       </xsl:element>
-      </xsl:if>
+    </xsl:if>
+
+  </xsl:template>
+
+
+  <!-- ============================================================
+       Template: elemConstraint                                    
+         Generate a 'constraint' node for a model element.         
+       ============================================================ -->
+  <xsl:template match="ownedRule[@xmi:type='uml:Constraint']"  mode="elemConstraint" >
+    <xsl:element name="constraint" >
+      <xsl:element name="description">
+        <xsl:value-of select="./specification/@value"/>
+      </xsl:element>
     </xsl:element>
   </xsl:template>
 
 
+  <!-- ============================================================
+       Template: roleConstraint                                    
+         Generates 'constraint' node for SubsettedRole.            
+       ============================================================ -->
+  <xsl:template match="*[@xmi:type='uml:Property']" mode="roleConstraint">
+
+    <!-- check if the property is subsetted -->
+    <xsl:variable name="subsets">
+      <xsl:call-template name="checkSubsets">
+        <xsl:with-param name="xmiid" select="@xmi:id" />
+      </xsl:call-template>
+    </xsl:variable>
+
+    <xsl:if test="string-length($subsets)!=0" >
+      <xsl:element name="constraint">
+	  <xsl:attribute name="xsi:type" select="'vo-dml:SubsettedRole'"/>
+	  <xsl:element name="role">
+            <xsl:element name="vodml-ref">
+              <xsl:value-of select="$subsets"/>
+	    </xsl:element>
+	  </xsl:element>
+          <xsl:if test="@type">
+            <xsl:element name="datatype">
+              <xsl:call-template name="asElementRef">
+		<xsl:with-param name="xmiidref" select="@type"/>
+              </xsl:call-template>
+            </xsl:element>
+          </xsl:if>
+          <xsl:call-template name="semanticconceptstereotype">
+            <xsl:with-param name="xmiid" select="@xmi:id" />
+          </xsl:call-template>
+	</xsl:element>
+    </xsl:if>
+  </xsl:template>
+
+
+  <!-- ============================================================
+       Template: references                                        
+         Generate a reference node for a model element.            
+       ============================================================ -->
+  <xsl:template match="*[@xmi:type='uml:Property']" mode="references">
+
+    <!-- check if the property is subsetted -->
+    <xsl:variable name="isSubsetted">
+      <xsl:call-template name="checkSubsetted">
+        <xsl:with-param name="xmiid" select="@xmi:id" />
+      </xsl:call-template>
+    </xsl:variable>
+
+    <xsl:if test="$isSubsetted='False'">
+      <xsl:element name="reference">
+	<xsl:apply-templates select="." mode="properties" />
+      </xsl:element>
+    </xsl:if>
+
+  </xsl:template>
+
+
+  <!-- ============================================================
+       Template: compositions                                      
+         Generate a composition node for a model element.          
+       ============================================================ -->
+  <xsl:template match="*[@xmi:type='uml:Property']" mode="compositions">
+    
+    <!-- check if the property is subsetted -->
+    <xsl:variable name="isSubsetted">
+      <xsl:call-template name="checkSubsetted">
+        <xsl:with-param name="xmiid" select="@xmi:id" />
+      </xsl:call-template>
+    </xsl:variable>
+
+    <xsl:if test="$isSubsetted='False'">
+      <xsl:element name="composition">
+	<xsl:apply-templates select="." mode="properties" />
+	<!-- check for isOrdered -->
+	<xsl:if test="./@isOrdered = 'true'">
+	  <xsl:element name="isOrdered">
+            <xsl:value-of select="'true'"/>
+	  </xsl:element>
+	</xsl:if>
+      </xsl:element>
+    </xsl:if>
+
+  </xsl:template>
 
 
   <xsl:template match="*[@xmi:type='uml:Property']" mode="properties">
@@ -432,7 +515,6 @@
       </xsl:call-template>
     </xsl:element>
   </xsl:template>
-
 
 
   <xsl:template name="attributestereotype">
@@ -465,8 +547,14 @@
   </xsl:template>
 
 
-
-
+  <!-- ============================================================
+       Template: semanticconceptstereotype                         
+         Generates 'semanticconcept' node with the contents of     
+         the <<semanticconcept>> stereotype associated with        
+         an element:                                               
+           .topconcept    = Top concept                            
+           .vocabularyURI = Vocabulary defintion                   
+       ============================================================ -->
   <xsl:template name="semanticconceptstereotype">
     <xsl:param name="xmiid" />
     
@@ -489,7 +577,6 @@
       </xsl:variable>
     
     <xsl:if test="$v !='' or $b != ''">
-    <xsl:message>Found semanticconcept</xsl:message>
       <xsl:element name="semanticconcept">
         <xsl:if test="$b != ''" >
           <xsl:element name="topConcept">
@@ -505,42 +592,6 @@
     </xsl:if>
     </xsl:if>
   </xsl:template>
-
-  <xsl:template match="*[@xmi:type='uml:Property']" mode="roleConstraint">
-    <xsl:variable name="astid">
-      <xsl:apply-templates select="." mode="appliedstereotype">
-        <xsl:with-param name="name" select="'subsets'"/>
-      </xsl:apply-templates>
-    </xsl:variable>
-    <xsl:if test="string-length($astid)!=0" >
-        <xsl:variable name="ast" select="//appliedStereotype[@xmi:id = $astid]"/>
-    
-    <xsl:element name="constraint">
-      <xsl:attribute name="xsi:type" select="'vo-dml:SubsettedRole'"/>
-      <xsl:element name="role">
-         <xsl:element name="vodml-ref">
-        <xsl:call-template name="slotvalue">
-          <xsl:with-param name="stereotype" select="'subsets'"/>
-          <xsl:with-param name="slot" select="'subsettedProperty'"/>
-          <xsl:with-param name="ast" select="$ast"/>
-        </xsl:call-template>
-          </xsl:element>
-      </xsl:element>
-        <xsl:if test="@type">
-        <xsl:element name="datatype">
-        <xsl:call-template name="asElementRef">
-            <xsl:with-param name="xmiidref" select="@type"/>
-        </xsl:call-template>
-        </xsl:element>
-        </xsl:if>
-        <xsl:call-template name="semanticconceptstereotype">
-          <xsl:with-param name="xmiid" select="@xmi:id" />
-        </xsl:call-template>
-      </xsl:element>
-    </xsl:if>
-  </xsl:template>
-
-
 
 
 
@@ -578,14 +629,13 @@
   </xsl:template>
 
 
-
-
-  <!-- resolve class type for both data types (primitive or specific) and classes -->
+  <!-- ============================================================
+       Template: get-class-from-id
+         resolve class type for both data types (primitive or specific) and classes
+         Generates 'datatype' tag.
+       ============================================================ -->
   <xsl:template name="get-class-from-id">
     <xsl:param name="id" />
-<!-- 
-    <xsl:variable name="c" select="key('classid',$id)" />
- -->
     <xsl:element name="datatype">
     <xsl:call-template name="asElementRef">
     <xsl:with-param name="xmiidref" select="$id" />
@@ -594,8 +644,10 @@
   </xsl:template>
 
 
-
-
+  <!-- ============================================================
+       Template: get-package-from-id
+         gets name of package with provided id.
+       ============================================================ -->
   <xsl:template name="get-package-from-id">
     <xsl:param name="id" />
     <xsl:variable name="p" select="key('classid',$id)" />
@@ -603,9 +655,11 @@
   </xsl:template>
 
 
-  <!-- ==================================================================================== -->
-  <!-- print the full path up to the specified package and append the specified suffix -->
-  <!-- ==================================================================================== -->
+  <!-- ============================================================
+       Template: full-path                                         
+         print the full path up to the specified package and       
+         append the specified suffix                               
+       ============================================================ -->
   <xsl:template name="full-path">
     <xsl:param name="id" />
     <xsl:param name="delimiter" />
@@ -641,8 +695,53 @@
   </xsl:template>
 
 
+  <!-- ============================================================
+       Template: checkSubsetted                                    
+         Check if a Property is subsetted                          
+       ============================================================ -->
+  <xsl:template name="checkSubsetted">
+    <xsl:param name="xmiid"/>
+
+    <!-- find constraint with associated with this ID -->
+    <xsl:variable name="constrained" select="/xmi:XMI//ownedRule[@xmi:type='uml:Constraint']/constrainedElement[@xmi:idref=$xmiid]" />
+    <xsl:choose>
+      <xsl:when test="$constrained">
+	<xsl:value-of select="'True'" />
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:value-of select="'False'" />
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <!-- ============================================================
+       Template: checkSubsets                                      
+         Check if a Property is subsetted                          
+         Returns the subsetted property vodml-id                   
+       ============================================================ -->
+  <xsl:template name="checkSubsets">
+    <xsl:param name="xmiid"/>
+
+    <!-- find constraint with associated with this ID -->
+    <xsl:variable name="constraint" select="/xmi:XMI//ownedRule[@xmi:type='uml:Constraint' and ./constrainedElement[@xmi:idref=$xmiid]]" />
+    <xsl:choose>
+      <xsl:when test="$constraint">
+	<xsl:value-of select="$constraint/specification/@value" />
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:value-of select="''" />
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
 
   <!-- ===== tempates treating match as a ReferencableElement ==== -->
+
+
+  <!-- ============================================================
+       Template: aselement                                         
+         Generates 'vodml-id' tag.                                 
+       ============================================================ -->
   <xsl:template match="*[@xmi:id]" mode="aselement">
     <xsl:variable name="xmiid" select="@xmi:id"/>
     <xsl:variable name="vodml-id" select="/xmi:XMI/IVOA_UML_Profile:modelelement[@base_Element = $xmiid]/@vodml_id" />
@@ -669,19 +768,23 @@
       </xsl:call-template>
   </xsl:template>
 
-<!-- Generate a proper utype element. Note, an element can have a declared vodml-id, even when defined in current model -->
+
+  <!-- ============================================================
+       Template: asElementRef
+         Generate a proper utype element. Note, an element can have
+         a declared vodml-id, even when defined in current model
+       ============================================================ -->
   <xsl:template name="asElementRef">
     <xsl:param name="xmiidref"/>
-    <!--  check whether referenced element has a declared vodml-id -->
+    <xsl:if test="not($xmiidref)">
+    <xsl:message>asElementRef MUST be called with a non-null xmiidref</xsl:message>
+    </xsl:if>
 
+    <!--  check whether referenced element has a declared vodml-id -->
     <xsl:variable name="modelimport" select="/xmi:XMI/uml:Model[@name='Root']/packagedElement[@xmi:type='uml:Model']/packagedElement[@xmi:type='uml:Model' and .//*[@xmi:id = $xmiidref]]" />
 
-<!--     
-    <xsl:variable name="stid" select="*/packageElement[@xmi:type='uml:StereoType' and @name='modelelement']/@xmi:id"/>
- -->    
     <xsl:variable name="ast"
       select="/xmi:XMI//packagedElement[@xmi:id = $xmiidref]/xmi:Extension[@extender='UModel']/appliedStereotype[@xmi:type='uml:StereotypeApplication']"/>
-      <!--  and @classifier=$stid]"/>   -->
     <xsl:variable name="vodml-id">
     <xsl:choose>
       <xsl:when test="$ast" >
@@ -695,17 +798,16 @@
     </xsl:variable>
 
     <xsl:variable name="vodmlref">
-    <xsl:choose>
-    <xsl:when test="$modelimport">
-    <xsl:value-of select="concat($modelimport/@name,':',$vodml-id)"/>
-    </xsl:when>
-    <xsl:otherwise>
-    <xsl:value-of select="$xmiidref"/>
-    </xsl:otherwise>
-    </xsl:choose>
+      <xsl:choose>
+	<xsl:when test="$modelimport">
+	  <xsl:value-of select="concat($modelimport/@name,':',$vodml-id)"/>
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:value-of select="$xmiidref"/>
+	</xsl:otherwise>
+      </xsl:choose>
     </xsl:variable>
- <!-- check whether a model prefix should be added to the declared vodml-id, this is only case if a vodml-id is declared -->
-
+    <!-- check whether a model prefix should be added to the declared vodml-id, this is only case if a vodml-id is declared -->
     <xsl:choose>
       <xsl:when test="$modelimport">
       <xsl:element name="vodml-ref">
@@ -714,7 +816,8 @@
       </xsl:when>
       <xsl:otherwise>
         <xsl:element name="vodml-ref">
-<!-- add the original xmiidref as attribute to indicate that vodml-ref still must be generated-->
+	  <!-- add the original xmiidref as attribute to indicate that the
+	       id still must be generated-->
           <xsl:attribute name="idref" select="$xmiidref"></xsl:attribute>
           <xsl:value-of select="$xmiidref" />
         </xsl:element>
@@ -722,80 +825,89 @@
       </xsl:choose>
   </xsl:template>
 
+
+  <!-- ============================================================
+       Template: modelimport
+         Generate 'import' tag for imported model, identified by
+         an associated modelimport stereotype.
+       ============================================================ -->
   <xsl:template match="packagedElement[@xmi:type='uml:Model']" mode="modelimport">
     <xsl:variable name="xmiid" select="@xmi:id"/>
-
-    <xsl:variable name="ast" 
-      select="./xmi:Extension[@extender='UModel']/appliedStereotype[@xmi:type='uml:StereotypeApplication']"/>
-
-  
+    <xsl:variable name="ast" select="./xmi:Extension[@extender='UModel']/appliedStereotype[@xmi:type='uml:StereotypeApplication']"/>
     <xsl:choose>
       <xsl:when test="$ast">
-      <xsl:element name="import">
-      <xsl:element name="name"><xsl:value-of select="@name"/></xsl:element>
-      
-      <xsl:element name="url">
-        <xsl:call-template name="slotvalue">
-          <xsl:with-param name="stereotype" select="'modelimport'"/>
-          <xsl:with-param name="slot" select="'url'"/>
-          <xsl:with-param name="ast" select="$ast"/>
-        </xsl:call-template>
-      </xsl:element>
-      <xsl:variable name="ivoId ">
-        <xsl:call-template name="slotvalue">
-          <xsl:with-param name="stereotype" select="'modelimport'"/>
-          <xsl:with-param name="slot" select="'ivoId'"/>
-          <xsl:with-param name="ast" select="$ast"/>
-        </xsl:call-template>
-      </xsl:variable>
-      <xsl:if test="$ivoId != ''">
-      <xsl:element name="ivoId"><xsl:value-of select="$ivoId"/>
-      </xsl:element>
-      </xsl:if>
-      <xsl:element name="documentationURL">
-        <xsl:call-template name="slotvalue">
-          <xsl:with-param name="stereotype" select="'modelimport'"/>
-          <xsl:with-param name="slot" select="'documentationURL'"/>
-          <xsl:with-param name="ast" select="$ast"/>
-        </xsl:call-template>
-      </xsl:element>
-</xsl:element>      
-    </xsl:when>
-    <xsl:otherwise>
-      <xsl:message>Model found inside of root model, but no corresponding modelimport stereotype is used.</xsl:message>
-    </xsl:otherwise>
+	<xsl:element name="import">
+	  <xsl:element name="name"><xsl:value-of select="@name"/></xsl:element>
+        
+	  <xsl:element name="url">
+            <xsl:call-template name="slotvalue">
+              <xsl:with-param name="stereotype" select="'modelimport'"/>
+              <xsl:with-param name="slot" select="'url'"/>
+              <xsl:with-param name="ast" select="$ast"/>
+            </xsl:call-template>
+	  </xsl:element>
+	  <xsl:variable name="ivoId ">
+            <xsl:call-template name="slotvalue">
+              <xsl:with-param name="stereotype" select="'modelimport'"/>
+              <xsl:with-param name="slot" select="'ivoId'"/>
+              <xsl:with-param name="ast" select="$ast"/>
+            </xsl:call-template>
+	  </xsl:variable>
+	  <xsl:if test="$ivoId != ''">
+	    <xsl:element name="ivoId"><xsl:value-of select="$ivoId"/>
+	    </xsl:element>
+	  </xsl:if>
+	  <xsl:element name="documentationURL">
+            <xsl:call-template name="slotvalue">
+              <xsl:with-param name="stereotype" select="'modelimport'"/>
+              <xsl:with-param name="slot" select="'documentationURL'"/>
+              <xsl:with-param name="ast" select="$ast"/>
+            </xsl:call-template>
+	  </xsl:element>
+	</xsl:element>      
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:message>Model found inside of root model, but no corresponding modelimport stereotype is used.</xsl:message>
+      </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  
+
+
+  <!-- ============================================================
+       Template: stereotype                                        
+       ============================================================ -->
   <xsl:template name="stereotype">
     <xsl:param name="name"/>
     <xsl:value-of
-      select="*/packagedElement[@xmi:type='uml:Profile' and @name='IVOA_UML_Profile']/packagedElement[@xmi:type='uml:Stereotype' and name=$name]"/>
+       select="*/packagedElement[@xmi:type='uml:Profile' and @name='IVOA_UML_Profile']/packagedElement[@xmi:type='uml:Stereotype' and name=$name]"/>
   </xsl:template>
   
   <xsl:template match="*" mode="appliedstereotype" >
     <xsl:param name="name"/>
-
+    <xsl:message>MCD TEMP: inside applied stereotype template.. name == '<xsl:value-of select="$name"/>'</xsl:message>
     <xsl:variable name="stid"
-      select="//packagedElement[@xmi:type='uml:Profile' and @name='IVOA_UML_Profile']/packagedElement[@xmi:type='uml:Stereotype' and @name=$name]/@xmi:id"/> 
+		  select="//packagedElement[@xmi:type='uml:Profile' and @name='IVOA_UML_Profile']/packagedElement[@xmi:type='uml:Stereotype' and @name=$name]/@xmi:id"/> 
+    <xsl:message>MCD TEMP: set stid to '<xsl:value-of select="$stid"/>'</xsl:message>
     <xsl:if test="./xmi:Extension[@extender='UModel']/appliedStereotype[@xmi:type='uml:StereotypeApplication' and @classifier=$stid]">
-    <xsl:value-of 
-      select="./xmi:Extension[@extender='UModel']/appliedStereotype[@xmi:type='uml:StereotypeApplication' and @classifier=$stid]/@xmi:id"/>
+      <xsl:value-of select="./xmi:Extension[@extender='UModel']/appliedStereotype[@xmi:type='uml:StereotypeApplication' and @classifier=$stid]/@xmi:id"/>
     </xsl:if>
   </xsl:template>
 
 
-
+  <!-- ============================================================
+       Template: slotvalue                                         
+         Matches stereotype slot with the corresponding attribute  
+       ============================================================ -->
   <xsl:template name="slotvalue" >
     <xsl:param name="slot"/>
     <xsl:param name="stereotype"/>
     <xsl:param name="ast"/>
     <xsl:variable name="slotid"
-      select="//packagedElement[@xmi:type='uml:Profile' and @name='IVOA_UML_Profile']/packagedElement[@xmi:type='uml:Stereotype' and @name=$stereotype]/ownedAttribute[@name=$slot]/@xmi:id"/>
+		  select="//packagedElement[@xmi:type='uml:Profile' and @name='IVOA_UML_Profile']/packagedElement[@xmi:type='uml:Stereotype' and @name=$stereotype]/ownedAttribute[@name=$slot]/@xmi:id"/>
     <xsl:if test="$ast/slot[@definingFeature=$slotid]">
-    <xsl:value-of select="$ast/slot[@definingFeature=$slotid]/value/@value"/>
+      <xsl:value-of select="$ast/slot[@definingFeature=$slotid]/value/@value"/>
     </xsl:if>
   </xsl:template>
 
-  
+
 </xsl:stylesheet>
