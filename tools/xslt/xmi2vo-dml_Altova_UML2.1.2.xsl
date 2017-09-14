@@ -118,6 +118,10 @@
     <xsl:variable name="ast"   select="./xmi:Extension[@extender='UModel']/appliedStereotype[@xmi:type='uml:StereotypeApplication']"/>
     <xsl:if test="$ast">
 
+      <xsl:element name="uri">
+          <xsl:value-of select="concat('http://ivoa.net/vodml/', @name, '.vo-dml')"/>
+      </xsl:element>
+
       <xsl:element name="title">
         <xsl:call-template name="slotvalue">
           <xsl:with-param name="stereotype" select="'model'"/>
@@ -196,7 +200,7 @@
         <xsl:apply-templates select="./*[@xmi:type='uml:Enumeration']" />
         <xsl:apply-templates select="./*[@xmi:type='uml:DataType']" />
         <xsl:apply-templates select="./*[@xmi:type='uml:Class']" />
-	
+	
         <!-- process sub-packages -->
         <xsl:apply-templates select="./*[@xmi:type='uml:Package']" />
       </xsl:element>
@@ -220,7 +224,7 @@
         <xsl:with-param name="xmiid" select="$xmiid" />
       </xsl:call-template>
     </xsl:variable>
-  
+  
     <xsl:variable name="isContained">
       <xsl:apply-templates select="key('classid',$rootid)" mode="testrootelements">
         <xsl:with-param name="count" select="'0'" />
@@ -241,7 +245,8 @@
       </xsl:if>
 
       <!-- Constraints on this element-->
-      <xsl:apply-templates select="./ownedRule[@xmi:type='uml:Constraint' and ./constrainedElement[@xmi:idref=$xmiid]]" mode="elemConstraint" />
+      <!-- <xsl:apply-templates select="./ownedRule[@xmi:type='uml:Constraint' and not(@name='Subset')]" mode="elemConstraint" /> -->
+      <xsl:apply-templates select="./ownedRule[@xmi:type='uml:Constraint' and not(contains(@name,'Subset'))]" mode="elemConstraint" />
       <!-- Subsets -->
       <xsl:apply-templates select=".//*[@xmi:type='uml:Property']" mode="roleConstraint"/>
       <!-- Attributes -->
@@ -292,7 +297,8 @@
       
 
       <!-- Constraints on this element-->
-      <xsl:apply-templates select="./ownedRule[@xmi:type='uml:Constraint' and ./constrainedElement[@xmi:idref=$xmiid]]" mode="elemConstraint" />
+      <!-- <xsl:apply-templates select="./ownedRule[@xmi:type='uml:Constraint' and not(@name='Subset')]" mode="elemConstraint" /> -->
+      <xsl:apply-templates select="./ownedRule[@xmi:type='uml:Constraint' and not(contains(@name,'Subset'))]" mode="elemConstraint" />
       <!-- Subsets     -->
       <xsl:apply-templates select=".//*[@xmi:type='uml:Property']" mode="roleConstraint"/>
       <!-- Attributes -->
@@ -703,7 +709,8 @@
     <xsl:param name="xmiid"/>
 
     <!-- find constraint with associated with this ID -->
-    <xsl:variable name="constrained" select="/xmi:XMI//ownedRule[@xmi:type='uml:Constraint']/constrainedElement[@xmi:idref=$xmiid]" />
+    <!-- <xsl:variable name="constrained" select="/xmi:XMI//ownedRule[@xmi:type='uml:Constraint' and @name='Subset']/constrainedElement[@xmi:idref=$xmiid]" /> -->
+    <xsl:variable name="constrained" select="/xmi:XMI//ownedRule[@xmi:type='uml:Constraint' and contains(@name,'Subset')]/constrainedElement[@xmi:idref=$xmiid]" />
     <xsl:choose>
       <xsl:when test="$constrained">
 	<xsl:value-of select="'True'" />
@@ -723,7 +730,8 @@
     <xsl:param name="xmiid"/>
 
     <!-- find constraint with associated with this ID -->
-    <xsl:variable name="constraint" select="/xmi:XMI//ownedRule[@xmi:type='uml:Constraint' and ./constrainedElement[@xmi:idref=$xmiid]]" />
+    <!-- <xsl:variable name="constraint" select="/xmi:XMI//ownedRule[@xmi:type='uml:Constraint' and @name='Subset' and ./constrainedElement[@xmi:idref=$xmiid]]" /> -->
+    <xsl:variable name="constraint" select="/xmi:XMI//ownedRule[@xmi:type='uml:Constraint' and contains(@name,'Subset') and ./constrainedElement[@xmi:idref=$xmiid]]" />
     <xsl:choose>
       <xsl:when test="$constraint">
 	<xsl:value-of select="$constraint/specification/@value" />
@@ -838,7 +846,7 @@
       <xsl:when test="$ast">
 	<xsl:element name="import">
 	  <xsl:element name="name"><xsl:value-of select="@name"/></xsl:element>
-        
+        
 	  <xsl:element name="url">
             <xsl:call-template name="slotvalue">
               <xsl:with-param name="stereotype" select="'modelimport'"/>
@@ -884,10 +892,8 @@
   
   <xsl:template match="*" mode="appliedstereotype" >
     <xsl:param name="name"/>
-    <xsl:message>MCD TEMP: inside applied stereotype template.. name == '<xsl:value-of select="$name"/>'</xsl:message>
     <xsl:variable name="stid"
 		  select="//packagedElement[@xmi:type='uml:Profile' and @name='IVOA_UML_Profile']/packagedElement[@xmi:type='uml:Stereotype' and @name=$name]/@xmi:id"/> 
-    <xsl:message>MCD TEMP: set stid to '<xsl:value-of select="$stid"/>'</xsl:message>
     <xsl:if test="./xmi:Extension[@extender='UModel']/appliedStereotype[@xmi:type='uml:StereotypeApplication' and @classifier=$stid]">
       <xsl:value-of select="./xmi:Extension[@extender='UModel']/appliedStereotype[@xmi:type='uml:StereotypeApplication' and @classifier=$stid]/@xmi:id"/>
     </xsl:if>
