@@ -90,7 +90,7 @@
   <property name="xslt" location="./xslt" />
 
   <!-- vo-dml generation properties -->
-  <property name="vo-dml.dir" value="${model}/xml" />
+  <property name="vo-dml.dir" value="${model}" />
   <property name="vo-dml.source" value="${dm.filename.prefix}.vo-dml.xml" />
 
   <property name="html.dir" value="${model}" />
