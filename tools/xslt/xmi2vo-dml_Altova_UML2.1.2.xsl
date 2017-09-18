@@ -119,7 +119,11 @@
     <xsl:if test="$ast">
 
       <xsl:element name="uri">
-          <xsl:value-of select="concat('http://ivoa.net/vodml/', @name, '.vo-dml')"/>
+        <xsl:call-template name="slotvalue">
+          <xsl:with-param name="stereotype" select="'model'"/>
+          <xsl:with-param name="slot" select="'uri'"/>
+          <xsl:with-param name="ast" select="$ast"/>
+        </xsl:call-template>
       </xsl:element>
 
       <xsl:element name="title">
@@ -729,12 +733,13 @@
   <xsl:template name="checkSubsets">
     <xsl:param name="xmiid"/>
 
-    <!-- find constraint with associated with this ID -->
-    <!-- <xsl:variable name="constraint" select="/xmi:XMI//ownedRule[@xmi:type='uml:Constraint' and @name='Subset' and ./constrainedElement[@xmi:idref=$xmiid]]" /> -->
+    <!-- find constraint associated with this ID -->
     <xsl:variable name="constraint" select="/xmi:XMI//ownedRule[@xmi:type='uml:Constraint' and contains(@name,'Subset') and ./constrainedElement[@xmi:idref=$xmiid]]" />
     <xsl:choose>
       <xsl:when test="$constraint">
-	<xsl:value-of select="$constraint/specification/@value" />
+	<xsl:call-template name="split_subset_string">
+          <xsl:with-param name="input" select="$constraint/specification/@value"/>
+        </xsl:call-template>
       </xsl:when>
       <xsl:otherwise>
 	<xsl:value-of select="''" />
@@ -899,6 +904,17 @@
     </xsl:if>
   </xsl:template>
 
+  <!-- ============================================================
+       Template: split_subset_string                               
+       ============================================================ -->
+  <xsl:template match="text()" name="split_subset_string">
+    <xsl:param name="input"/>
+    <xsl:param name="delimeter" select="'\s'"/>
+    <xsl:variable name="parts" select="tokenize($input,$delimeter)"/>
+
+    <xsl:value-of select="$parts[2]"/>
+  </xsl:template>
+  
 
   <!-- ============================================================
        Template: slotvalue                                         
