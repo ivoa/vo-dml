@@ -1,0 +1,714 @@
+<html xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1.0">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>IVOA Reference Types Data Model ala VO-URP</title>
+    <link rel="stylesheet" href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa_wg.css" type="text/css">
+    <link rel="stylesheet" href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/xmi.css" type="text/css">
+  </head>
+  <body>
+    <h1>IVOA Reference Types Data Model ala VO-URP</h1>
+    <h2><a id="contents" name="contents">Table of Contents</a></h2>
+    <div class="head">
+      <table class=".toc">
+        <tr>
+          <td>1.</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#model_section">model: ivoa</a></td>
+        </tr>
+        <tr>
+          <td>2.</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#packages">Packages and Types</a></td>
+        </tr>
+        <tr>
+          <td>2.1</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#rootpackage">[root package]</a></td>
+        </tr>
+        <tr>
+          <td>2.1.1</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#IntegerQuantity">dataType:IntegerQuantity</a></td>
+        </tr>
+        <tr>
+          <td>2.1.2</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Quantity">dataType:Quantity</a></td>
+        </tr>
+        <tr>
+          <td>2.1.3</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RealQuantity">dataType:RealQuantity</a></td>
+        </tr>
+        <tr>
+          <td>2.1.4</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Unit">primitiveType:Unit</a></td>
+        </tr>
+        <tr>
+          <td>2.1.5</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anyURI">primitiveType:anyURI</a></td>
+        </tr>
+        <tr>
+          <td>2.1.6</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#boolean">primitiveType:boolean</a></td>
+        </tr>
+        <tr>
+          <td>2.1.7</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#complex">dataType:complex</a></td>
+        </tr>
+        <tr>
+          <td>2.1.8</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#datetime">primitiveType:datetime</a></td>
+        </tr>
+        <tr>
+          <td>2.1.9</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#integer">primitiveType:integer</a></td>
+        </tr>
+        <tr>
+          <td>2.1.10</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#nonnegativeInteger">primitiveType:nonnegativeInteger</a></td>
+        </tr>
+        <tr>
+          <td>2.1.11</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#rational">dataType:rational</a></td>
+        </tr>
+        <tr>
+          <td>2.1.12</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#real">primitiveType:real</a></td>
+        </tr>
+        <tr>
+          <td>2.1.13</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#string">primitiveType:string</a></td>
+        </tr>
+        <tr>
+          <td>3.</td>
+          <td>
+            &nbsp;&nbsp;&nbsp;&nbsp;<a href="#vodml-ids">vodml-id-s</a></td>
+        </tr>
+      </table>
+    </div>
+    <hr>
+    <h1><a name="model_section">1. Model: IVOA Reference Types Data Model ala VO-URP (ivoa)</a></h1>
+    <table>
+      <tr>
+        <td align="right"><b>Authors</b></td>
+        <td> : </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td align="right"><b>Date</b></td>
+        <td> : </td>
+        <td>2017-09-19T13:04:17</td>
+      </tr>
+      <tr>
+        <td align="right"><b>Version</b></td>
+        <td> : </td>
+        <td>1.0</td>
+      </tr>
+      <tr>
+        <td align="right" valign="top"><b>Abstract</b></td>
+        <td valign="top"> : </td>
+        <td>This is the main reference data model containing primitive types used in other data models.</td>
+      </tr>
+      <tr>
+        <td align="right" valign="top"><b>Diagram</b></td>
+        <td valign="top"> : </td>
+        <td>The following diagram has been generated from the model using the <a href="http://www.graphviz.org/" target="_blank">GraphViz</a> tool.<br>
+          The classes and packages in the diagram can be clicked and are mapped to the descriptions of the corresponding element elsewhere
+          in the document. 
+          
+        </td>
+      </tr>
+      <tr>
+        <td colspan="3"></td>
+      </tr>
+    </table><img src="IVOA-v1.0.png" usemap="#GVmap"><map id="GVmap" name="GVmap">
+<area shape="rect" id="node1" href="#Unit" title="{&lt;&lt;primitive type&gt;&gt;\nUnit}" alt="" coords="5,16,119,65"/>
+<area shape="rect" id="node8" href="#string" title="{&lt;&lt;primitive type&gt;&gt;\nstring}" alt="" coords="73,129,187,178"/>
+<area shape="rect" id="node2" href="#anyURI" title="{&lt;&lt;primitive type&gt;&gt;\nanyURI}" alt="" coords="143,16,256,65"/>
+<area shape="rect" id="node3" href="#boolean" title="{&lt;&lt;primitive type&gt;&gt;\nboolean}" alt="" coords="280,16,393,65"/>
+<area shape="rect" id="node4" href="#datetime" title="{&lt;&lt;primitive type&gt;&gt;\ndatetime}" alt="" coords="417,16,531,65"/>
+<area shape="rect" id="node5" href="#integer" title="{&lt;&lt;primitive type&gt;&gt;\ninteger}" alt="" coords="555,16,668,65"/>
+<area shape="rect" id="node6" href="#nonnegativeInteger" title="{&lt;&lt;primitive type&gt;&gt;\nnonnegativeInteger}" alt="" coords="692,16,805,65"/>
+<area shape="rect" id="node7" href="#real" title="{&lt;&lt;primitive type&gt;&gt;\nreal}" alt="" coords="829,16,943,65"/>
+<area shape="rect" id="node9" href="#IntegerQuantity" title="{&lt;&lt;datatype&gt;&gt;\nIntegerQuantity|+value : ivoa:integer\l}" alt="" coords="967,11,1083,70"/>
+<area shape="rect" id="node10" href="#Quantity" title="{&lt;&lt;datatype&gt;&gt;\nQuantity|+unit : ivoa:Unit\l}" alt="" coords="1042,124,1141,183"/>
+<area shape="rect" id="node11" href="#RealQuantity" title="{&lt;&lt;datatype&gt;&gt;\nRealQuantity|+value : ivoa:real\l}" alt="" coords="1107,11,1209,70"/>
+<area shape="rect" id="node12" href="#complex" title="{&lt;&lt;datatype&gt;&gt;\ncomplex|+re : ivoa:real\l+im : ivoa:real\l}" alt="" coords="1233,5,1323,76"/>
+<area shape="rect" id="node13" href="#rational" title="{&lt;&lt;datatype&gt;&gt;\nrational|+numerator : ivoa:integer\l+denominator : ivoa:nonnegativeInteger\l}" alt="" coords="1347,5,1556,76"/>
+</map>
+
+    <hr>
+    <h1>2.<a name="packages">Model contents: Packages and Types</a></h1>
+    <p>
+      The following sub-sections present all packages in the model with their types.
+      The packages are listed here in alphabetical order.
+      Each sub-section contains a description of the package and a table containing its various features.
+      
+    </p>
+    <h3><a name="rootpackage"></a>2.1 [root package]
+    </h3>
+    <table border="1" cellspacing="2" width="100%">
+      <tr>
+        <td class="objecttype-title" width="20%">Model</td>
+        <td class="objecttype-name">ivoa</td>
+      </tr>
+      <tr>
+        <td width="20%" class="info-title">Data types</td>
+        <td colspan="2" class="feature-detail"><a href="#IntegerQuantity">IntegerQuantity</a> <a href="#Quantity">Quantity</a> <a href="#RealQuantity">RealQuantity</a> <a href="#complex">complex</a> <a href="#rational">rational</a> 
+        </td>
+      </tr>
+      <tr>
+        <td width="20%" class="info-title">Primitive types</td>
+        <td colspan="2" class="feature-detail"><a href="#Unit">Unit</a> <a href="#anyURI">anyURI</a> <a href="#boolean">boolean</a> <a href="#datetime">datetime</a> <a href="#integer">integer</a> <a href="#nonnegativeInteger">nonnegativeInteger</a> <a href="#real">real</a> <a href="#string">string</a> 
+        </td>
+      </tr>
+    </table>
+    <h3><a name="IntegerQuantity"></a>2.1.1 dataType: IntegerQuantity
+    </h3>
+    <div align="center">
+      <table border="1" width="100%" cellspacing="2">
+        <tr>
+          <td class="objecttype-title" width="20%">vodml-id</td>
+          <td class="objecttype-name" colspan="1">IntegerQuantity</td>
+        </tr>
+        <tr>
+          <td class="info-title">description</td>
+          <td class="feature-detail" colspan="1">An integer number with a unit. Examples of such units that can be used for attributes are bit/byte/kiloByte etc.</td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td colspan="2" bgcolor="#cacaca">
+                  <table width="100%" border="0" cellpadding="3" cellspacing="1">
+                    <tr>
+                      <td width="20%" class="info-title">extends</td>
+                      <td colspan="3" class="feature-detail"><a href="#Quantity">Quantity [ivoa:Quantity]</a></td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="info-title">attributes</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading" width="20%">name</td>
+                      <td class="feature-heading" width="10%">feature</td>
+                      <td class="feature-heading" width="70%">value</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="IntegerQuantity.value"></a><b>value</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#integer">integer [ivoa:integer]</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">IntegerQuantity.value</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div><br><h3><a name="Quantity"></a>2.1.2 dataType: Quantity
+    </h3>
+    <div align="center">
+      <table border="1" width="100%" cellspacing="2">
+        <tr>
+          <td class="objecttype-title" width="20%">vodml-id</td>
+          <td class="objecttype-name" colspan="1">Quantity</td>
+        </tr>
+        <tr>
+          <td class="info-title">description</td>
+          <td class="feature-detail" colspan="1">Meant to represent the value of a numerical physical quantity.  
+            Can be mapped in VOTables to FIELDrefs and PARAM(ref)s, in which case the @unit attribute of those VOTable elements is assumed
+            to be mapped to the attribute on the Quantity.
+            Ths is only allowed for these predefined ivoa types.
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td colspan="2" bgcolor="#cacaca">
+                  <table width="100%" border="0" cellpadding="3" cellspacing="1">
+                    <tr>
+                      <td class="info-title">Subclasses in this model</td>
+                      <td class="feature-detail" colspan="3"><a href="#IntegerQuantity">IntegerQuantity</a> <a href="#RealQuantity">RealQuantity</a> 
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="info-title">attributes</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading" width="20%">name</td>
+                      <td class="feature-heading" width="10%">feature</td>
+                      <td class="feature-heading" width="70%">value</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="Quantity.unit"></a><b>unit</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#Unit">Unit [ivoa:Unit]</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">Quantity.unit</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">0..1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div><br><h3><a name="RealQuantity"></a>2.1.3 dataType: RealQuantity
+    </h3>
+    <div align="center">
+      <table border="1" width="100%" cellspacing="2">
+        <tr>
+          <td class="objecttype-title" width="20%">vodml-id</td>
+          <td class="objecttype-name" colspan="1">RealQuantity</td>
+        </tr>
+        <tr>
+          <td class="info-title">description</td>
+          <td class="feature-detail" colspan="1">A real value with a unit.</td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td colspan="2" bgcolor="#cacaca">
+                  <table width="100%" border="0" cellpadding="3" cellspacing="1">
+                    <tr>
+                      <td width="20%" class="info-title">extends</td>
+                      <td colspan="3" class="feature-detail"><a href="#Quantity">Quantity [ivoa:Quantity]</a></td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="info-title">attributes</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading" width="20%">name</td>
+                      <td class="feature-heading" width="10%">feature</td>
+                      <td class="feature-heading" width="70%">value</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="RealQuantity.value"></a><b>value</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#real">real [ivoa:real]</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">RealQuantity.value</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div><br><h3><a name="Unit"></a>2.1.4 primitiveType: Unit
+    </h3>
+    <table border="1" width="100%" cellspacing="2">
+      <tr>
+        <td class="objecttype-title" width="20%">vodml-id</td>
+        <td class="objecttype-name" colspan="1">Unit</td>
+      </tr>
+      <tr>
+        <td class="info-title">description</td>
+        <td class="feature-detail" colspan="1">Must conform to definition of unit in VOUnit spec.</td>
+      </tr>
+    </table><br><h3><a name="anyURI"></a>2.1.5 primitiveType: anyURI
+    </h3>
+    <table border="1" width="100%" cellspacing="2">
+      <tr>
+        <td class="objecttype-title" width="20%">vodml-id</td>
+        <td class="objecttype-name" colspan="1">anyURI</td>
+      </tr>
+      <tr>
+        <td class="info-title">description</td>
+        <td class="feature-detail" colspan="1">Represents a URI in the same way as the datatype of the same nam in XML Schema is used.</td>
+      </tr>
+    </table><br><h3><a name="boolean"></a>2.1.6 primitiveType: boolean
+    </h3>
+    <table border="1" width="100%" cellspacing="2">
+      <tr>
+        <td class="objecttype-title" width="20%">vodml-id</td>
+        <td class="objecttype-name" colspan="1">boolean</td>
+      </tr>
+      <tr>
+        <td class="info-title">description</td>
+        <td class="feature-detail" colspan="1">The standard boolean, having values true or false.</td>
+      </tr>
+    </table><br><h3><a name="complex"></a>2.1.7 dataType: complex
+    </h3>
+    <div align="center">
+      <table border="1" width="100%" cellspacing="2">
+        <tr>
+          <td class="objecttype-title" width="20%">vodml-id</td>
+          <td class="objecttype-name" colspan="1">complex</td>
+        </tr>
+        <tr>
+          <td class="info-title">description</td>
+          <td class="feature-detail" colspan="1">Represents a complex number, consisting of a real and imaginary component, both of which are reals. Note that in many contexts
+            there is no native mapping for this type and it must be treated with a custom mapping.
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td colspan="2" bgcolor="#cacaca">
+                  <table width="100%" border="0" cellpadding="3" cellspacing="1">
+                    <tr>
+                      <td colspan="3" class="info-title">attributes</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading" width="20%">name</td>
+                      <td class="feature-heading" width="10%">feature</td>
+                      <td class="feature-heading" width="70%">value</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="complex.re"></a><b>re</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#real">real [ivoa:real]</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">complex.re</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">The real part of the complex number.</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="complex.im"></a><b>im</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#real">real [ivoa:real]</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">complex.im</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">The imaginary part of the complex number.</td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div><br><h3><a name="datetime"></a>2.1.8 primitiveType: datetime
+    </h3>
+    <table border="1" width="100%" cellspacing="2">
+      <tr>
+        <td class="objecttype-title" width="20%">vodml-id</td>
+        <td class="objecttype-name" colspan="1">datetime</td>
+      </tr>
+      <tr>
+        <td class="info-title">description</td>
+        <td class="feature-detail" colspan="1">Represents a moment in time using a date+timestamp. </td>
+      </tr>
+    </table><br><h3><a name="integer"></a>2.1.9 primitiveType: integer
+    </h3>
+    <table border="1" width="100%" cellspacing="2">
+      <tr>
+        <td class="objecttype-title" width="20%">vodml-id</td>
+        <td class="objecttype-name" colspan="1">integer</td>
+      </tr>
+      <tr>
+        <td class="info-title">description</td>
+        <td class="feature-detail" colspan="1">An integer number (from Z).</td>
+      </tr>
+    </table><br><h3><a name="nonnegativeInteger"></a>2.1.10 primitiveType: nonnegativeInteger
+    </h3>
+    <table border="1" width="100%" cellspacing="2">
+      <tr>
+        <td class="objecttype-title" width="20%">vodml-id</td>
+        <td class="objecttype-name" colspan="1">nonnegativeInteger</td>
+      </tr>
+      <tr>
+        <td class="info-title">description</td>
+        <td class="feature-detail" colspan="1">An integer number from N, therefore greater than or equal to 0.</td>
+      </tr>
+    </table><br><h3><a name="rational"></a>2.1.11 dataType: rational
+    </h3>
+    <div align="center">
+      <table border="1" width="100%" cellspacing="2">
+        <tr>
+          <td class="objecttype-title" width="20%">vodml-id</td>
+          <td class="objecttype-name" colspan="1">rational</td>
+        </tr>
+        <tr>
+          <td class="info-title">description</td>
+          <td class="feature-detail" colspan="1">A rational number from Q, represented by two integers, a numerator and a denominator. A native mapping to a serialisation
+            context does in general not exists.
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td colspan="2" bgcolor="#cacaca">
+                  <table width="100%" border="0" cellpadding="3" cellspacing="1">
+                    <tr>
+                      <td colspan="3" class="info-title">attributes</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading" width="20%">name</td>
+                      <td class="feature-heading" width="10%">feature</td>
+                      <td class="feature-heading" width="70%">value</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="rational.numerator"></a><b>numerator</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#integer">integer [ivoa:integer]</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">rational.numerator</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">The numerator of the quotient defining the rational.</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="rational.denominator"></a><b>denominator</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#nonnegativeInteger">nonnegativeInteger [ivoa:nonnegativeInteger]</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">rational.denominator</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">The denominator of the rational. Must be greater than 0.</td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="info-title">constraints</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" colspan="3">denominator &gt; 0</td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div><br><h3><a name="real"></a>2.1.12 primitiveType: real
+    </h3>
+    <table border="1" width="100%" cellspacing="2">
+      <tr>
+        <td class="objecttype-title" width="20%">vodml-id</td>
+        <td class="objecttype-name" colspan="1">real</td>
+      </tr>
+      <tr>
+        <td class="info-title">description</td>
+        <td class="feature-detail" colspan="1">A real number (from R).</td>
+      </tr>
+    </table><br><h3><a name="string"></a>2.1.13 primitiveType: string
+    </h3>
+    <table border="1" width="100%" cellspacing="2">
+      <tr>
+        <td class="objecttype-title" width="20%">vodml-id</td>
+        <td class="objecttype-name" colspan="1">string</td>
+      </tr>
+      <tr>
+        <td class="info-title">description</td>
+        <td class="feature-detail" colspan="1">A string, represented as an array of characters treated as a single, primitive value. Ala Java, a string can not be updated,
+          that is any update leads to a different string. However in contrast to Java we assume that two strings that are identical
+          in all their constitutent characters are the same.
+          I.e. string has value type semantics.
+        </td>
+      </tr>
+    </table><br><hr>
+    <h1>3.<a name="vodml-ids">Element Identifiers/VO-DMLrefs</a></h1>  
+    The following table shows all fully qualified vodml-ids for this data model.
+    It is ordered alphabetically and the identifiers are hyper-linked to the location
+    in the document where the actual element is fully defined.
+    
+    
+    <table style="border-style:solid;border-width:1px;" border="1" cellspacing="0" cellpadding="0">
+      <tr>
+        <td class="feature-heading">vodml-id</td>
+        <td class="feature-heading">feature type</td>
+        <td class="feature-heading">description</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#"></a></td>
+        <td class="feature-detail">vo-dml:model</td>
+        <td class="feature-detail">This is the main reference data model containing primitive types used in other data models.</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#IntegerQuantity">IntegerQuantity</a></td>
+        <td class="feature-detail">dataType</td>
+        <td class="feature-detail">An integer number with a unit. Examples of such units that can be used for attributes are bit/byte/kiloByte etc.</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#IntegerQuantity.value">IntegerQuantity.value</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#Quantity">Quantity</a></td>
+        <td class="feature-detail">dataType</td>
+        <td class="feature-detail">Meant to represent the value of a numerical physical quantity.  
+          Can be mapped in VOTables to FIELDrefs and PARAM(ref)s, in which case the @unit attribute of those VOTable elements is assumed
+          to be mapped to the attribute on the Quantity.
+          Ths is only allowed for these predefined ivoa types.
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#Quantity.unit">Quantity.unit</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#RealQuantity">RealQuantity</a></td>
+        <td class="feature-detail">dataType</td>
+        <td class="feature-detail">A real value with a unit.</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#RealQuantity.value">RealQuantity.value</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#Unit">Unit</a></td>
+        <td class="feature-detail">primitiveType</td>
+        <td class="feature-detail">Must conform to definition of unit in VOUnit spec.</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#anyURI">anyURI</a></td>
+        <td class="feature-detail">primitiveType</td>
+        <td class="feature-detail">Represents a URI in the same way as the datatype of the same nam in XML Schema is used.</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#boolean">boolean</a></td>
+        <td class="feature-detail">primitiveType</td>
+        <td class="feature-detail">The standard boolean, having values true or false.</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#complex">complex</a></td>
+        <td class="feature-detail">dataType</td>
+        <td class="feature-detail">Represents a complex number, consisting of a real and imaginary component, both of which are reals. Note that in many contexts
+          there is no native mapping for this type and it must be treated with a custom mapping.
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#complex.im">complex.im</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">The imaginary part of the complex number.</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#complex.re">complex.re</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">The real part of the complex number.</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#datetime">datetime</a></td>
+        <td class="feature-detail">primitiveType</td>
+        <td class="feature-detail">Represents a moment in time using a date+timestamp. </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#integer">integer</a></td>
+        <td class="feature-detail">primitiveType</td>
+        <td class="feature-detail">An integer number (from Z).</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#nonnegativeInteger">nonnegativeInteger</a></td>
+        <td class="feature-detail">primitiveType</td>
+        <td class="feature-detail">An integer number from N, therefore greater than or equal to 0.</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#rational">rational</a></td>
+        <td class="feature-detail">dataType</td>
+        <td class="feature-detail">A rational number from Q, represented by two integers, a numerator and a denominator. A native mapping to a serialisation
+          context does in general not exists.
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#rational.denominator">rational.denominator</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">The denominator of the rational. Must be greater than 0.</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#rational.numerator">rational.numerator</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">The numerator of the quotient defining the rational.</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#real">real</a></td>
+        <td class="feature-detail">primitiveType</td>
+        <td class="feature-detail">A real number (from R).</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#string">string</a></td>
+        <td class="feature-detail">primitiveType</td>
+        <td class="feature-detail">A string, represented as an array of characters treated as a single, primitive value. Ala Java, a string can not be updated,
+          that is any update leads to a different string. However in contrast to Java we assume that two strings that are identical
+          in all their constitutent characters are the same.
+          I.e. string has value type semantics.
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
