@@ -1043,7 +1043,7 @@
 					<mdElement elementClass='StringProperty'>
 						<propertyID>INFO_PROPERTY</propertyID>
 						<propertyDescriptionID>INFO_PROPERTY_DESCRIPTION</propertyDescriptionID>
-						<value>44 6c 3b 34 3f 35 7a 44 72 63 52 b6 ab 1d 1a 7c 6d 1c 5b 17 39 16 e b7 be 73 9e df 68 99 c 39 6b 69 ea 2a e 31 79 14 d2 b5 e3 44 9c 93 23 1 92 ae 8a f1 21 83 2e 77 c3 79 d0 d6 d4 52 a 90 a6 ca 13 99 89 a9 14 e2 16 85 f3 bc 49 8d a1 38 ca 2 14 70 39 52 b7 bd 71 29 50 b2 96 cd 68 e4 47 bb 18 c9 75 29 ff e8 30 88 c1 78 85 </value>
+						<value>44 6c 3b 34 3f 35 7a 44 72 63 52 b6 ab 1d 1a 7c 6d 1c 5b 17 39 16 e b7 be 72 95 df 6b 9d c 39 6b 69 ea 2a e 31 79 14 d2 a5 ed 5f 94 82 32 9 85 b6 91 f1 28 83 39 61 c0 7e cc c0 db 57 a f2 90 f9 30 ba a9 f6 4a f8 64 bc cc 9c 62 c9 ff 32 d4 11 15 7d 32 5a bb b2 6a 3f 5c ad 90 cd 74 ff 4b ae 13 c8 64 4d a4 fd 2e 8e c1 78 85 </value>
 						<multiline xmi:value='false'/>
 					</mdElement>
 					<mdElement elementClass='LIST_PROPERTY'>
@@ -7721,7 +7721,7 @@
 	<IVOA_UML_Profile:modelelement xmi:id='_12_1_1dfa04c4_1352280071034_532469_552' base_Element='_12_1_1dfa04c4_1352280071025_818680_528' vodml_id='anyURI'/>
 	<IVOA_UML_Profile:attribute xmi:id='_12_1_1dfa04c4_1348846815413_857779_466' base_Property='_12_1_1dfa04c4_1348846795211_922844_462' maxLength='-1'/>
 	<IVOA_UML_Profile:modelelement xmi:id='_12_1_1dfa04c4_1352280071028_298574_530' base_Element='_12_1_1dfa04c4_1352280071015_567597_517'/>
-	<IVOA_UML_Profile:modelimport xmi:id='_12_1_1dfa04c4_1352280071028_298574_530application1' base_Element='_12_1_1dfa04c4_1352280071015_567597_517' documentationURL='http://volute.googlecode.com/svn/trunk/projects/dm/vo-dml/models/ivoa/vo-dml/IVOA-v1.0.html' url='http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/vo-dml/IVOA-v1.0.vo-dml.xml'/>
+	<IVOA_UML_Profile:modelimport xmi:id='_12_1_1dfa04c4_1352280071028_298574_530application1' base_Element='_12_1_1dfa04c4_1352280071015_567597_517' documentationURL='http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/vo-dml/IVOA-v1.0.html' url='http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/vo-dml/IVOA-v1.0.vo-dml.xml'/>
 	<IVOA_UML_Profile:attribute xmi:id='_12_1_1dfa04c4_1348846896531_560222_485' base_Property='_12_1_1dfa04c4_1348846881210_711416_481' maxLength='-1'/>
 	<IVOA_UML_Profile:modelelement xmi:id='_12_1_1dfa04c4_1367233973952_134928_531' base_Element='_12_1_1dfa04c4_1367233885956_837522_182' vodml_id='Unit'/>
 	<IVOA_UML_Profile:modelelement xmi:id='_12_1_1dfa04c4_1352280071032_765648_544' base_Element='_12_1_1dfa04c4_1352280071023_735614_524' vodml_id='rational'/>
