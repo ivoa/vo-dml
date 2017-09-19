@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vo-dml:model xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1.0"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.ivoa.net/xml/VODML/v1.0 http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/xsd/vo-dml-v1.0.xsd">
+  <name>filter</name>
+  <description>This is an alternative version of the data model for Photometric Calibration ... </description>
+  <title>Filter</title>
+  <version>0.x</version>
+  <lastModified>2017-01-26T14:59:24</lastModified>
+  <import>
+    <name>ivoa</name>
+    <url>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.vo-dml.xml</url>
+    <documentationURL>http://volute.googlecode.com/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html</documentationURL>
+  </import>
+  <objectType>
+    <vodml-id>PhotometricSystem</vodml-id>
+    <name>PhotometricSystem</name>
+    <description>
+          TODO : Missing description : please, update your UML model asap.
+        </description>
+    <attribute>
+      <vodml-id>PhotometricSystem.description</vodml-id>
+      <name>description</name>
+      <description>String representation Photometric system</description>
+      <datatype>
+        <vodml-ref>ivoa:string</vodml-ref>
+      </datatype>
+      <multiplicity>
+        <minOccurs>0</minOccurs>
+        <maxOccurs>1</maxOccurs>
+      </multiplicity>
+    </attribute>
+    <attribute>
+      <vodml-id>PhotometricSystem.detectorType</vodml-id>
+      <name>detectorType</name>
+      <description>Type of detector (e.g energy or photon counter)</description>
+      <datatype>
+        <vodml-ref>ivoa:integer</vodml-ref>
+      </datatype>
+      <multiplicity>
+        <minOccurs>1</minOccurs>
+        <maxOccurs>1</maxOccurs>
+      </multiplicity>
+    </attribute>
+    <composition>
+      <vodml-id>PhotometricSystem.photometryFilter</vodml-id>
+      <name>photometryFilter</name>
+      <description>
+          TODO : Missing description : please, update your UML model asap.
+        </description>
+      <datatype>
+        <vodml-ref>filter:PhotometryFilter</vodml-ref>
+      </datatype>
+      <multiplicity>
+        <minOccurs>1</minOccurs>
+        <maxOccurs>-1</maxOccurs>
+      </multiplicity>
+    </composition>
+  </objectType>
+
+  <objectType>
+    <vodml-id>PhotometryFilter</vodml-id>
+    <name>PhotometryFilter</name>
+    <description>
+          TODO : Missing description : please, update your UML model asap.
+        </description>
+    <attribute>
+      <vodml-id>PhotometryFilter.fpsIdentifier</vodml-id>
+      <name>fpsIdentifier</name>
+      <description>IVOA identifier of the Filter Profile Service</description>
+      <datatype>
+        <vodml-ref>ivoa:string</vodml-ref>
+      </datatype>
+      <multiplicity>
+        <minOccurs>1</minOccurs>
+        <maxOccurs>1</maxOccurs>
+      </multiplicity>
+    </attribute>
+    <attribute>
+      <vodml-id>PhotometryFilter.identifier</vodml-id>
+      <name>identifier</name>
+      <description>
+          TODO : Missing description : please, update your UML model asap.
+        </description>
+      <datatype>
+        <vodml-ref>ivoa:string</vodml-ref>
+      </datatype>
+      <multiplicity>
+        <minOccurs>1</minOccurs>
+        <maxOccurs>1</maxOccurs>
+      </multiplicity>
+    </attribute>
+    <attribute>
+      <vodml-id>PhotometryFilter.name</vodml-id>
+      <name>name</name>
+      <description>Filter Name in the instrumental
+configuration</description>
+      <datatype>
+        <vodml-ref>ivoa:string</vodml-ref>
+      </datatype>
+      <multiplicity>
+        <minOccurs>1</minOccurs>
+        <maxOccurs>1</maxOccurs>
+      </multiplicity>
+    </attribute>
+    <attribute>
+      <vodml-id>PhotometryFilter.description</vodml-id>
+      <name>description</name>
+      <description>Text description of the filter band</description>
+      <datatype>
+        <vodml-ref>ivoa:string</vodml-ref>
+      </datatype>
+      <multiplicity>
+        <minOccurs>1</minOccurs>
+        <maxOccurs>1</maxOccurs>
+      </multiplicity>
+    </attribute>
+    <attribute>
+      <vodml-id>PhotometryFilter.bandName</vodml-id>
+      <name>bandName</name>
+      <description>
+          TODO : Missing description : please, update your UML model asap.
+        </description>
+      <datatype>
+        <vodml-ref>ivoa:string</vodml-ref>
+      </datatype>
+      <multiplicity>
+        <minOccurs>1</minOccurs>
+        <maxOccurs>1</maxOccurs>
+      </multiplicity>
+    </attribute>
+    <attribute>
+      <vodml-id>PhotometryFilter.dataValidityFrom</vodml-id>
+      <name>dataValidityFrom</name>
+      <description>
+          TODO : Missing description : please, update your UML model asap.
+        </description>
+      <datatype>
+        <vodml-ref>ivoa:datetime</vodml-ref>
+      </datatype>
+      <multiplicity>
+        <minOccurs>1</minOccurs>
+        <maxOccurs>1</maxOccurs>
+      </multiplicity>
+    </attribute>
+    <attribute>
+      <vodml-id>PhotometryFilter.dataValidityTo</vodml-id>
+      <name>dataValidityTo</name>
+      <description>
+          TODO : Missing description : please, update your UML model asap.
+        </description>
+      <datatype>
+        <vodml-ref>ivoa:datetime</vodml-ref>
+      </datatype>
+      <multiplicity>
+        <minOccurs>1</minOccurs>
+        <maxOccurs>1</maxOccurs>
+      </multiplicity>
+    </attribute>
+    <attribute>
+      <vodml-id>PhotometryFilter.spectralLocation</vodml-id>
+      <name>spectralLocation</name>
+      <description>
+          TODO : Missing description : please, update your UML model asap.
+        </description>
+      <datatype>
+        <vodml-ref>ivoa:RealQuantity</vodml-ref>
+      </datatype>
+      <multiplicity>
+        <minOccurs>1</minOccurs>
+        <maxOccurs>1</maxOccurs>
+      </multiplicity>
+    </attribute>
+  </objectType>
+
+</vo-dml:model>

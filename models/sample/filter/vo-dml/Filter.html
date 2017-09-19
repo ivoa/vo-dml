@@ -1,0 +1,562 @@
+<html xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1.0">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Filter</title>
+    <link rel="stylesheet" href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa_wg.css" type="text/css">
+    <link rel="stylesheet" href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/xmi.css" type="text/css">
+  </head>
+  <body>
+    <h1>Filter</h1>
+    <h2><a id="contents" name="contents">Table of Contents</a></h2>
+    <div class="head">
+      <table class=".toc">
+        <tr>
+          <td>1.</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#model_section">model: filter</a></td>
+        </tr>
+        <tr>
+          <td>2.</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#packages">Packages and Types</a></td>
+        </tr>
+        <tr>
+          <td>2.1</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#rootpackage">[root package]</a></td>
+        </tr>
+        <tr>
+          <td>2.1.1</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#PhotometricSystem">objectType:PhotometricSystem</a></td>
+        </tr>
+        <tr>
+          <td>2.1.2</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#PhotometryFilter">objectType:PhotometryFilter</a></td>
+        </tr>
+        <tr>
+          <td>3.</td>
+          <td>
+            &nbsp;&nbsp;&nbsp;&nbsp;<a href="#vodml-ids">vodml-id-s</a></td>
+        </tr>
+        <tr>
+          <td>4.</td>
+          <td>
+            &nbsp;&nbsp;&nbsp;&nbsp;<a href="#modelimports">Imported Models</a></td>
+        </tr>
+        <tr>
+          <td>4.1</td>
+          <td>
+            &nbsp;&nbsp;&nbsp;&nbsp;<a href="#ivoa">ivoa</a></td>
+        </tr>
+      </table>
+    </div>
+    <hr>
+    <h1><a name="model_section">1. Model: Filter (filter)</a></h1>
+    <table>
+      <tr>
+        <td align="right"><b>Authors</b></td>
+        <td> : </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td align="right"><b>Date</b></td>
+        <td> : </td>
+        <td>2017-01-26T14:59:24</td>
+      </tr>
+      <tr>
+        <td align="right"><b>Version</b></td>
+        <td> : </td>
+        <td>0.x</td>
+      </tr>
+      <tr>
+        <td align="right" valign="top"><b>Abstract</b></td>
+        <td valign="top"> : </td>
+        <td>This is an alternative version of the data model for Photometric Calibration ... </td>
+      </tr>
+      <tr>
+        <td align="right" valign="top"><b>Diagram</b></td>
+        <td valign="top"> : </td>
+        <td>The following diagram has been generated from the model using the <a href="http://www.graphviz.org/" target="_blank">GraphViz</a> tool.<br>
+          The classes and packages in the diagram can be clicked and are mapped to the descriptions of the corresponding element elsewhere
+          in the document. 
+          
+        </td>
+      </tr>
+      <tr>
+        <td colspan="3"></td>
+      </tr>
+    </table><img src="Filter.png" usemap="#GVmap"><map id="GVmap" name="GVmap">
+<area shape="rect" id="node1" href="#PhotometricSystem" title="{PhotometricSystem|+description : ivoa:string\l+detectorType : ivoa:integer\l}" alt="" coords="27,5,182,64"/>
+<area shape="rect" id="node2" href="#PhotometryFilter" title="{PhotometryFilter|+fpsIdentifier : ivoa:string\l+identifier : ivoa:string\l+name : ivoa:string\l+description : ivoa:string\l+bandName : ivoa:string\l+dataValidityFrom : ivoa:datetime\l+dataValidityTo : ivoa:datetime\l+spectralLocation : ivoa:RealQuantity\l}" alt="" coords="5,127,204,257"/>
+</map>
+
+    <hr>
+    <h1>2.<a name="packages">Model contents: Packages and Types</a></h1>
+    <p>
+      The following sub-sections present all packages in the model with their types.
+      The packages are listed here in alphabetical order.
+      Each sub-section contains a description of the package and a table containing its various features.
+      
+    </p>
+    <h3><a name="rootpackage"></a>2.1 [root package]
+    </h3>
+    <table border="1" cellspacing="2" width="100%">
+      <tr>
+        <td class="objecttype-title" width="20%">Model</td>
+        <td class="objecttype-name">filter</td>
+      </tr>
+      <tr>
+        <td width="20%" class="info-title">Object types</td>
+        <td colspan="2" class="feature-detail"><a href="#PhotometricSystem">PhotometricSystem</a> <a href="#PhotometryFilter">PhotometryFilter</a> 
+        </td>
+      </tr>
+    </table>
+    <h3><a name="PhotometricSystem"></a>2.1.1 objectType: PhotometricSystem
+    </h3>
+    <div align="center">
+      <table border="1" width="100%" cellspacing="2">
+        <tr>
+          <td class="objecttype-title" width="20%">vodml-id</td>
+          <td class="objecttype-name" colspan="1">PhotometricSystem</td>
+        </tr>
+        <tr>
+          <td class="info-title">description</td>
+          <td class="feature-detail" colspan="1">
+            TODO : Missing description : please, update your UML model asap.
+            
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td colspan="2" bgcolor="#cacaca">
+                  <table width="100%" border="0" cellpadding="3" cellspacing="1">
+                    <tr>
+                      <td colspan="3" class="info-title">attributes</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading" width="20%">name</td>
+                      <td class="feature-heading" width="10%">feature</td>
+                      <td class="feature-heading" width="70%">value</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="PhotometricSystem.description"></a><b>description</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="http://volute.googlecode.com/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#string">string</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">PhotometricSystem.description</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">0..1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">String representation Photometric system</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="PhotometricSystem.detectorType"></a><b>detectorType</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="http://volute.googlecode.com/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#integer">integer</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">PhotometricSystem.detectorType</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">Type of detector (e.g energy or photon counter)</td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="info-title">compositions</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading" width="20%">name</td>
+                      <td class="feature-heading" width="10%">feature</td>
+                      <td class="feature-heading" width="70%">value</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="5"><a name="PhotometricSystem%0A      _12_1_1dfa04c4_1348152525485_995078_483%0A      photometryFilter%0A      %0A          TODO : Missing description : please, update your UML model asap.%0A        %0A      %0A        _12_1_1dfa04c4_1348152525455_268767_480%0A      %0A      %0A        1%0A        -1%0A      %0A    photometryFilter"></a><b>photometryFilter</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#PhotometryFilter">PhotometryFilter [filter:PhotometryFilter]</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">PhotometricSystem
+                        _12_1_1dfa04c4_1348152525485_995078_483
+                        photometryFilter
+                        
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                        
+                        _12_1_1dfa04c4_1348152525455_268767_480
+                        
+                        
+                        1
+                        -1
+                        
+                        photometryFilter
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1..*</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">isOrdered</td>
+                      <td class="feature-detail">false</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div><br><h3><a name="PhotometryFilter"></a>2.1.2 objectType: PhotometryFilter
+    </h3>
+    <div align="center">
+      <table border="1" width="100%" cellspacing="2">
+        <tr>
+          <td class="objecttype-title" width="20%">vodml-id</td>
+          <td class="objecttype-name" colspan="1">PhotometryFilter</td>
+        </tr>
+        <tr>
+          <td class="info-title">description</td>
+          <td class="feature-detail" colspan="1">
+            TODO : Missing description : please, update your UML model asap.
+            
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td colspan="2" bgcolor="#cacaca">
+                  <table width="100%" border="0" cellpadding="3" cellspacing="1">
+                    <tr>
+                      <td colspan="3" class="info-title">attributes</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading" width="20%">name</td>
+                      <td class="feature-heading" width="10%">feature</td>
+                      <td class="feature-heading" width="70%">value</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="PhotometryFilter.fpsIdentifier"></a><b>fpsIdentifier</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="http://volute.googlecode.com/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#string">string</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">PhotometryFilter.fpsIdentifier</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">IVOA identifier of the Filter Profile Service</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="PhotometryFilter.identifier"></a><b>identifier</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="http://volute.googlecode.com/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#string">string</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">PhotometryFilter.identifier</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="PhotometryFilter.name"></a><b>name</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="http://volute.googlecode.com/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#string">string</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">PhotometryFilter.name</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">Filter Name in the instrumental
+                        configuration
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="PhotometryFilter.description"></a><b>description</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="http://volute.googlecode.com/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#string">string</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">PhotometryFilter.description</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">Text description of the filter band</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="PhotometryFilter.bandName"></a><b>bandName</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="http://volute.googlecode.com/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#string">string</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">PhotometryFilter.bandName</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="PhotometryFilter.dataValidityFrom"></a><b>dataValidityFrom</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="http://volute.googlecode.com/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#datetime">datetime</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">PhotometryFilter.dataValidityFrom</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="PhotometryFilter.dataValidityTo"></a><b>dataValidityTo</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="http://volute.googlecode.com/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#datetime">datetime</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">PhotometryFilter.dataValidityTo</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="PhotometryFilter.spectralLocation"></a><b>spectralLocation</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="http://volute.googlecode.com/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#RealQuantity">RealQuantity</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">PhotometryFilter.spectralLocation</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div><br><hr>
+    <h1>3.<a name="vodml-ids">Element Identifiers/VO-DMLrefs</a></h1>  
+    The following table shows all fully qualified vodml-ids for this data model.
+    It is ordered alphabetically and the identifiers are hyper-linked to the location
+    in the document where the actual element is fully defined.
+    
+    
+    <table style="border-style:solid;border-width:1px;" border="1" cellspacing="0" cellpadding="0">
+      <tr>
+        <td class="feature-heading">vodml-id</td>
+        <td class="feature-heading">feature type</td>
+        <td class="feature-heading">description</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#"></a></td>
+        <td class="feature-detail">vo-dml:model</td>
+        <td class="feature-detail">This is an alternative version of the data model for Photometric Calibration ... </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#PhotometricSystem">PhotometricSystem</a></td>
+        <td class="feature-detail">objectType</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#PhotometricSystem.description">PhotometricSystem.description</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">String representation Photometric system</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#PhotometricSystem.detectorType">PhotometricSystem.detectorType</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">Type of detector (e.g energy or photon counter)</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#PhotometricSystem%0A      _12_1_1dfa04c4_1348152525485_995078_483%0A      photometryFilter%0A      %0A          TODO : Missing description : please, update your UML model asap.%0A        %0A      %0A        _12_1_1dfa04c4_1348152525455_268767_480%0A      %0A      %0A        1%0A        -1%0A      %0A    photometryFilter">PhotometricSystem
+            _12_1_1dfa04c4_1348152525485_995078_483
+            photometryFilter
+            
+            TODO : Missing description : please, update your UML model asap.
+            
+            
+            _12_1_1dfa04c4_1348152525455_268767_480
+            
+            
+            1
+            -1
+            
+            photometryFilter</a></td>
+        <td class="feature-detail">composition</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#PhotometryFilter">PhotometryFilter</a></td>
+        <td class="feature-detail">objectType</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#PhotometryFilter.bandName">PhotometryFilter.bandName</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#PhotometryFilter.dataValidityFrom">PhotometryFilter.dataValidityFrom</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#PhotometryFilter.dataValidityTo">PhotometryFilter.dataValidityTo</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#PhotometryFilter.description">PhotometryFilter.description</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">Text description of the filter band</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#PhotometryFilter.fpsIdentifier">PhotometryFilter.fpsIdentifier</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">IVOA identifier of the Filter Profile Service</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#PhotometryFilter.identifier">PhotometryFilter.identifier</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#PhotometryFilter.name">PhotometryFilter.name</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">Filter Name in the instrumental
+          configuration
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#PhotometryFilter.spectralLocation">PhotometryFilter.spectralLocation</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+    </table>
+    <hr>
+    <h1>4.<a name="modelimports">Imported Models</a></h1>
+    <p>This section lists the external models imported by the current data model.
+      For each imported model we list URLs to the VO-DML and HTML representations and the prefix used for vodml-ids from inside
+      the model.
+    </p>
+    <h2><a name="ivoa"></a>4.1 ivoa
+    </h2>
+    <table border="1" cellspacing="2" width="100%">
+      <tr>
+        <td class="objecttype-title" width="20%">Model vodml-id</td>
+        <td class="objecttype-name">ivoa</td>
+      </tr>
+      <tr>
+        <td width="30%" class="info-title">url</td>
+        <td><a href="http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.vo-dml.xml">http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.vo-dml.xml</a></td>
+      </tr>
+      <tr>
+        <td width="30%" class="info-title">documentation url</td>
+        <td><a href="http://volute.googlecode.com/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html">http://volute.googlecode.com/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html</a></td>
+      </tr>
+    </table>
+  </body>
+</html>

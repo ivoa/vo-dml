@@ -1,0 +1,1898 @@
+<html xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1.0">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Sample VO-DML data model.</title>
+    <link rel="stylesheet" href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa_wg.css" type="text/css">
+    <link rel="stylesheet" href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/xmi.css" type="text/css">
+  </head>
+  <body>
+    <h1>Sample VO-DML data model.</h1>
+    <h2><a id="contents" name="contents">Table of Contents</a></h2>
+    <div class="head">
+      <table class=".toc">
+        <tr>
+          <td>1.</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#model_section">model: sample</a></td>
+        </tr>
+        <tr>
+          <td>2.</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#packages">Packages and Types</a></td>
+        </tr>
+        <tr>
+          <td>2.1</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#rootpackage">[root package]</a></td>
+        </tr>
+        <tr>
+          <td>2.2</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#catalog">package: catalog</a></td>
+        </tr>
+        <tr>
+          <td>2.2.1</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#catalog.AbstractSource">objectType: AbstractSource</a></td>
+        </tr>
+        <tr>
+          <td>2.2.2</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#catalog.AlignedEllipse">dataType: AlignedEllipse</a></td>
+        </tr>
+        <tr>
+          <td>2.2.3</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#catalog.AstroObject">objectType: AstroObject</a></td>
+        </tr>
+        <tr>
+          <td>2.2.4</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#catalog.CircleError">dataType: CircleError</a></td>
+        </tr>
+        <tr>
+          <td>2.2.5</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#catalog.GenericEllipse">dataType: GenericEllipse</a></td>
+        </tr>
+        <tr>
+          <td>2.2.6</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#catalog.LuminosityMeasurement">objectType: LuminosityMeasurement</a></td>
+        </tr>
+        <tr>
+          <td>2.2.7</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#catalog.LuminosityType">enumeration: LuminosityType</a></td>
+        </tr>
+        <tr>
+          <td>2.2.8</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#catalog.SDSSSource">objectType: SDSSSource</a></td>
+        </tr>
+        <tr>
+          <td>2.2.9</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#catalog.SkyCoordinate">dataType: SkyCoordinate</a></td>
+        </tr>
+        <tr>
+          <td>2.2.10</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#catalog.SkyCoordinateFrame">objectType: SkyCoordinateFrame</a></td>
+        </tr>
+        <tr>
+          <td>2.2.11</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#catalog.SkyError">dataType: SkyError</a></td>
+        </tr>
+        <tr>
+          <td>2.2.12</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#catalog.Source">objectType: Source</a></td>
+        </tr>
+        <tr>
+          <td>2.2.13</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#catalog.SourceClassification">enumeration: SourceClassification</a></td>
+        </tr>
+        <tr>
+          <td>2.2.14</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#catalog.TwoMassSource">objectType: TwoMassSource</a></td>
+        </tr>
+        <tr>
+          <td>3.</td>
+          <td>
+            &nbsp;&nbsp;&nbsp;&nbsp;<a href="#vodml-ids">vodml-id-s</a></td>
+        </tr>
+        <tr>
+          <td>4.</td>
+          <td>
+            &nbsp;&nbsp;&nbsp;&nbsp;<a href="#modelimports">Imported Models</a></td>
+        </tr>
+        <tr>
+          <td>4.1</td>
+          <td>
+            &nbsp;&nbsp;&nbsp;&nbsp;<a href="#filter">filter</a></td>
+        </tr>
+        <tr>
+          <td>4.2</td>
+          <td>
+            &nbsp;&nbsp;&nbsp;&nbsp;<a href="#ivoa">ivoa</a></td>
+        </tr>
+      </table>
+    </div>
+    <hr>
+    <h1><a name="model_section">1. Model: Sample VO-DML data model. (sample)</a></h1>
+    <table>
+      <tr>
+        <td align="right"><b>Authors</b></td>
+        <td> : </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td align="right"><b>Date</b></td>
+        <td> : </td>
+        <td>2017-01-26T14:59:24</td>
+      </tr>
+      <tr>
+        <td align="right"><b>Version</b></td>
+        <td> : </td>
+        <td>1.0</td>
+      </tr>
+      <tr>
+        <td align="right" valign="top"><b>Abstract</b></td>
+        <td valign="top"> : </td>
+        <td>This is a sample data model. It contains the IVOA UML Profile and imports the IVOA_Profile data model with primitive types.
+          It has some sample relationships etc to be used in documentation etc.
+        </td>
+      </tr>
+      <tr>
+        <td align="right" valign="top"><b>Diagram</b></td>
+        <td valign="top"> : </td>
+        <td>The following diagram has been generated from the model using the <a href="http://www.graphviz.org/" target="_blank">GraphViz</a> tool.<br>
+          The classes and packages in the diagram can be clicked and are mapped to the descriptions of the corresponding element elsewhere
+          in the document. 
+          
+        </td>
+      </tr>
+      <tr>
+        <td colspan="3"></td>
+      </tr>
+    </table><img src="Sample.png" usemap="#GVmap"><map id="GVmap" name="GVmap">
+<area shape="rect" id="node1" href="#catalog" title="catalog" alt="" coords="43,57,118,105"/>
+<area shape="rect" id="node2" href="#catalog.LuminosityType" title="{&lt;&lt;enumeration&gt;&gt;\lcatalog/LuminosityType|+magnitude\l+flux\l}" alt="" coords="13,197,149,268"/>
+<area shape="rect" id="node3" href="#catalog.SourceClassification" title="{&lt;&lt;enumeration&gt;&gt;\lcatalog/SourceClassification|+star\l+galaxy\l+AGN\l+planet\l+unknown\l}" alt="" coords="5,343,156,449"/>
+<area shape="rect" id="node4" href="#catalog.AlignedEllipse" title="{&lt;&lt;datatype&gt;&gt;\ncatalog/AlignedEllipse|+longError : ivoa:real\l+latError : ivoa:real\l}" alt="" coords="143,46,267,117"/>
+<area shape="rect" id="node5" href="#catalog.SkyError" title="{&lt;&lt;datatype&gt;&gt;\ncatalog/SkyError}" alt="" coords="296,208,396,257"/>
+<area shape="rect" id="node6" href="#catalog.CircleError" title="{&lt;&lt;datatype&gt;&gt;\ncatalog/CircleError|+radius : ivoa:real\l}" alt="" coords="291,52,401,111"/>
+<area shape="rect" id="node7" href="#catalog.GenericEllipse" title="{&lt;&lt;datatype&gt;&gt;\ncatalog/GenericEllipse|+major : ivoa:real\l+minor : ivoa:real\l+pa : ivoa:real\l}" alt="" coords="425,40,549,123"/>
+<area shape="rect" id="node8" href="#catalog.SkyCoordinate" title="{&lt;&lt;datatype&gt;&gt;\ncatalog/SkyCoordinate|+longitude : ivoa:RealQuantity\l+latitude : ivoa:RealQuantity\l}" alt="" coords="574,46,737,117"/>
+<area shape="rect" id="node9" href="#catalog.SkyCoordinateFrame" title="{catalog/SkyCoordinateFrame|+name : ivoa:string\l+documentURI : ivoa:anyURI\l+equinox : ivoa:string\l+system : ivoa:string\l}" alt="" coords="575,191,735,274"/>
+<area shape="rect" id="node10" href="#catalog.AbstractSource" title="{catalog/AbstractSource|+name : ivoa:string\l+description : ivoa:string\l+position : sample:catalog.SkyCoordinate\l+positionError : sample:catalog.SkyError\l+classification : sample:catalog.SourceClassification\l}" alt="" coords="811,185,1071,280"/>
+<area shape="rect" id="node11" href="#catalog.AstroObject" title="{catalog/AstroObject|+label : ivoa:string\l}" alt="" coords="826,371,941,421"/>
+<area shape="rect" id="node12" href="#catalog.LuminosityMeasurement" title="{catalog/LuminosityMeasurement|+value : ivoa:RealQuantity\l+error : ivoa:RealQuantity\l+description : ivoa:string\l+type : sample:catalog.LuminosityType\l}" alt="" coords="965,355,1172,437"/>
+<area shape="rect" id="node14" href="#catalog.SDSSSource" title="{catalog/SDSSSource}" alt="" coords="761,57,872,106"/>
+<area shape="rect" id="node15" href="#catalog.Source" title="{catalog/Source}" alt="" coords="897,57,985,106"/>
+<area shape="rect" id="node16" href="#catalog.TwoMassSource" title="{catalog/TwoMassSource}" alt="" coords="1009,57,1141,106"/>
+</map>
+
+    <hr>
+    <h1>2.<a name="packages">Model contents: Packages and Types</a></h1>
+    <p>
+      The following sub-sections present all packages in the model with their types.
+      The packages are listed here in alphabetical order.
+      Each sub-section contains a description of the package and a table containing its various features.
+      
+    </p>
+    <h3><a name="rootpackage"></a>2.1 [root package]
+    </h3>
+    <table border="1" cellspacing="2" width="100%">
+      <tr>
+        <td class="objecttype-title" width="20%">Model</td>
+        <td class="objecttype-name">sample</td>
+      </tr>
+      <tr>
+        <td width="20%" class="info-title">child package(s)</td>
+        <td colspan="2" class="feature-detail"><a href="#catalog">catalog</a> 
+        </td>
+      </tr>
+    </table>
+    <h3><a name="catalog"></a>2.2 package: catalog
+    </h3>
+    <table border="1" cellspacing="2" width="100%">
+      <tr>
+        <td class="objecttype-title" width="20%">vodml-id</td>
+        <td class="objecttype-name" colspan="1">catalog</td>
+      </tr>
+      <tr>
+        <td class="info-title">description</td>
+        <td class="feature-detail" colspan="1">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td width="20%" class="info-title">parent</td>
+        <td colspan="2" class="feature-detail"><a href="#model_section">sample</a></td>
+      </tr>
+      <tr>
+        <td width="20%" class="info-title">Object types</td>
+        <td colspan="2" class="feature-detail"><a href="#catalog.AbstractSource">AbstractSource</a> <a href="#catalog.AstroObject">AstroObject</a> <a href="#catalog.LuminosityMeasurement">LuminosityMeasurement</a> <a href="#catalog.SDSSSource">SDSSSource</a> <a href="#catalog.SkyCoordinateFrame">SkyCoordinateFrame</a> <a href="#catalog.Source">Source</a> <a href="#catalog.TwoMassSource">TwoMassSource</a> 
+        </td>
+      </tr>
+      <tr>
+        <td width="20%" class="info-title">Data types</td>
+        <td colspan="2" class="feature-detail"><a href="#catalog.AlignedEllipse">AlignedEllipse</a> <a href="#catalog.CircleError">CircleError</a> <a href="#catalog.GenericEllipse">GenericEllipse</a> <a href="#catalog.SkyCoordinate">SkyCoordinate</a> <a href="#catalog.SkyError">SkyError</a> 
+        </td>
+      </tr>
+      <tr>
+        <td width="20%" class="info-title">Enumerations</td>
+        <td colspan="2" class="feature-detail"><a href="#catalog.LuminosityType">LuminosityType</a> <a href="#catalog.SourceClassification">SourceClassification</a> 
+        </td>
+      </tr>
+    </table>
+    <h3><a name="catalog.AbstractSource"></a>2.2.1 objectType: AbstractSource
+    </h3>
+    <div align="center">
+      <table border="1" width="100%" cellspacing="2">
+        <tr>
+          <td class="objecttype-title" width="20%">vodml-id</td>
+          <td class="objecttype-name" colspan="1">catalog.AbstractSource</td>
+        </tr>
+        <tr>
+          <td class="info-title">description</td>
+          <td class="feature-detail" colspan="1">
+            TODO : Missing description : please, update your UML model asap.
+            
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td colspan="2" bgcolor="#cacaca">
+                  <table width="100%" border="0" cellpadding="3" cellspacing="1">
+                    <tr>
+                      <td width="20%" class="info-title">package</td>
+                      <td colspan="3" class="feature-detail"><a href="#catalog">catalog</a></td>
+                    </tr>
+                    <tr>
+                      <td width="20%" class="info-title">extends</td>
+                      <td colspan="3" class="feature-detail"><a href="#catalog.AstroObject">AstroObject [sample:catalog.AstroObject]</a></td>
+                    </tr>
+                    <tr>
+                      <td class="info-title">Subclasses in this model</td>
+                      <td class="feature-detail" colspan="3"><a href="#catalog.SDSSSource">SDSSSource</a> <a href="#catalog.Source">Source</a> <a href="#catalog.TwoMassSource">TwoMassSource</a> 
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="info-title">attributes</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading" width="20%">name</td>
+                      <td class="feature-heading" width="10%">feature</td>
+                      <td class="feature-heading" width="70%">value</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="catalog.AbstractSource.name"></a><b>name</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#string">string</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.AbstractSource.name</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="catalog.AbstractSource.description"></a><b>description</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#string">string</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.AbstractSource.description</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">0..1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="catalog.AbstractSource.position"></a><b>position</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#catalog.SkyCoordinate">SkyCoordinate [sample:catalog.SkyCoordinate]</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.AbstractSource.position</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="catalog.AbstractSource.positionError"></a><b>positionError</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#catalog.SkyError">SkyError [sample:catalog.SkyError]</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.AbstractSource.positionError</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">0..1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="catalog.AbstractSource.classification"></a><b>classification</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#catalog.SourceClassification">SourceClassification [sample:catalog.SourceClassification]</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.AbstractSource.classification</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="info-title">compositions</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading" width="20%">name</td>
+                      <td class="feature-heading" width="10%">feature</td>
+                      <td class="feature-heading" width="70%">value</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="5"><a name="catalog.AbstractSource%0A        _12_1_1dfa04c4_1354024798700_361746_809%0A        luminosity%0A        %0A          TODO : Missing description : please, update your UML model asap.%0A        %0A        %0A          _12_1_1dfa04c4_1354024794825_962426_779%0A        %0A        %0A          0%0A          -1%0A        %0A      luminosity"></a><b>luminosity</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#catalog.LuminosityMeasurement">LuminosityMeasurement [sample:catalog.LuminosityMeasurement]</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.AbstractSource
+                        _12_1_1dfa04c4_1354024798700_361746_809
+                        luminosity
+                        
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                        
+                        _12_1_1dfa04c4_1354024794825_962426_779
+                        
+                        
+                        0
+                        -1
+                        
+                        luminosity
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">0..*</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">isOrdered</td>
+                      <td class="feature-detail">false</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="info-title">role constraints</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading" width="30%">Constrained Role</td>
+                      <td class="feature-heading" width="20%">Constraint Feature</td>
+                      <td class="feature-heading" width="50%">Constraint Value</td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="feature-detail" valign="top"><a href="#catalog.AstroObject.label">label [sample:catalog.AstroObject.label]</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail"></td>
+                      <td class="feature-heading" valign="top">
+                        datatype
+                      </td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#string">string</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail"></td>
+                      <td class="feature-heading" valign="top">
+                        semantic concept
+                      </td>
+                      <td valign="top" class="feature-detail">
+                        top concept: http://purl.org/astronomy/vocab/DataObjectTypes/Source<br>
+                        vocabulary URI: 
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div><br><h3><a name="catalog.AlignedEllipse"></a>2.2.2 dataType: AlignedEllipse
+    </h3>
+    <div align="center">
+      <table border="1" width="100%" cellspacing="2">
+        <tr>
+          <td class="objecttype-title" width="20%">vodml-id</td>
+          <td class="objecttype-name" colspan="1">catalog.AlignedEllipse</td>
+        </tr>
+        <tr>
+          <td class="info-title">description</td>
+          <td class="feature-detail" colspan="1">
+            TODO : Missing description : please, update your UML model asap.
+            
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td colspan="2" bgcolor="#cacaca">
+                  <table width="100%" border="0" cellpadding="3" cellspacing="1">
+                    <tr>
+                      <td width="20%" class="info-title">package</td>
+                      <td colspan="3" class="feature-detail"><a href="#catalog">catalog</a></td>
+                    </tr>
+                    <tr>
+                      <td width="20%" class="info-title">extends</td>
+                      <td colspan="3" class="feature-detail"><a href="#catalog.SkyError">SkyError [sample:catalog.SkyError]</a></td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="info-title">attributes</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading" width="20%">name</td>
+                      <td class="feature-heading" width="10%">feature</td>
+                      <td class="feature-heading" width="70%">value</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="catalog.AlignedEllipse.longError"></a><b>longError</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#real">real</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.AlignedEllipse.longError</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="catalog.AlignedEllipse.latError"></a><b>latError</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#real">real</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.AlignedEllipse.latError</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div><br><h3><a name="catalog.AstroObject"></a>2.2.3 objectType: AstroObject
+    </h3>
+    <div align="center">
+      <table border="1" width="100%" cellspacing="2">
+        <tr>
+          <td class="objecttype-title" width="20%">vodml-id</td>
+          <td class="objecttype-name" colspan="1">catalog.AstroObject</td>
+        </tr>
+        <tr>
+          <td class="info-title">description</td>
+          <td class="feature-detail" colspan="1">Generic base class for all astronomical objects.</td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td colspan="2" bgcolor="#cacaca">
+                  <table width="100%" border="0" cellpadding="3" cellspacing="1">
+                    <tr>
+                      <td width="20%" class="info-title">package</td>
+                      <td colspan="3" class="feature-detail"><a href="#catalog">catalog</a></td>
+                    </tr>
+                    <tr>
+                      <td class="info-title">Subclasses in this model</td>
+                      <td class="feature-detail" colspan="3"><a href="#catalog.AbstractSource">AbstractSource</a> 
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="info-title">attributes</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading" width="20%">name</td>
+                      <td class="feature-heading" width="10%">feature</td>
+                      <td class="feature-heading" width="70%">value</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="5"><a name="catalog.AstroObject.label"></a><b>label</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#string">string</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">semanticconcept</td>
+                      <td class="feature-detail">
+                        Semantic top concept:<br><a href="http://purl.org/astronomy/vocab/DataObjectTypes/DataObjectType" target="_blank">http://purl.org/astronomy/vocab/DataObjectTypes/DataObjectType</a><br>Vocabulary URI:<br><a href="http://purl.org/astronomy/vocab/DataObjectTypes" target="_blank">http://purl.org/astronomy/vocab/DataObjectTypes</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.AstroObject.label</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">0..1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div><br><h3><a name="catalog.CircleError"></a>2.2.4 dataType: CircleError
+    </h3>
+    <div align="center">
+      <table border="1" width="100%" cellspacing="2">
+        <tr>
+          <td class="objecttype-title" width="20%">vodml-id</td>
+          <td class="objecttype-name" colspan="1">catalog.CircleError</td>
+        </tr>
+        <tr>
+          <td class="info-title">description</td>
+          <td class="feature-detail" colspan="1">
+            TODO : Missing description : please, update your UML model asap.
+            
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td colspan="2" bgcolor="#cacaca">
+                  <table width="100%" border="0" cellpadding="3" cellspacing="1">
+                    <tr>
+                      <td width="20%" class="info-title">package</td>
+                      <td colspan="3" class="feature-detail"><a href="#catalog">catalog</a></td>
+                    </tr>
+                    <tr>
+                      <td width="20%" class="info-title">extends</td>
+                      <td colspan="3" class="feature-detail"><a href="#catalog.SkyError">SkyError [sample:catalog.SkyError]</a></td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="info-title">attributes</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading" width="20%">name</td>
+                      <td class="feature-heading" width="10%">feature</td>
+                      <td class="feature-heading" width="70%">value</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="catalog.CircleError.radius"></a><b>radius</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#real">real</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.CircleError.radius</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div><br><h3><a name="catalog.GenericEllipse"></a>2.2.5 dataType: GenericEllipse
+    </h3>
+    <div align="center">
+      <table border="1" width="100%" cellspacing="2">
+        <tr>
+          <td class="objecttype-title" width="20%">vodml-id</td>
+          <td class="objecttype-name" colspan="1">catalog.GenericEllipse</td>
+        </tr>
+        <tr>
+          <td class="info-title">description</td>
+          <td class="feature-detail" colspan="1">
+            TODO : Missing description : please, update your UML model asap.
+            
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td colspan="2" bgcolor="#cacaca">
+                  <table width="100%" border="0" cellpadding="3" cellspacing="1">
+                    <tr>
+                      <td width="20%" class="info-title">package</td>
+                      <td colspan="3" class="feature-detail"><a href="#catalog">catalog</a></td>
+                    </tr>
+                    <tr>
+                      <td width="20%" class="info-title">extends</td>
+                      <td colspan="3" class="feature-detail"><a href="#catalog.SkyError">SkyError [sample:catalog.SkyError]</a></td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="info-title">attributes</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading" width="20%">name</td>
+                      <td class="feature-heading" width="10%">feature</td>
+                      <td class="feature-heading" width="70%">value</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="catalog.GenericEllipse.major"></a><b>major</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#real">real</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.GenericEllipse.major</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">major axis of error ellipse</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="catalog.GenericEllipse.minor"></a><b>minor</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#real">real</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.GenericEllipse.minor</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="catalog.GenericEllipse.pa"></a><b>pa</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#real">real</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.GenericEllipse.pa</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">0..*</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">Position angle of error ellipse in coordinate system of position.</td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="info-title">constraints</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" colspan="3">self.major&gt;=self.minor</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" colspan="3">self.minor &gt;= 0</td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div><br><h3><a name="catalog.LuminosityMeasurement"></a>2.2.6 objectType: LuminosityMeasurement
+    </h3>
+    <div align="center">
+      <table border="1" width="100%" cellspacing="2">
+        <tr>
+          <td class="objecttype-title" width="20%">vodml-id</td>
+          <td class="objecttype-name" colspan="1">catalog.LuminosityMeasurement</td>
+        </tr>
+        <tr>
+          <td class="info-title">description</td>
+          <td class="feature-detail" colspan="1">
+            TODO : Missing description : please, update your UML model asap.
+            
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td colspan="2" bgcolor="#cacaca">
+                  <table width="100%" border="0" cellpadding="3" cellspacing="1">
+                    <tr>
+                      <td width="20%" class="info-title">package</td>
+                      <td colspan="3" class="feature-detail"><a href="#catalog">catalog</a></td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="info-title">attributes</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading" width="20%">name</td>
+                      <td class="feature-heading" width="10%">feature</td>
+                      <td class="feature-heading" width="70%">value</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="catalog.LuminosityMeasurement.value"></a><b>value</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#RealQuantity">RealQuantity</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.LuminosityMeasurement.value</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="catalog.LuminosityMeasurement.error"></a><b>error</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#RealQuantity">RealQuantity</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.LuminosityMeasurement.error</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">0..1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="catalog.LuminosityMeasurement.description"></a><b>description</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#string">string</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.LuminosityMeasurement.description</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">0..1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="catalog.LuminosityMeasurement.type"></a><b>type</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#catalog.LuminosityType">LuminosityType [sample:catalog.LuminosityType]</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.LuminosityMeasurement.type</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="info-title">references</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading" width="20%">name</td>
+                      <td class="feature-heading" width="10%">feature</td>
+                      <td class="feature-heading" width="70%">value</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="catalog.LuminosityMeasurement.filter"></a><b>filter</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#filter">filter</a>:<a href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/sample/filter/Filter.html#PhotometryFilter">PhotometryFilter</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.LuminosityMeasurement.filter</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div><br><h3><a name="catalog.LuminosityType"></a>2.2.7 enumeration: LuminosityType
+    </h3>
+    <table border="1" width="100%" cellspacing="2">
+      <tr>
+        <td class="objecttype-title" width="20%">vodml-id</td>
+        <td class="objecttype-name" colspan="2">catalog.LuminosityType</td>
+      </tr>
+      <tr>
+        <td class="info-title">description</td>
+        <td class="feature-detail" colspan="2">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td width="20%" class="info-title">package</td>
+        <td colspan="3" class="feature-detail"><a href="#catalog">catalog</a></td>
+      </tr>
+      <tr>
+        <td colspan="3" class="info-title" align="center">literals</td>
+      </tr>
+      <tr>
+        <td class="feature-heading" width="25%">name</td>
+        <td class="feature-heading" width="25%">feature</td>
+        <td class="feature-heading" width="50%">value</td>
+      </tr>
+      <tr>
+        <td class="feature-detail" rowspan="2" valign="top"><a name="catalog.LuminosityType.magnitude"></a>magnitude
+        </td>
+        <td class="feature-heading">vodml-id</td>
+        <td class="feature-detail">catalog.LuminosityType.magnitude</td>
+      </tr>
+      <tr>
+        <td class="feature-heading">description</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail" rowspan="2" valign="top"><a name="catalog.LuminosityType.flux"></a>flux
+        </td>
+        <td class="feature-heading">vodml-id</td>
+        <td class="feature-detail">catalog.LuminosityType.flux</td>
+      </tr>
+      <tr>
+        <td class="feature-heading">description</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+    </table><br><h3><a name="catalog.SDSSSource"></a>2.2.8 objectType: SDSSSource
+    </h3>
+    <div align="center">
+      <table border="1" width="100%" cellspacing="2">
+        <tr>
+          <td class="objecttype-title" width="20%">vodml-id</td>
+          <td class="objecttype-name" colspan="1">catalog.SDSSSource</td>
+        </tr>
+        <tr>
+          <td class="info-title">description</td>
+          <td class="feature-detail" colspan="1">
+            TODO : Missing description : please, update your UML model asap.
+            
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td colspan="2" bgcolor="#cacaca">
+                  <table width="100%" border="0" cellpadding="3" cellspacing="1">
+                    <tr>
+                      <td width="20%" class="info-title">package</td>
+                      <td colspan="3" class="feature-detail"><a href="#catalog">catalog</a></td>
+                    </tr>
+                    <tr>
+                      <td width="20%" class="info-title">extends</td>
+                      <td colspan="3" class="feature-detail"><a href="#catalog.AbstractSource">AbstractSource [sample:catalog.AbstractSource]</a></td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="info-title">role constraints</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading" width="30%">Constrained Role</td>
+                      <td class="feature-heading" width="20%">Constraint Feature</td>
+                      <td class="feature-heading" width="50%">Constraint Value</td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="feature-detail" valign="top"><a href="#catalog.AbstractSource.positionError">positionError [sample:catalog.AbstractSource.positionError]</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail"></td>
+                      <td class="feature-heading" valign="top">
+                        datatype
+                      </td>
+                      <td class="feature-detail"><a href="#catalog.AlignedEllipse">AlignedEllipse [sample:catalog.AlignedEllipse]</a></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div><br><h3><a name="catalog.SkyCoordinate"></a>2.2.9 dataType: SkyCoordinate
+    </h3>
+    <div align="center">
+      <table border="1" width="100%" cellspacing="2">
+        <tr>
+          <td class="objecttype-title" width="20%">vodml-id</td>
+          <td class="objecttype-name" colspan="1">catalog.SkyCoordinate</td>
+        </tr>
+        <tr>
+          <td class="info-title">description</td>
+          <td class="feature-detail" colspan="1">
+            TODO : Missing description : please, update your UML model asap.
+            
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td colspan="2" bgcolor="#cacaca">
+                  <table width="100%" border="0" cellpadding="3" cellspacing="1">
+                    <tr>
+                      <td width="20%" class="info-title">package</td>
+                      <td colspan="3" class="feature-detail"><a href="#catalog">catalog</a></td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="info-title">attributes</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading" width="20%">name</td>
+                      <td class="feature-heading" width="10%">feature</td>
+                      <td class="feature-heading" width="70%">value</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="catalog.SkyCoordinate.longitude"></a><b>longitude</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#RealQuantity">RealQuantity</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.SkyCoordinate.longitude</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">The longitude part of this position in units of degrees.</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="catalog.SkyCoordinate.latitude"></a><b>latitude</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#RealQuantity">RealQuantity</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.SkyCoordinate.latitude</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">The latitude part of this position in units of degrees.</td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="info-title">references</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading" width="20%">name</td>
+                      <td class="feature-heading" width="10%">feature</td>
+                      <td class="feature-heading" width="70%">value</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="catalog.SkyCoordinate.frame"></a><b>frame</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#catalog.SkyCoordinateFrame">SkyCoordinateFrame [sample:catalog.SkyCoordinateFrame]</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.SkyCoordinate.frame</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="info-title">constraints</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" colspan="3">-90&lt;=self.latitude.value&lt;=90 </td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" colspan="3">0&lt;=self.longitude.value &lt; 360 </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div><br><h3><a name="catalog.SkyCoordinateFrame"></a>2.2.10 objectType: SkyCoordinateFrame
+    </h3>
+    <div align="center">
+      <table border="1" width="100%" cellspacing="2">
+        <tr>
+          <td class="objecttype-title" width="20%">vodml-id</td>
+          <td class="objecttype-name" colspan="1">catalog.SkyCoordinateFrame</td>
+        </tr>
+        <tr>
+          <td class="info-title">description</td>
+          <td class="feature-detail" colspan="1">
+            TODO : Missing description : please, update your UML model asap.
+            
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td colspan="2" bgcolor="#cacaca">
+                  <table width="100%" border="0" cellpadding="3" cellspacing="1">
+                    <tr>
+                      <td width="20%" class="info-title">package</td>
+                      <td colspan="3" class="feature-detail"><a href="#catalog">catalog</a></td>
+                    </tr>
+                    <tr>
+                      <td class="info-title">referrers</td>
+                      <td class="feature-detail" colspan="3"><a href="#catalog.SkyCoordinate">SkyCoordinate</a> 
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="info-title">attributes</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading" width="20%">name</td>
+                      <td class="feature-heading" width="10%">feature</td>
+                      <td class="feature-heading" width="70%">value</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="catalog.SkyCoordinateFrame.name"></a><b>name</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#string">string</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.SkyCoordinateFrame.name</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="catalog.SkyCoordinateFrame.documentURI"></a><b>documentURI</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#anyURI">anyURI</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.SkyCoordinateFrame.documentURI</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="catalog.SkyCoordinateFrame.equinox"></a><b>equinox</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#string">string</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.SkyCoordinateFrame.equinox</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">0..1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail" valign="top" rowspan="4"><a name="catalog.SkyCoordinateFrame.system"></a><b>system</b></td>
+                      <td class="feature-heading">type</td>
+                      <td class="feature-detail"><a href="#ivoa">ivoa</a>:<a href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html#string">string</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">vodml-id</td>
+                      <td class="feature-detail">catalog.SkyCoordinateFrame.system</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">multiplicity</td>
+                      <td class="feature-detail">0..1</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading">description</td>
+                      <td class="feature-detail">
+                        TODO : Missing description : please, update your UML model asap.
+                        
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div><br><h3><a name="catalog.SkyError"></a>2.2.11 dataType: SkyError
+    </h3>
+    <div align="center">
+      <table border="1" width="100%" cellspacing="2">
+        <tr>
+          <td class="objecttype-title" width="20%">vodml-id</td>
+          <td class="objecttype-name" colspan="1">catalog.SkyError</td>
+        </tr>
+        <tr>
+          <td class="info-title">description</td>
+          <td class="feature-detail" colspan="1">Error of a position on the sky.</td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td colspan="2" bgcolor="#cacaca">
+                  <table width="100%" border="0" cellpadding="3" cellspacing="1">
+                    <tr>
+                      <td width="20%" class="info-title">package</td>
+                      <td colspan="3" class="feature-detail"><a href="#catalog">catalog</a></td>
+                    </tr>
+                    <tr>
+                      <td class="info-title">Subclasses in this model</td>
+                      <td class="feature-detail" colspan="3"><a href="#catalog.AlignedEllipse">AlignedEllipse</a> <a href="#catalog.CircleError">CircleError</a> <a href="#catalog.GenericEllipse">GenericEllipse</a> 
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div><br><h3><a name="catalog.Source"></a>2.2.12 objectType: Source
+    </h3>
+    <div align="center">
+      <table border="1" width="100%" cellspacing="2">
+        <tr>
+          <td class="objecttype-title" width="20%">vodml-id</td>
+          <td class="objecttype-name" colspan="1">catalog.Source</td>
+        </tr>
+        <tr>
+          <td class="info-title">description</td>
+          <td class="feature-detail" colspan="1">
+            TODO : Missing description : please, update your UML model asap.
+            
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td colspan="2" bgcolor="#cacaca">
+                  <table width="100%" border="0" cellpadding="3" cellspacing="1">
+                    <tr>
+                      <td width="20%" class="info-title">package</td>
+                      <td colspan="3" class="feature-detail"><a href="#catalog">catalog</a></td>
+                    </tr>
+                    <tr>
+                      <td width="20%" class="info-title">extends</td>
+                      <td colspan="3" class="feature-detail"><a href="#catalog.AbstractSource">AbstractSource [sample:catalog.AbstractSource]</a></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div><br><h3><a name="catalog.SourceClassification"></a>2.2.13 enumeration: SourceClassification
+    </h3>
+    <table border="1" width="100%" cellspacing="2">
+      <tr>
+        <td class="objecttype-title" width="20%">vodml-id</td>
+        <td class="objecttype-name" colspan="2">catalog.SourceClassification</td>
+      </tr>
+      <tr>
+        <td class="info-title">description</td>
+        <td class="feature-detail" colspan="2">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td width="20%" class="info-title">package</td>
+        <td colspan="3" class="feature-detail"><a href="#catalog">catalog</a></td>
+      </tr>
+      <tr>
+        <td colspan="3" class="info-title" align="center">literals</td>
+      </tr>
+      <tr>
+        <td class="feature-heading" width="25%">name</td>
+        <td class="feature-heading" width="25%">feature</td>
+        <td class="feature-heading" width="50%">value</td>
+      </tr>
+      <tr>
+        <td class="feature-detail" rowspan="2" valign="top"><a name="catalog.SourceClassification.star"></a>star
+        </td>
+        <td class="feature-heading">vodml-id</td>
+        <td class="feature-detail">catalog.SourceClassification.star</td>
+      </tr>
+      <tr>
+        <td class="feature-heading">description</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail" rowspan="2" valign="top"><a name="catalog.SourceClassification.galaxy"></a>galaxy
+        </td>
+        <td class="feature-heading">vodml-id</td>
+        <td class="feature-detail">catalog.SourceClassification.galaxy</td>
+      </tr>
+      <tr>
+        <td class="feature-heading">description</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail" rowspan="2" valign="top"><a name="catalog.SourceClassification.AGN"></a>AGN
+        </td>
+        <td class="feature-heading">vodml-id</td>
+        <td class="feature-detail">catalog.SourceClassification.AGN</td>
+      </tr>
+      <tr>
+        <td class="feature-heading">description</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail" rowspan="2" valign="top"><a name="catalog.SourceClassification.planet"></a>planet
+        </td>
+        <td class="feature-heading">vodml-id</td>
+        <td class="feature-detail">catalog.SourceClassification.planet</td>
+      </tr>
+      <tr>
+        <td class="feature-heading">description</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail" rowspan="2" valign="top"><a name="catalog.SourceClassification.unknown"></a>unknown
+        </td>
+        <td class="feature-heading">vodml-id</td>
+        <td class="feature-detail">catalog.SourceClassification.unknown</td>
+      </tr>
+      <tr>
+        <td class="feature-heading">description</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+    </table><br><h3><a name="catalog.TwoMassSource"></a>2.2.14 objectType: TwoMassSource
+    </h3>
+    <div align="center">
+      <table border="1" width="100%" cellspacing="2">
+        <tr>
+          <td class="objecttype-title" width="20%">vodml-id</td>
+          <td class="objecttype-name" colspan="1">catalog.TwoMassSource</td>
+        </tr>
+        <tr>
+          <td class="info-title">description</td>
+          <td class="feature-detail" colspan="1">
+            TODO : Missing description : please, update your UML model asap.
+            
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td colspan="2" bgcolor="#cacaca">
+                  <table width="100%" border="0" cellpadding="3" cellspacing="1">
+                    <tr>
+                      <td width="20%" class="info-title">package</td>
+                      <td colspan="3" class="feature-detail"><a href="#catalog">catalog</a></td>
+                    </tr>
+                    <tr>
+                      <td width="20%" class="info-title">extends</td>
+                      <td colspan="3" class="feature-detail"><a href="#catalog.AbstractSource">AbstractSource [sample:catalog.AbstractSource]</a></td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="info-title">role constraints</td>
+                    </tr>
+                    <tr>
+                      <td class="feature-heading" width="30%">Constrained Role</td>
+                      <td class="feature-heading" width="20%">Constraint Feature</td>
+                      <td class="feature-heading" width="50%">Constraint Value</td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="feature-detail" valign="top"><a href="#catalog.AbstractSource.positionError">positionError [sample:catalog.AbstractSource.positionError]</a></td>
+                    </tr>
+                    <tr>
+                      <td class="feature-detail"></td>
+                      <td class="feature-heading" valign="top">
+                        datatype
+                      </td>
+                      <td class="feature-detail"><a href="#catalog.GenericEllipse">GenericEllipse [sample:catalog.GenericEllipse]</a></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div><br><hr>
+    <h1>3.<a name="vodml-ids">Element Identifiers/VO-DMLrefs</a></h1>  
+    The following table shows all fully qualified vodml-ids for this data model.
+    It is ordered alphabetically and the identifiers are hyper-linked to the location
+    in the document where the actual element is fully defined.
+    
+    
+    <table style="border-style:solid;border-width:1px;" border="1" cellspacing="0" cellpadding="0">
+      <tr>
+        <td class="feature-heading">vodml-id</td>
+        <td class="feature-heading">feature type</td>
+        <td class="feature-heading">description</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#"></a></td>
+        <td class="feature-detail">vo-dml:model</td>
+        <td class="feature-detail">This is a sample data model. It contains the IVOA UML Profile and imports the IVOA_Profile data model with primitive types.
+          It has some sample relationships etc to be used in documentation etc.
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog">catalog</a></td>
+        <td class="feature-detail">package</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.AbstractSource">catalog.AbstractSource</a></td>
+        <td class="feature-detail">objectType</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.AbstractSource.classification">catalog.AbstractSource.classification</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.AbstractSource.description">catalog.AbstractSource.description</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.AbstractSource%0A        _12_1_1dfa04c4_1354024798700_361746_809%0A        luminosity%0A        %0A          TODO : Missing description : please, update your UML model asap.%0A        %0A        %0A          _12_1_1dfa04c4_1354024794825_962426_779%0A        %0A        %0A          0%0A          -1%0A        %0A      luminosity">catalog.AbstractSource
+            _12_1_1dfa04c4_1354024798700_361746_809
+            luminosity
+            
+            TODO : Missing description : please, update your UML model asap.
+            
+            
+            _12_1_1dfa04c4_1354024794825_962426_779
+            
+            
+            0
+            -1
+            
+            luminosity</a></td>
+        <td class="feature-detail">composition</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.AbstractSource.name">catalog.AbstractSource.name</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.AbstractSource.position">catalog.AbstractSource.position</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.AbstractSource.positionError">catalog.AbstractSource.positionError</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.AlignedEllipse">catalog.AlignedEllipse</a></td>
+        <td class="feature-detail">dataType</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.AlignedEllipse.latError">catalog.AlignedEllipse.latError</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.AlignedEllipse.longError">catalog.AlignedEllipse.longError</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.AstroObject">catalog.AstroObject</a></td>
+        <td class="feature-detail">objectType</td>
+        <td class="feature-detail">Generic base class for all astronomical objects.</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.AstroObject.label">catalog.AstroObject.label</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.CircleError">catalog.CircleError</a></td>
+        <td class="feature-detail">dataType</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.CircleError.radius">catalog.CircleError.radius</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.GenericEllipse">catalog.GenericEllipse</a></td>
+        <td class="feature-detail">dataType</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.GenericEllipse.major">catalog.GenericEllipse.major</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">major axis of error ellipse</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.GenericEllipse.minor">catalog.GenericEllipse.minor</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.GenericEllipse.pa">catalog.GenericEllipse.pa</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">Position angle of error ellipse in coordinate system of position.</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.LuminosityMeasurement">catalog.LuminosityMeasurement</a></td>
+        <td class="feature-detail">objectType</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.LuminosityMeasurement.description">catalog.LuminosityMeasurement.description</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.LuminosityMeasurement.error">catalog.LuminosityMeasurement.error</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.LuminosityMeasurement.filter">catalog.LuminosityMeasurement.filter</a></td>
+        <td class="feature-detail">reference</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.LuminosityMeasurement.type">catalog.LuminosityMeasurement.type</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.LuminosityMeasurement.value">catalog.LuminosityMeasurement.value</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.LuminosityType">catalog.LuminosityType</a></td>
+        <td class="feature-detail">enumeration</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.LuminosityType.flux">catalog.LuminosityType.flux</a></td>
+        <td class="feature-detail">literal</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.LuminosityType.magnitude">catalog.LuminosityType.magnitude</a></td>
+        <td class="feature-detail">literal</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.SDSSSource">catalog.SDSSSource</a></td>
+        <td class="feature-detail">objectType</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.SkyCoordinate">catalog.SkyCoordinate</a></td>
+        <td class="feature-detail">dataType</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.SkyCoordinate.frame">catalog.SkyCoordinate.frame</a></td>
+        <td class="feature-detail">reference</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.SkyCoordinate.latitude">catalog.SkyCoordinate.latitude</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">The latitude part of this position in units of degrees.</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.SkyCoordinate.longitude">catalog.SkyCoordinate.longitude</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">The longitude part of this position in units of degrees.</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.SkyCoordinateFrame">catalog.SkyCoordinateFrame</a></td>
+        <td class="feature-detail">objectType</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.SkyCoordinateFrame.documentURI">catalog.SkyCoordinateFrame.documentURI</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.SkyCoordinateFrame.equinox">catalog.SkyCoordinateFrame.equinox</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.SkyCoordinateFrame.name">catalog.SkyCoordinateFrame.name</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.SkyCoordinateFrame.system">catalog.SkyCoordinateFrame.system</a></td>
+        <td class="feature-detail">attribute</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.SkyError">catalog.SkyError</a></td>
+        <td class="feature-detail">dataType</td>
+        <td class="feature-detail">Error of a position on the sky.</td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.Source">catalog.Source</a></td>
+        <td class="feature-detail">objectType</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.SourceClassification">catalog.SourceClassification</a></td>
+        <td class="feature-detail">enumeration</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.SourceClassification.AGN">catalog.SourceClassification.AGN</a></td>
+        <td class="feature-detail">literal</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.SourceClassification.galaxy">catalog.SourceClassification.galaxy</a></td>
+        <td class="feature-detail">literal</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.SourceClassification.planet">catalog.SourceClassification.planet</a></td>
+        <td class="feature-detail">literal</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.SourceClassification.star">catalog.SourceClassification.star</a></td>
+        <td class="feature-detail">literal</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.SourceClassification.unknown">catalog.SourceClassification.unknown</a></td>
+        <td class="feature-detail">literal</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="feature-detail"><a href="#catalog.TwoMassSource">catalog.TwoMassSource</a></td>
+        <td class="feature-detail">objectType</td>
+        <td class="feature-detail">
+          TODO : Missing description : please, update your UML model asap.
+          
+        </td>
+      </tr>
+    </table>
+    <hr>
+    <h1>4.<a name="modelimports">Imported Models</a></h1>
+    <p>This section lists the external models imported by the current data model.
+      For each imported model we list URLs to the VO-DML and HTML representations and the prefix used for vodml-ids from inside
+      the model.
+    </p>
+    <h2><a name="filter"></a>4.1 filter
+    </h2>
+    <table border="1" cellspacing="2" width="100%">
+      <tr>
+        <td class="objecttype-title" width="20%">Model vodml-id</td>
+        <td class="objecttype-name">filter</td>
+      </tr>
+      <tr>
+        <td width="30%" class="info-title">url</td>
+        <td><a href="http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/sample/filter/Filter.vo-dml.xml">http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/sample/filter/Filter.vo-dml.xml</a></td>
+      </tr>
+      <tr>
+        <td width="30%" class="info-title">documentation url</td>
+        <td><a href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/sample/filter/Filter.html">https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/sample/filter/Filter.html</a></td>
+      </tr>
+    </table>
+    <h2><a name="ivoa"></a>4.2 ivoa
+    </h2>
+    <table border="1" cellspacing="2" width="100%">
+      <tr>
+        <td class="objecttype-title" width="20%">Model vodml-id</td>
+        <td class="objecttype-name">ivoa</td>
+      </tr>
+      <tr>
+        <td width="30%" class="info-title">url</td>
+        <td><a href="http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.vo-dml.xml">http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.vo-dml.xml</a></td>
+      </tr>
+      <tr>
+        <td width="30%" class="info-title">documentation url</td>
+        <td><a href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html">https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/IVOA.html</a></td>
+      </tr>
+    </table>
+  </body>
+</html>
