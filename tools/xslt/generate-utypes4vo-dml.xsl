@@ -19,7 +19,7 @@
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 xmlns:uml="http://schema.omg.org/spec/UML/2.0"
                	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1.0">
+  xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1">
   
   <!--
     Templates used by XSLT scripts to derive vodml-id and vodml-ref -s for attributes, references and compositions

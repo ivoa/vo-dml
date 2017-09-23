@@ -242,7 +242,10 @@
     <fail unless="model" message="Must define property 'model' in build.properties !" />
     <fail unless="xmi.source.profile" message="Must define property 'xmi.source.profile' in ${model}/vo-dml.properties (the profile according to which XMI file is structured) !" />
     <echo> Running xmi2vo-dml for ${model}/${xmi.source}</echo>
-    <xslt2 in="${model}/${xmi.source}" out="${vo-dml.dir}/__TEMP__.vo-dml.xml" style="${xslt}/xmi2vo-dml_${xmi.source.profile}.xsl"/>
+    <xslt2 in="${model}/${xmi.source}" out="${vo-dml.dir}/__TEMP__.vo-dml.xml" style="${xslt}/xmi2vo-dml_${xmi.source.profile}.xsl">
+    	<param name="vodmlSchemaNS" expression="${vodmlSchemaNS}" />   	
+    	<param name="vodmlSchemaLocation" expression="${vodmlSchemaLocation}" />   	
+    	</xslt2>
     <xslt2 in="${vo-dml.dir}/__TEMP__.vo-dml.xml" out="${vo-dml.dir}/${vo-dml.source}" style="${xslt}/generate-utypes4vo-dml.xsl"/>
   </target>
   
@@ -270,7 +273,7 @@
     <echo>+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</echo>
     <record name="${vo-dml.dir}/${vo-dml.source}.validation-report.txt" action="start"  append="yes"/>
     <schemavalidate file="${vo-dml.dir}/${vo-dml.source}" failonerror="false" >
-      <schema namespace="http://www.ivoa.net/xml/VODML/v1.0" file="${xsd}/vo-dml-v1.0.xsd"/>
+      <schema namespace="${vodmlSchemaNS}" file="${vodmlSchemaLocation}"/>
     </schemavalidate>
     <record name="${vo-dml.dir}/${vo-dml.source}.validation-report.txt" action="stop"/>
     <delete file="${vo-dml.dir}/validation.log" />	

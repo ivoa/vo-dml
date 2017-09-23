@@ -15,7 +15,7 @@ http://www.objectsbydesign.com/projects/xmi.css
 -->
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1.0">
+	xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1">
   
   <xsl:import href="common.xsl"/>
   <xsl:import href="utype.xsl"/>

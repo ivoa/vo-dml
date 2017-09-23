@@ -15,7 +15,7 @@ intermediate representation to a GraphViz dot file.
 								xmlns:exsl="http://exslt.org/common"
                 extension-element-prefixes="exsl"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-                xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1.0">
+                xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1">
   
   <xsl:import href="common.xsl"/>
   
@@ -170,7 +170,7 @@ digraph GVmap {  <!-- name must not be too long. the cmap that is generated uses
     </xsl:variable>
     <xsl:value-of select="$nodename"/> [
     URL="#<xsl:value-of select="vodml-id"/>"
-    label = "{&amp;lt;&amp;lt;enumeration&amp;gt;&amp;gt;\l<xsl:value-of select="$label"/><xsl:if test="literal">|<xsl:apply-templates select="literal"/></xsl:if>}"
+    label = "{&amp;lt;&amp;lt;enumeration&amp;gt;&amp;gt;\n<xsl:value-of select="$label"/><xsl:if test="literal">|<xsl:apply-templates select="literal"/></xsl:if>}"
     fillcolor="<xsl:apply-templates select="." mode="color"/>"
     ] ;
   </xsl:template>

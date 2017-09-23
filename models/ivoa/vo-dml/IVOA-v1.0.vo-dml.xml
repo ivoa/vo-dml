@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<vo-dml:model xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1.0"
+<vo-dml:model xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://www.ivoa.net/xml/VODML/v1.0 http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/xsd/vo-dml-v1.0.xsd">
+              xsi:schemaLocation="http://www.ivoa.net/xml/VODML/v1 http://www.ivoa.net/xml/VODML/vo-dml-v1.xsd">
   <name>ivoa</name>
   <description>This is the main reference data model containing primitive types used in other data models.</description>
   <title>IVOA Reference Types Data Model ala VO-URP</title>
   <version>1.0</version>
-  <lastModified>2017-09-19T13:04:17</lastModified>
+  <lastModified>2017-09-23T09:33:12</lastModified>
   <primitiveType>
     <vodml-id>Unit</vodml-id>
     <name>Unit</name>
@@ -32,6 +32,12 @@
   </primitiveType>
 
   <primitiveType>
+    <vodml-id>complex</vodml-id>
+    <name>complex</name>
+    <description>Represents a complex number, consisting of a real and imaginary component, both of which are reals. Note that in many contexts there is no native mapping for this type and it must be treated with a custom mapping.</description>
+  </primitiveType>
+
+  <primitiveType>
     <vodml-id>datetime</vodml-id>
     <name>datetime</name>
     <description>Represents a moment in time using a date+timestamp. </description>
@@ -47,6 +53,12 @@
     <vodml-id>nonnegativeInteger</vodml-id>
     <name>nonnegativeInteger</name>
     <description>An integer number from N, therefore greater than or equal to 0.</description>
+  </primitiveType>
+
+  <primitiveType>
+    <vodml-id>rational</vodml-id>
+    <name>rational</name>
+    <description>A rational number from Q, represented by two integers, a numerator and a denominator. A native mapping to a serialisation context does in general not exists.</description>
   </primitiveType>
 
   <primitiveType>
@@ -122,69 +134,6 @@ Ths is only allowed for these predefined ivoa types.</description>
         </description>
       <datatype>
         <vodml-ref>ivoa:real</vodml-ref>
-      </datatype>
-      <multiplicity>
-        <minOccurs>1</minOccurs>
-        <maxOccurs>1</maxOccurs>
-      </multiplicity>
-    </attribute>
-  </dataType>
-
-  <dataType>
-    <vodml-id>complex</vodml-id>
-    <name>complex</name>
-    <description>Represents a complex number, consisting of a real and imaginary component, both of which are reals. Note that in many contexts there is no native mapping for this type and it must be treated with a custom mapping.</description>
-    <attribute>
-      <vodml-id>complex.re</vodml-id>
-      <name>re</name>
-      <description>The real part of the complex number.</description>
-      <datatype>
-        <vodml-ref>ivoa:real</vodml-ref>
-      </datatype>
-      <multiplicity>
-        <minOccurs>1</minOccurs>
-        <maxOccurs>1</maxOccurs>
-      </multiplicity>
-    </attribute>
-    <attribute>
-      <vodml-id>complex.im</vodml-id>
-      <name>im</name>
-      <description>The imaginary part of the complex number.</description>
-      <datatype>
-        <vodml-ref>ivoa:real</vodml-ref>
-      </datatype>
-      <multiplicity>
-        <minOccurs>1</minOccurs>
-        <maxOccurs>1</maxOccurs>
-      </multiplicity>
-    </attribute>
-  </dataType>
-
-  <dataType>
-    <vodml-id>rational</vodml-id>
-    <name>rational</name>
-    <description>A rational number from Q, represented by two integers, a numerator and a denominator. A native mapping to a serialisation context does in general not exists.</description>
-    <constraint>
-      <description>denominator &gt; 0</description>
-    </constraint>
-    <attribute>
-      <vodml-id>rational.numerator</vodml-id>
-      <name>numerator</name>
-      <description>The numerator of the quotient defining the rational.</description>
-      <datatype>
-        <vodml-ref>ivoa:integer</vodml-ref>
-      </datatype>
-      <multiplicity>
-        <minOccurs>1</minOccurs>
-        <maxOccurs>1</maxOccurs>
-      </multiplicity>
-    </attribute>
-    <attribute>
-      <vodml-id>rational.denominator</vodml-id>
-      <name>denominator</name>
-      <description>The denominator of the rational. Must be greater than 0.</description>
-      <datatype>
-        <vodml-ref>ivoa:nonnegativeInteger</vodml-ref>
       </datatype>
       <multiplicity>
         <minOccurs>1</minOccurs>

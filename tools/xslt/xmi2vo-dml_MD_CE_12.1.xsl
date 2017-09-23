@@ -11,7 +11,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:uml="http://schema.omg.org/spec/UML/2.0" 
   xmlns:IVOA_UML_Profile='http://www.magicdraw.com/schemas/IVOA_UML_Profile.xmi'
-  xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1.0">
+  xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1">
 
   <xsl:import href="common.xsl" />
   <xsl:import href="utype.xsl" />
@@ -21,6 +21,10 @@
   <xsl:param name="lastModified" />
   <xsl:param name="lastModifiedText" />
   <xsl:param name="lastModifiedXSDDatetime"/>
+
+
+  <xsl:param name="vodmlSchemaNS" />
+  <xsl:param name="vodmlSchemaLocation" />
   
   <!-- xml index on xml:id -->
   <!-- problem with match="*" is that MagicDraw creates a <proxy> for Resource (for example) when it uses a stereotype and Resource shows then up twice with the same xmi:id. -->
@@ -60,9 +64,10 @@
     <xsl:variable name="modeltags" select="/xmi:XMI/IVOA_UML_Profile:model[@base_Model = $xmiid]" />
 
     <xsl:element name="vo-dml:model">
-      <xsl:namespace name="vo-dml">http://www.ivoa.net/xml/VODML/v1.0</xsl:namespace>
+      <xsl:namespace name="vo-dml" select="$vodmlSchemaNS"/>
       <xsl:namespace name="xsi">http://www.w3.org/2001/XMLSchema-instance</xsl:namespace>
-      <xsl:attribute name="xsi:schemaLocation" select="'http://www.ivoa.net/xml/VODML/v1.0 http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/xsd/vo-dml-v1.0.xsd'"/>
+      <xsl:attribute name="xsi:schemaLocation" select="concat($vodmlSchemaNS,' ',$vodmlSchemaLocation)" />
+      <!-- 'http://www.ivoa.net/xml/VODML/v1.0 http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/xsd/vo-dml-v1.0.xsd'" -->
 
 <!-- Note, in the MD CE 12.1 profile the name of the UML model is to be used as vodml-id, its title tag as name ! -->
       <xsl:element name="name">
