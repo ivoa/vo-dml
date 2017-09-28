@@ -230,7 +230,7 @@
   <!-- Description:                                                           -->
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <target name="schematron-compile">
-    <xslt2 basedir="." style="./schematron/iso_svrl_for_xslt2.xsl" in="${xsd}/vo-dml.v1.0.sch.xml" out="${xslt}/vo-dml.sch.xsl" />
+    <xslt2 basedir="." style="./schematron/iso_svrl_for_xslt2.xsl" in="${xsd}/vo-dml-v1.0.sch.xml" out="${xslt}/vo-dml.sch.xsl" />
   </target>
   
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->

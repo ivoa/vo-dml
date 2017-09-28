@@ -6,7 +6,7 @@
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                 xmlns:schold="http://www.ascc.net/xml/schematron"
                 xmlns:iso="http://purl.oclc.org/dsdl/schematron"
-                xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1.0"
+                xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
                 xmlns:fct="localFunctions"
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 version="2.0"><!--Implementers: please note that overriding process-prolog or process-root is 
@@ -197,7 +197,7 @@
 		 <xsl:value-of select="$fileNameParameter"/>  
 		 <xsl:value-of select="$fileDirParameter"/>
       </xsl:comment>
-      <svrl:ns-prefix-in-attribute-values uri="http://www.ivoa.net/xml/VODML/v1.0" prefix="vo-dml"/>
+      <svrl:ns-prefix-in-attribute-values uri="http://www.ivoa.net/xml/VODML/v1" prefix="vo-dml"/>
       <svrl:ns-prefix-in-attribute-values uri="localFunctions" prefix="fct"/>
       <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/2001/XMLSchema-instance" prefix="xsi"/>
       <svrl:active-pattern>
