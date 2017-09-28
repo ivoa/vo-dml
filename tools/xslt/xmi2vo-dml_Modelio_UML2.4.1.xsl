@@ -16,7 +16,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:uml="http://www.omg.org/spec/UML/20100901" 
   xmlns:IVOA_UML_Profile="http:///schemas/IVOA_UML_Profile/_XgC-YAfeEeahgduW7MgheA/0"
-  xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1.0">
+  xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1">
 
   <xsl:import href="common.xsl" />
   <xsl:import href="utype.xsl" />
@@ -26,6 +26,9 @@
   <xsl:param name="lastModified" />
   <xsl:param name="lastModifiedText" />
   <xsl:param name="lastModifiedXSDDatetime"/>
+
+  <xsl:param name="vodmlSchemaNS" />
+  <xsl:param name="vodmlSchemaLocation" />
 
   <!-- xml index on xml:id -->
   <!-- problem with match="*" is that MagicDraw creates a <proxy> for Resource (for example) when it uses a stereotype and Resource shows then up twice with the same xmi:id. -->
@@ -73,9 +76,9 @@
       is to be used for validating this generated document.
     </xsl:comment>&cr;
     <xsl:element name="vo-dml:model">
-      <xsl:namespace name="vo-dml">http://www.ivoa.net/xml/VODML/v1.0</xsl:namespace>
+      <xsl:namespace name="vo-dml" select="$vodmlSchemaNS"/>
       <xsl:namespace name="xsi">http://www.w3.org/2001/XMLSchema-instance</xsl:namespace>
-      <xsl:attribute name="xsi:schemaLocation" select="'http://www.ivoa.net/xml/VODML/v1.0 http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/xsd/vo-dml-v1.0.xsd'"/>
+      <xsl:attribute name="xsi:schemaLocation" select="concat($vodmlSchemaNS,' ',$vodmlSchemaLocation)" />
 
       <!-- Write model specification elements -->
       <xsl:apply-templates select="." mode="modelspec" />
@@ -109,6 +112,10 @@
     </xsl:element>
 
     <xsl:apply-templates select="." mode="description"/>
+
+    <xsl:element name="uri">
+      <xsl:value-of select="$modeltags/@uri" />
+    </xsl:element>
 
     <xsl:element name="title">
       <xsl:value-of select="$modeltags/@title" />
@@ -222,8 +229,8 @@
       <!-- Constraints - Modelio stores these at the Model level -->
       <xsl:apply-templates select="/xmi:XMI/uml:Model/ownedRule[@xmi:type='uml:Constraint' and @constrainedElement=$xmiid]" mode="elemConstraint"  />
       <!-- Subsets -->
-      <!-- <xsl:apply-templates select="." mode="roleConstraint"/> -->
-      <xsl:apply-templates select=".//*[@xmi:type='uml:Property']" mode="roleConstraint"/>
+      <!-- <xsl:apply-templates select=".//*[@xmi:type='uml:Property']" mode="roleConstraint"/> -->
+      <xsl:apply-templates select="/xmi:XMI/uml:Model/ownedRule[@xmi:type='uml:Constraint' and @constrainedElement=$xmiid]" mode="roleConstraint"  />
       <!-- Attributes -->
       <xsl:apply-templates select="ownedAttribute[@xmi:type='uml:Property' and not(@association) and not(@aggregation) ]" mode="attributes" />
       <!-- Compositions -->
@@ -271,6 +278,8 @@
 
       <!-- Constraints - Modelio stores these at the Model level -->
       <xsl:apply-templates select="/xmi:XMI/uml:Model/ownedRule[@xmi:type='uml:Constraint' and @constrainedElement=$xmiid]" mode="elemConstraint"  />
+      <!-- Subsets -->
+      <xsl:apply-templates select="/xmi:XMI/uml:Model/ownedRule[@xmi:type='uml:Constraint' and @constrainedElement=$xmiid]" mode="roleConstraint"  />
       <!-- Attributes -->
       <xsl:apply-templates select="ownedAttribute[@xmi:type='uml:Property' and not(@association)]" mode="attributes" />
       <!-- References -->
@@ -375,46 +384,59 @@
          Generate a 'constraint' node for a model element.         
        ============================================================ -->
   <xsl:template match="ownedRule[@xmi:type='uml:Constraint']"  mode="elemConstraint">
-    <xsl:element name="constraint" >
-      <xsl:element name="description">
-        <xsl:value-of select="./specification/@value"/>
-      </xsl:element>
-    </xsl:element>
-  </xsl:template>
 
+    <!-- check if this is a subset constraint -->
+    <xsl:variable name="isSubset">
+      <xsl:call-template name="checkIfSubset">
+        <xsl:with-param name="xmiid" select="@xmi:id" />
+      </xsl:call-template>
+    </xsl:variable>
+
+    <!-- write Normal constraint node -->
+    <xsl:if test="$isSubset='False'">
+      <xsl:element name="constraint" >
+	<xsl:element name="description">
+          <xsl:value-of select="./specification/@value"/>
+	</xsl:element>
+      </xsl:element>
+    </xsl:if>
+
+  </xsl:template>
 
   <!-- ============================================================
        Template: roleConstraint                                    
          Generates 'constraint' node for SubsettedRole.            
                                                                    
          For Modelio,                                              
-           the Constraint on the element is at the Model node      
-           its content is the vodmlid of the subsetted role        
-           the Subsets stereotype refers to the Constraint         
-         so need to find constraint, then see if it is a subset.   
-       ============================================================ -->
-  <xsl:template match="*[@xmi:type='uml:Property']" mode="roleConstraint">
-    <xsl:variable name="xmiid" select="@xmi:id"/>
+           There are 2 elements which define a 'subset' constraint.
+           a) 'Constraint' associated with the object holding 
+              the constrained element in a super type.
+           b) a 'subset' stereotype refering to the Constraint as its 'base_constraint'
 
-    <!-- check if the property is subsetted -->
-    <xsl:variable name="isSubsetted">
-      <xsl:call-template name="checkSubsetted">
+           The SubsettedRole content is on the Constraint as:
+             + 'name' - holds the vodml-id of the subsetted role
+             + 'specification/value' - holds the vodml-id of the constrained type
+       ============================================================ -->
+  <xsl:template match="ownedRule[@xmi:type='uml:Constraint']"  mode="roleConstraint">
+
+    <!-- check if this is a subset constraint -->
+    <xsl:variable name="isSubset">
+      <xsl:call-template name="checkIfSubset">
         <xsl:with-param name="xmiid" select="@xmi:id" />
       </xsl:call-template>
     </xsl:variable>
 
-    <xsl:if test="$isSubsetted='True'">
-      <xsl:variable name="constraint" select="/xmi:XMI/uml:Model/ownedRule[@xmi:type='uml:Constraint' and @constrainedElement=$xmiid]" />
+    <xsl:if test="$isSubset='True'">
       <xsl:element name="constraint">
         <xsl:attribute name="xsi:type" select="'vo-dml:SubsettedRole'"/>
         <xsl:element name="role">
           <xsl:call-template name="asElementRef">
-            <xsl:with-param name="xmiidref" select="$constraint/specification/@value"/>
+            <xsl:with-param name="xmiidref" select="@name"/>
           </xsl:call-template>
         </xsl:element>
         <xsl:element name="datatype">
           <xsl:call-template name="asElementRef">
-            <xsl:with-param name="xmiidref" select="@type"/>
+            <xsl:with-param name="xmiidref" select="specification/@value"/>
           </xsl:call-template>
         </xsl:element>
         <xsl:call-template name="semanticconceptstereotype">
@@ -424,7 +446,6 @@
     </xsl:if>
 
   </xsl:template>
-
 
   <!-- ============================================================
        Template: references                                        
@@ -498,7 +519,7 @@
     <xsl:variable name="minOccurs">
       <xsl:choose>
         <xsl:when test="lowerValue">         <!-- check element exists -->
-          <xsl:choose>          
+          <xsl:choose>          
           <xsl:when test="lowerValue/@value"><xsl:value-of select="lowerValue/@value"/></xsl:when> <!-- check element has value field -->
           <xsl:otherwise>0</xsl:otherwise> <!-- no value field.. default=0 -->
           </xsl:choose>
@@ -706,6 +727,27 @@
     </xsl:choose>
   </xsl:template>
 
+
+  <!-- ============================================================
+       Template: checkIfSubset                                    
+         Check if a constraint is a 'Subset' constraint           
+
+         Is there a 'subset' element referring to this element
+         as its base_constraint?
+       ============================================================ -->
+  <xsl:template name="checkIfSubset">
+    <xsl:param name="xmiid"/>
+
+    <xsl:variable name="subset" select="/xmi:XMI/*[local-name()='subset' and @base_Constraint=$xmiid]" />
+    <xsl:choose>
+      <xsl:when test="$subset">
+	<xsl:value-of select="'True'" />
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:value-of select="'False'" />
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
 
   <!-- ============================================================
        Template: checkSubsetted                                    
