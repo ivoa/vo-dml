@@ -40,7 +40,6 @@
   <property file="${model}/vo-dml.properties" />
   <property name="ant.contrib.jar" value="./libs/ant-contrib-0.6.jar"/>
 
-
   <!-- define XSLT2 task -->
   <presetdef name="xslt2">
     <!-- The processor=SaxonLiaison setting causes our custom XSLTLiaison class to be used. -->
