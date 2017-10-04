@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+   04/2017: reference to the same schema as this of the VOTable (LM)
+ -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	xmlns="http://www.ivoa.net/xml/VOTable/v1.4_vodml" targetNamespace="http://www.ivoa.net/xml/VOTable/v1.4_vodml">
+	<!-- VODML types -->
+  
+  <xs:complexType name="VODML">
+    <xs:annotation>
+      <xs:documentation>
+      A VODML element MUST have at least one model and at least on globals or templates.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="MODEL" type="Model" minOccurs="1" maxOccurs="unbounded" />
+      <xs:choice minOccurs="1" maxOccurs="unbounded">
+        <xs:element name="GLOBALS" type="VODMLGlobals"/>
+        <xs:element name="TEMPLATES" type="VODMLInstanceTemplates"/> 
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+  
+	<xs:complexType name="VODMLGlobals">
+		<xs:annotation>
+			<xs:documentation>
+				This section will describe all global instances, that is, instances that are not created once per row of a table.
+				It starts with a list of all the MODELs, then has all the GLOBAL instances.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="INSTANCE" type="VODMLObject" minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+    <xs:attribute name="ID" type="xs:ID" use="optional">
+    <!-- TODO document purpose of this attribute? Can be used by targetid in  ORM reference to refer to
+    the collection of objects containing the actually referenced one. Analagously to using the targetid to
+    refer to a template object that also represents a collection of objects. -->
+    </xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="VODMLInstanceTemplates">
+		<xs:annotation>
+			<xs:documentation>
+				This section will describe all the instance, that is, instances created once per row of a table.
+				The instances can have FIELDrefs describing how to fill individual primtive valuesthe templates from TABLEDATA values.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+      <xs:element name="INSTANCE" type="VODMLObject" minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+    <xs:attribute name="tableref" type="xs:IDREF" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="Model">
+		<xs:sequence>
+			<xs:element name="NAME">
+        <xs:simpleType>
+          <xs:restriction base="xs:string" > <!-- xsd:NCName ? -->
+            <xs:pattern value="[a-zA-Z][a-zA-Z0-9_\-]*">
+              <xs:annotation>
+                <xs:documentation>
+                  The name of the model that is to be used as prefix when referring to its elements in a VODMLRef.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:pattern>
+          </xs:restriction>			
+        </xs:simpleType>
+      </xs:element>
+			<xs:element name="URL" type="xs:anyURI" />
+			<xs:element name="IDENTIFIER" type="xs:string" minOccurs="0" >
+      <xs:annotation>
+      <xs:documentation>
+      The IVOA Identifier by which the model is registered in an IVOA registry.
+      </xs:documentation>
+      </xs:annotation>
+      </xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="VODMLInstance" abstract="true">
+	  <xs:attribute name="dmtype" type="VODMLRef" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="VODMLObject">
+		<xs:complexContent>
+			<xs:extension base="VODMLInstance">
+				<xs:sequence>
+					<!-- lets be explicit -->
+					<xs:element name="PRIMARYKEY" type="VODMLObjectIdentifier" minOccurs="0" >
+						<xs:annotation>
+							<xs:documentation>
+								Objects, i.e. ObjectType instances, can have a unique identifier which can be used in ORM-like references.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+          <xs:element name="CONTAINER" type="VODMLReference" minOccurs="0" maxOccurs="1" >
+            <xs:annotation>
+              <xs:documentation>
+              Possible reference to a parent container of the object. May be given when the objects is not already
+              contained in a colleciton on the parent object.
+              Note, a VODMLReference can have multiple instances, but a CONTAINER MUST have only 1 instance.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+					<xs:element name="ATTRIBUTE" type="VODMLAttribute" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="COMPOSITION" type="VODMLComposition" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="REFERENCE" type="VODMLReference" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+        <xs:attribute name="ID" type="xs:ID">
+          <xs:annotation>
+            <xs:documentation>
+              Can be used by references as identifier for an object or template.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+  <xs:complexType name="VODMLPrimitive"> <!-- in place of PARAM -->
+    <xs:complexContent>
+      <xs:extension base="VODMLInstance">
+        <xs:sequence>
+    			<xs:element name="OPTIONMAPPING" type="VODMLOptionMapping" minOccurs="0" maxOccurs="unbounded">
+    			  <xs:annotation>
+		    	    <xs:documentation>
+			        Allows one to map OPTION values in VOTABLE to either EnumLiterals in data model (if TYPE identifies VO-DML/ Enumeration), 
+			        or SKOSConcept in external SKOS vocabulary (if ROLE is a VO-DML/Attribute containing a skosconcept declaration).
+			        NB: IF the datatype of the ROLE is an Enumeration, and there is NO optionmapping it implies that the values ARE the enum literals, or the concepts.
+			        </xs:documentation>
+			      </xs:annotation>
+			    </xs:element>  
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+	<xs:complexType name="VODMLLiteral"> <!-- in place of PARAM -->
+    <xs:complexContent>
+      <xs:extension base="VODMLPrimitive">
+        <xs:attribute name="value" type="xs:string" use="required"/>
+        <xs:attribute name="unit" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+	</xs:complexType>
+  
+  
+  <xs:complexType name="VODMLOptionMapping">
+  <xs:annotation>
+    <xs:documentation>
+    Allows one to map particular values defined in a VALUES/OPTION list to enumeration literals
+    in the VO-DML model or to a concept in a SKOS vocabulary.
+    </xs:documentation>
+  </xs:annotation>
+    <xs:sequence>
+      <xs:element name="MAPPEDOPTION" type="xs:string" minOccurs="1" maxOccurs="1" >
+        <xs:annotation>
+          <xs:documentation>
+          The VOTable OPTION value that is being mapped to enum literal or semantic concept.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:choice>
+        <xs:element name="ENUMLITERAL" type="VODMLRef" minOccurs="1" maxOccurs="1" />
+        <xs:element name="SEMANTICCONCEPT" type="xs:anyURI" minOccurs="1" maxOccurs="1" >
+          <xs:annotation>
+            <xs:documentation>
+            TBD anyURI as an identifier of concepts made sense for SKOS vocabularies. How about general semantic vocabularies?
+            I.e. is it ok for the type be xs:string iso xs:anyURI?
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+  
+	<xs:complexType name="VODMLFieldOrParamRef">
+    <xs:complexContent>
+      <xs:extension base="VODMLPrimitive">
+        <xs:attribute name="ref" type="xs:IDREF" use="required" />
+      </xs:extension>
+    </xs:complexContent>
+	</xs:complexType>
+
+
+	<xs:complexType name="VODMLRole">
+      <xs:attribute name="dmrole" type="VODMLRef" use="optional">
+        <xs:annotation>
+          <xs:documentation>
+          NB: dmrole is optional (at the moment) *only* because VODMLObject::CONTAINER (a VODMLReferece) needs no role.
+          ATTRIBUTE, COMPOSITION and REFERENCE MUST have a ROLE.
+          Hard to model in XML schema, could be done in Schematron.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+	</xs:complexType>
+
+  <xs:complexType name="VODMLAttribute">
+    <xs:complexContent>
+      <xs:extension base="VODMLRole">
+        <xs:annotation>
+          <xs:documentation>
+          a VODMLAttribute MUST have a dmrole attribute
+          </xs:documentation>
+        </xs:annotation>
+        <xs:choice>
+          <xs:choice maxOccurs="unbounded">
+            <xs:element name="COLUMN" type="VODMLFieldOrParamRef">
+              <xs:annotation>
+                <xs:documentation>
+                  When used inside a "template" structured type, i.e. one defined inside a TABLE element,
+                  this allows one to indicate a FIELD representing the attribute.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="CONSTANT" type="VODMLFieldOrParamRef">
+              <xs:annotation>
+                <xs:documentation>
+                  Ref to a predefined PARAM.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="LITERAL" type="VODMLLiteral">
+              <xs:annotation>
+                <xs:documentation>
+                  Simple, primitive value, possibly with extra attributes.
+                  Similar to PARAM, but restricted attribute set.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:choice>
+          <xs:element name="INSTANCE" type="VODMLObject" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>
+                Structured value, must be instance of DataType
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:choice>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+	<xs:complexType name="VODMLComposition">
+	  <xs:annotation>
+	    <xs:documentation>
+	    A VODMLCollection represents collection of child objects in a VO-DML Composition relationship.
+	    The collection receives the VO-DML ref to the composition relation, the member objects inside the 
+	    collection do *not* have a ROLE.
+	    </xs:documentation>
+	  </xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="VODMLRole">
+        <xs:annotation>
+          <xs:documentation>
+          a VODMLComposition MUST have a dmrole attribute, even though it is optional on VODMLRole
+          </xs:documentation>
+        </xs:annotation>
+				<xs:sequence>
+					<xs:element name="INSTANCE" type="VODMLObject" maxOccurs="unbounded" minOccurs="0">
+					  <xs:annotation>
+					    <xs:documentation>
+					    An object in the collection. It type must conform to the declared type of the VO-DML Collection.
+					    I.e. it must be that exact type or a sub-type.
+					    </xs:documentation>
+					  </xs:annotation>
+					</xs:element>
+          <xs:element name="EXTINSTANCES" type="xs:IDREF" maxOccurs="unbounded" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+             Reference to an annotation of a a collection of objects that mnay contain child objects for this composition.
+             This may be a GLOBALS or (a VODMLObject in )a TEMPLATES. 
+             These object in general SHOULD have a CONTAINER pointer to the parent object.
+             If they don't, then all objects in the collection are assumed to be children of the current parent object.
+             NB we should add a consistency constraint on this.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+  
+
+	<xs:complexType name="VODMLReference">
+		<xs:annotation>
+			<xs:documentation>
+				Provides a reference to an ObjectType instance. Must allow that instance to be identified exactly.
+				Various different modes depending on how that instance is serialized.
+				- If as a Standalone instance in same VOTable document, an IDREF can point to its ID (use IDREF).
+				- If as a row in a TABLE a relational foreign key can be used (use ORMREFERENCE)
+				- if a remote document contains the serialized instance, a URI must be used that MUST be able to identify that object
+				inside its remote serialization (a REMOTEREFERENCE must be used).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="VODMLRole">
+        <xs:annotation>
+          <xs:documentation>
+          a VODMLReference MUST have a dmrole attribute UNLESS it is used in a VODMLObject::CONTAINER, 
+          even though it is optional on VODMLRole.
+          </xs:documentation>
+        </xs:annotation>
+				<xs:sequence>
+					<xs:choice maxOccurs="unbounded">
+						<xs:element name="IDREF" type="xs:IDREF">
+							<xs:annotation>
+								<xs:documentation>
+									MUST identify an individual/standalone object defined in the same XML document.
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="REMOTEREFERENCE" type="xs:anyURI" />
+						<xs:element name="FOREIGNKEY" type="VODMLORMReference" />
+					</xs:choice>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+  <xs:complexType name="VODMLORMReference">
+    <xs:annotation>
+      <xs:documentation>
+        A reference to an object identified by that object's identifier.
+        The referenced object must be stored in a TABLE and must have been annotated with an explicit identifier.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="VODMLObjectIdentifier">
+        <xs:sequence>
+          <xs:element name="TARGETID" type="xs:IDREF" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                This element MAY be used to provide a IDREF to the (ID of a) VODMLObject template annotating
+                the TABLE containing the referenced object.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="VODMLObjectIdentifierField">
+    <xs:choice>
+      <xs:element name="LITERAL" type="VODMLLiteral"/>
+      <xs:element name="COLUMN" type="VODMLFieldOrParamRef"/>
+      <xs:element name="CONSTANT" type="VODMLFieldOrParamRef"/>
+    </xs:choice>
+  </xs:complexType>
+
+	<xs:complexType name="VODMLObjectIdentifier">
+		<xs:annotation>
+			<xs:documentation>
+				This type allows a generic identifier to be assigned to an object. The identifier consists of one or more IDFIELD-s.
+				This way of identifying an object is equivalent to using one or more columns in a table as primary key.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PKFIELD" maxOccurs="unbounded" type="VODMLObjectIdentifierField">
+				<xs:annotation>
+					<xs:documentation>
+						A field in an identifier. The identifier may contain 1 or more such fields. Their order 
+						is important, ORM references to the object must use the same order for their foreign key.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="VODMLRef">
+		<xs:annotation>
+			<xs:documentation>
+				The valid format of a reference to a VO-DML element. (Used to be 'UTYPE').
+				MUST have a prefix that elsewhere in the VOTable is defined to correspond to a VO-DML model defining the referenced
+				element.
+				See "mapping document", https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/doc/MappingDMtoVOTable-v1.0-201607xx.docx.
+				Suffix, separated from the prefix by a ':', MUST correspond to the vodml-id of the referenced element in the
+				VO-DML/XML representation
+				of that model.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[a-zA-Z][a-zA-Z0-9_\-]*:[a-zA-Z][a-zA-Z0-9\._]*" />
+		</xs:restriction>
+	</xs:simpleType>
+
+</xs:schema>

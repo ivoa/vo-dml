@@ -1,0 +1,889 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--W3C Schema for VOTable = Virtual Observatory Tabular Format .Version 1.0 : 15-Apr-2002 .Version 1.09: 23-Jan-2004 Version 
+	1.09 .Version 1.09: 30-Jan-2004 Version 1.091 .Version 1.09: 22-Mar-2004 Version 1.092 .Version 1.094: 02-Jun-2004 GROUP 
+	does not contain FIELD .Version 1.1 : 10-Jun-2004 remove the complexContent .Version 1.11: GL: 23-May-2006 remove most root 
+	elements, use name= type= iso ref= structure .Version 1.11: GL: 29-Aug-2006 review and added comments (prefixed by GL) before 
+	sending to Francois Ochsenbein .Version 1.12: FO: Preliminary Version 1.2 .Version 1.18: FO: Tested (jax) version 1.2 .Version 
+	1.19: FO: Completed INFO attributes .Version 1.20: FO: Added xtype; content-role is less restrictive (May2009) .Version 1.20a: 
+	FO: PR-20090710 Cosmetics. .Version 1.20b: FO: INFO does not accept sub-elements (2009-09-29) .Version 1.20c: FO: elementFormDefault="qualified" 
+	to stay compatible with 1.1 .Version 1.3: MT: Added BINARY2 element .Version 1.3: MT: Further relaxed LINK content-role type 
+	to token -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	xmlns="http://www.ivoa.net/xml/VOTable/v1.4_vodml" targetNamespace="http://www.ivoa.net/xml/VOTable/v1.4_vodml">
+	<xs:annotation>
+		<xs:documentation>
+			VOTable is meant to serialize tabular documents in the
+			context of Virtual Observatory applications. This schema
+			corresponds to the VOTable document available from
+			http://www.ivoa.net/Documents/latest/VOT.html
+		</xs:documentation>
+	</xs:annotation>
+	<!-- Here we define some interesting new datatypes: - anyTEXT may have embedded XHTML (conforming HTML) - astroYear is an 
+		epoch in Besselian or Julian year, e.g. J2000 - arrayDEF specifies an array size e.g. 12x23x* - dataType defines the acceptable 
+		datatypes - ucdType defines the acceptable UCDs (UCD1+) - precType defines the acceptable precisions - yesno defines just 
+		the 2 alternatives -->
+	<xs:complexType name="anyTEXT" mixed="true">
+		<xs:sequence>
+			<xs:any minOccurs="0" maxOccurs="unbounded" processContents="skip" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="astroYear">
+		<xs:restriction base="xs:token">
+			<xs:pattern value="[JB]?[0-9]+([.][0-9]*)?" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ucdType">
+		<xs:restriction base="xs:token">
+			<xs:annotation>
+				<xs:documentation>
+					Accept UCD1+
+					Accept also old UCD1 (but not / + %) including SIAP convention (with :)
+				</xs:documentation>
+			</xs:annotation>
+			<xs:pattern value="[A-Za-z0-9_.:;\-]*" />
+			<!-- UCD1 use also / + % -->
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="arrayDEF">
+		<xs:restriction base="xs:token">
+			<xs:pattern value="([0-9]+x)*[0-9]*[*]?(s\W)?" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="encodingType">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:enumeration value="gzip" />
+			<xs:enumeration value="base64" />
+			<xs:enumeration value="dynamic" />
+			<xs:enumeration value="none" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="dataType">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:enumeration value="boolean" />
+			<xs:enumeration value="bit" />
+			<xs:enumeration value="unsignedByte" />
+			<xs:enumeration value="short" />
+			<xs:enumeration value="int" />
+			<xs:enumeration value="long" />
+			<xs:enumeration value="char" />
+			<xs:enumeration value="unicodeChar" />
+			<xs:enumeration value="float" />
+			<xs:enumeration value="double" />
+			<xs:enumeration value="floatComplex" />
+			<xs:enumeration value="doubleComplex" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="precType">
+		<xs:restriction base="xs:token">
+			<xs:pattern value="[EF]?[1-9][0-9]*" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="yesno">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:enumeration value="yes" />
+			<xs:enumeration value="no" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="Min">
+		<xs:attribute name="value" type="xs:string" use="required" />
+		<xs:attribute name="inclusive" type="yesno" default="yes" />
+	</xs:complexType>
+	<xs:complexType name="Max">
+		<xs:attribute name="value" type="xs:string" use="required" />
+		<xs:attribute name="inclusive" type="yesno" default="yes" />
+	</xs:complexType>
+	<xs:complexType name="Option">
+		<xs:sequence>
+			<xs:element name="OPTION" type="Option" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:token" />
+		<xs:attribute name="value" type="xs:string" use="required" />
+	</xs:complexType>
+	<!-- VALUES expresses the values that can be taken by the data in a column or by a parameter -->
+	<xs:complexType name="Values">
+		<xs:sequence>
+			<xs:element name="MIN" type="Min" minOccurs="0" />
+			<xs:element name="MAX" type="Max" minOccurs="0" />
+			<xs:element name="OPTION" type="Option" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="ID" type="xs:ID" />
+		<xs:attribute name="type" default="legal">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="legal" />
+					<xs:enumeration value="actual" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="null" type="xs:token" />
+		<xs:attribute name="ref" type="xs:IDREF" />
+		<!-- xs:attribute name="invalid" type="yesno" default="no"/ -->
+	</xs:complexType>
+	<!-- The LINK is a URL (href) or some other kind of reference (gref) -->
+	<xs:complexType name="Link">
+		<xs:annotation>
+			<xs:documentation>
+				content-role was previsouly restricted as: <![CDATA[
+    <xs:attribute name="content-role">
+      <xs:simpleType>
+        <xs:restriction base="xs:NMTOKEN">
+          <xs:enumeration value="query"/>
+          <xs:enumeration value="hints"/>
+          <xs:enumeration value="doc"/>
+          <xs:enumeration value="location"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>]]>;
+				is now a token.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="ID" type="xs:ID" />
+		<xs:attribute name="content-role" type="xs:token" />
+		<xs:attribute name="content-type" type="xs:token" />
+		<xs:attribute name="title" type="xs:string" />
+		<xs:attribute name="value" type="xs:string" />
+		<xs:attribute name="href" type="xs:anyURI" />
+		<xs:attribute name="gref" type="xs:token" />
+		<!-- Deprecated in V1.1 -->
+		<xs:attribute name="action" type="xs:anyURI" />
+	</xs:complexType>
+	<!-- INFO is defined in Version 1.2 as a PARAM of String type <xs:complexType name="Info"> <xs:complexContent> <xs:restriction 
+		base="Param"> <xs:attribute name="unit" fixed=""/> <xs:attribute name="datatype" fixed="char"/> <xs:attribute name="arraysize" 
+		fixed="*"/> </xs:restriction> </xs:complexContent> </xs:complexType> -or- as a full definition: <xs:complexType name="Info"> 
+		<xs:sequence> <xs:element name="DESCRIPTION" type="anyTEXT" minOccurs="0"/> <xs:element name="VALUES" type="Values" minOccurs="0"/> 
+		<xs:element name="LINK" type="Link" minOccurs="0" maxOccurs="unbounded"/> </xs:sequence> <xs:attribute name="name" type="xs:token" 
+		use="required"/> <xs:attribute name="value" type="xs:string" use="required"/> <xs:attribute name="ID" type="xs:ID"/> <xs:attribute 
+		name="unit" type="xs:token"/> <xs:attribute name="xtype" type="xs:token"/> <xs:attribute name="ref" type="xs:IDREF"/> <xs:attribute 
+		name="ucd" type="ucdType"/> <xs:attribute name="utype" type="xs:string"/> </xs:complexType> -->
+	<!-- No sub-element is accepted in INFO for backward compatibility -->
+	<xs:complexType name="Info">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="ID" type="xs:ID" />
+				<xs:attribute name="name" type="xs:token" use="required" />
+				<xs:attribute name="value" type="xs:string" use="required" />
+				<xs:attribute name="unit" type="xs:token" />
+				<xs:attribute name="xtype" type="xs:token" />
+				<xs:attribute name="ref" type="xs:IDREF" />
+				<xs:attribute name="ucd" type="ucdType" />
+				<xs:attribute name="utype" type="xs:string" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- Expresses the coordinate system we are using -->
+	<!-- Deprecated V1.2 -->
+	<xs:complexType name="CoordinateSystem">
+		<xs:annotation>
+			<xs:documentation>
+				Deprecated in Version 1.2
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="ID" type="xs:ID" use="required" />
+				<xs:attribute name="equinox" type="astroYear" />
+				<xs:attribute name="epoch" type="astroYear" />
+				<xs:attribute name="system" default="eq_FK5">
+					<xs:simpleType>
+						<xs:restriction base="xs:NMTOKEN">
+							<xs:enumeration value="eq_FK4" />
+							<xs:enumeration value="eq_FK5" />
+							<xs:enumeration value="ICRS" />
+							<xs:enumeration value="ecl_FK4" />
+							<xs:enumeration value="ecl_FK5" />
+							<xs:enumeration value="galactic" />
+							<xs:enumeration value="supergalactic" />
+							<xs:enumeration value="xy" />
+							<xs:enumeration value="barycentric" />
+							<xs:enumeration value="geo_app" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="Definitions">
+		<xs:annotation>
+			<xs:documentation>
+				Deprecated in Version 1.1
+			</xs:documentation>
+		</xs:annotation>
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="COOSYS" type="CoordinateSystem" />
+			<!-- Deprecated in V1.2 -->
+			<xs:element name="PARAM" type="Param" />
+		</xs:choice>
+	</xs:complexType>
+	<!-- FIELD is the definition of what is in a column of the table -->
+	<xs:complexType name="Field">
+		<xs:sequence>
+			<!-- minOccurs="0" maxOccurs="unbounded" -->
+			<xs:element name="DESCRIPTION" type="anyTEXT" minOccurs="0" />
+			<xs:element name="VALUES" type="Values" minOccurs="0" />
+			<!-- maxOccurs="2" -->
+			<xs:element name="LINK" type="Link" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="ID" type="xs:ID" />
+		<xs:attribute name="unit" type="xs:token" />
+		<xs:attribute name="datatype" type="dataType" use="required" />
+		<xs:attribute name="precision" type="precType" />
+		<xs:attribute name="width" type="xs:positiveInteger" />
+		<xs:attribute name="xtype" type="xs:token" />
+		<xs:attribute name="ref" type="xs:IDREF" />
+		<xs:attribute name="name" type="xs:token" use="required" />
+		<xs:attribute name="ucd" type="ucdType" />
+		<xs:attribute name="utype" type="xs:string" />
+		<xs:attribute name="arraysize" type="xs:string" />
+		<!-- GL: is the next deprecated element remaining (is not in PARAM, but will in new model be inherited) -->
+		<xs:attribute name="type">
+			<!-- type is not in the Version 1.1, but is kept for backward compatibility purposes -->
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="hidden" />
+					<xs:enumeration value="no_query" />
+					<xs:enumeration value="trigger" />
+					<xs:enumeration value="location" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<!-- A PARAM is similar to a FIELD, but it also has a "value" attribute -->
+	<!-- GL: implemented here as a subtype as suggested we do in Kyoto. -->
+	<xs:complexType name="Param">
+		<xs:complexContent>
+			<xs:extension base="Field">
+				<xs:attribute name="value" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- GROUP groups columns; may include descriptions, fields/params/groups -->
+	<xs:complexType name="Group">
+		<xs:sequence>
+			<xs:element name="DESCRIPTION" type="anyTEXT" minOccurs="0" />
+			<!-- GL I guess I can understand the next choice element as one may (?) really want to group fields and params and groups 
+				in a particular order. -->
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="FIELDref" type="FieldRef" />
+				<xs:element name="PARAMref" type="ParamRef" />
+				<xs:element name="PARAM" type="Param" />
+				<xs:element name="GROUP" type="Group" />
+				<!-- GL a GroupRef could remove recursion -->
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="ID" type="xs:ID" />
+		<xs:attribute name="name" type="xs:token" />
+		<xs:attribute name="ref" type="xs:IDREF" />
+		<xs:attribute name="ucd" type="ucdType" />
+		<xs:attribute name="utype" type="xs:string" />
+	</xs:complexType>
+	<!-- FIELDref and PARAMref are references to FIELD or PARAM defined in the parent TABLE or RESOURCE -->
+	<!-- GL This can not be enforced in XML Schema, so why not IDREF in <Group> ? In particular if the UCD and utype attributes 
+		will NOT be added -->
+	<xs:complexType name="FieldRef">
+		<xs:attribute name="ref" type="xs:IDREF" use="required" />
+		<xs:attribute name="ucd" type="ucdType" />
+		<xs:attribute name="utype" type="xs:string" />
+	</xs:complexType>
+	<xs:complexType name="ParamRef">
+		<xs:attribute name="ref" type="xs:IDREF" use="required" />
+		<xs:attribute name="ucd" type="ucdType" />
+		<xs:attribute name="utype" type="xs:string" />
+	</xs:complexType>
+	<!-- DATA is the actual table data, in one of three formats -->
+	<!-- GL in Kyoto we discussed the option of having the specific Data items be subtypes of Data: -->
+	<!-- <xs:complexType name="Data" abstract="true"/> <xs:complexType name="TableData"> <xs:complexContent> <xs:extension base="Data"> 
+		... etc </xs:extension> </xs:complexContent> </xs:complexType> -->
+	<xs:complexType name="Data">
+		<xs:annotation>
+			<xs:documentation>
+				Added in Version 1.2: INFO for diagnostics
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="TABLEDATA" type="TableData" />
+				<xs:element name="BINARY" type="Binary" />
+				<xs:element name="BINARY2" type="Binary2" />
+				<xs:element name="FITS" type="FITS" />
+			</xs:choice>
+			<xs:element name="INFO" type="Info" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+	<!-- Pure XML data -->
+	<xs:complexType name="TableData">
+		<xs:sequence>
+			<xs:element name="TR" type="Tr" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Td">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<!-- xs:attribute name="ref" type="xs:IDREF"/ -->
+				<xs:annotation>
+					<xs:documentation>
+						The 'encoding' attribute is added here to avoid
+						problems of code generators which do not properly
+						interpret the TR/TD structures.
+						'encoding' was chosen because it appears in
+						appendix A.5
+					</xs:documentation>
+				</xs:annotation>
+				<xs:attribute name="encoding" type="encodingType" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="Tr">
+		<xs:annotation>
+			<xs:documentation>
+				The ID attribute is added here to the TR tag to avoid
+				problems of code generators which do not properly
+				interpret the TR/TD structures
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TD" type="Td" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="ID" type="xs:ID" />
+	</xs:complexType>
+	<!-- FITS file, perhaps with specification of which extension to seek to -->
+	<xs:complexType name="FITS">
+		<xs:sequence>
+			<xs:element name="STREAM" type="Stream" />
+		</xs:sequence>
+		<xs:attribute name="extnum" type="xs:positiveInteger" />
+	</xs:complexType>
+	<!-- BINARY data format -->
+	<xs:complexType name="Binary">
+		<xs:sequence>
+			<xs:element name="STREAM" type="Stream" />
+		</xs:sequence>
+	</xs:complexType>
+	<!-- BINARY2 data format -->
+	<xs:complexType name="Binary2">
+		<xs:sequence>
+			<xs:element name="STREAM" type="Stream" />
+		</xs:sequence>
+	</xs:complexType>
+	<!-- STREAM can be local or remote, encoded or not -->
+	<xs:complexType name="Stream">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="type" default="locator">
+					<xs:simpleType>
+						<xs:restriction base="xs:NMTOKEN">
+							<xs:enumeration value="locator" />
+							<xs:enumeration value="other" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="href" type="xs:anyURI" />
+				<xs:attribute name="actuate" default="onRequest">
+					<xs:simpleType>
+						<xs:restriction base="xs:NMTOKEN">
+							<xs:enumeration value="onLoad" />
+							<xs:enumeration value="onRequest" />
+							<xs:enumeration value="other" />
+							<xs:enumeration value="none" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="encoding" type="encodingType" default="none" />
+				<xs:attribute name="expires" type="xs:dateTime" />
+				<xs:attribute name="rights" type="xs:token" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- A TABLE is a sequence of FIELD/PARAMs and LINKS and DESCRIPTION, possibly followed by a DATA section -->
+	<xs:complexType name="Table">
+		<xs:annotation>
+			<xs:documentation>
+				Added in Version 1.2: INFO for diagnostics
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DESCRIPTION" type="anyTEXT" minOccurs="0" />
+			<!-- GL: why a choice iso for example -->
+			<!-- <xs:element name="PARAM" type="Param" minOccurs="0" maxOccurs="unbounded"/> <xs:element name="FIELD" type="Field" 
+				minOccurs="0" maxOccurs="unbounded"/> <xs:element name="GROUP" type="Group" minOccurs="0" maxOccurs="unbounded"/> -->
+			<!-- This could also enforce groups to be defined after the fields and params to which they must have a reference, which 
+				is somewhat more logical -->
+			<!-- Added Version 1.2: -->
+			<xs:element name="INFO" type="Info" minOccurs="0" maxOccurs="unbounded" />
+			<!-- An empty table without any FIELD/PARAM should not be acceptable -->
+			<xs:choice minOccurs="1" maxOccurs="unbounded">
+				<xs:element name="FIELD" type="Field" />
+				<xs:element name="PARAM" type="Param" />
+				<xs:element name="GROUP" type="Group" />
+			</xs:choice>
+			<xs:element name="LINK" type="Link" minOccurs="0" maxOccurs="unbounded" />
+			<!-- This would allow several DATA parts in a table (future extension?) <xs:sequence minOccurs="0" maxOccurs="unbounded"> 
+				<xs:element name="DATA" type="Data"/> <xs:element name="INFO" type="Info" minOccurs="0" maxOccurs="unbounded"/> </xs:sequence> -->
+			<xs:element name="DATA" type="Data" minOccurs="0" />
+			<xs:element name="INFO" type="Info" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="ID" type="xs:ID" />
+		<xs:attribute name="name" type="xs:token" />
+		<xs:attribute name="ref" type="xs:IDREF" />
+		<xs:attribute name="ucd" type="ucdType" />
+		<xs:attribute name="utype" type="xs:string" />
+		<xs:attribute name="nrows" type="xs:nonNegativeInteger" />
+	</xs:complexType>
+	<!-- RESOURCES can contain DESCRIPTION, (INFO|PARAM|COSYS), LINK, TABLEs -->
+	<xs:complexType name="Resource">
+		<xs:annotation>
+			<xs:documentation>
+				Added in Version 1.2: INFO for diagnostics in several places
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DESCRIPTION" type="anyTEXT" minOccurs="0" />
+			<xs:element name="INFO" type="Info" minOccurs="0" maxOccurs="unbounded" />
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="COOSYS" type="CoordinateSystem" />
+				<!-- Deprecated in V1.2 -->
+				<xs:element name="GROUP" type="Group" />
+				<xs:element name="PARAM" type="Param" />
+			</xs:choice>
+			<xs:sequence minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="LINK" type="Link" minOccurs="0" maxOccurs="unbounded" />
+				<xs:choice>
+					<xs:element name="TABLE" type="Table" />
+					<xs:element name="RESOURCE" type="Resource" />
+				</xs:choice>
+				<xs:element name="INFO" type="Info" minOccurs="0" maxOccurs="unbounded" />
+			</xs:sequence>
+			<!-- Suggested Doug Tody, to include new RESOURCE types -->
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:token" />
+		<xs:attribute name="ID" type="xs:ID" />
+		<xs:attribute name="utype" type="xs:string" />
+		<xs:attribute name="type" default="results">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="results" />
+					<xs:enumeration value="meta" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<!-- Suggested Doug Tody, to include new RESOURCE attributes -->
+		<xs:anyAttribute namespace="##other" processContents="lax" />
+	</xs:complexType>
+  
+  
+	<!-- VODML types -->
+  
+  <xs:complexType name="VODML">
+    <xs:annotation>
+      <xs:documentation>
+      A VODML element MUST have at least one model and at least on globals or templates.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="MODEL" type="Model" minOccurs="1" maxOccurs="unbounded" />
+      <xs:choice minOccurs="1" maxOccurs="unbounded">
+        <xs:element name="GLOBALS" type="VODMLGlobals"/>
+        <xs:element name="TEMPLATES" type="VODMLInstanceTemplates"/> 
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+  
+	<xs:complexType name="VODMLGlobals">
+		<xs:annotation>
+			<xs:documentation>
+				This section will describe all global instances, that is, instances that are not created once per row of a table.
+				It starts with a list of all the MODELs, then has all the GLOBAL instances.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="INSTANCE" type="VODMLObject" minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+    <xs:attribute name="ID" type="xs:ID" use="optional">
+    <!-- TODO document purpose of this attribute? Can be used by targetid in  ORM reference to refer to
+    the collection of objects containing the actually referenced one. Analagously to using the targetid to
+    refer to a template object that also represents a collection of objects. -->
+    </xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="VODMLInstanceTemplates">
+		<xs:annotation>
+			<xs:documentation>
+				This section will describe all the instance, that is, instances created once per row of a table.
+				The instances can have FIELDrefs describing how to fill individual primtive valuesthe templates from TABLEDATA values.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+      <xs:element name="INSTANCE" type="VODMLObject" minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+    <xs:attribute name="tableref" type="xs:IDREF" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="Model">
+		<xs:sequence>
+			<xs:element name="NAME">
+        <xs:simpleType>
+          <xs:restriction base="xs:string" > <!-- xsd:NCName ? -->
+            <xs:pattern value="[a-zA-Z][a-zA-Z0-9_\-]*">
+              <xs:annotation>
+                <xs:documentation>
+                  The name of the model that is to be used as prefix when referring to its elements in a VODMLRef.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:pattern>
+          </xs:restriction>			
+        </xs:simpleType>
+      </xs:element>
+			<xs:element name="URL" type="xs:anyURI" />
+			<xs:element name="IDENTIFIER" type="xs:string" minOccurs="0" >
+      <xs:annotation>
+      <xs:documentation>
+      The IVOA Identifier by which the model is registered in an IVOA registry.
+      </xs:documentation>
+      </xs:annotation>
+      </xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="VODMLInstance" abstract="true">
+	  <xs:attribute name="dmtype" type="VODMLRef" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="VODMLObject">
+		<xs:complexContent>
+			<xs:extension base="VODMLInstance">
+				<xs:sequence>
+					<!-- lets be explicit -->
+					<xs:element name="PRIMARYKEY" type="VODMLObjectIdentifier" minOccurs="0" >
+						<xs:annotation>
+							<xs:documentation>
+								Objects, i.e. ObjectType instances, can have a unique identifier which can be used in ORM-like references.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+          <xs:element name="CONTAINER" type="VODMLReference" minOccurs="0" maxOccurs="1" >
+            <xs:annotation>
+              <xs:documentation>
+              Possible reference to a parent container of the object. May be given when the objects is not already
+              contained in a colleciton on the parent object.
+              Note, a VODMLReference can have multiple instances, but a CONTAINER MUST have only 1 instance.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+					<xs:element name="ATTRIBUTE" type="VODMLAttribute" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="COMPOSITION" type="VODMLComposition" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="REFERENCE" type="VODMLReference" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+        <xs:attribute name="ID" type="xs:ID">
+          <xs:annotation>
+            <xs:documentation>
+              Can be used by references as identifier for an object or template.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+  <xs:complexType name="VODMLPrimitive"> <!-- in place of PARAM -->
+    <xs:complexContent>
+      <xs:extension base="VODMLInstance">
+        <xs:sequence>
+    			<xs:element name="OPTIONMAPPING" type="VODMLOptionMapping" minOccurs="0" maxOccurs="unbounded">
+    			  <xs:annotation>
+		    	    <xs:documentation>
+			        Allows one to map OPTION values in VOTABLE to either EnumLiterals in data model (if TYPE identifies VO-DML/ Enumeration), 
+			        or SKOSConcept in external SKOS vocabulary (if ROLE is a VO-DML/Attribute containing a skosconcept declaration).
+			        NB: IF the datatype of the ROLE is an Enumeration, and there is NO optionmapping it implies that the values ARE the enum literals, or the concepts.
+			        </xs:documentation>
+			      </xs:annotation>
+			    </xs:element>  
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+	<xs:complexType name="VODMLLiteral"> <!-- in place of PARAM -->
+    <xs:complexContent>
+      <xs:extension base="VODMLPrimitive">
+        <xs:attribute name="value" type="xs:string" use="required"/>
+        <xs:attribute name="unit" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+	</xs:complexType>
+  
+  
+  <xs:complexType name="VODMLOptionMapping">
+  <xs:annotation>
+    <xs:documentation>
+    Allows one to map particular values defined in a VALUES/OPTION list to enumeration literals
+    in the VO-DML model or to a concept in a SKOS vocabulary.
+    </xs:documentation>
+  </xs:annotation>
+    <xs:sequence>
+      <xs:element name="MAPPEDOPTION" type="xs:string" minOccurs="1" maxOccurs="1" >
+        <xs:annotation>
+          <xs:documentation>
+          The VOTable OPTION value that is being mapped to enum literal or semantic concept.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:choice>
+        <xs:element name="ENUMLITERAL" type="VODMLRef" minOccurs="1" maxOccurs="1" />
+        <xs:element name="SEMANTICCONCEPT" type="xs:anyURI" minOccurs="1" maxOccurs="1" >
+          <xs:annotation>
+            <xs:documentation>
+            TBD anyURI as an identifier of concepts made sense for SKOS vocabularies. How about general semantic vocabularies?
+            I.e. is it ok for the type be xs:string iso xs:anyURI?
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+  
+	<xs:complexType name="VODMLFieldOrParamRef">
+    <xs:complexContent>
+      <xs:extension base="VODMLPrimitive">
+        <xs:attribute name="ref" type="xs:IDREF" use="required" />
+      </xs:extension>
+    </xs:complexContent>
+	</xs:complexType>
+
+
+	<xs:complexType name="VODMLRole">
+      <xs:attribute name="dmrole" type="VODMLRef" use="optional">
+        <xs:annotation>
+          <xs:documentation>
+          NB: dmrole is optional (at the moment) *only* because VODMLObject::CONTAINER (a VODMLReferece) needs no role.
+          ATTRIBUTE, COMPOSITION and REFERENCE MUST have a ROLE.
+          Hard to model in XML schema, could be done in Schematron.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+	</xs:complexType>
+
+  <xs:complexType name="VODMLAttribute">
+    <xs:complexContent>
+      <xs:extension base="VODMLRole">
+        <xs:annotation>
+          <xs:documentation>
+          a VODMLAttribute MUST have a dmrole attribute
+          </xs:documentation>
+        </xs:annotation>
+          <xs:choice>
+            <xs:choice maxOccurs="unbounded">
+              <xs:element name="COLUMN" type="VODMLFieldOrParamRef">
+                <xs:annotation>
+                  <xs:documentation>
+                    When used inside a "template" structured type, i.e. one defined inside a TABLE element,
+                    this allows one to indicate a FIELD representing the attribute.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="CONSTANT" type="VODMLFieldOrParamRef">
+                <xs:annotation>
+                  <xs:documentation>
+                    Ref to a predefined PARAM.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="LITERAL" type="VODMLLiteral">
+                <xs:annotation>
+                  <xs:documentation>
+                    Simple, primitive value, possibly with extra attributes.
+                    Similar to PARAM, but restricted attribute set.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+            </xs:choice>
+            <xs:element name="INSTANCE" type="VODMLObject" maxOccurs="unbounded">
+              <xs:annotation>
+                <xs:documentation>
+                  Structured value, must be instance of DataType
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:choice>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+	<xs:complexType name="VODMLComposition">
+	  <xs:annotation>
+	    <xs:documentation>
+	    A VODMLCollection represents collection of child objects in a VO-DML Composition relationship.
+	    The collection receives the VO-DML ref to the composition relation, the member objects inside the 
+	    collection do *not* have a ROLE.
+	    </xs:documentation>
+	  </xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="VODMLRole">
+        <xs:annotation>
+          <xs:documentation>
+          a VODMLComposition MUST have a dmrole attribute, even though it is optional on VODMLRole
+          </xs:documentation>
+        </xs:annotation>
+				<xs:sequence>
+					<xs:element name="INSTANCE" type="VODMLObject" maxOccurs="unbounded" minOccurs="0">
+					  <xs:annotation>
+					    <xs:documentation>
+					    An object in the collection. It type must conform to the declared type of the VO-DML Collection.
+					    I.e. it must be that exact type or a sub-type.
+					    </xs:documentation>
+					  </xs:annotation>
+					</xs:element>
+          <xs:element name="EXTINSTANCES" type="xs:IDREF" maxOccurs="unbounded" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+             Reference to an annotation of a a collection of objects that mnay contain child objects for this composition.
+             This may be a GLOBALS or (a VODMLObject in )a TEMPLATES. 
+             These object in general SHOULD have a CONTAINER pointer to the parent object.
+             If they don't, then all objects in the collection are assumed to be children of the current parent object.
+             NB we should add a consistency constraint on this.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+  
+
+	<xs:complexType name="VODMLReference">
+		<xs:annotation>
+			<xs:documentation>
+				Provides a reference to an ObjectType instance. Must allow that instance to be identified exactly.
+				Various different modes depending on how that instance is serialized.
+				- If as a Standalone instance in same VOTable document, an IDREF can point to its ID (use IDREF).
+				- If as a row in a TABLE a relational foreign key can be used (use ORMREFERENCE)
+				- if a remote document contains the serialized instance, a URI must be used that MUST be able to identify that object
+				inside its remote serialization (a REMOTEREFERENCE must be used).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="VODMLRole">
+        <xs:annotation>
+          <xs:documentation>
+          a VODMLReference MUST have a dmrole attribute UNLESS it is used in a VODMLObject::CONTAINER, 
+          even though it is optional on VODMLRole.
+          </xs:documentation>
+        </xs:annotation>
+				<xs:sequence>
+					<xs:choice maxOccurs="unbounded">
+						<xs:element name="IDREF" type="xs:IDREF">
+							<xs:annotation>
+								<xs:documentation>
+									MUST identify an individual/standalone object defined in the same XML document.
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="REMOTEREFERENCE" type="xs:anyURI" />
+						<xs:element name="FOREIGNKEY" type="VODMLORMReference" />
+					</xs:choice>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+  <xs:complexType name="VODMLORMReference">
+    <xs:annotation>
+      <xs:documentation>
+        A reference to an object identified by that object's identifier.
+        The referenced object must be stored in a TABLE and must have been annotated with an explicit identifier.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="VODMLObjectIdentifier">
+        <xs:sequence>
+          <xs:element name="TARGETID" type="xs:IDREF" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                This element MAY be used to provide a IDREF to the (ID of a) VODMLObject template annotating
+                the TABLE containing the referenced object.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="VODMLObjectIdentifierField">
+    <xs:choice>
+      <xs:element name="LITERAL" type="VODMLLiteral"/>
+      <xs:element name="COLUMN" type="VODMLFieldOrParamRef"/>
+      <xs:element name="CONSTANT" type="VODMLFieldOrParamRef"/>
+    </xs:choice>
+  </xs:complexType>
+
+	<xs:complexType name="VODMLObjectIdentifier">
+		<xs:annotation>
+			<xs:documentation>
+				This type allows a generic identifier to be assigned to an object. The identifier consists of one or more IDFIELD-s.
+				This way of identifying an object is equivalent to using one or more columns in a table as primary key.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PKFIELD" maxOccurs="unbounded" type="VODMLObjectIdentifierField">
+				<xs:annotation>
+					<xs:documentation>
+						A field in an identifier. The identifier may contain 1 or more such fields. Their order 
+						is important, ORM references to the object must use the same order for their foreign key.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="VODMLRef">
+		<xs:annotation>
+			<xs:documentation>
+				The valid format of a reference to a VO-DML element. (Used to be 'UTYPE').
+				MUST have a prefix that elsewhere in the VOTable is defined to correspond to a VO-DML model defining the referenced
+				element.
+				See "mapping document", https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/doc/MappingDMtoVOTable-v1.0-201607xx.docx.
+				Suffix, separated from the prefix by a ':', MUST correspond to the vodml-id of the referenced element in the
+				VO-DML/XML representation
+				of that model.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[a-zA-Z][a-zA-Z0-9_\-]*:[a-zA-Z][a-zA-Z0-9\._]*" />
+		</xs:restriction>
+	</xs:simpleType>
+  
+	<!-- VOTable is the root element -->
+	<xs:element name="VOTABLE">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="VODML" type="VODML" minOccurs="0" />
+				<xs:element name="DESCRIPTION" type="anyTEXT" minOccurs="0" />
+				<xs:element name="DEFINITIONS" type="Definitions" minOccurs="0" />
+				<!-- Deprecated -->
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="COOSYS" type="CoordinateSystem" />
+					<!-- Deprecated in V1.2 -->
+					<xs:element name="GROUP" type="Group" />
+					<xs:element name="PARAM" type="Param" />
+					<xs:element name="INFO" type="Info" minOccurs="0" maxOccurs="unbounded" />
+				</xs:choice>
+				<xs:element name="RESOURCE" type="Resource" minOccurs="1" maxOccurs="unbounded" />
+				<xs:element name="INFO" type="Info" minOccurs="0" maxOccurs="unbounded" />
+			</xs:sequence>
+			<xs:attribute name="ID" type="xs:ID" />
+			<xs:attribute name="version">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="1.3" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+
+
+
+</xs:schema>
