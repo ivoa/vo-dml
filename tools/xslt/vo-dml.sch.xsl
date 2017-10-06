@@ -574,6 +574,7 @@ Attribute <xsl:text/>
                      context="constraint[@xsi:type='vo-dml:SubsettedRole']"/>
     <xsl:variable name="owner" select="../name()"/>
     <xsl:variable name="target" select="fct:vo-dml_element(./role/vodml-ref,/vo-dml:model)"/>
+    <xsl:variable name="dtype" select="fct:vo-dml_element(./datatype/vodml-ref,/vo-dml:model)"/>
 
 		  <!--ASSERT -->
 <xsl:choose>
@@ -585,10 +586,30 @@ Attribute <xsl:text/>
             <xsl:apply-templates select="." mode="schematron-select-full-path"/>
           </xsl:attribute>
           <svrl:text>
-Target of subsets constraint on '<xsl:text/>
+Target role of subsets constraint on '<xsl:text/>
             <xsl:value-of select="../vodml-id"/>
             <xsl:text/>' with vodml-ref <xsl:text/>
-            <xsl:value-of select="./vodml-ref"/>
+            <xsl:value-of select="./role/vodml-ref"/>
+            <xsl:text/> can not be found
+    </svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		  <!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="$dtype"/>
+      <xsl:otherwise>
+        <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl" test="$dtype">
+          <xsl:attribute name="flag">error</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+          </xsl:attribute>
+          <svrl:text>
+Target datatype of subsets constraint on '<xsl:text/>
+            <xsl:value-of select="../vodml-id"/>
+            <xsl:text/>' with vodml-ref <xsl:text/>
+            <xsl:value-of select="./datatype/vodml-ref"/>
             <xsl:text/> can not be found
     </svrl:text>
         </svrl:failed-assert>

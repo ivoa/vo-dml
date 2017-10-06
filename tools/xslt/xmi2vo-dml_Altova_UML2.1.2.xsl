@@ -16,7 +16,7 @@
   xmlns:uml="http://schema.omg.org/spec/UML/2.1.2" 
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:IVOA_UML_Profile='http://www.magicdraw.com/schemas/IVOA_UML_Profile.xmi'
-  xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1.0">
+  xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1">
 
   <xsl:import href="common.xsl" />
   <xsl:import href="utype.xsl" />
@@ -27,6 +27,9 @@
   <xsl:param name="lastModifiedText" />
   <xsl:param name="lastModifiedXSDDatetime"/>
   
+  <xsl:param name="vodmlSchemaNS" />
+  <xsl:param name="vodmlSchemaLocation" />
+
   <!-- xml index on xml:id -->
   <!-- problem with match="*" is that MagicDraw creates a <proxy> for Resource (for example) when it uses a stereotype and Resource shows then up twice with the same xmi:id. -->
   <xsl:key name="classid" match="*/uml:Model//*" use="@xmi:id" />
@@ -70,22 +73,18 @@
   <xsl:template match="packagedElement[@xmi:type='uml:Model']">
     <xsl:comment>
       This XML document is generated without explicit xmlns specification
-      as it complicates
-      writing XSLT scripts against it [TBD add a link to some web dicsussions
-      about it].
-      It is understood that the XML
-      schema in
-      http://volute.g-vo.org/svn/trunk/projects/theory/snapdm/specification/uml/intermediateModel.xsd
+      as it complicates writing XSLT scripts against it.
+      [TBD add a link to some web dicsussion about it]
+      It is understood that the XML schema in
+        http://volute.g-vo.org/svn/trunk/projects/theory/snapdm/specification/uml/intermediateModel.xsd
       is to be used for validating this generated document.
     </xsl:comment>&cr;
     <xsl:element name="vo-dml:model">
-    <xsl:namespace name="vo-dml">http://www.ivoa.net/xml/VODML/v1.0</xsl:namespace>
+      <xsl:namespace name="vo-dml" select="$vodmlSchemaNS"/>
       <xsl:namespace name="xsi">http://www.w3.org/2001/XMLSchema-instance</xsl:namespace>
-      <xsl:attribute name="xsi:schemaLocation" select="'http://www.ivoa.net/xml/VODML/v1.0 http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/xsd/vo-dml-v1.0.xsd'"/>
+      <xsl:attribute name="xsi:schemaLocation" select="concat($vodmlSchemaNS,' ',$vodmlSchemaLocation)" />
     
-<!-- 
-      <xsl:attribute name="id"><xsl:value-of select="@xmi:id"></xsl:value-of></xsl:attribute>
- -->
+      <!-- Write model specification elements -->
       <xsl:element name="name">
         <xsl:value-of select="@name" />
       </xsl:element>
