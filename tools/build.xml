@@ -272,7 +272,7 @@
     <echo>+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</echo>
     <record name="${vo-dml.dir}/${vo-dml.source}.validation-report.txt" action="start"  append="yes"/>
     <schemavalidate file="${vo-dml.dir}/${vo-dml.source}" failonerror="false" >
-      <schema namespace="${vodmlSchemaNS}" file="${vodmlSchemaLocation}"/>
+      <schema namespace="${vodmlSchemaNS}" url="${vodmlSchemaLocation}"/>
     </schemavalidate>
     <record name="${vo-dml.dir}/${vo-dml.source}.validation-report.txt" action="stop"/>
     <delete file="${vo-dml.dir}/validation.log" />	
