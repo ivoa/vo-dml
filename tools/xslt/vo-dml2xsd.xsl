@@ -22,11 +22,12 @@ being able to choose a more specific sub-type.
 <!ENTITY bl "<xsl:text> </xsl:text>">
 ]>
 
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-                xmlns:map="http://volute.g-vo.org/dm/vo-dml-mapping/v0.9"
-                xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1.0">
-  
+                xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
+                xmlns:vodml-base="http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1"
+                >
+
   <xsl:import href="common.xsl"/>
   <xsl:import href="common-mapping.xsl"/>
   
@@ -43,49 +44,45 @@ being able to choose a more specific sub-type.
   <xsl:param name="lastModifiedText"/>
 
   <xsl:param name="mapping_file"/> <!-- file containing mapping info for java generation such as root packages for all models -->
-  <xsl:param name="schemalocation_root" select="'https://volute.googlecode.com/svn/trunk/projects/dm/vo-dml/models-xsd/'"/>
+  <xsl:param name="schemalocation_root" select="'https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/xsd/'"/>
   
   <xsl:variable name="mapping" select="."/>
   <xsl:variable name="xsd-ns">http://www.w3.org/2001/XMLSchema</xsl:variable>
   <xsl:variable name="xsd-prefix">xsd</xsl:variable>
   <xsl:variable name="base-prefix">vodml-base</xsl:variable>
   <xsl:variable name="base-schemanamespace" select="'http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1'"/>
-  <xsl:variable name="base-schemalocation" select="'https://volute.googlecode.com/svn/trunk/projects/dm/vo-dml/xsd/vodml-base.xsd'"/>
 
-  <xsl:variable name="typeSchemanameSuffix" select="'.types.xsd'"/>
-  <xsl:variable name="elementSchemanameSuffix" select="'.elements.xsd'"/>
-  
-  <xsl:variable name="referenceType" select="concat($base-prefix,':Reference')"/>
+  <xsl:variable name="baseType" select="'vodml-base:VODMLObject'"/>
+  <xsl:variable name="referenceType" select="'vodml-base:VODMLReference'"/>
 
-  <xsl:variable name="metadataObjectType" select="concat($base-prefix,':MetadataObject')"/>
-  <xsl:variable name="targetnamespace_root" select="concat(namespace-uri(/*),'/xsd')"/> 
-  
   <!-- main pattern : processes for root node model -->
   <xsl:template match="/">
-    <xsl:for-each select="map:mappedModels/todo/model">
-      <xsl:variable name="prefix" select="." />
-      <xsl:for-each select="/map:mappedModels/model[name=$prefix]">
-        <xsl:choose>
-          <xsl:when test="file">
-            <xsl:apply-templates select="document(file)/vo-dml:model" />
-            <xsl:apply-templates select="document(file)/vo-dml:model" mode="votable-elements"/>
-          </xsl:when>
-          <xsl:when test="url">
-            <xsl:apply-templates select="document(url)/vo-dml:model" />
-            <xsl:apply-templates select="document(url)/vo-dml:model" mode="votable-elements"/>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:message>
-              Model <xsl:value-of select="vodml-id" /> has neither url nor file, hence no XML schemas are generated.
-            </xsl:message>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:for-each>
+    <xsl:for-each select="mappedModels/todo/model" >
+    <xsl:variable name="mname" select="."/>
+      <xsl:variable name="model" select="/mappedModels/model[name=$mname]" />
+      <xsl:choose>
+        <xsl:when test="$model/file">
+          <xsl:apply-templates select="document($model/file)/vo-dml:model">
+            <xsl:with-param name="xsd-location" select="$model/xsd-location"/>
+           </xsl:apply-templates>
+         </xsl:when>
+        <xsl:when test="$model/url">
+          <xsl:message >doing url <xsl:value-of select="$model/url"/> with <xsl:value-of select="document($model/url)/vo-dml:model/name"/></xsl:message>
+          <xsl:apply-templates select="document($model/url)/vo-dml:model" >
+            <xsl:with-param name="xsd-location" select="$model/xsd-location"/>
+           </xsl:apply-templates>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:message>
+            Model <xsl:value-of select="." /> has neither url nor file, hence no XML schemas are generated.
+          </xsl:message>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:for-each>
   </xsl:template>
 
   <xsl:template match="vo-dml:model">
-    <xsl:message>Model = <xsl:value-of select="vodml-id"/></xsl:message>
+    <xsl:message>Model = <xsl:value-of select="name"/></xsl:message>
 
     <xsl:variable name="path">
        <xsl:apply-templates select="." mode="xsd-path">
@@ -93,23 +90,35 @@ being able to choose a more specific sub-type.
        </xsl:apply-templates>
     </xsl:variable>
     
-    <xsl:variable name="file" select="concat(vodml-id,$typeSchemanameSuffix)"/>
-    <!-- open file for the schema file corresponding to this package -->
-    <xsl:message >Opening file <xsl:value-of select="$file"/></xsl:message>
-    <xsl:result-document href="{$file}">
-      <xsl:variable name="targetNamespace">
-        <xsl:value-of select="concat($targetnamespace_root,'/',vodml-id)"/>
-      </xsl:variable>
+    <xsl:variable name="xsd-location">
+      <xsl:call-template name="schema-location4model">
+        <xsl:with-param name="name" select="name"/>
+      </xsl:call-template>
+    </xsl:variable>
+
+    <xsl:variable name="targetNamespace">
+      <xsl:call-template name="ns-root4model">
+        <xsl:with-param name="name" select="name"/>
+        </xsl:call-template>
+    </xsl:variable>
+
+    <xsl:message >Opening file <xsl:value-of select="$xsd-location"/></xsl:message>
+    <xsl:result-document href="{$xsd-location}" >
       <xsd:schema>
-        <xsl:namespace name="{vodml-id}">
+        <xsl:namespace name="{name}">
           <xsl:value-of select="$targetNamespace"/>
         </xsl:namespace>
         <xsl:attribute name="targetNamespace">
           <xsl:value-of select="$targetNamespace"/>
         </xsl:attribute>
-        <xsl:call-template name="ns-rootnamespaces" />
+        <!--  import base schema -->
         <xsl:apply-templates select="import" mode="xmlns"/>
-        <xsl:call-template name="import-rootnamespaces"/>
+      <xsl:element name="xsd:import">
+        <xsl:attribute name="namespace" select="$mapping/mappedModels/vodml-base-namespace"/>
+        <xsl:attribute name="schemaLocation" select="$mapping/mappedModels/vodml-base-location">
+        </xsl:attribute>
+      </xsl:element>
+        
         <xsl:apply-templates select="import" mode="ns-import"/>
         
         <xsl:apply-templates select="objectType" mode="test"/>
@@ -123,83 +132,31 @@ being able to choose a more specific sub-type.
     </xsl:result-document>
   </xsl:template>
   
-  <xsl:template match="vo-dml:model" mode="votable-elements">
-    <xsl:message>Model = <xsl:value-of select="vodml-id"/></xsl:message>
-
-    <xsl:variable name="path">
-       <xsl:apply-templates select="." mode="xsd-path">
-          <xsl:with-param name="delimiter" select="'/'"/>
-       </xsl:apply-templates>
-    </xsl:variable>
-    
-    <xsl:variable name="file" select="concat(vodml-id,$elementSchemanameSuffix)"/>
-    <!-- open file for the schema file corresponding to this package -->
-    <xsl:message >Opening file <xsl:value-of select="$file"/></xsl:message>
-    <xsl:result-document href="{$file}">
-      <xsl:variable name="targetNamespace">
-        <xsl:value-of select="concat($targetnamespace_root,'/',vodml-id)"/>
-      </xsl:variable>
-      <xsd:schema>
-        <xsl:namespace name="{vodml-id}">
-          <xsl:value-of select="$targetNamespace"/>
-        </xsl:namespace>
-        <xsl:attribute name="targetNamespace">
-          <xsl:value-of select="$targetNamespace"/>
-        </xsl:attribute>
-    <xsl:element name="xsd:include">
-      <xsl:attribute name="schemaLocation">
-        <xsl:value-of select="concat($schemalocation_root,vodml-id,$typeSchemanameSuffix)"/>
-      </xsl:attribute>
-    </xsl:element>
-        <xsd:element name="instance">
-          <xsd:complexType>
-            <xsd:choice maxOccurs="unbounded">
-              <xsl:apply-templates select="//objectType" mode="element"/>
-              <xsl:apply-templates select="//dataType" mode="element"/>
-            </xsd:choice>
-          </xsd:complexType>
-        </xsd:element>
-        
-      </xsd:schema>
-    </xsl:result-document>
-    
-    
-  </xsl:template>
   
   <xsl:template match="import" mode="xmlns" >
-    <xsl:namespace name="{prefix}">
-      <xsl:value-of select="concat($targetnamespace_root,'/',prefix)"/>
+    <xsl:namespace name="{name}">
+    <xsl:call-template name="ns-root4model">
+      <xsl:with-param name="name" select="name"/>
+    </xsl:call-template> 
     </xsl:namespace>
   </xsl:template>
   
   <xsl:template match="import" mode="ns-import">
     <xsl:element name="xsd:import">
       <xsl:attribute name="namespace">
-        <xsl:value-of select="concat($targetnamespace_root,'/',prefix)"/>
+    <xsl:call-template name="ns-root4model">
+      <xsl:with-param name="name" select="name"/>
+    </xsl:call-template> 
       </xsl:attribute>
       <xsl:attribute name="schemaLocation">
-        <xsl:value-of select="concat($schemalocation_root,vodml-id,$typeSchemanameSuffix)"/>
+    <xsl:call-template name="schema-location4model">
+      <xsl:with-param name="name" select="name"/>
+    </xsl:call-template> 
       </xsl:attribute>
     </xsl:element>
   </xsl:template>
 
-  <xsl:template name="ns-rootnamespaces">
-    <xsl:namespace name="{$base-prefix}">
-      <xsl:value-of select="$base-schemanamespace"/>
-    </xsl:namespace>
-  </xsl:template>
-  
-  <xsl:template name="import-rootnamespaces">
-    <xsl:element name="xsd:import">
-      <xsl:attribute name="namespace">
-        <xsl:value-of select="$base-schemanamespace"/>
-      </xsl:attribute>
-      <xsl:attribute name="schemaLocation">
-        <xsl:value-of select="$base-schemalocation"/>
-      </xsl:attribute>
-    </xsl:element>
-  </xsl:template>
-  
+ 
   
   <xsl:template match="package">  
         <xsl:apply-templates select="objectType" mode="test"/>
@@ -264,34 +221,23 @@ being able to choose a more specific sub-type.
         </xsl:attribute>
       </xsl:if>
       <xsl:call-template name="add_annotation"/>
-      <xsl:choose>
-        <xsl:when test="extends">
           <xsd:complexContent>
-            <xsd:extension>
-              <xsl:attribute name="base">
-                <xsl:call-template name="XSDType">
-                  <xsl:with-param name="model" select="ancestor::vo-dml:model"/>
-                  <xsl:with-param name="vodml-ref" select="extends/vodml-ref"/>
-                </xsl:call-template>
-              </xsl:attribute>
-              <xsl:apply-templates select="." mode="content"/>
-            </xsd:extension>
+              <xsd:extension>
+            <xsl:attribute name="base">
+                <xsl:choose>
+                  <xsl:when test="extends">
+                    <xsl:call-template name="XSDType">
+                      <xsl:with-param name="model" select="ancestor::vo-dml:model"/>
+                      <xsl:with-param name="vodml-ref" select="extends/vodml-ref"/>
+                    </xsl:call-template>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="$baseType"/>
+                  </xsl:otherwise>
+                </xsl:choose>
+            </xsl:attribute>
+              </xsd:extension>
           </xsd:complexContent>
-        </xsl:when>
-        <xsl:otherwise>
-
-          <!-- fix : MetaDataObject -->
-          <xsd:complexContent>
-            <xsd:extension>
-              <xsl:attribute name="base">
-                    <xsl:value-of select="$metadataObjectType"/>
-              </xsl:attribute>
-              <xsl:apply-templates select="." mode="content"/>
-            </xsd:extension>
-          </xsd:complexContent>
-          
-        </xsl:otherwise>
-      </xsl:choose>
     </xsd:complexType>&cr;&cr;
   </xsl:template>
   
@@ -550,14 +496,14 @@ being able to choose a more specific sub-type.
 
   <xsl:template name="add_appinfo">
         <xsd:appinfo>
-          <vo-dml:vodml-id>
+          <vodml-id>
             <xsl:value-of select="./vodml-id"/>
-          </vo-dml:vodml-id>
+          </vodml-id>
         </xsd:appinfo>
   </xsl:template>
 
 <!-- copied from vo-dml2pojo -->
-    <xsl:template name="Model4vodml-ref" as="element()">
+  <xsl:template name="Model4vodml-ref" as="element()">
     <xsl:param name="model"/>
     <xsl:param name="vodml-ref"/>
 <xsl:if test="not($model)">
@@ -574,12 +520,12 @@ being able to choose a more specific sub-type.
       </xsl:when>
       <xsl:otherwise>
     <xsl:choose>
-      <xsl:when test="$mapping/map:mappedModels/model[Model4vodml-ref=$prefix]/file">
-        <xsl:variable name="file" select="$mapping/map:mappedModels/model[name=$prefix]/file"/>
+      <xsl:when test="$mapping/mappedModels/model[name=$prefix]/file">
+        <xsl:variable name="file" select="$mapping/mappedModels/model[name=$prefix]/file"/>
         <xsl:copy-of select="document($file)/vo-dml:model"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:variable name="import" select="$model/import[prefix = $prefix]/url"/>
+        <xsl:variable name="import" select="$model/import[name = $prefix]/url"/>
         <xsl:copy-of select="document($import)/vo-dml:model"/>
       </xsl:otherwise>
     </xsl:choose>
@@ -614,7 +560,7 @@ being able to choose a more specific sub-type.
 <!--         <xsl:message >Finding full path for <xsl:value-of select="$vodml-ref"/></xsl:message>   -->
           <xsl:call-template  name="fullpath">
             <xsl:with-param name="model" select="$model"/>
-            <xsl:with-param name="utyvodml-refpe" select="$vodml-ref"/>
+            <xsl:with-param name="vodml-ref" select="$vodml-ref"/>
           </xsl:call-template>
         </xsl:when>
         <xsl:otherwise>
@@ -637,7 +583,7 @@ being able to choose a more specific sub-type.
   <xsl:template name="findmappingInThisModel">
     <xsl:param name="modelname"/>
     <xsl:param name="vodml-id"/>
-        <xsl:value-of select="$mapping/map:mappedModels/model[name=$modelname]/type-mapping[vodml-id=$vodml-id]/xsd-type"/>
+        <xsl:value-of select="$mapping/mappedModels/model[name=$modelname]/type-mapping[vodml-id=$vodml-id]/xsd-type"/>
   </xsl:template>
 
   <xsl:template name="findmapping">
@@ -648,7 +594,7 @@ being able to choose a more specific sub-type.
     <xsl:if test="not($modelname) or $modelname=''">
       <xsl:message>!!!!!!! ERROR No prefix found in findmaping for <xsl:value-of select="$vodml-ref"/></xsl:message>
     </xsl:if>
-    <xsl:value-of select="$mapping/map:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/xsd-type"/>
+    <xsl:value-of select="$mapping/mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/xsd-type"/>
   </xsl:template>
   
     <!-- find a java package path towards the type identified with the name -->
@@ -689,5 +635,17 @@ being able to choose a more specific sub-type.
     </xsl:variable>
     <xsl:value-of select="$path"/>
   </xsl:template>  
+  
+  
+  <!-- utility templates -->
+  <xsl:template name="ns-root4model" >
+    <xsl:param name="name"/>
+    <xsl:value-of select="$mapping/mappedModels/model[name=$name]/target-namespace"/>
+  </xsl:template>
+  
+  <xsl:template name="schema-location4model" >
+    <xsl:param name="name"/>
+    <xsl:value-of select="$mapping/mappedModels/model[name=$name]/xsd-location"/>
+  </xsl:template>
   
 </xsl:stylesheet>
