@@ -19,20 +19,20 @@
       of the object in that document. 
       </xsd:documentation>
     </xsd:annotation>
+    <xsd:attribute name="IDREF" type="xsd:IDREF" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+        Represents a reference to an element in the same XML document. 
+        Useful when inserting a new, purely transient resource in a SimDB.  
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
     <xsd:attribute name="REMOTEID" type="xsd:anyURI" use="optional">
       <xsd:annotation>
         <xsd:documentation>
         A URI that can be resolved to an object. SHOULD consist of a URL and a fragment, where the fragment should identify 
         the ID of the referenced object in the external document. 
         TODO can we use an xlink here. 
-        </xsd:documentation>
-      </xsd:annotation>
-    </xsd:attribute>
-    <xsd:attribute name="IDREF" type="xsd:IDREF" use="optional">
-      <xsd:annotation>
-        <xsd:documentation>
-        Represents a reference to an element in the same XML document. 
-        Useful when inserting a new, purely transient resource in a SimDB.  
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
