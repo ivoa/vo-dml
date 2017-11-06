@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
+            xmlns:vodml-base="http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:filter="http://ivoa.net/dm/models/vo-dml/xsd/sample/filter"
+            xmlns:ivoa="http://ivoa.net/dm/models/vo-dml/xsd/ivoa"
+            targetNamespace="http://ivoa.net/dm/models/vo-dml/xsd/sample/filter">
+   <xsd:import namespace="http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1"
+               schemaLocation="http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/xsd/vodml-base.xsd"/>
+   <xsd:import namespace="http://ivoa.net/dm/models/vo-dml/xsd/ivoa"
+               schemaLocation="http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/vo-dml/IVOA.xsd"/>
+   <xsd:complexType name="PhotometricSystem">
+      <xsd:annotation>
+         <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+         <xsd:appinfo>
+            <vodml-id>PhotometricSystem</vodml-id>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="vodml-base:VODMLObject"/>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="PhotometryFilter">
+      <xsd:annotation>
+         <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+         <xsd:appinfo>
+            <vodml-id>PhotometryFilter</vodml-id>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="vodml-base:VODMLObject"/>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+</xsd:schema>

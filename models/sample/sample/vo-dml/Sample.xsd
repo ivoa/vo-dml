@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
+            xmlns:vodml-base="http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:sample="http://ivoa.net/dm/models/vo-dml/xsd/sample/sample"
+            xmlns:ivoa="http://ivoa.net/dm/models/vo-dml/xsd/ivoa"
+            xmlns:filter="http://ivoa.net/dm/models/vo-dml/xsd/sample/filter"
+            targetNamespace="http://ivoa.net/dm/models/vo-dml/xsd/sample/sample">
+   <xsd:import namespace="http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1"
+               schemaLocation="http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/xsd/vodml-base.xsd"/>
+   <xsd:import namespace="http://ivoa.net/dm/models/vo-dml/xsd/ivoa"
+               schemaLocation="http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/vo-dml/IVOA.xsd"/>
+   <xsd:import namespace="http://ivoa.net/dm/models/vo-dml/xsd/sample/filter"
+               schemaLocation="http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/sample/filter/vo-dml/Filter.xsd"/>
+   <xsd:complexType name="catalog.AbstractSource" abstract="true">
+      <xsd:annotation>
+         <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+         <xsd:appinfo>
+            <vodml-id>catalog.AbstractSource</vodml-id>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="sample:catalog.AstroObject"/>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="catalog.AstroObject" abstract="true">
+      <xsd:annotation>
+         <xsd:documentation>Generic base class for all astronomical objects.</xsd:documentation>
+         <xsd:appinfo>
+            <vodml-id>catalog.AstroObject</vodml-id>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="vodml-base:VODMLObject"/>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="catalog.LuminosityMeasurement">
+      <xsd:annotation>
+         <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+         <xsd:appinfo>
+            <vodml-id>catalog.LuminosityMeasurement</vodml-id>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="vodml-base:VODMLObject"/>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="catalog.SDSSSource">
+      <xsd:annotation>
+         <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+         <xsd:appinfo>
+            <vodml-id>catalog.SDSSSource</vodml-id>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="sample:catalog.AbstractSource"/>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="catalog.SkyCoordinateFrame">
+      <xsd:annotation>
+         <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+         <xsd:appinfo>
+            <vodml-id>catalog.SkyCoordinateFrame</vodml-id>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="vodml-base:VODMLObject"/>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="catalog.Source">
+      <xsd:annotation>
+         <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+         <xsd:appinfo>
+            <vodml-id>catalog.Source</vodml-id>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="sample:catalog.AbstractSource"/>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="catalog.TwoMassSource">
+      <xsd:annotation>
+         <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+         <xsd:appinfo>
+            <vodml-id>catalog.TwoMassSource</vodml-id>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="sample:catalog.AbstractSource"/>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="catalog.AlignedEllipse">
+      <xsd:annotation>
+         <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+         <xsd:appinfo>
+            <vodml-id>catalog.AlignedEllipse</vodml-id>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="sample:catalog.SkyError">
+            <xsd:sequence>
+               <xsd:element name="longError" type="xsd:float" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+                     <xsd:appinfo>
+                        <vodml-id>catalog.AlignedEllipse.longError</vodml-id>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="latError" type="xsd:float" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+                     <xsd:appinfo>
+                        <vodml-id>catalog.AlignedEllipse.latError</vodml-id>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+            </xsd:sequence>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="catalog.CircleError">
+      <xsd:annotation>
+         <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+         <xsd:appinfo>
+            <vodml-id>catalog.CircleError</vodml-id>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="sample:catalog.SkyError">
+            <xsd:sequence>
+               <xsd:element name="radius" type="xsd:float" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+                     <xsd:appinfo>
+                        <vodml-id>catalog.CircleError.radius</vodml-id>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+            </xsd:sequence>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="catalog.GenericEllipse">
+      <xsd:annotation>
+         <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+         <xsd:appinfo>
+            <vodml-id>catalog.GenericEllipse</vodml-id>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="sample:catalog.SkyError">
+            <xsd:sequence>
+               <xsd:element name="major" type="xsd:float" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:documentation>major axis of error ellipse</xsd:documentation>
+                     <xsd:appinfo>
+                        <vodml-id>catalog.GenericEllipse.major</vodml-id>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="minor" type="xsd:float" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+                     <xsd:appinfo>
+                        <vodml-id>catalog.GenericEllipse.minor</vodml-id>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="pa" type="xsd:float" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:documentation>Position angle of error ellipse in coordinate system of position.</xsd:documentation>
+                     <xsd:appinfo>
+                        <vodml-id>catalog.GenericEllipse.pa</vodml-id>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+            </xsd:sequence>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="catalog.SkyCoordinate">
+      <xsd:annotation>
+         <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+         <xsd:appinfo>
+            <vodml-id>catalog.SkyCoordinate</vodml-id>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="longitude" type="ivoa:RealQuantity" minOccurs="1" maxOccurs="1">
+            <xsd:annotation>
+               <xsd:documentation>The longitude part of this position in units of degrees.</xsd:documentation>
+               <xsd:appinfo>
+                  <vodml-id>catalog.SkyCoordinate.longitude</vodml-id>
+               </xsd:appinfo>
+            </xsd:annotation>
+         </xsd:element>
+         <xsd:element name="latitude" type="ivoa:RealQuantity" minOccurs="1" maxOccurs="1">
+            <xsd:annotation>
+               <xsd:documentation>The latitude part of this position in units of degrees.</xsd:documentation>
+               <xsd:appinfo>
+                  <vodml-id>catalog.SkyCoordinate.latitude</vodml-id>
+               </xsd:appinfo>
+            </xsd:annotation>
+         </xsd:element>
+      </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="catalog.SkyError" abstract="true">
+      <xsd:annotation>
+         <xsd:documentation>Error of a position on the sky.</xsd:documentation>
+         <xsd:appinfo>
+            <vodml-id>catalog.SkyError</vodml-id>
+         </xsd:appinfo>
+      </xsd:annotation>
+   </xsd:complexType>
+
+   <xsd:simpleType name="catalog.LuminosityType">
+      <xsd:annotation>
+         <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+         <xsd:appinfo>
+            <vodml-id>catalog.LuminosityType</vodml-id>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="magnitude">
+            <xsd:annotation>
+               <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+               <xsd:appinfo>
+                  <vodml-id>catalog.LuminosityType.magnitude</vodml-id>
+               </xsd:appinfo>
+            </xsd:annotation>
+         </xsd:enumeration>
+         <xsd:enumeration value="flux">
+            <xsd:annotation>
+               <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+               <xsd:appinfo>
+                  <vodml-id>catalog.LuminosityType.flux</vodml-id>
+               </xsd:appinfo>
+            </xsd:annotation>
+         </xsd:enumeration>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+   <xsd:simpleType name="catalog.SourceClassification">
+      <xsd:annotation>
+         <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+         <xsd:appinfo>
+            <vodml-id>catalog.SourceClassification</vodml-id>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="star">
+            <xsd:annotation>
+               <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+               <xsd:appinfo>
+                  <vodml-id>catalog.SourceClassification.star</vodml-id>
+               </xsd:appinfo>
+            </xsd:annotation>
+         </xsd:enumeration>
+         <xsd:enumeration value="galaxy">
+            <xsd:annotation>
+               <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+               <xsd:appinfo>
+                  <vodml-id>catalog.SourceClassification.galaxy</vodml-id>
+               </xsd:appinfo>
+            </xsd:annotation>
+         </xsd:enumeration>
+         <xsd:enumeration value="AGN">
+            <xsd:annotation>
+               <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+               <xsd:appinfo>
+                  <vodml-id>catalog.SourceClassification.AGN</vodml-id>
+               </xsd:appinfo>
+            </xsd:annotation>
+         </xsd:enumeration>
+         <xsd:enumeration value="planet">
+            <xsd:annotation>
+               <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+               <xsd:appinfo>
+                  <vodml-id>catalog.SourceClassification.planet</vodml-id>
+               </xsd:appinfo>
+            </xsd:annotation>
+         </xsd:enumeration>
+         <xsd:enumeration value="unknown">
+            <xsd:annotation>
+               <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+               <xsd:appinfo>
+                  <vodml-id>catalog.SourceClassification.unknown</vodml-id>
+               </xsd:appinfo>
+            </xsd:annotation>
+         </xsd:enumeration>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+</xsd:schema>

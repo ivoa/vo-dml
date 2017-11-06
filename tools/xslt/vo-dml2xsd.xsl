@@ -1,17 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Gerard Lemson (glemson1@jhu.edu, gerard.lemson@gmail.com) 2017-11-04 -->
 <!-- 
-- map each model to single schema document defining ONLY types.
-- map types to either complex (objectType, dataType) or simpleTypes.
-Use fully qualified type names, i.e. <package-path-with-dots>.typename.
-Could do '_' as well, less safe.  Should disallow '.' in names in VO-DML!
-'.' is allowed in NCName in XSD. [TBD check what JAXB does with these names]
-This makes import much easier as well as prefix: use model prefix!!!
-Note, XML files will not need type namess, apart from in xsi:type (but there again nice!)
+This style sheet generates an XML schema document from a VO-DML/XML model.
+It follows the serialization prescription specified in appendix B of that specification.
+It relies on a mapping_config.xml that provides some configuration and type-mapping elements.
+TODO This can be cleaned up more no doubt.
 
+- map VODML model to single schema document defining ONLY types.
+- map types to either complex (objectType, dataType) or simpleTypes.
+Use fully qualified type names, i.e. <package-path-with-dots>.typename. (i.e. ala generated vodml-id for types!)
+- simple types may be mapped to existing xsd primitive types in a  file.
+- This makes import much easier as well as prefix choice: use model prefix!!!
+Note, XML files will not need type name, apart from in xsi:type.
+- ONLY (?) non-trivial choice is how to represent References.
+Choice made here is for them to be of type vodml-base:VODMLReference defined in the separate schema vodml-base.xsd.
+This schema defines a base type for ObjectTypes that defines an ID attribute (of type xsd:ID).
+And it defines a VODMLReference type that declares an IDREF and a REMOTEID attribute.
+When using the IDREF the referenced object must (obviously) be in the same document as the referrer.
+REMOTEID is of type xsd:anyURI and MUST have a suffix  '#<IDREF>'. The IDREF fragment identifier MUST match an ID in the document identified by the URL.
+
+If someone can come up with something better, please!
+
+
+Notes to self ...
 - No root elements defined, root element definitions up to user.
-- Create a single document with element definitions for all complexTypes. 
+OR
+- TODO Create a separate XSD document with element definitions for all complexTypes. 
 Idea is that this schema document can be used to validate for example the result of an interpretation of a VOTable. 
-Note, this also will allow one to create elements representing an abstract type, using an anoymous type definition extending it.
+Note, this also will allow one to create elements representing an abstract type, using an anonymous type definition extending it.
 This is because sometimes in VOTable one might just want to declare a certain type to be an instance of an abstract type, without 
 being able to choose a more specific sub-type.
  -->
@@ -48,7 +64,6 @@ being able to choose a more specific sub-type.
   
   <xsl:variable name="mapping" select="."/>
   <xsl:variable name="xsd-ns">http://www.w3.org/2001/XMLSchema</xsl:variable>
-  <xsl:variable name="xsd-prefix">xsd</xsl:variable>
   <xsl:variable name="base-prefix">vodml-base</xsl:variable>
   <xsl:variable name="base-schemanamespace" select="'http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1'"/>
 
@@ -83,7 +98,9 @@ being able to choose a more specific sub-type.
 
   <xsl:template match="vo-dml:model">
     <xsl:message>Model = <xsl:value-of select="name"/></xsl:message>
-
+    <xsl:variable name="name">
+    <xsl:value-of select="name"/>
+    </xsl:variable>
     <xsl:variable name="path">
        <xsl:apply-templates select="." mode="xsd-path">
           <xsl:with-param name="delimiter" select="'/'"/>
@@ -91,9 +108,7 @@ being able to choose a more specific sub-type.
     </xsl:variable>
     
     <xsl:variable name="xsd-location">
-      <xsl:call-template name="schema-location4model">
-        <xsl:with-param name="name" select="name"/>
-      </xsl:call-template>
+      <xsl:value-of select="$mapping/mappedModels/model[name=$name]/xsd-location"/>
     </xsl:variable>
 
     <xsl:variable name="targetNamespace">
@@ -460,23 +475,6 @@ being able to choose a more specific sub-type.
   
   
   <!--    named util templates    -->  
-  <!-- return the schema location for the schema document for the package with the given id -->
-  <xsl:template name="schemalocation-for-package">
-    <xsl:param name="themodel"/>
-    <xsl:param name="packageid"/>
-    <xsl:variable name="path">
-      <xsl:call-template name="package-path">
-        <xsl:with-param name="model" select="$themodel"/>
-        <xsl:with-param name="packageid" select="$packageid"/>
-        <xsl:with-param name="delimiter" select="'/'"/>
-      </xsl:call-template>
-    </xsl:variable>    
-    <xsl:value-of select="concat($schemalocation_root,$path,'.xsd')"/>
-  </xsl:template>
-  
-  
-  
-  
   <!-- Add appinfo element -->
   <xsl:template name="add_annotation">
     <xsl:if test="description or vodml-id">
@@ -645,7 +643,14 @@ being able to choose a more specific sub-type.
   
   <xsl:template name="schema-location4model" >
     <xsl:param name="name"/>
+    <xsl:choose>
+    <xsl:when test="$mapping/mappedModels/model[name=$name]/schema-location">
+    <xsl:value-of select="$mapping/mappedModels/model[name=$name]/schema-location"/>
+    </xsl:when>
+    <xsl:otherwise>
     <xsl:value-of select="$mapping/mappedModels/model[name=$name]/xsd-location"/>
+    </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
 </xsl:stylesheet>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
+            xmlns:vodml-base="http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:ivoa="http://ivoa.net/dm/models/vo-dml/xsd/ivoa"
+            targetNamespace="http://ivoa.net/dm/models/vo-dml/xsd/ivoa">
+   <xsd:import namespace="http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1"
+               schemaLocation="http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/xsd/vodml-base.xsd"/>
+   <xsd:complexType name="IntegerQuantity">
+      <xsd:annotation>
+         <xsd:documentation>An integer number with a unit. Examples of such units that can be used for attributes are bit/byte/kiloByte etc.</xsd:documentation>
+         <xsd:appinfo>
+            <vodml-id>IntegerQuantity</vodml-id>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="ivoa:Quantity">
+            <xsd:sequence>
+               <xsd:element name="value" type="xsd:int" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+                     <xsd:appinfo>
+                        <vodml-id>IntegerQuantity.value</vodml-id>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+            </xsd:sequence>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="Quantity" abstract="true">
+      <xsd:annotation>
+         <xsd:documentation>Meant to represent the value of a numerical physical quantity.  
+Can be mapped in VOTables to FIELDrefs and PARAM(ref)s, in which case the @unit attribute of those VOTable elements is assumed to be mapped to the attribute on the Quantity.
+Ths is only allowed for these predefined ivoa types.</xsd:documentation>
+         <xsd:appinfo>
+            <vodml-id>Quantity</vodml-id>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element name="unit" type="ivoa:Unit" minOccurs="0" maxOccurs="1">
+            <xsd:annotation>
+               <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+               <xsd:appinfo>
+                  <vodml-id>Quantity.unit</vodml-id>
+               </xsd:appinfo>
+            </xsd:annotation>
+         </xsd:element>
+      </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="RealQuantity">
+      <xsd:annotation>
+         <xsd:documentation>A real value with a unit.</xsd:documentation>
+         <xsd:appinfo>
+            <vodml-id>RealQuantity</vodml-id>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexContent>
+         <xsd:extension base="ivoa:Quantity">
+            <xsd:sequence>
+               <xsd:element name="value" type="xsd:float" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:documentation>
+          TODO : Missing description : please, update your UML model asap.
+        </xsd:documentation>
+                     <xsd:appinfo>
+                        <vodml-id>RealQuantity.value</vodml-id>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+            </xsd:sequence>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   <xsd:simpleType name="Unit">
+      <xsd:annotation>
+         <xsd:documentation>Must conform to definition of unit in VOUnit spec.</xsd:documentation>
+         <xsd:appinfo>
+            <vodml-id>Unit</vodml-id>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+
+</xsd:schema>
