@@ -6,10 +6,10 @@
   <description>This is an alternative version of the data model for Photometric Calibration ... </description>
   <title>Filter</title>
   <version>0.x</version>
-  <lastModified>2017-09-23T08:14:39</lastModified>
+  <lastModified>2018-02-28T10:03:44</lastModified>
   <import>
     <name>ivoa</name>
-    <url>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/vo-dml/IVOA-v1.0.vo-dml.xml</url>
+    <url>http://ivoa.net/xml/VODML/IVOA-v1.vo-dml.xml</url>
     <documentationURL>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/vo-dml/IVOA-v1.0.html</documentationURL>
   </import>
   <objectType>
