@@ -7,10 +7,10 @@
 It has some sample relationships etc to be used in documentation etc.</description>
   <title>Sample VO-DML data model.</title>
   <version>1.0</version>
-  <lastModified>2018-02-28T10:03:00</lastModified>
+  <lastModified>2018-03-01T08:13:45</lastModified>
   <import>
     <name>ivoa</name>
-    <url>http://ivoa.net/xml/VODML/IVOA-v1.vo-dml.xml</url>
+    <url>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/vo-dml/IVOA-v1.0.vo-dml.xml</url>
     <documentationURL>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/vo-dml/IVOA-v1.0.html</documentationURL>
   </import>
   <import>
