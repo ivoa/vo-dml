@@ -68,8 +68,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 <title>
 <xsl:value-of select="title"/>
 </title>
-    <link rel="stylesheet" href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/style/ivoa_wg.css" type="text/css"/>
-    <link rel="stylesheet" href="https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/style/xmi.css" type="text/css"/>
+    <link rel="stylesheet" href="http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/style/ivoa_wg.css" type="text/css"/>
+    <link rel="stylesheet" href="http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/style/xmi.css" type="text/css"/>
 </head>
 <body>
   
