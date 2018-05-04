@@ -67,6 +67,16 @@
       <xsl:namespace name="vo-dml" select="$vodmlSchemaNS"/>
       <xsl:namespace name="xsi">http://www.w3.org/2001/XMLSchema-instance</xsl:namespace>
       <xsl:attribute name="xsi:schemaLocation" select="concat($vodmlSchemaNS,' ',$vodmlSchemaLocation)" />
+      <xsl:attribute name="version">
+        <xsl:choose>
+         <xsl:when test="$modeltags/@vodml-version">
+          <xsl:value-of select="$modeltags/@vodml-version" />
+         </xsl:when>
+         <xsl:otherwise>
+           <xsl:value-of select="'1.0'" />
+         </xsl:otherwise>
+       </xsl:choose>
+      </xsl:attribute>
       <!-- 'http://www.ivoa.net/xml/VODML/v1.0 http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/xsd/vo-dml-v1.0.xsd'" -->
 
 <!-- Note, in the MD CE 12.1 profile the name of the UML model is to be used as vodml-id, its title tag as name ! -->
@@ -76,6 +86,14 @@
       <xsl:call-template name="description">
         <xsl:with-param name="ownedComment" select="./ownedComment" />
       </xsl:call-template>
+      <xsl:if test="$modeltags/@identifier">
+        <xsl:element name="identifier">
+          <xsl:value-of select="$modeltags/@identifier" />
+        </xsl:element>
+      </xsl:if>
+      <xsl:element name="uri">
+        <xsl:value-of select="$modeltags/@uri" />
+      </xsl:element>
       <xsl:element name="title">
         <xsl:value-of select="$modeltags/@title" />
       </xsl:element>
@@ -119,8 +137,12 @@
       <xsl:apply-templates select="./*[@xmi:type='uml:Package']" >
         <xsl:sort select="@name"/>
       </xsl:apply-templates>
-
+      <!-- 
+    <xsl:element name="XMIID2VODMLID">
+      <xsl:apply-templates select="//IVOA_UML_Profile:modelelement[@vodml_id]" mode="XMI-ID-Mapping"/>
     </xsl:element>
+ -->
+     </xsl:element>
   </xsl:template>
 
 
@@ -627,7 +649,7 @@
     <xsl:variable name="modelimport" select="/xmi:XMI/IVOA_UML_Profile:modelimport[@base_Element = $xmiid]" />
     <xsl:choose>
       <xsl:when test="$modelimport">
-    <xsl:element  name="import">
+    <xsl:element name="import" >
     <!-- 
       <xsl:apply-templates select="." mode="aselement"/>
     -->
@@ -646,6 +668,17 @@
       <xsl:message>Model found inside of root model, but no corresponding modelimport stereotype is used.</xsl:message>
     </xsl:otherwise>
     </xsl:choose>
+  </xsl:template>
+<!-- 
+   xmi:id='_12_1_58601f2_1521666461202_172741_239' base_Element='_12_1_58601f2_1521666444607_35353_218' vodml_id='Coordinate'/>
+"
+ -->  
+  <xsl:template match="IVOA_UML_Profile:modelelement" mode="XMI-ID-Mapping">
+    <xsl:element name="TEMP-ID-Mapping">
+    <xsl:attribute name="vodml_id" select="@vodml_id"/>
+    <xsl:attribute name="xmi_id" select="@xmi:id"/>
+    <xsl:attribute name="base_element" select="@base_Element"/>
+    </xsl:element>
   </xsl:template>
   
   
