@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vo-dml:model xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://www.ivoa.net/xml/VODML/v1 http://www.ivoa.net/xml/VODML/vo-dml-v1.xsd">
+              xsi:schemaLocation="http://www.ivoa.net/xml/VODML/v1 http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/xsd/vo-dml-v1.0.xsd"
+              version="1.0">
   <name>ivoa</name>
   <description>This is the main reference data model containing primitive types used in other data models.</description>
+  <uri/>
   <title>IVOA Reference Types Data Model ala VO-URP</title>
   <version>1.0</version>
-  <lastModified>2017-09-23T09:33:12</lastModified>
+  <lastModified>2018-05-05T17:11:22</lastModified>
   <primitiveType>
     <vodml-id>Unit</vodml-id>
     <name>Unit</name>
@@ -84,9 +86,7 @@ I.e. string has value type semantics.</description>
     <attribute>
       <vodml-id>IntegerQuantity.value</vodml-id>
       <name>value</name>
-      <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
+      <description>The integer value of this IntegerQuantity.</description>
       <datatype>
         <vodml-ref>ivoa:integer</vodml-ref>
       </datatype>
@@ -106,9 +106,7 @@ Ths is only allowed for these predefined ivoa types.</description>
     <attribute>
       <vodml-id>Quantity.unit</vodml-id>
       <name>unit</name>
-      <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
+      <description>The unit of this  quantity.</description>
       <datatype>
         <vodml-ref>ivoa:Unit</vodml-ref>
       </datatype>
@@ -129,9 +127,7 @@ Ths is only allowed for these predefined ivoa types.</description>
     <attribute>
       <vodml-id>RealQuantity.value</vodml-id>
       <name>value</name>
-      <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
+      <description>The real value of this quantity</description>
       <datatype>
         <vodml-ref>ivoa:real</vodml-ref>
       </datatype>
