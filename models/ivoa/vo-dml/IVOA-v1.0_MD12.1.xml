@@ -621,7 +621,7 @@
 					<diagramOpened xmi:value='true'/>
 					<diagramWindowBounds>2, 24, 1152, 549</diagramWindowBounds>
 					<diagramScrollPositionX xmi:value='1'/>
-					<diagramScrollPositionY xmi:value='120'/>
+					<diagramScrollPositionY xmi:value='60'/>
 					<maximized xmi:value='false'/>
 					<active xmi:value='true'/>
 					<mdOwnedViews>
@@ -1217,7 +1217,7 @@
 					<mdElement elementClass='StringProperty'>
 						<propertyID>INFO_PROPERTY</propertyID>
 						<propertyDescriptionID>INFO_PROPERTY_DESCRIPTION</propertyDescriptionID>
-						<value>2b 35 64 c 0 3f 30 11 51 70 31 84 a7 e1 cf ee 1e 2c 86 b0 68 84 95 87 24 7b 94 2e ed 38 6 8 8d 1e de 9f 7c 48 bf e9 9e cf b8 d0 28 96 2d 5 b1 e2 5 d ca 6 3e a6 7f b1 e8 cc 6d c af 23 c0 1f 49 99 26 7 9d 5 34 ba 6c d5 32 d3 34 b0 46 66 69 d7 11 e7 c7 c7 b7 84 6a 3d 1c 6e 56 3c 53 6b b bf e5 bd c3 46 c0 a5 b6 e0 31 </value>
+						<value>2b 35 64 c 0 3f 30 11 51 70 31 84 a7 e1 cf ee 1e 2c 86 b0 68 84 95 87 24 7b 92 2e ee 33 6 8 8d 1e de 9f 7c 48 bf e9 9e cf b8 d0 28 96 2d 5 b1 e2 5 d ca 6 3e a6 7f b1 e8 cc 6d c af 23 c0 1f 49 99 26 7 9d 5 34 ba 6c d5 32 d3 34 b0 46 66 69 d7 11 e7 c7 c7 b7 84 6a 3d 1c 6e 56 3c 53 6b b bf e5 bd c3 46 c0 a5 b6 e0 31 </value>
 						<multiline xmi:value='false'/>
 					</mdElement>
 					<mdElement elementClass='LIST_PROPERTY'>
@@ -7879,7 +7879,7 @@
 		</mdElement>
 	</xmi:Extension>
 	<IVOA_UML_Profile:constraint xmi:id='_12_1_1dfa04c4_1367134651409_882976_202' base_Constraint='_12_1_1dfa04c4_1367134651393_82308_179'/>
-	<IVOA_UML_Profile:model xmi:id='_12_1_8e0028f_1209131204250_261929_211' base_Model='eee_1045467100313_135436_1' author='Gerard Lemson' namespaceURI='http://www.ivoa.net/vo-dml/models/IVOA' version='1.0' title='IVOA Reference Types Data Model ala VO-URP' subject='This model defines the basic primtive types and an Identity type for use in other IVOA data models.'/>
+	<IVOA_UML_Profile:model xmi:id='_12_1_8e0028f_1209131204250_261929_211' base_Model='eee_1045467100313_135436_1' author='IVOA DM WG' namespaceURI='http://www.ivoa.net/vo-dml/models/IVOA' version='1.0' title='IVOA Reference Value Types' subject='This model defines basic primtive types and some Quantity datatypes for use in other IVOA data models.'/>
 	<IVOA_UML_Profile:modelelement xmi:id='_12_1_8e0028f_1209131204250_261929_211application1' base_Element='eee_1045467100313_135436_1'/>
 	<IVOA_UML_Profile:modelimport xmi:id='_12_1_8e0028f_1209131204250_261929_211application2' base_Element='eee_1045467100313_135436_1'/>
 	<MagicDraw_Profile:DiagramInfo xmi:id='_12_1_1dfa04c4_1396585724812_628913_160' base_Diagram='_12_1_1dfa04c4_1396585724802_109248_148' Author='GerardLemson' Modification_date='04/04/14 06:28' Creation_date='04/04/14 06:28'/>

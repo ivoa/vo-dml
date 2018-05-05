@@ -6,9 +6,9 @@
   <name>ivoa</name>
   <description>This is the main reference data model containing primitive types used in other data models.</description>
   <uri/>
-  <title>IVOA Reference Types Data Model ala VO-URP</title>
+  <title>IVOA Reference Value Types</title>
   <version>1.0</version>
-  <lastModified>2018-05-05T17:11:22</lastModified>
+  <lastModified>2018-05-05T17:17:19</lastModified>
   <primitiveType>
     <vodml-id>Unit</vodml-id>
     <name>Unit</name>
