@@ -4,7 +4,7 @@ standard -->
 <ri:Resource 
 	xsi:type="vodm:DataModel" 
 	created="2017-07-24T09:00:00" 
-	updated="2017-07-24T09:00:00"
+	updated="2018-05-19T09:00:00"
 	status="active"
 	xmlns:vr="http://www.ivoa.net/xml/VOResource/v1.0" 
 	xmlns:vodm="http://www.ivoa.net/xml/DataModel/v1" 
@@ -57,7 +57,7 @@ standard -->
     </creator>
 
 		<!-- this should be the date of the last recommendation -->
-    <date role="update">2017-07-23</date>
+    <date role="update">2018-05-19</date>
     <version>1.0</version>
     <contact>
       <name>IVOA Data Models WG</name>
