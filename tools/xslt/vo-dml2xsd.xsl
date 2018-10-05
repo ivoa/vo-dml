@@ -60,7 +60,7 @@ being able to choose a more specific sub-type.
   <xsl:param name="lastModifiedText"/>
 
   <xsl:param name="mapping_file"/> <!-- file containing mapping info for java generation such as root packages for all models -->
-  <xsl:param name="schemalocation_root" select="'https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/xsd/'"/>
+  <xsl:param name="schemalocation_root" select="'http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/xsd/'"/>
   
   <xsl:variable name="mapping" select="."/>
   <xsl:variable name="xsd-ns">http://www.w3.org/2001/XMLSchema</xsl:variable>
@@ -178,6 +178,7 @@ being able to choose a more specific sub-type.
         <xsl:apply-templates select="dataType" mode="test"/>
         <xsl:apply-templates select="primitiveType" mode="test"/>
         <xsl:apply-templates select="enumeration" mode="test"/>
+        <xsl:apply-templates select="package"/>
   </xsl:template>  
   
   <xsl:template match="objectType|dataType|enumeration|primitiveType" mode="test">
@@ -251,6 +252,7 @@ being able to choose a more specific sub-type.
                   </xsl:otherwise>
                 </xsl:choose>
             </xsl:attribute>
+            <xsl:apply-templates select="." mode="content"/>
               </xsd:extension>
           </xsd:complexContent>
     </xsd:complexType>&cr;&cr;

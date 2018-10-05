@@ -12,10 +12,10 @@ intermediate representation to a GraphViz dot file.
 ]>
 
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-								xmlns:exsl="http://exslt.org/common"
-                extension-element-prefixes="exsl"
+				xmlns:exsl="http://exslt.org/common"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-                xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1">
+                xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1" 
+                extension-element-prefixes="exsl">
   
   <xsl:import href="common.xsl"/>
   
@@ -25,6 +25,7 @@ intermediate representation to a GraphViz dot file.
   
   <xsl:key name="element" match="*//vodml-id" use="."/>
   <xsl:key name="package" match="*//package/vodml-id" use="."/>
+  <xsl:key name="modelDocURLs" match="*//import/documentationURL" use="../name"/>
 
   <xsl:param name="project.name"/>
   <xsl:param name="usesubgraph" select="'F'"/>
@@ -62,6 +63,7 @@ digraph GVmap {  <!-- name must not be too long. the cmap that is generated uses
 	shape=record
 	fontsize=8
 	style=filled] 
+    <xsl:apply-templates select="." mode="importedtypes"/>
 	<xsl:apply-templates select="." mode="types"/>
 <!--   <xsl:apply-templates select="//objectType"/>  -->
   <xsl:if test="//extends">
@@ -116,6 +118,34 @@ digraph GVmap {  <!-- name must not be too long. the cmap that is generated uses
     <xsl:apply-templates select="package" mode="types"/>
   </xsl:template>
   
+  <xsl:template match="vo-dml:model" mode="importedtypes">
+  
+    <xsl:variable name="vodmlrefs" select="(//extends|//reference/datatype|//composition/datatype)[substring-before(vodml-ref,':') != /vo-dml:model/name]"/> <!-- Define the variable with the node path. -->
+<!-- 
+must create next as variable to select from inside the atomic context of the distinct-values
+ -->
+    <xsl:variable name="imports" select="/vo-dml:model/import"/>
+    <xsl:for-each select="distinct-values($vodmlrefs)">
+      <xsl:variable name="vodmlref" select="."/>
+      <xsl:variable name="prefix" select="substring-before($vodmlref,':')"/>
+      <xsl:variable name="vodml-id" select="substring-after($vodmlref,':')"/>
+      <xsl:variable name="docURL" select="$imports[name = $prefix]/documentationURL"/>
+      <xsl:message>
+<!--       <xsl:element name="a"><xsl:attribute name="href" select="concat($docURL,'#',$vodml-id)"/><xsl:value-of select="$vodml-id"/></xsl:element>
+  -->     <xsl:value-of select="concat($docURL,'#',$vodml-id)"/>
+      </xsl:message>
+
+    <xsl:variable name="label">
+        <xsl:apply-templates select="." mode="nodelabel"/>
+    </xsl:variable>
+  "<xsl:value-of select='$vodmlref'/>" [
+    URL="<xsl:value-of select="concat($docURL,'#',$vodml-id)"/>"
+    label = "{<xsl:value-of select="$vodmlref"/>}"
+    fillcolor="grey"
+    ] ;
+      
+    </xsl:for-each>
+  </xsl:template>
   
   <!--  TBD deal with types directly under model -->
   <xsl:template match="objectType">
@@ -257,7 +287,15 @@ digraph GVmap {  <!-- name must not be too long. the cmap that is generated uses
  -->
    </xsl:template>
 
-
+  <xsl:template name="hyperlink">
+    <xsl:param name="vodmlref"/>
+    <xsl:variable name="prefix" select="substring-before($vodmlref,':')"/>
+    <xsl:variable name="vodml-id" select="substring-after($vodmlref,':')"/>
+    <xsl:if test="$prefix != /vo-dml:model/name">
+        <xsl:variable name="docURL" select="/vo-dml:model/import[name = $prefix]/documentationURL"/>
+        <a><xsl:attribute name="href" select="concat($docURL,'#',$vodml-id)"/><xsl:value-of select="$vodml-id"/></a>
+    </xsl:if>
+  </xsl:template>
 
   <xsl:template match="objectType|dataType|primitiveType|enumeration" mode="nodelabel">
 <!--       <xsl:value-of select="concat('&quot;',/vo-dml:model/name,':',./vodml-id,'&quot;')"/>   -->
