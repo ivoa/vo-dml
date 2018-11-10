@@ -266,11 +266,11 @@ being able to choose a more specific sub-type.
  NB Might we prefer attribute,referemce, collection???
  -->
   <xsl:template match="objectType" mode="content">
-    <xsl:variable name="numprops" select="count(attribute|reference[not(subsets)]|collection)"/>
+    <xsl:variable name="numprops" select="count(attribute|reference[not(subsets)]|composition)"/>
     <xsl:if test="number($numprops) > 0">
       <xsd:sequence>
         <xsl:apply-templates select="attribute"/>
-        <xsl:apply-templates select="collection[not(subsets)]"/>
+        <xsl:apply-templates select="composition[not(subsets)]"/>
         <xsl:apply-templates select="reference[not(subsets)]"/>
       </xsd:sequence>
     </xsl:if>
@@ -413,7 +413,7 @@ being able to choose a more specific sub-type.
   </xsl:template>  
   
   
-  <xsl:template match="collection" >
+  <xsl:template match="composition" >
     <xsl:variable name="type">
       <xsl:call-template name="XSDType">
         <xsl:with-param name="model" select="ancestor::vo-dml:model"/>
