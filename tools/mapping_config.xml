@@ -6,8 +6,14 @@
 
   <todo> <!-- models for which XSD should be generated -->
     <model>ivoa</model>
+    <model>coords</model>
+    <model>meas</model>
+    <model>trans</model>
+<!--
+    <model>sample</model>
     <model>filter</model>
     <model>sample</model>
+-->
   </todo>
 
   <model>
@@ -72,6 +78,30 @@
     <xsd-location>file:///C:/workspaces/eclipse-oxygen/vo-dml/models/sample/sample/vo-dml/Sample.xsd</xsd-location>
     <target-namespace>http://ivoa.net/dm/models/vo-dml/xsd/sample/sample</target-namespace>
     <schema-location>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/sample/sample/vo-dml/Sample.xsd</schema-location>
+  </model>
+
+  <model>
+    <name>coords</name>
+    <url>http://volute.g-vo.org/svn/trunk/projects/dm/STC/vo-dml/STC_coords-v2.0.vo-dml.xml</url>
+    <xsd-location>file:///C:/workspaces/eclipse-oxygen/STC/vo-dml/xsd/STC2-coords.xsd</xsd-location>
+    <target-namespace>http://ivoa.net/dm/models/vo-dml/xsd/stc2/coords</target-namespace>
+    <schema-location>http://volute.g-vo.org/svn/trunk/projects/dm/STC/vo-dml/xsd/STC2-coords.xsd</schema-location>
+  </model>
+
+  <model>
+    <name>meas</name>
+    <url>http://volute.g-vo.org/svn/trunk/projects/dm/STC/vo-dml/STC_meas-v2.0.vo-dml.xml</url>
+    <xsd-location>file:///C:/workspaces/eclipse-oxygen/STC/vo-dml/xsd/STC2-meas.xsd</xsd-location>
+    <target-namespace>http://ivoa.net/dm/models/vo-dml/xsd/stc2/meas</target-namespace>
+    <schema-location>http://volute.g-vo.org/svn/trunk/projects/dm/STC/vo-dml/xsd/STC2-meas.xsd</schema-location>
+  </model>
+
+  <model>
+    <name>trans</name>
+    <url>http://volute.g-vo.org/svn/trunk/projects/dm/STC/vo-dml/STC_trans-v2.0.vo-dml.xml</url>
+    <xsd-location>file:///C:/workspaces/eclipse-oxygen/STC/vo-dml/xsd/STC2-trans.xsd</xsd-location>
+    <target-namespace>http://ivoa.net/dm/models/vo-dml/xsd/stc2/trans</target-namespace>
+    <schema-location>http://volute.g-vo.org/svn/trunk/projects/dm/STC/vo-dml/xsd/STC2-trans.xsd</schema-location>
   </model>
 
 </mappedModels>
