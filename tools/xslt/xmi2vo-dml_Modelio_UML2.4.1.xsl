@@ -493,10 +493,10 @@
         </xsl:element>
       </xsl:if>
       <!-- check for isOrdered -->
-      <xsl:if test="/xmi:XMI/IVOA_UML_Profile:composition[@base_Property=$xmiid]/@isOrdered">
-      <xsl:element name="isOrdered">
-        <xsl:value-of select="/xmi:XMI/IVOA_UML_Profile:composition[@base_Property=$xmiid]/@isOrdered"/>
-      </xsl:element>
+      <xsl:if test="./@isOrdered = 'true'">
+	<xsl:element name="isOrdered">
+          <xsl:value-of select="'true'"/>
+	</xsl:element>
       </xsl:if>
     </xsl:element>
   </xsl:template>
