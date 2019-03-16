@@ -216,6 +216,22 @@
        Template:                                                   
          Process Class objects.                                    
        ============================================================ -->
+  <xsl:template name="findRootId">
+    <xsl:param name="xmiid"/>
+    <xsl:variable name="class" select="key('classid',$xmiid)"/>
+    <xsl:choose>
+      <xsl:when test="$class/generalization">
+        <xsl:call-template name="findRootId">
+          <xsl:with-param name="xmiid" select="$class/generalization/@general"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$xmiid"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+       
+       
   <xsl:template match="*[@xmi:type='uml:Class']">
     <xsl:variable name="xmiid" select="@xmi:id" />
     <!-- Check whether this class is in a tree that has a contained class

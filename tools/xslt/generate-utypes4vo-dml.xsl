@@ -47,6 +47,12 @@
     </xsl:if>
   </xsl:template>
 
+  <xsl:template match="description">
+  	<xsl:copy>
+      <xsl:apply-templates select="node()" mode="copy"/>
+  	</xsl:copy>
+  </xsl:template>
+
   <xsl:template match="vodml-id">
       <xsl:element name="vodml-id">
       <xsl:apply-templates select=".." mode="vodml-id"/>

@@ -83,9 +83,7 @@
       <xsl:element name="name">
         <xsl:value-of select="@name" />
       </xsl:element>
-      <xsl:call-template name="description">
-        <xsl:with-param name="ownedComment" select="./ownedComment" />
-      </xsl:call-template>
+      <xsl:apply-templates select="." mode="description"/>
       <xsl:if test="$modeltags/@identifier">
         <xsl:element name="identifier">
           <xsl:value-of select="$modeltags/@identifier" />
@@ -220,6 +218,24 @@
 
 
 
+  <xsl:template name="findRootId">
+    <xsl:param name="xmiid"/>
+    <xsl:variable name="class" select="key('classid',$xmiid)"/>
+    <xsl:choose>
+      <xsl:when test="$class/generalization">
+        <xsl:call-template name="findRootId">
+          <xsl:with-param name="xmiid" select="$class/generalization/@general"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$xmiid"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+
+
+
   <xsl:template match="*[@xmi:type='uml:Class']">
     <xsl:variable name="xmiid" select="@xmi:id" />
 
@@ -349,15 +365,17 @@
 
 
 
-  <xsl:template name="description">
-    <xsl:param name="ownedComment" />
+  <xsl:template match="*" mode="description">
+    <xsl:variable name="ownedComment" select="./ownedComment"/>
     <xsl:element name="description">
       <xsl:choose>
         <xsl:when test="$ownedComment/@body">
+      <xsl:attribute name="xmi-id" select="$ownedComment/@xmi:id"/>
           <xsl:value-of select="$ownedComment/@body" />
         </xsl:when>
         <xsl:otherwise>
-          TODO : Missing description : please, update your UML model asap.
+      <xsl:attribute name="owner-id" select="@xmi:id"/>
+          <xsl:text>TODO : Missing description : please, update your UML model asap.</xsl:text>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:element>
@@ -583,6 +601,8 @@
       <xsl:choose>
         <xsl:when test="$vodml-id">
           <xsl:element name="vodml-id">
+            <xsl:attribute name="id" select="@xmi:id"/>
+            <xsl:attribute name="vodmlid" select="$vodml-id"/>
             <xsl:value-of select="$vodml-id" />
           </xsl:element>
         </xsl:when>
@@ -597,9 +617,7 @@
         <xsl:value-of select="@name" />
       </xsl:element>
       <xsl:if test="name() != 'ownedRule'">
-      <xsl:call-template name="description">
-        <xsl:with-param name="ownedComment" select="./ownedComment" />
-      </xsl:call-template>
+      <xsl:apply-templates select="." mode="description"/>
       </xsl:if>
   </xsl:template>
 

@@ -114,24 +114,6 @@
 
 
 
-  <xsl:template name="findRootId">
-    <xsl:param name="xmiid"/>
-    <xsl:variable name="class" select="key('classid',$xmiid)"/>
-    <xsl:choose>
-      <xsl:when test="$class/generalization">
-        <xsl:call-template name="findRootId">
-          <xsl:with-param name="xmiid" select="$class/generalization/@general"/>
-        </xsl:call-template>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="$xmiid"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-
-
-
   <xsl:template match="*[@xmi:type='uml:Class']" mode="dummy">
     <xsl:message><xsl:value-of select="@name"/></xsl:message>
     <xsl:value-of select="'0'"/>

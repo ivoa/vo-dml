@@ -100,6 +100,10 @@
   <property name="graphviz.map.placeholder" value="___GRAPHVIZ_MAP___" />
 
 
+   <!-- java generation properties -->
+   <property name="python.dir" value="./python/${model}" />
+   <property name="python.target" value="${dm.filename.prefix}.py" />
+
   <!-- java generation properties -->
   <property name="rdf.target" value="${dm.filename.prefix}.ttl"/>
   <property name="java.gen" location="./java/gen" />
@@ -245,10 +249,28 @@
     	<param name="vodmlSchemaNS" expression="${vodmlSchemaNS}" />   	
     	<param name="vodmlSchemaLocation" expression="${vodmlSchemaLocation}" />   	
     	</xslt2>
+    <xslt2 in="${vo-dml.dir}/__TEMP__.vo-dml.xml" out="${vo-dml.dir}/DOCUMENTATION.xml" style="${xslt}/generate-documentation-list.xsl"/>
     <xslt2 in="${vo-dml.dir}/__TEMP__.vo-dml.xml" out="${vo-dml.dir}/${vo-dml.source}" style="${xslt}/generate-utypes4vo-dml.xsl"/>
   </target>
   
-  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <target name="run-update-xmi-documentation" depends="set-ant-contrib" description="Updates documentation in original XMI document">
+    <for list="${models}" param="model">
+      <sequential>
+      	<ant target="update-xmi-documentation" inheritall="false">
+	  <property name="model" value="@{model}" />
+	</ant>
+      </sequential>
+    </for>
+  </target>
+  <target name="update-xmi-documentation">
+    <echo> Running update-xmi-documentation for ${model}/${xmi.source}</echo>
+  	<property name="absolute.path" location="${model}"/>
+    <xslt2 in="${model}/${xmi.source}" out="${model}/${xmi.source}.UPDATED.xml" style="${xslt}/update-xmi-documentation_${xmi.source.profile}.xsl">
+    	<param name="DOC" expression="${absolute.path}/DOCUMENTATION.xml" />   	
+    	</xslt2>
+  </target>
+
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <!-- Target: validate_vo-dml                                                -->
   <!-- Description:  validate vo-dml file using schematron schema             -->
   <!--               TODO add validation by schema itself                     -->
@@ -294,6 +316,17 @@
     <echo>run_vo-dml2html : done.</echo>
   </target>
   
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	  <!-- Target: vo-dml2python                                                    -->
+	  <!-- Description:  generate python classes for a single model           -->
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	  <target name="vo-dml2python" if="model" >
+	    <echo>run_vo-dml2python : starting generate python file ${model}/${dm.filename.prefix}</echo>
+	    <xslt2 in="${vo-dml.dir}/${vo-dml.source}" out="${vo-dml.dir}/python/${python.target}" style="${xslt}/vo-dml2python.xsl">
+	      <param name="project_name" expression="${dm.filename.prefix}" />
+	    </xslt2>
+	    <echo>run_vo-dml2python : done.</echo>
+	  </target>
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <!-- Target: vo-dml2gvd                                                     -->
   <!-- Description:  generates Object Graphs (graphviz tool) for a single     -->
@@ -348,7 +381,21 @@
     <echo>run_vo-dml2rdf : done.</echo>
   </target>
   
-  
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	  <target name="run_vo-dml2python"  depends="set-ant-contrib"   description="Generate python classes for vo-dml model">
+	    <echo>run_vo-dml2python : starting generate python code for model in </echo>
+	    <fail unless="models" message="Must define property 'models' in build.properties before running run_vo-dml_all target !" />
+	    <for list="${models}" param="model">
+	      <sequential>
+		<ant target="vo-dml2python" inheritall="false">
+		  <property name="model" value="@{model}"/>
+		</ant>
+	      </sequential>
+	    </for>
+	  </target>
+	  
+	
+	
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <target name="run_vo-dml2pojo"   description="Generate POJO java classes for all models identified in mapping.file">
     <fail unless="mapping.file" message="Must define property 'mapping.file' in build.properties (the source VO-DML file) !" />
