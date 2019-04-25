@@ -249,10 +249,12 @@
     	<param name="vodmlSchemaNS" expression="${vodmlSchemaNS}" />   	
     	<param name="vodmlSchemaLocation" expression="${vodmlSchemaLocation}" />   	
     	</xslt2>
+  	<!--
     <xslt2 in="${vo-dml.dir}/__TEMP__.vo-dml.xml" out="${vo-dml.dir}/DOCUMENTATION.xml" style="${xslt}/generate-documentation-list.xsl"/>
+    -->
     <xslt2 in="${vo-dml.dir}/__TEMP__.vo-dml.xml" out="${vo-dml.dir}/${vo-dml.source}" style="${xslt}/generate-utypes4vo-dml.xsl"/>
   </target>
-  
+<!--  
   <target name="run-update-xmi-documentation" depends="set-ant-contrib" description="Updates documentation in original XMI document">
     <for list="${models}" param="model">
       <sequential>
@@ -269,7 +271,7 @@
     	<param name="DOC" expression="${absolute.path}/DOCUMENTATION.xml" />   	
     	</xslt2>
   </target>
-
+-->
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <!-- Target: validate_vo-dml                                                -->
   <!-- Description:  validate vo-dml file using schematron schema             -->
@@ -382,7 +384,8 @@
   </target>
   
 	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-	  <target name="run_vo-dml2python"  depends="set-ant-contrib"   description="Generate python classes for vo-dml model">
+<!--
+	<target name="run_vo-dml2python"  depends="set-ant-contrib"   description="Generate python classes for vo-dml model">
 	    <echo>run_vo-dml2python : starting generate python code for model in </echo>
 	    <fail unless="models" message="Must define property 'models' in build.properties before running run_vo-dml_all target !" />
 	    <for list="${models}" param="model">
@@ -393,7 +396,7 @@
 	      </sequential>
 	    </for>
 	  </target>
-	  
+-->	  
 	
 	
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
