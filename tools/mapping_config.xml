@@ -1,19 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mappedModels>
+
+<!-- ========================================
+This is a sample file for mapping VO-DML models to XSD using the corresponding 
+vo-dml2xsd.xsl scripts in the xslt/ folder. In fact it is the input to that script.
+Its <xsd-location> elements below need updating to values for you local context.
+in the <todo> you should un-comment the models that you want to transform.
+To add new models add new entries there and a corresponding >model> below.
+ -->
+
+
   <xsd-root-namespace>http://ivoa.net/dm/vo-dml/xsd/</xsd-root-namespace>
   <vodml-base-namespace>http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1</vodml-base-namespace>
   <vodml-base-location>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/xsd/vodml-base.xsd</vodml-base-location>
 
   <todo> <!-- models for which XSD should be generated -->
+<!--
     <model>ivoa</model>
     <model>coords</model>
     <model>meas</model>
     <model>trans</model>
-<!--
     <model>sample</model>
     <model>filter</model>
     <model>sample</model>
 -->
+    <model>simdm</model>
   </todo>
 
   <model>
@@ -104,4 +115,11 @@
     <schema-location>http://volute.g-vo.org/svn/trunk/projects/dm/STC/vo-dml/xsd/STC2-trans.xsd</schema-location>
   </model>
 
+  <model>
+    <name>simdm</name>
+    <url>http://volute.g-vo.org/svn/trunk/projects/theory/snapdm/specification/v1.1/vo-dml/SimDM-v1.1.vo-dml.xml</url>
+    <xsd-location>file:///C:/workspaces/eclipse-oxygen/SimDB-Clean/specification/v1.1/vo-dml/SimDM-v1.1.xsd</xsd-location>
+    <target-namespace>http://ivoa.net/dm/models/vo-dml/xsd/simdm1_1</target-namespace>
+    <schema-location>http://volute.g-vo.org/svn/trunk/projects/dm/STC/vo-dml/xsd/SimDM-v1.1.xsd</schema-location>
+  </model>
 </mappedModels>
