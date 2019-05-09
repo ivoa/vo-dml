@@ -431,9 +431,6 @@ being able to choose a more specific sub-type.
     </xsd:element>
   </xsl:template>
   
-  
-  
-  
   <xsl:template match="reference" >
     <xsl:variable name="type">
       <xsl:call-template name="XSDType">
@@ -496,9 +493,9 @@ being able to choose a more specific sub-type.
 
   <xsl:template name="add_appinfo">
         <xsd:appinfo>
-          <vodml-id>
-            <xsl:value-of select="./vodml-id"/>
-          </vodml-id>
+          <vodml-ref>
+            <xsl:apply-templates select="./vodml-id" mode="asvodml-ref"/>
+          </vodml-ref>
         </xsd:appinfo>
   </xsl:template>
 
