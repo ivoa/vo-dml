@@ -11,6 +11,11 @@
            * uml namespace change 20100901 to 20110701
            * IVOA_UML_PROFILE: base_Package      to base_Element
            * IVOA_UML_PROFILE: base_NamedElement to base_Element
+       o  Modelio v3.8 exporting UML 2.4.1
+           * IVOA_UML_PROFILE: base_Element      to base_Package      (reverts)
+           * IVOA_UML_PROFILE: base_Element      to base_NamedElement (reverts)
+          Q: I wonder if this is a difference in our IVOA_UML_Profile-s!
+
 
 -->
 <!DOCTYPE stylesheet [
@@ -111,7 +116,7 @@
        ============================================================ -->
   <xsl:template match="uml:Model" mode="modelspec">
     <xsl:variable name="xmiid" select="@xmi:id" />
-    <xsl:variable name="modeltags" select="/xmi:XMI/*[local-name()='model' and @base_Element = $xmiid]" />
+    <xsl:variable name="modeltags" select="/xmi:XMI/*[local-name()='model' and @base_Package = $xmiid]" />
 
     <xsl:element name="name">
       <xsl:value-of select="@name" />
@@ -167,7 +172,7 @@
 
     <!-- test that the Package is not a modelimport -->
     <xsl:choose>
-      <xsl:when test="not(/xmi:XMI/*[local-name()='modelimport' and @base_Element = $xmiid])">
+      <xsl:when test="not(/xmi:XMI/*[local-name()='modelimport' and @base_Package = $xmiid])">
         <xsl:message>found no modelimport for package <xsl:value-of select="@name"/></xsl:message>
 
         <!-- check if a name is defined -->
@@ -594,7 +599,7 @@
        ============================================================ -->
   <xsl:template name="semanticconceptstereotype">
     <xsl:param name="xmiid" />
-    <xsl:variable name="attribute" select="/xmi:XMI/*[local-name()='semanticconcept' and @base_Element=$xmiid]" />
+    <xsl:variable name="attribute" select="/xmi:XMI/*[local-name()='semanticconcept' and @base_Package=$xmiid]" />
     <xsl:if test="$attribute">
       <xsl:element name="semanticconcept">
         <xsl:if test="$attribute/@topconcept">
@@ -812,7 +817,7 @@
        ============================================================ -->
   <xsl:template match="*[@xmi:id]" mode="aselement">
     <xsl:variable name="xmiid" select="@xmi:id"/>
-    <xsl:variable name="vodml-id" select="/xmi:XMI/*:modelelement[@base_Element = $xmiid]/@vodmlid" />
+    <xsl:variable name="vodml-id" select="/xmi:XMI/*:modelelement[@base_NamedElement = $xmiid]/@vodmlid" />
     <xsl:variable name="modelimport" select="/xmi:XMI/uml:Model/packagedElement[@xmi:type='uml:Model' 
     and .//packagedElement[@xmi:id = $xmiid]]" />
     
@@ -848,7 +853,7 @@
     </xsl:if>
     <!-- get referenced element, check for modelelement stereotype defining vodml-id  -->
     <xsl:variable name="element" select="/xmi:XMI//*[@xmi:id = $xmiidref]"/>
-    <xsl:variable name="vodml-id" select="/xmi:XMI/*:modelelement[@base_Element = $xmiidref]/@vodmlid" />
+    <xsl:variable name="vodml-id" select="/xmi:XMI/*:modelelement[@base_NamedElement = $xmiidref]/@vodmlid" />
     
     <!-- get Package containing the referenced element -->
     <xsl:variable name="package" select="/xmi:XMI//*[@xmi:id = $xmiidref]/..[@xmi:type='uml:Package']"/>
@@ -856,7 +861,7 @@
     <!-- get root Package containing referenced element, check for modelimport stereotype.
 	 imported elements must have vodml-id resolved here. -->
     <xsl:variable name="rootpackage" select="/xmi:XMI/uml:Model/packagedElement[@xmi:type='uml:Package' and .//*[@xmi:id = $xmiidref]]" />
-    <xsl:variable name="modelimport" select="/xmi:XMI/*[local-name()='modelimport' and @base_Element=$rootpackage/@xmi:id]"/>
+    <xsl:variable name="modelimport" select="/xmi:XMI/*[local-name()='modelimport' and @base_Package=$rootpackage/@xmi:id]"/>
     
     <!-- report imported elements with no specified vodml-id. -->
     <xsl:if test="$modelimport and not($vodml-id)">
@@ -911,7 +916,7 @@
        ============================================================ -->
   <xsl:template match="packagedElement[@xmi:type='uml:Package']" mode="modelimport">
     <xsl:variable name="xmiid" select="@xmi:id"/>
-    <xsl:variable name="modelimport" select="/xmi:XMI/*[local-name()='modelimport' and @base_Element = $xmiid]" />
+    <xsl:variable name="modelimport" select="/xmi:XMI/*[local-name()='modelimport' and @base_Package = $xmiid]" />
     <xsl:if test="$modelimport">
     <xsl:element  name="import">
       <xsl:variable name="vodml-id" select="@name"/>
