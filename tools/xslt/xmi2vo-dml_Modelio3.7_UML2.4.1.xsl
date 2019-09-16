@@ -11,6 +11,7 @@
            * uml namespace change 20100901 to 20110701
            * IVOA_UML_PROFILE: base_Package      to base_Element
            * IVOA_UML_PROFILE: base_NamedElement to base_Element
+	   * base_Constraint to base_Element
 
 -->
 <!DOCTYPE stylesheet [
@@ -764,7 +765,7 @@
   <xsl:template name="checkIfSubset">
     <xsl:param name="xmiid"/>
 
-    <xsl:variable name="subset" select="/xmi:XMI/*[local-name()='subset' and @base_Constraint=$xmiid]" />
+    <xsl:variable name="subset" select="/xmi:XMI/*[local-name()='subset' and @base_Element=$xmiid]" />
     <xsl:choose>
       <xsl:when test="$subset">
 	<xsl:value-of select="'True'" />
@@ -786,7 +787,7 @@
     <xsl:choose>
       <xsl:when test="$constraint">
         <xsl:variable name="constraintid" select="$constraint/@xmi:id"/>
-        <xsl:variable name="subset" select="/xmi:XMI/*[local-name()='subset' and @base_Constraint=$constraintid]" />
+        <xsl:variable name="subset" select="/xmi:XMI/*[local-name()='subset' and @base_Element=$constraintid]" />
         <xsl:choose>
           <xsl:when test="$subset">
 	    <xsl:value-of select="'True'" />

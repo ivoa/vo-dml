@@ -319,10 +319,11 @@ being able to choose a more specific sub-type.
   
   
   <xsl:template match="dataType" mode="content">
-    <xsl:variable name="numprops" select="count(attribute)"/>
+    <xsl:variable name="numprops" select="count(attribute|reference[not(subsets)])"/>
     <xsl:if test="number($numprops) > 0">
       <xsd:sequence>
         <xsl:apply-templates select="attribute"/>
+        <xsl:apply-templates select="reference[not(subsets)]"/>
       </xsd:sequence>
     </xsl:if>
   </xsl:template>
