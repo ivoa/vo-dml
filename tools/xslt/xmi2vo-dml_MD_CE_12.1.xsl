@@ -67,6 +67,7 @@
       <xsl:namespace name="vo-dml" select="$vodmlSchemaNS"/>
       <xsl:namespace name="xsi">http://www.w3.org/2001/XMLSchema-instance</xsl:namespace>
       <xsl:attribute name="xsi:schemaLocation" select="concat($vodmlSchemaNS,' ',$vodmlSchemaLocation)" />
+<!-- 
       <xsl:attribute name="version">
         <xsl:choose>
          <xsl:when test="$modeltags/@vodml-version">
@@ -77,7 +78,7 @@
          </xsl:otherwise>
        </xsl:choose>
       </xsl:attribute>
-      <!-- 'http://www.ivoa.net/xml/VODML/v1.0 http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/xsd/vo-dml-v1.0.xsd'" -->
+ -->      <!-- 'http://www.ivoa.net/xml/VODML/v1.0 http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/xsd/vo-dml-v1.0.xsd'" -->
 
 <!-- Note, in the MD CE 12.1 profile the name of the UML model is to be used as vodml-id, its title tag as name ! -->
       <xsl:element name="name">
