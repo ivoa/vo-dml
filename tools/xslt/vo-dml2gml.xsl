@@ -217,7 +217,7 @@ must create next as variable to select from inside the atomic context of the dis
         <y:PolyLineEdge>
         <xsl:choose>
           <xsl:when test="self::composition">
-            <y:LineStyle color="#0000FF" type="line" width="2.0"/>
+            <y:LineStyle color="#9393FF" type="line" width="2.0"/>
             <y:Arrows source="diamond" target="standard"/>
           </xsl:when>
           <xsl:otherwise>
@@ -231,21 +231,29 @@ must create next as variable to select from inside the atomic context of the dis
       fontFamily="Dialog" fontSize="12" fontStyle="plain"
       hasBackgroundColor="false" hasLineColor="false"
       horizontalTextPosition="center"
-      iconTextGap="4" modelName="three_center" modelPosition="center"
-      preferredPlacement="anywhere" ratio="0.5" textColor="#000000"
+      iconTextGap="4" modelName="six_pos" modelPosition="head"
+      preferredPlacement="centered" ratio="0.5" textColor="#000000"
       verticalTextPosition="bottom" visible="true" 
       xml:space="preserve" 
-   ><xsl:value-of select="name"/></y:EdgeLabel>
+   ><xsl:value-of select="name"/><y:PreferredPlacementDescriptor
+      angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute"
+      angleRotationOnRightSide="co" distance="-1.0" placement="center"
+      side="on_edge" sideReference="relative_to_edge_flow" />
+   </y:EdgeLabel>
    <y:EdgeLabel alignment="center"
       configuration="AutoFlippingLabel" distance="2.0"
       fontFamily="Dialog" fontSize="12" fontStyle="plain"
       hasBackgroundColor="false" hasLineColor="false"
       horizontalTextPosition="center"
-      iconTextGap="4" modelName="three_center" modelPosition="tcentr"
+      iconTextGap="4" modelName="six_pos" modelPosition="thead"
       preferredPlacement="target_on_edge" ratio="0.5"
       textColor="#000000" verticalTextPosition="bottom" visible="true"
       xml:space="preserve"
-      ><xsl:apply-templates select="multiplicity" mode="tostring"/></y:EdgeLabel>
+      ><xsl:apply-templates select="multiplicity" mode="tostring"/><y:PreferredPlacementDescriptor
+      angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute"
+      angleRotationOnRightSide="co" distance="-1.0" placement="target"
+      side="anywhere" sideReference="relative_to_edge_flow" />
+      </y:EdgeLabel>
 
 
         </y:PolyLineEdge>
