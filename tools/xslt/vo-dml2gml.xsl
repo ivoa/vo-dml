@@ -45,6 +45,11 @@ derived from the vo-dml2gvd.xsl file
   <xsl:message>Found model</xsl:message>
   <xsl:element name="graphml" namespace="http://graphml.graphdrawing.org/xmlns/graphml" >
   <xsl:attribute name="schemaLocation" namespace="http://www.w3.org/2001/XMLSchema-instance">http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.0/ygraphml.xsd</xsl:attribute>
+  
+   <!-- todo - put all of the model metadata here.... -->
+     <key attr.name="Title" attr.type="string" for="graph" id="t0">
+       <default xml:space="preserve"><xsl:value-of select="name"/></default>
+     </key>
       <key attr.name="description" attr.type="string" for="node" id="k1"/>
       <key id="k2" for="node" yfiles.type="nodegraphics"/>
       <key id="k3" for="edge" yfiles.type="edgegraphics"/>
@@ -102,8 +107,22 @@ derived from the vo-dml2gvd.xsl file
 
 
   <xsl:template match="package">
-  <!-- for now don't distinguish packages and just carry on -->
-       <xsl:apply-templates select="child::node()"/>
+       <node id="{generate-id()}" yfiles.foldertype="group">
+         <data key="k2">
+            <y:GroupNode>
+               <y:Fill color="#E8E9CA" transparent="false" />
+               <y:BorderStyle color="#000000" raised="false"
+         type="dashed" width="1.0" />
+              <y:NodeLabel alignment="left" autoSizePolicy="node_width"
+              modelName="sides" modelPosition="n"
+              backgroundColor="#F2F0D8"
+              ><xsl:value-of select="name"/></y:NodeLabel>
+            </y:GroupNode>
+         </data>
+        <graph edgedefault="directed" id="G">
+          <xsl:apply-templates select="child::node()"/>
+       </graph>
+       </node>
   </xsl:template>
 
   
@@ -142,8 +161,14 @@ must create next as variable to select from inside the atomic context of the dis
         <xsl:when test="self::enumeration|self::primitiveType"><xsl:value-of select="local-name()"/></xsl:when>
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
- 
     </xsl:variable>
+     <xsl:variable name="fontstyle">
+        <xsl:choose>
+          <xsl:when test="@abstract = 'true'">bolditalic</xsl:when>
+          <xsl:otherwise>bold</xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+   
     
     <xsl:element name="node" namespace="http://graphml.graphdrawing.org/xmlns/graphml">
        <xsl:attribute name="id"><xsl:value-of select="$nodename"/>
@@ -156,7 +181,13 @@ must create next as variable to select from inside the atomic context of the dis
         <y:UMLClassNode>
           <y:Fill color="#BDB992" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false"  horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="c" textColor="#000000" verticalTextPosition="bottom" visible="true"  xml:space="preserve" y="3.0"><xsl:value-of select="$label"/></y:NodeLabel>
+          <y:NodeLabel alignment="center"
+   autoSizePolicy="content" fontFamily="Dialog" fontSize="12"
+   fontStyle="{$fontstyle}" hasBackgroundColor="false" hasLineColor="false"
+   horizontalTextPosition="center" iconTextGap="4" modelName="internal"
+   modelPosition="c" textColor="#000000" verticalTextPosition="bottom"
+   visible="true" xml:space="preserve" y="3.0"
+><xsl:value-of select="$label" /></y:NodeLabel>
           <y:UML clipContent="true" constraint="" hasDetailsColor="false" omitDetails="false" stereotype="{$stereotype}" use3DEffect="true">
             <y:AttributeLabel xml:space="preserve"><xsl:apply-templates select="attribute|literal"/></y:AttributeLabel>
             <y:MethodLabel xml:space="preserve"></y:MethodLabel>
