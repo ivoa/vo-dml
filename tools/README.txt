@@ -144,6 +144,11 @@ This file is used by GraphViz to generate an image for the model.
 It also (in the build.xml's run_vo-dml2gvd target) generates a map of the image
 that is inserted into the HTML to create a cross linking between diagram and data model element in the HTML document.
 
+- ./xslt/vo-dml2gml.xsl
+An XSLT script that can be used to create a GRAPHML representation of the model to allow
+for hand editing of a model diagram in https://www.yworks.com/products/yed
+
+
 - ./xslt/vo-dml2pojo.xsl
 Generates "perfectly ordinary java" class definitions based on the models and the mapping_file.xml.
 Have a deepToString method for serializing the objects to an XML format compatible with ./xsd/vo-dml-instance.xml.
