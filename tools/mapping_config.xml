@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mappedModels>
+<m:mappedModels xmlns:m="http://volute.g-vo.org/dm/vo-dml-mapping/v0.9">
 
 <!-- ========================================
 This is a sample file for mapping VO-DML models to XSD using the corresponding 
@@ -122,4 +122,4 @@ To add new models add new entries there and a corresponding >model> below.
     <target-namespace>http://ivoa.net/dm/models/vo-dml/xsd/simdm1_1</target-namespace>
     <schema-location>http://volute.g-vo.org/svn/trunk/projects/dm/STC/vo-dml/xsd/SimDM-v1.1.xsd</schema-location>
   </model>
-</mappedModels>
+</m:mappedModels>

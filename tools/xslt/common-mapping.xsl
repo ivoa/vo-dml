@@ -6,7 +6,7 @@
 ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:map="http://volute.g-vo.org/dm/vo-dml-mapping/v0.9"
-                xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1.0">
+                xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1">
 
 
   
@@ -181,8 +181,8 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
       <xsl:otherwise>
  
     <xsl:choose>
-      <xsl:when test="$mapping/mappedModels/model[name=$prefix]/file">
-        <xsl:variable name="file" select="$mapping/mappedModels/model[name=$prefix]/file"/>
+      <xsl:when test="$mapping/map:mappedModels/model[name=$prefix]/file">
+        <xsl:variable name="file" select="$mapping/map:mappedModels/model[name=$prefix]/file"/>
         <xsl:copy-of select="document($file)/vo-dml:model//*[vodml-id=$vodml-id]"/>
       </xsl:when>
       <xsl:otherwise>
@@ -217,8 +217,8 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
       </xsl:when>
       <xsl:otherwise>
     <xsl:choose>
-      <xsl:when test="$mapping/mappedModels/model[name=$prefix]/file">
-        <xsl:variable name="file" select="$mapping/mappedModels/model[name=$prefix]/file"/>
+      <xsl:when test="$mapping/map:mappedModels/model[name=$prefix]/file">
+        <xsl:variable name="file" select="$mapping/map:mappedModels/model[name=$prefix]/file"/>
         <xsl:message>Model4vodml-ref : <xsl:value-of select="$file"/></xsl:message>
         <xsl:copy-of select="document($file)/vo-dml:model"/>
       </xsl:when>

@@ -87,7 +87,7 @@ To add new models add new entries there and a corresponding >model> below.
 <name>filter</name>
 <url>https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/sample/filter/vo-dml/Filter.vo-dml.xml</url>
 <file>/Users/pharriso/Work/volute/projects/dm/vo-dml/models/sample/filter/vo-dml/Filter.vo-dml.xml</file>
- <java-package>org.ivoa.dm.sample</java-package>
+ <java-package>org.ivoa.dm.filter</java-package>
 <xsd-location>file:///Users/pharriso/Work/volute/projects/dm/vo-dml/models/sample/filter/vo-dml/Filter.xsd</xsd-location>
 <target-namespace>http://ivoa.net/dm/models/vo-dml/xsd/sample/filter</target-namespace>
 <schema-location>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/sample/filter/vo-dml/Filter.xsd</schema-location>

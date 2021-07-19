@@ -4,6 +4,7 @@
               xsi:schemaLocation="http://www.ivoa.net/xml/VODML/v1 http://www.ivoa.net/xml/VODML/vo-dml-v1.xsd">
   <name>filter</name>
   <description>This is an alternative version of the data model for Photometric Calibration ... </description>
+  <uri/>
   <title>Filter</title>
   <version>0.x</version>
   <lastModified>2018-03-01T08:13:05</lastModified>

@@ -5,6 +5,7 @@
   <name>sample</name>
   <description>This is a sample data model. It contains the IVOA UML Profile and imports the IVOA_Profile data model with primitive types.
 It has some sample relationships etc to be used in documentation etc.</description>
+  <uri/>
   <title>Sample VO-DML data model.</title>
   <version>1.0</version>
   <lastModified>2018-03-01T08:13:45</lastModified>

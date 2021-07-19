@@ -415,7 +415,7 @@
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <target name="run_vo-dml2xsd"   description="Generate XML schema files for all models identified in mapping.file">
     <fail unless="mapping.config.file" message="Must define property 'mapping.file' in build.properties (the source VO-DML file) !" />
-    <echo>run_vo-dml2xsd : starting generate XML schema files for all models in mapping file ${mapping.file}</echo>
+    <echo>run_vo-dml2xsd : starting generate XML schema files for all models in mapping file ${mapping.config.file}</echo>
     <xslt2 in="${mapping.config.file}" out="${xsd.gen}/run_xsd.txt" style="${xslt}/vo-dml2xsd.xsl">
       <param name="mapping_file" expression="${mapping.config.file}" />
       <param name="schemalocation_root" expression="${schemalocation_root}" />

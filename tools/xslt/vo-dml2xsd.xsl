@@ -41,6 +41,7 @@ being able to choose a more specific sub-type.
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
+                xmlns:map="http://volute.g-vo.org/dm/vo-dml-mapping/v0.9"
                 xmlns:vodml-base="http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1"
                 >
 
@@ -72,9 +73,9 @@ being able to choose a more specific sub-type.
 
   <!-- main pattern : processes for root node model -->
   <xsl:template match="/">
-    <xsl:for-each select="mappedModels/todo/model" >
+    <xsl:for-each select="map:mappedModels/todo/model" >
     <xsl:variable name="mname" select="."/>
-      <xsl:variable name="model" select="/mappedModels/model[name=$mname]" />
+      <xsl:variable name="model" select="/map:mappedModels/model[name=$mname]" />
       <xsl:choose>
         <xsl:when test="$model/file">
           <xsl:apply-templates select="document($model/file)/vo-dml:model">
@@ -108,7 +109,7 @@ being able to choose a more specific sub-type.
     </xsl:variable>
     
     <xsl:variable name="xsd-location">
-      <xsl:value-of select="$mapping/mappedModels/model[name=$name]/xsd-location"/>
+      <xsl:value-of select="$mapping/map:mappedModels/model[name=$name]/xsd-location"/>
     </xsl:variable>
 
     <xsl:variable name="targetNamespace">
@@ -129,8 +130,8 @@ being able to choose a more specific sub-type.
         <!--  import base schema -->
         <xsl:apply-templates select="import" mode="xmlns"/>
       <xsl:element name="xsd:import">
-        <xsl:attribute name="namespace" select="$mapping/mappedModels/vodml-base-namespace"/>
-        <xsl:attribute name="schemaLocation" select="$mapping/mappedModels/vodml-base-location">
+        <xsl:attribute name="namespace" select="$mapping/map:mappedModels/vodml-base-namespace"/>
+        <xsl:attribute name="schemaLocation" select="$mapping/map:mappedModels/vodml-base-location">
         </xsl:attribute>
       </xsl:element>
         
@@ -518,8 +519,8 @@ being able to choose a more specific sub-type.
       </xsl:when>
       <xsl:otherwise>
     <xsl:choose>
-      <xsl:when test="$mapping/mappedModels/model[name=$prefix]/file">
-        <xsl:variable name="file" select="$mapping/mappedModels/model[name=$prefix]/file"/>
+      <xsl:when test="$mapping/map:mappedModels/model[name=$prefix]/file">
+        <xsl:variable name="file" select="$mapping/map:mappedModels/model[name=$prefix]/file"/>
         <xsl:copy-of select="document($file)/vo-dml:model"/>
       </xsl:when>
       <xsl:otherwise>
@@ -581,7 +582,7 @@ being able to choose a more specific sub-type.
   <xsl:template name="findmappingInThisModel">
     <xsl:param name="modelname"/>
     <xsl:param name="vodml-id"/>
-        <xsl:value-of select="$mapping/mappedModels/model[name=$modelname]/type-mapping[vodml-id=$vodml-id]/xsd-type"/>
+        <xsl:value-of select="$mapping/map:mappedModels/model[name=$modelname]/type-mapping[vodml-id=$vodml-id]/xsd-type"/>
   </xsl:template>
 
   <xsl:template name="findmapping">
@@ -592,7 +593,7 @@ being able to choose a more specific sub-type.
     <xsl:if test="not($modelname) or $modelname=''">
       <xsl:message>!!!!!!! ERROR No prefix found in findmaping for <xsl:value-of select="$vodml-ref"/></xsl:message>
     </xsl:if>
-    <xsl:value-of select="$mapping/mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/xsd-type"/>
+    <xsl:value-of select="$mapping/map:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/xsd-type"/>
   </xsl:template>
   
     <!-- find a java package path towards the type identified with the name -->
@@ -638,17 +639,17 @@ being able to choose a more specific sub-type.
   <!-- utility templates -->
   <xsl:template name="ns-root4model" >
     <xsl:param name="name"/>
-    <xsl:value-of select="$mapping/mappedModels/model[name=$name]/target-namespace"/>
+    <xsl:value-of select="$mapping/map:mappedModels/model[name=$name]/target-namespace"/>
   </xsl:template>
   
   <xsl:template name="schema-location4model" >
     <xsl:param name="name"/>
     <xsl:choose>
-    <xsl:when test="$mapping/mappedModels/model[name=$name]/schema-location">
-    <xsl:value-of select="$mapping/mappedModels/model[name=$name]/schema-location"/>
+    <xsl:when test="$mapping/map:mappedModels/model[name=$name]/schema-location">
+    <xsl:value-of select="$mapping/map:mappedModels/model[name=$name]/schema-location"/>
     </xsl:when>
     <xsl:otherwise>
-    <xsl:value-of select="$mapping/mappedModels/model[name=$name]/xsd-location"/>
+    <xsl:value-of select="$mapping/map:mappedModels/model[name=$name]/xsd-location"/>
     </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
