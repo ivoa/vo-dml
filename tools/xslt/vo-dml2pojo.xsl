@@ -7,7 +7,7 @@
 ]>
 
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1.0"
+                xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
                 xmlns:exsl="http://exslt.org/common"
                 xmlns:map="http://volute.g-vo.org/dm/vo-dml-mapping/v0.9"
                 extension-element-prefixes="exsl">
@@ -50,6 +50,7 @@
 
   <!-- main pattern : processes for root node model -->
   <xsl:template match="/">
+  <xsl:message >Generating Java</xsl:message>
   <xsl:for-each select="map:mappedModels/todo/model">
   <xsl:message >Model: <xsl:value-of select="."/></xsl:message>
   <xsl:variable name="prefix" select="."/>
