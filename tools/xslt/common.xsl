@@ -55,7 +55,7 @@
     <xsl:param name="packageid"/>
     <xsl:param name="delimiter"/>
     <xsl:param name="suffix"/>
-
+<!--     <xsl:message>package-path: packageid=<xsl:value-of select="$packageid"/> suffix=<xsl:value-of select="$suffix"/> model=<xsl:value-of select="$model/name"/></xsl:message> -->
     <xsl:variable name="p" select="$model//package[vodml-id = $packageid]"/>
     <xsl:choose>
       <xsl:when test="name($p) = 'package'">
@@ -70,7 +70,7 @@
           </xsl:choose>
         </xsl:variable>
         <xsl:call-template name="package-path">
-          <xsl:with-param name="model" select="$model"/>
+          <xsl:with-param name="model" select="$model" as="node()"/>
           <xsl:with-param name="packageid" select="$p/../vodml-id"/>
           <xsl:with-param name="suffix" select="$newsuffix"/>
           <xsl:with-param name="delimiter" select="$delimiter"/>

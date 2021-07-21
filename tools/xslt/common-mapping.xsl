@@ -14,7 +14,6 @@
 
   <xsl:param name="targetnamespace_root"/>
 
-
   <xsl:template match="vo-dml:model" mode="xsd-path">
     <xsl:param name="delimiter"/>
     <xsl:param name="suffix" select="''"/>
@@ -35,7 +34,7 @@
 
   <!-- return the targetnamespace for the schema document for the package with the given id -->
   <xsl:template name="namespace-for-package">
-    <xsl:param name="model"/>
+    <xsl:param name="model" select="ancestor-or-self::vo-dml:model"/>
     <xsl:param name="packageid"/>
     <xsl:variable name="path">
       <xsl:call-template name="package-path">
@@ -114,21 +113,25 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
       <xsl:value-of select="concat($article,name)"/>
   </xsl:template>
   
+   <xsl:template name="getmodel">
+    <xsl:param name="vodml-ref"/> <!-- assumed to be fully qualified! i.e. also for elements in local model, the prefix is included! -->
+    <xsl:variable name="modelname" select="substring-before($vodml-ref,':')"/>
+    <xsl:if test="not($modelname) or $modelname=''">
+      <xsl:message>!!!!!!! ERROR No prefix found in findmapping for <xsl:value-of select="$vodml-ref"/></xsl:message>
+    </xsl:if>
+    <xsl:copy-of select="$models/vo-dml:model[name=$modelname]"/>
+    </xsl:template>
+  
   
     <!-- find JavaType for given vodml-ref, starting from provided model element -->
   <xsl:template name="JavaType">
-    <xsl:param name="model" />
     <xsl:param name="vodml-ref"/> <!-- assumed to be fully qualified! i.e. also for elements in local model, the prefix is included! -->
     <xsl:param name="length" select="''"/> 
-    <xsl:param name="fullpath" /> 
+    <xsl:param name="fullpath" select="'false'" /> 
 
-    <xsl:if test="not($model)">
-      <xsl:message>JavaType: No model supplied for <xsl:value-of select="vodml-ref"/></xsl:message>
-    </xsl:if>
-
+ 
     <xsl:variable name="mappedtype">
       <xsl:call-template name="findmapping">
-        <xsl:with-param name="model" select="$model"/>
         <xsl:with-param name="vodml-ref" select="$vodml-ref"/>
       </xsl:call-template>
     </xsl:variable>
@@ -141,7 +144,6 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
         <xsl:when test="$fullpath='true'">
 <!--         <xsl:message >Finding full path for <xsl:value-of select="$vodml-ref"/></xsl:message>   -->
           <xsl:call-template  name="fullpath">
-            <xsl:with-param name="model" select="$model"/>
             <xsl:with-param name="vodml-ref" select="$vodml-ref"/>
           </xsl:call-template>
         </xsl:when>
@@ -149,88 +151,33 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
         
         <xsl:variable name="type" as="element()">
           <xsl:call-template name="Element4vodml-ref">
-            <xsl:with-param name="model" select="$model"/>
             <xsl:with-param name="vodml-ref" select="$vodml-ref"/>
           </xsl:call-template>
         </xsl:variable> 
-        
           <xsl:value-of select="$type/name"/>
         </xsl:otherwise>
       </xsl:choose>
      </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  
-  
-  <xsl:template name="Element4vodml-ref" as="element()">
-    <xsl:param name="model" as="element()"/>
-    <xsl:param name="vodml-ref"/>
+   <xsl:template name="Element4vodml-ref" as="element()">
+      <xsl:param name="vodml-ref" />
+      <xsl:variable name="prefix" select="substring-before($vodml-ref,':')" />
+      <xsl:if test="not($prefix) or $prefix=''">
+         <xsl:message>!!!!!!! ERROR No prefix found in Element4vodml-ref for <xsl:value-of select="$vodml-ref" /></xsl:message>
+      </xsl:if>
+      <xsl:variable name="vodml-id" select="substring-after($vodml-ref,':')" />
+      <xsl:choose>
+         <xsl:when test="$models/vo-dml:model[name = $prefix]">
+            <xsl:copy-of select="$models/vo-dml:model[name = $prefix]//*[vodml-id=$vodml-id]" />
+         </xsl:when>
+         <xsl:otherwise>
+           <xsl:message>**ERROR** failed to find '<xsl:value-of select="$vodml-ref" />'</xsl:message>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
+
     
-    <xsl:if test="not($model)">
-      <xsl:message>Element4vodml-ref: No model provided for vodml-ref <xsl:value-of select="$vodml-ref"/></xsl:message>
-    </xsl:if>
-    <xsl:variable name="prefix" select="substring-before($vodml-ref,':')"/>
-    <xsl:if test="not($prefix) or $prefix=''">
-    <xsl:message>!!!!!!! ERROR No prefix found in Element4vodml-ref for <xsl:value-of select="$vodml-ref"/></xsl:message>
-    </xsl:if>
-    <xsl:variable name="vodml-id" select="substring-after($vodml-ref,':')"/>
-    <xsl:choose>
-      <xsl:when test="$model/name = $prefix">
-        <xsl:copy-of select="$model//*[vodml-id=$vodml-id]"/>
-      </xsl:when>
-      <xsl:otherwise>
- 
-    <xsl:choose>
-      <xsl:when test="$mapping/map:mappedModels/model[name=$prefix]/file">
-        <xsl:variable name="file" select="$mapping/map:mappedModels/model[name=$prefix]/file"/>
-        <xsl:copy-of select="document($file)/vo-dml:model//*[vodml-id=$vodml-id]"/>
-      </xsl:when>
-      <xsl:otherwise>
-      <xsl:message >Looking online for model '<xsl:value-of select="$prefix"/>'</xsl:message>
-        <xsl:variable name="import" select="$model/import[prefix = $prefix]/url"/>
-        <xsl:copy-of select="document($import)/vo-dml:model//*[vodml-id=$vodml-id]"/>
-      </xsl:otherwise>
-    </xsl:choose>
-    </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <xsl:template name="Model4vodml-ref" ><!-- as="element()">  -->
-    <xsl:param name="model"/>
-    <xsl:param name="vodml-ref"/>
-    <xsl:message>Model4vodml-ref: vodml-ref=<xsl:value-of select="$vodml-ref"/></xsl:message>
-
-<xsl:if test="not($model)">
-    <xsl:message>Model4vodml-ref: No model supplied for </xsl:message>
-</xsl:if>
-
-    <xsl:variable name="prefix" select="substring-before($vodml-ref,':')"/>
-    <xsl:message>Model4vodml-ref: prefix=<xsl:value-of select="$prefix"/></xsl:message>
-    <xsl:variable name="vodml-id" select="substring-after($vodml-ref,':')"/>
-    <xsl:if test="not($prefix) or $prefix=''">
-    <xsl:message>!!!!!!! ERROR No prefix found in Model4vodml-ref for <xsl:value-of select="$vodml-ref"/></xsl:message>
-    </xsl:if>
-    <xsl:choose>
-      <xsl:when test="not($prefix) or $prefix = '' or $model/name = $prefix">
-        <xsl:message>Model4vodml-ref : <xsl:value-of select="$model/name"/></xsl:message>
-        <xsl:copy-of select="$model"/>
-      </xsl:when>
-      <xsl:otherwise>
-    <xsl:choose>
-      <xsl:when test="$mapping/map:mappedModels/model[name=$prefix]/file">
-        <xsl:variable name="file" select="$mapping/map:mappedModels/model[name=$prefix]/file"/>
-        <xsl:message>Model4vodml-ref : <xsl:value-of select="$file"/></xsl:message>
-        <xsl:copy-of select="document($file)/vo-dml:model"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:variable name="import" select="$model/import[name = $prefix]/url"/>
-        <xsl:copy-of select="document($import)/vo-dml:model"/>
-      </xsl:otherwise>
-    </xsl:choose>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-  
   
   
 </xsl:stylesheet>

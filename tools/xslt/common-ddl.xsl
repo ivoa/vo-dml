@@ -171,7 +171,7 @@ template in jpa.xsl
     <xsl:param name="nullable" select="'false'" />
 <!--  <xsl:param name="subtypeid"/>   --> 
 
-    <xsl:variable name="typeid" select="datatype/@xmiidref"/>
+    <xsl:variable name="typeid" select="datatype/vodml-ref"/>
     <xsl:variable name="utype">
       <xsl:value-of select="concat($utypeprefix,'.',name)"/>
     </xsl:variable>
@@ -228,7 +228,7 @@ template in jpa.xsl
           </xsl:apply-templates>
         </xsl:for-each>
         
-    		<xsl:if test="key('element',//extends[@xmiidref = $typeid]/../@xmiid)">
+    		<xsl:if test="key('element',//extends[vodml-ref = $typeid]/../vodml-id)">
 		      <xsl:message>**** WARNING *** Found subclasses of datatype <xsl:value-of select="name"/>. VO-URP does currently not properly support such patterns properly.</xsl:message>
 		    </xsl:if>
       </xsl:when>

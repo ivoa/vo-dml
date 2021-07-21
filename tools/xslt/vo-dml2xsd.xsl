@@ -60,7 +60,6 @@ being able to choose a more specific sub-type.
   <!-- Input parameters -->
   <xsl:param name="lastModifiedText"/>
 
-  <xsl:param name="mapping_file"/> <!-- file containing mapping info for java generation such as root packages for all models -->
   <xsl:param name="schemalocation_root" select="'http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/xsd/'"/>
   
   <xsl:variable name="mapping" select="."/>
