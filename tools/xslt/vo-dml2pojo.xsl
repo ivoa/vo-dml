@@ -10,7 +10,8 @@
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
                 xmlns:exsl="http://exslt.org/common"
                 xmlns:map="http://volute.g-vo.org/dm/vo-dml-mapping/v0.9"
-                extension-element-prefixes="exsl">
+                extension-element-prefixes="exsl"
+                exclude-result-prefixes="map" >
 
 <!-- 
   This XSLT script transforms a data model in VO-DML/XML representation to 
@@ -23,7 +24,6 @@
 -->
 
 
-  <xsl:import href="common.xsl"/>
   <xsl:import href="common-mapping.xsl"/>
   <xsl:import href="jaxb.xsl"/>
   <xsl:import href="jpa.xsl"/>
@@ -42,28 +42,6 @@
   <xsl:param name="lastModifiedText"/>
   <xsl:variable name="mapping" select="." />
   
-  <!-- load all models at start -->
-  <xsl:variable name="models">
-      <xsl:for-each select="/map:mappedModels/model">
-         <xsl:choose>
-            <xsl:when test="file"> <!-- prefer local file for reading defn -->
-               <xsl:copy-of
-                  select="document(file)/vo-dml:model" />
-            </xsl:when>
-            <xsl:when test="url">
-               <xsl:copy-of
-                  select="document(url)/vo-dml:model" />
-            </xsl:when>
-            <xsl:otherwise>
-               <xsl:message>
-                  Model <xsl:value-of select="vodml-id" />
-                  has neither url nor file, hence no Java classes are
-                  generated.
-               </xsl:message>
-            </xsl:otherwise>
-         </xsl:choose>
-      </xsl:for-each>
-   </xsl:variable>
    
    
   
@@ -74,11 +52,10 @@
 
   <!-- main pattern : processes for root node model -->
   <xsl:template match="/">
-  <xsl:message >Generating Java - considering <xsl:value-of select="string-join($models/vo-dml:model/name,',')" /></xsl:message>
+  <xsl:message >Generating Java - considering models <xsl:value-of select="string-join($models/vo-dml:model/name,',')" /></xsl:message>
   <xsl:for-each select="map:mappedModels/todo/model">
   <xsl:message >Model: <xsl:value-of select="."/></xsl:message>
   <xsl:variable name="prefix" select="."/>
-  <xsl:for-each select="/map:mappedModels/model[name=$prefix]">
   <xsl:choose>
     <xsl:when test="/map:mappedModels/model[name=$prefix]">
       <xsl:apply-templates select="$models/vo-dml:model[name=$prefix]"/>
@@ -87,8 +64,7 @@
       <xsl:message>Model <xsl:value-of select="vodml-id"/> not in mapping, hence no Java classes are generated.</xsl:message>
     </xsl:otherwise>
   </xsl:choose>
-  </xsl:for-each>
-</xsl:for-each>  
+  </xsl:for-each> 
 </xsl:template>
 
   <!-- model pattern : generates gen-log and processes nodes package and generates the ModelVersion class and persistence.xml -->
@@ -866,7 +842,7 @@ package <xsl:value-of select="$path"/>;
 
   <xsl:template match="*" mode="desc">
     <xsl:choose>
-      <xsl:when test="count(description) > 0 and description != 'TODO : Missing description : please, update your UML model asap.'"><xsl:value-of select="description" disable-output-escaping="yes"/></xsl:when>
+      <xsl:when test="count(description) > 0 and normalize-space(description) != 'TODO : Missing description : please, update your UML model asap.'"><xsl:value-of select="description" disable-output-escaping="yes"/></xsl:when>
       <xsl:otherwise>
       <xsl:message >TODO : <xsl:value-of select="name"/> Missing description : please, update your UML model asap.</xsl:message>
       </xsl:otherwise>

@@ -11,29 +11,107 @@
                schemaLocation="http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/vo-dml/IVOA.xsd"/>
    <xsd:complexType name="PhotometricSystem">
       <xsd:annotation>
-         <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
          <xsd:appinfo>
-            <vodml-id>PhotometricSystem</vodml-id>
+            <vodml-ref>filter:PhotometricSystem</vodml-ref>
          </xsd:appinfo>
       </xsd:annotation>
       <xsd:complexContent>
-         <xsd:extension base="vodml-base:VODMLObject"/>
+         <xsd:extension base="vodml-base:VODMLObject">
+            <xsd:sequence>
+               <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:documentation>String representation Photometric system</xsd:documentation>
+                     <xsd:appinfo>
+                        <vodml-ref>filter:PhotometricSystem.description</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="detectorType" type="xsd:int" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:documentation>Type of detector (e.g energy or photon counter)</xsd:documentation>
+                     <xsd:appinfo>
+                        <vodml-ref>filter:PhotometricSystem.detectorType</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="photometryFilter" type="filter:PhotometryFilter" minOccurs="1"
+                            maxOccurs="unbounded"/>
+            </xsd:sequence>
+         </xsd:extension>
       </xsd:complexContent>
    </xsd:complexType>
 
    <xsd:complexType name="PhotometryFilter">
       <xsd:annotation>
-         <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
          <xsd:appinfo>
-            <vodml-id>PhotometryFilter</vodml-id>
+            <vodml-ref>filter:PhotometryFilter</vodml-ref>
          </xsd:appinfo>
       </xsd:annotation>
       <xsd:complexContent>
-         <xsd:extension base="vodml-base:VODMLObject"/>
+         <xsd:extension base="vodml-base:VODMLObject">
+            <xsd:sequence>
+               <xsd:element name="fpsIdentifier" type="xsd:string" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:documentation>IVOA identifier of the Filter Profile Service</xsd:documentation>
+                     <xsd:appinfo>
+                        <vodml-ref>filter:PhotometryFilter.fpsIdentifier</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="identifier" type="xsd:string" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:appinfo>
+                        <vodml-ref>filter:PhotometryFilter.identifier</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="name" type="xsd:string" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:documentation>Filter Name in the instrumental
+configuration</xsd:documentation>
+                     <xsd:appinfo>
+                        <vodml-ref>filter:PhotometryFilter.name</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="description" type="xsd:string" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:documentation>Text description of the filter band</xsd:documentation>
+                     <xsd:appinfo>
+                        <vodml-ref>filter:PhotometryFilter.description</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="bandName" type="xsd:string" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:appinfo>
+                        <vodml-ref>filter:PhotometryFilter.bandName</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="dataValidityFrom" type="xsd:dateTime" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:appinfo>
+                        <vodml-ref>filter:PhotometryFilter.dataValidityFrom</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="dataValidityTo" type="xsd:dateTime" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:appinfo>
+                        <vodml-ref>filter:PhotometryFilter.dataValidityTo</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="spectralLocation" type="ivoa:RealQuantity" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:appinfo>
+                        <vodml-ref>filter:PhotometryFilter.spectralLocation</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+            </xsd:sequence>
+         </xsd:extension>
       </xsd:complexContent>
    </xsd:complexType>
 

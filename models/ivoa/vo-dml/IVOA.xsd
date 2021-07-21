@@ -10,7 +10,7 @@
       <xsd:annotation>
          <xsd:documentation>An integer number with a unit. Examples of such units that can be used for attributes are bit/byte/kiloByte etc.</xsd:documentation>
          <xsd:appinfo>
-            <vodml-id>IntegerQuantity</vodml-id>
+            <vodml-ref>ivoa:IntegerQuantity</vodml-ref>
          </xsd:appinfo>
       </xsd:annotation>
       <xsd:complexContent>
@@ -18,11 +18,9 @@
             <xsd:sequence>
                <xsd:element name="value" type="xsd:int" minOccurs="1" maxOccurs="1">
                   <xsd:annotation>
-                     <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
+                     <xsd:documentation>The integer value of this IntegerQuantity.</xsd:documentation>
                      <xsd:appinfo>
-                        <vodml-id>IntegerQuantity.value</vodml-id>
+                        <vodml-ref>ivoa:IntegerQuantity.value</vodml-ref>
                      </xsd:appinfo>
                   </xsd:annotation>
                </xsd:element>
@@ -37,17 +35,15 @@
 Can be mapped in VOTables to FIELDrefs and PARAM(ref)s, in which case the @unit attribute of those VOTable elements is assumed to be mapped to the attribute on the Quantity.
 Ths is only allowed for these predefined ivoa types.</xsd:documentation>
          <xsd:appinfo>
-            <vodml-id>Quantity</vodml-id>
+            <vodml-ref>ivoa:Quantity</vodml-ref>
          </xsd:appinfo>
       </xsd:annotation>
       <xsd:sequence>
          <xsd:element name="unit" type="ivoa:Unit" minOccurs="0" maxOccurs="1">
             <xsd:annotation>
-               <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
+               <xsd:documentation>The unit of this  quantity.</xsd:documentation>
                <xsd:appinfo>
-                  <vodml-id>Quantity.unit</vodml-id>
+                  <vodml-ref>ivoa:Quantity.unit</vodml-ref>
                </xsd:appinfo>
             </xsd:annotation>
          </xsd:element>
@@ -58,7 +54,7 @@ Ths is only allowed for these predefined ivoa types.</xsd:documentation>
       <xsd:annotation>
          <xsd:documentation>A real value with a unit.</xsd:documentation>
          <xsd:appinfo>
-            <vodml-id>RealQuantity</vodml-id>
+            <vodml-ref>ivoa:RealQuantity</vodml-ref>
          </xsd:appinfo>
       </xsd:annotation>
       <xsd:complexContent>
@@ -66,11 +62,9 @@ Ths is only allowed for these predefined ivoa types.</xsd:documentation>
             <xsd:sequence>
                <xsd:element name="value" type="xsd:float" minOccurs="1" maxOccurs="1">
                   <xsd:annotation>
-                     <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
+                     <xsd:documentation>The real value of this quantity</xsd:documentation>
                      <xsd:appinfo>
-                        <vodml-id>RealQuantity.value</vodml-id>
+                        <vodml-ref>ivoa:RealQuantity.value</vodml-ref>
                      </xsd:appinfo>
                   </xsd:annotation>
                </xsd:element>
@@ -83,7 +77,7 @@ Ths is only allowed for these predefined ivoa types.</xsd:documentation>
       <xsd:annotation>
          <xsd:documentation>Must conform to definition of unit in VOUnit spec.</xsd:documentation>
          <xsd:appinfo>
-            <vodml-id>Unit</vodml-id>
+            <vodml-ref>ivoa:Unit</vodml-ref>
          </xsd:appinfo>
       </xsd:annotation>
       <xsd:restriction base="xsd:string"/>

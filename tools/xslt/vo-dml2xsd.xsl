@@ -43,9 +43,9 @@ being able to choose a more specific sub-type.
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
                 xmlns:map="http://volute.g-vo.org/dm/vo-dml-mapping/v0.9"
                 xmlns:vodml-base="http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1"
+                exclude-result-prefixes="map" 
                 >
 
-  <xsl:import href="common.xsl"/>
   <xsl:import href="common-mapping.xsl"/>
   
   <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
@@ -72,24 +72,19 @@ being able to choose a more specific sub-type.
 
   <!-- main pattern : processes for root node model -->
   <xsl:template match="/">
+    <xsl:message >Generating XML schema - considering models <xsl:value-of select="string-join($models/vo-dml:model/name,',')" /></xsl:message>
+  
     <xsl:for-each select="map:mappedModels/todo/model" >
     <xsl:variable name="mname" select="."/>
-      <xsl:variable name="model" select="/map:mappedModels/model[name=$mname]" />
       <xsl:choose>
-        <xsl:when test="$model/file">
-          <xsl:apply-templates select="document($model/file)/vo-dml:model">
-            <xsl:with-param name="xsd-location" select="$model/xsd-location"/>
-           </xsl:apply-templates>
-         </xsl:when>
-        <xsl:when test="$model/url">
-          <xsl:message >doing url <xsl:value-of select="$model/url"/> with <xsl:value-of select="document($model/url)/vo-dml:model/name"/></xsl:message>
-          <xsl:apply-templates select="document($model/url)/vo-dml:model" >
-            <xsl:with-param name="xsd-location" select="$model/xsd-location"/>
+        <xsl:when test="/map:mappedModels/model[name=$mname]">
+          <xsl:apply-templates select="$models/vo-dml:model[name=$mname]">
+            <xsl:with-param name="xsd-location" select="$models/vo-dml:model[name=$mname]/xsd-location"/>
            </xsl:apply-templates>
         </xsl:when>
         <xsl:otherwise>
           <xsl:message>
-            Model <xsl:value-of select="." /> has neither url nor file, hence no XML schemas are generated.
+            Model <xsl:value-of select="." /> not in mapping, hence no XML schemas are generated.
           </xsl:message>
         </xsl:otherwise>
       </xsl:choose>
@@ -479,7 +474,7 @@ being able to choose a more specific sub-type.
   <xsl:template name="add_annotation">
     <xsl:if test="description or vodml-id">
     <xsd:annotation>
-      <xsl:if test="description">
+      <xsl:if test="description and normalize-space(description) != 'TODO : Missing description : please, update your UML model asap.'">
         <xsd:documentation>
           <xsl:value-of select="description"/>
         </xsd:documentation>
@@ -565,7 +560,6 @@ being able to choose a more specific sub-type.
         
         <xsl:variable name="type" as="element()">
           <xsl:call-template name="Element4vodml-ref">
-            <xsl:with-param name="model" select="$model"/>
             <xsl:with-param name="vodml-ref" select="$vodml-ref"/>
           </xsl:call-template>
         </xsl:variable> 

@@ -14,15 +14,53 @@
                schemaLocation="http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/sample/filter/vo-dml/Filter.xsd"/>
    <xsd:complexType name="catalog.AbstractSource" abstract="true">
       <xsd:annotation>
-         <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
          <xsd:appinfo>
-            <vodml-id>catalog.AbstractSource</vodml-id>
+            <vodml-ref>sample:catalog.AbstractSource</vodml-ref>
          </xsd:appinfo>
       </xsd:annotation>
       <xsd:complexContent>
-         <xsd:extension base="sample:catalog.AstroObject"/>
+         <xsd:extension base="sample:catalog.AstroObject">
+            <xsd:sequence>
+               <xsd:element name="name" type="xsd:string" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:appinfo>
+                        <vodml-ref>sample:catalog.AbstractSource.name</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:appinfo>
+                        <vodml-ref>sample:catalog.AbstractSource.description</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="position" type="sample:catalog.SkyCoordinate" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:appinfo>
+                        <vodml-ref>sample:catalog.AbstractSource.position</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="positionError" type="sample:catalog.SkyError" minOccurs="0" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:appinfo>
+                        <vodml-ref>sample:catalog.AbstractSource.positionError</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="classification" type="sample:catalog.SourceClassification" minOccurs="1"
+                            maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:appinfo>
+                        <vodml-ref>sample:catalog.AbstractSource.classification</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="luminosity" type="sample:catalog.LuminosityMeasurement" minOccurs="0"
+                            maxOccurs="unbounded"/>
+            </xsd:sequence>
+         </xsd:extension>
       </xsd:complexContent>
    </xsd:complexType>
 
@@ -30,35 +68,77 @@
       <xsd:annotation>
          <xsd:documentation>Generic base class for all astronomical objects.</xsd:documentation>
          <xsd:appinfo>
-            <vodml-id>catalog.AstroObject</vodml-id>
+            <vodml-ref>sample:catalog.AstroObject</vodml-ref>
          </xsd:appinfo>
       </xsd:annotation>
       <xsd:complexContent>
-         <xsd:extension base="vodml-base:VODMLObject"/>
+         <xsd:extension base="vodml-base:VODMLObject">
+            <xsd:sequence>
+               <xsd:element name="label" type="xsd:string" minOccurs="0" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:appinfo>
+                        <vodml-ref>sample:catalog.AstroObject.label</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+            </xsd:sequence>
+         </xsd:extension>
       </xsd:complexContent>
    </xsd:complexType>
 
    <xsd:complexType name="catalog.LuminosityMeasurement">
       <xsd:annotation>
-         <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
          <xsd:appinfo>
-            <vodml-id>catalog.LuminosityMeasurement</vodml-id>
+            <vodml-ref>sample:catalog.LuminosityMeasurement</vodml-ref>
          </xsd:appinfo>
       </xsd:annotation>
       <xsd:complexContent>
-         <xsd:extension base="vodml-base:VODMLObject"/>
+         <xsd:extension base="vodml-base:VODMLObject">
+            <xsd:sequence>
+               <xsd:element name="value" type="ivoa:RealQuantity" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:appinfo>
+                        <vodml-ref>sample:catalog.LuminosityMeasurement.value</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="error" type="ivoa:RealQuantity" minOccurs="0" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:appinfo>
+                        <vodml-ref>sample:catalog.LuminosityMeasurement.error</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:appinfo>
+                        <vodml-ref>sample:catalog.LuminosityMeasurement.description</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="type" type="sample:catalog.LuminosityType" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:appinfo>
+                        <vodml-ref>sample:catalog.LuminosityMeasurement.type</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="filter" type="vodml-base:VODMLReference" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:appinfo>
+                        <vodml-ref>sample:catalog.LuminosityMeasurement.filter</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+            </xsd:sequence>
+         </xsd:extension>
       </xsd:complexContent>
    </xsd:complexType>
 
    <xsd:complexType name="catalog.SDSSSource">
       <xsd:annotation>
-         <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
          <xsd:appinfo>
-            <vodml-id>catalog.SDSSSource</vodml-id>
+            <vodml-ref>sample:catalog.SDSSSource</vodml-ref>
          </xsd:appinfo>
       </xsd:annotation>
       <xsd:complexContent>
@@ -68,25 +148,50 @@
 
    <xsd:complexType name="catalog.SkyCoordinateFrame">
       <xsd:annotation>
-         <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
          <xsd:appinfo>
-            <vodml-id>catalog.SkyCoordinateFrame</vodml-id>
+            <vodml-ref>sample:catalog.SkyCoordinateFrame</vodml-ref>
          </xsd:appinfo>
       </xsd:annotation>
       <xsd:complexContent>
-         <xsd:extension base="vodml-base:VODMLObject"/>
+         <xsd:extension base="vodml-base:VODMLObject">
+            <xsd:sequence>
+               <xsd:element name="name" type="xsd:string" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:appinfo>
+                        <vodml-ref>sample:catalog.SkyCoordinateFrame.name</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="documentURI" type="xsd:anyURI" minOccurs="1" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:appinfo>
+                        <vodml-ref>sample:catalog.SkyCoordinateFrame.documentURI</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="equinox" type="xsd:string" minOccurs="0" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:appinfo>
+                        <vodml-ref>sample:catalog.SkyCoordinateFrame.equinox</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+               <xsd:element name="system" type="xsd:string" minOccurs="0" maxOccurs="1">
+                  <xsd:annotation>
+                     <xsd:appinfo>
+                        <vodml-ref>sample:catalog.SkyCoordinateFrame.system</vodml-ref>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:element>
+            </xsd:sequence>
+         </xsd:extension>
       </xsd:complexContent>
    </xsd:complexType>
 
    <xsd:complexType name="catalog.Source">
       <xsd:annotation>
-         <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
          <xsd:appinfo>
-            <vodml-id>catalog.Source</vodml-id>
+            <vodml-ref>sample:catalog.Source</vodml-ref>
          </xsd:appinfo>
       </xsd:annotation>
       <xsd:complexContent>
@@ -96,11 +201,8 @@
 
    <xsd:complexType name="catalog.TwoMassSource">
       <xsd:annotation>
-         <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
          <xsd:appinfo>
-            <vodml-id>catalog.TwoMassSource</vodml-id>
+            <vodml-ref>sample:catalog.TwoMassSource</vodml-ref>
          </xsd:appinfo>
       </xsd:annotation>
       <xsd:complexContent>
@@ -110,11 +212,8 @@
 
    <xsd:complexType name="catalog.AlignedEllipse">
       <xsd:annotation>
-         <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
          <xsd:appinfo>
-            <vodml-id>catalog.AlignedEllipse</vodml-id>
+            <vodml-ref>sample:catalog.AlignedEllipse</vodml-ref>
          </xsd:appinfo>
       </xsd:annotation>
       <xsd:complexContent>
@@ -122,21 +221,15 @@
             <xsd:sequence>
                <xsd:element name="longError" type="xsd:float" minOccurs="1" maxOccurs="1">
                   <xsd:annotation>
-                     <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
                      <xsd:appinfo>
-                        <vodml-id>catalog.AlignedEllipse.longError</vodml-id>
+                        <vodml-ref>sample:catalog.AlignedEllipse.longError</vodml-ref>
                      </xsd:appinfo>
                   </xsd:annotation>
                </xsd:element>
                <xsd:element name="latError" type="xsd:float" minOccurs="1" maxOccurs="1">
                   <xsd:annotation>
-                     <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
                      <xsd:appinfo>
-                        <vodml-id>catalog.AlignedEllipse.latError</vodml-id>
+                        <vodml-ref>sample:catalog.AlignedEllipse.latError</vodml-ref>
                      </xsd:appinfo>
                   </xsd:annotation>
                </xsd:element>
@@ -147,11 +240,8 @@
 
    <xsd:complexType name="catalog.CircleError">
       <xsd:annotation>
-         <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
          <xsd:appinfo>
-            <vodml-id>catalog.CircleError</vodml-id>
+            <vodml-ref>sample:catalog.CircleError</vodml-ref>
          </xsd:appinfo>
       </xsd:annotation>
       <xsd:complexContent>
@@ -159,11 +249,8 @@
             <xsd:sequence>
                <xsd:element name="radius" type="xsd:float" minOccurs="1" maxOccurs="1">
                   <xsd:annotation>
-                     <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
                      <xsd:appinfo>
-                        <vodml-id>catalog.CircleError.radius</vodml-id>
+                        <vodml-ref>sample:catalog.CircleError.radius</vodml-ref>
                      </xsd:appinfo>
                   </xsd:annotation>
                </xsd:element>
@@ -174,11 +261,8 @@
 
    <xsd:complexType name="catalog.GenericEllipse">
       <xsd:annotation>
-         <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
          <xsd:appinfo>
-            <vodml-id>catalog.GenericEllipse</vodml-id>
+            <vodml-ref>sample:catalog.GenericEllipse</vodml-ref>
          </xsd:appinfo>
       </xsd:annotation>
       <xsd:complexContent>
@@ -188,17 +272,14 @@
                   <xsd:annotation>
                      <xsd:documentation>major axis of error ellipse</xsd:documentation>
                      <xsd:appinfo>
-                        <vodml-id>catalog.GenericEllipse.major</vodml-id>
+                        <vodml-ref>sample:catalog.GenericEllipse.major</vodml-ref>
                      </xsd:appinfo>
                   </xsd:annotation>
                </xsd:element>
                <xsd:element name="minor" type="xsd:float" minOccurs="1" maxOccurs="1">
                   <xsd:annotation>
-                     <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
                      <xsd:appinfo>
-                        <vodml-id>catalog.GenericEllipse.minor</vodml-id>
+                        <vodml-ref>sample:catalog.GenericEllipse.minor</vodml-ref>
                      </xsd:appinfo>
                   </xsd:annotation>
                </xsd:element>
@@ -206,7 +287,7 @@
                   <xsd:annotation>
                      <xsd:documentation>Position angle of error ellipse in coordinate system of position.</xsd:documentation>
                      <xsd:appinfo>
-                        <vodml-id>catalog.GenericEllipse.pa</vodml-id>
+                        <vodml-ref>sample:catalog.GenericEllipse.pa</vodml-ref>
                      </xsd:appinfo>
                   </xsd:annotation>
                </xsd:element>
@@ -217,11 +298,8 @@
 
    <xsd:complexType name="catalog.SkyCoordinate">
       <xsd:annotation>
-         <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
          <xsd:appinfo>
-            <vodml-id>catalog.SkyCoordinate</vodml-id>
+            <vodml-ref>sample:catalog.SkyCoordinate</vodml-ref>
          </xsd:appinfo>
       </xsd:annotation>
       <xsd:sequence>
@@ -229,7 +307,7 @@
             <xsd:annotation>
                <xsd:documentation>The longitude part of this position in units of degrees.</xsd:documentation>
                <xsd:appinfo>
-                  <vodml-id>catalog.SkyCoordinate.longitude</vodml-id>
+                  <vodml-ref>sample:catalog.SkyCoordinate.longitude</vodml-ref>
                </xsd:appinfo>
             </xsd:annotation>
          </xsd:element>
@@ -237,7 +315,14 @@
             <xsd:annotation>
                <xsd:documentation>The latitude part of this position in units of degrees.</xsd:documentation>
                <xsd:appinfo>
-                  <vodml-id>catalog.SkyCoordinate.latitude</vodml-id>
+                  <vodml-ref>sample:catalog.SkyCoordinate.latitude</vodml-ref>
+               </xsd:appinfo>
+            </xsd:annotation>
+         </xsd:element>
+         <xsd:element name="frame" type="vodml-base:VODMLReference" minOccurs="1" maxOccurs="1">
+            <xsd:annotation>
+               <xsd:appinfo>
+                  <vodml-ref>sample:catalog.SkyCoordinate.frame</vodml-ref>
                </xsd:appinfo>
             </xsd:annotation>
          </xsd:element>
@@ -248,38 +333,29 @@
       <xsd:annotation>
          <xsd:documentation>Error of a position on the sky.</xsd:documentation>
          <xsd:appinfo>
-            <vodml-id>catalog.SkyError</vodml-id>
+            <vodml-ref>sample:catalog.SkyError</vodml-ref>
          </xsd:appinfo>
       </xsd:annotation>
    </xsd:complexType>
 
    <xsd:simpleType name="catalog.LuminosityType">
       <xsd:annotation>
-         <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
          <xsd:appinfo>
-            <vodml-id>catalog.LuminosityType</vodml-id>
+            <vodml-ref>sample:catalog.LuminosityType</vodml-ref>
          </xsd:appinfo>
       </xsd:annotation>
       <xsd:restriction base="xsd:string">
          <xsd:enumeration value="magnitude">
             <xsd:annotation>
-               <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
                <xsd:appinfo>
-                  <vodml-id>catalog.LuminosityType.magnitude</vodml-id>
+                  <vodml-ref>sample:catalog.LuminosityType.magnitude</vodml-ref>
                </xsd:appinfo>
             </xsd:annotation>
          </xsd:enumeration>
          <xsd:enumeration value="flux">
             <xsd:annotation>
-               <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
                <xsd:appinfo>
-                  <vodml-id>catalog.LuminosityType.flux</vodml-id>
+                  <vodml-ref>sample:catalog.LuminosityType.flux</vodml-ref>
                </xsd:appinfo>
             </xsd:annotation>
          </xsd:enumeration>
@@ -288,61 +364,43 @@
 
    <xsd:simpleType name="catalog.SourceClassification">
       <xsd:annotation>
-         <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
          <xsd:appinfo>
-            <vodml-id>catalog.SourceClassification</vodml-id>
+            <vodml-ref>sample:catalog.SourceClassification</vodml-ref>
          </xsd:appinfo>
       </xsd:annotation>
       <xsd:restriction base="xsd:string">
          <xsd:enumeration value="star">
             <xsd:annotation>
-               <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
                <xsd:appinfo>
-                  <vodml-id>catalog.SourceClassification.star</vodml-id>
+                  <vodml-ref>sample:catalog.SourceClassification.star</vodml-ref>
                </xsd:appinfo>
             </xsd:annotation>
          </xsd:enumeration>
          <xsd:enumeration value="galaxy">
             <xsd:annotation>
-               <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
                <xsd:appinfo>
-                  <vodml-id>catalog.SourceClassification.galaxy</vodml-id>
+                  <vodml-ref>sample:catalog.SourceClassification.galaxy</vodml-ref>
                </xsd:appinfo>
             </xsd:annotation>
          </xsd:enumeration>
          <xsd:enumeration value="AGN">
             <xsd:annotation>
-               <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
                <xsd:appinfo>
-                  <vodml-id>catalog.SourceClassification.AGN</vodml-id>
+                  <vodml-ref>sample:catalog.SourceClassification.AGN</vodml-ref>
                </xsd:appinfo>
             </xsd:annotation>
          </xsd:enumeration>
          <xsd:enumeration value="planet">
             <xsd:annotation>
-               <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
                <xsd:appinfo>
-                  <vodml-id>catalog.SourceClassification.planet</vodml-id>
+                  <vodml-ref>sample:catalog.SourceClassification.planet</vodml-ref>
                </xsd:appinfo>
             </xsd:annotation>
          </xsd:enumeration>
          <xsd:enumeration value="unknown">
             <xsd:annotation>
-               <xsd:documentation>
-          TODO : Missing description : please, update your UML model asap.
-        </xsd:documentation>
                <xsd:appinfo>
-                  <vodml-id>catalog.SourceClassification.unknown</vodml-id>
+                  <vodml-ref>sample:catalog.SourceClassification.unknown</vodml-ref>
                </xsd:appinfo>
             </xsd:annotation>
          </xsd:enumeration>

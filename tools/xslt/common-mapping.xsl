@@ -12,6 +12,27 @@
   
   <xsl:import href="common.xsl"/>
 
+
+ <!-- load all models at start -->
+  <xsl:variable name="models">
+      <xsl:for-each select="/map:mappedModels/model">
+         <xsl:choose>
+            <xsl:when test="file"> <!-- prefer local file for reading defn -->
+               <xsl:copy-of
+                  select="document(file)/vo-dml:model" />
+            </xsl:when>
+            <xsl:when test="url">
+               <xsl:copy-of
+                  select="document(url)/vo-dml:model" />
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:message>Model <xsl:value-of select="vodml-id" />has neither url nor file, hence no artifacts will be generated.</xsl:message>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:for-each>
+   </xsl:variable>
+ 
+
   <xsl:param name="targetnamespace_root"/>
 
   <xsl:template match="vo-dml:model" mode="xsd-path">

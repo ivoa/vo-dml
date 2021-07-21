@@ -23,9 +23,6 @@ It has some sample relationships etc to be used in documentation etc.</descripti
   <package>
     <vodml-id>catalog</vodml-id>
     <name>catalog</name>
-    <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
     <enumeration>
       <vodml-id>catalog.LuminosityType</vodml-id>
       <name>LuminosityType</name>
