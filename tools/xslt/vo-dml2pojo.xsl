@@ -11,7 +11,8 @@
                 xmlns:exsl="http://exslt.org/common"
                 xmlns:map="http://volute.g-vo.org/dm/vo-dml-mapping/v0.9"
                 extension-element-prefixes="exsl"
-                exclude-result-prefixes="map" >
+                exclude-result-prefixes="map" 
+                >
 
 <!-- 
   This XSLT script transforms a data model in VO-DML/XML representation to 
@@ -34,18 +35,16 @@
 
   <xsl:strip-space elements="*" />
 
-  <xsl:key name="element" match="*//*/vodml-id" use="."/>
-  <!-- Next is to check whether package needs handling, or is internal -->
-  <xsl:key name="modelpackage" match="*//package/vodml-id" use="."/>
 
   <xsl:param name="lastModified"/>
   <xsl:param name="lastModifiedText"/>
+  <xsl:param name="output_root" select="resolve-uri('../../src/generated/java/',static-base-uri())"/>
+  <xsl:param name="vo-dml_package" select="'org.ivoa.vodml.model'"/>
   <xsl:variable name="mapping" select="." />
   
    
    
   
-  <xsl:param name="vo-dml_package"/>
   
   <!-- next could be parameters -->
 
@@ -162,7 +161,7 @@
     </xsl:variable>
     <xsl:choose>
     <xsl:when test="not($mappedtype) or $mappedtype = ''" >
-      <xsl:variable name="file" select="concat('src/', $dir, '/', name, '.java')"/>
+      <xsl:variable name="file" select="concat($output_root, $dir, '/', name, '.java')"/>
 
     <!-- open file for this class -->
       <xsl:message >Opening Class file <xsl:value-of select="$file"/></xsl:message>
@@ -844,7 +843,7 @@ package <xsl:value-of select="$path"/>;
     <xsl:choose>
       <xsl:when test="count(description) > 0 and normalize-space(description) != 'TODO : Missing description : please, update your UML model asap.'"><xsl:value-of select="description" disable-output-escaping="yes"/></xsl:when>
       <xsl:otherwise>
-      <xsl:message >TODO : <xsl:value-of select="name"/> Missing description : please, update your UML model asap.</xsl:message>
+<!--       <xsl:message >TODO : <xsl:value-of select="name"/> Missing description : please, update your VO-DML model asap.</xsl:message> -->
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>  
@@ -858,7 +857,7 @@ package <xsl:value-of select="$path"/>;
   <xsl:template match="vo-dml:model" mode="modelFactory">
     <xsl:param name="root_package"/>
     <xsl:param name="root_package_dir"/>
-    <xsl:variable name="file" select="concat('src/', $root_package_dir,'/','ModelFactory.java')"/>
+    <xsl:variable name="file" select="concat($output_root, $root_package_dir,'/','ModelFactory.java')"/>
     <!-- open file for this class -->
     <xsl:message >Opening Factory file <xsl:value-of select="$file"/></xsl:message>
     <xsl:result-document href="{$file}">package <xsl:value-of select="$root_package"/>;
@@ -875,8 +874,8 @@ package <xsl:value-of select="$path"/>;
       */
       public class ModelFactory extends <xsl:value-of select="$vo-dml_package"/>.ModelFactory { 
 
-        /** last modification date of the UML model */
-        public final static long LAST_MODIFICATION_DATE = <xsl:value-of select="$lastModified"/>l;
+        /** last modification date of the VODML model */
+        public final static String LAST_MODIFICATION_DATE = "<xsl:value-of select="lastModified"/>";
 
         <xsl:if test="descendant-or-self::objectType|descendant-or-self::dataType">
         @Override
@@ -946,7 +945,7 @@ package <xsl:value-of select="$path"/>;
   <!-- package.html -->
   <xsl:template match="vo-dml:model|package" mode="packageDesc">
     <xsl:param name="dir"/>
-    <xsl:variable name="file" select="concat('src/',$dir,'/package.html')"/>
+    <xsl:variable name="file" select="concat($output_root,$dir,'/package.html')"/>
     <!-- open file for this class -->
     <xsl:message >Opening package file <xsl:value-of select="$file"/></xsl:message>
     <xsl:result-document href="{$file}" format="packageInfo">

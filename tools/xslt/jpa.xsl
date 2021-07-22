@@ -7,9 +7,10 @@
 ]>
 
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 				xmlns:exsl="http://exslt.org/common"
 				xmlns:fn="http://www.w3.org/2005/02/xpath-functions"
-                extension-element-prefixes="exsl">
+            extension-element-prefixes="exsl">
 
 <!-- 
   This XSLT is used by intermediate2java.xsl to generate JPA annotations and JPA specific java code.
@@ -24,7 +25,6 @@
 
   <xsl:param name="persistence.xml"/>
   <xsl:param name="schemaPrefix" select="''"/>
-
 
   <xsl:key name="element" match="*//*" use="vodml-id"/>
 
@@ -65,7 +65,7 @@
 <!-- Once JPA 2.0 with nested embeddable mapping is supported in Eclipselink we may revisit the next code. 
 For now it is commented out. -->
 <!-- 
-  <xsl:if test="attribute[key('element', datatype/vodml-ref)/name() = 'dataType']">
+  <xsl:if test="attribute[$models/key('ellookup', datatype/vodml-ref)/name() = 'dataType']">
     @javax.persistence.AttributeOverrides ( {
         <xsl:variable name="columns">
           <xsl:apply-templates select="." mode="columns"/>
@@ -129,9 +129,9 @@ For now it is commented out. -->
     <xsl:text>@javax.persistence.Embeddable</xsl:text>&cr;
 <!-- see comment for similar code concerning nested embeddables in the objectType template -->    
 <!-- 
-  <xsl:if test="attribute[key('element', datatype/vodml-ref)/name() = 'dataType']">
+  <xsl:if test="attribute[$models/key('ellookup', datatype/vodml-ref)/name() = 'dataType']">
     @javax.persistence.AttributeOverrides ( {
-      <xsl:for-each select="attribute[key('element', datatype/vodml-ref)/name() = 'dataType']">
+      <xsl:for-each select="attribute[$models/key('ellookup', datatype/vodml-ref)/name() = 'dataType']">
         <xsl:variable name="columns">
           <xsl:apply-templates select="." mode="columns"/>
         </xsl:variable>
@@ -161,7 +161,10 @@ Currently only for JPA 2.0 impementation of eclipselink it seems as if nested at
         <xsl:text>@javax.persistence.Basic</xsl:text>
       </xsl:when>
       <xsl:otherwise>
-    <xsl:variable name="type" select="key('element', datatype/vodml-ref)"/>
+    <xsl:variable name="ref" select="datatype/vodml-ref"/>  <!--  first mystery - need to create this variable to use in key below - even string(datatype/vodml-ref) does not work  -->
+    <xsl:variable name="type" select="$models/key('ellookup',$ref)"/>
+       
+<!--     <xsl:message>****jpa attr  ref=<xsl:value-of select="datatype/vodml-ref"/> type="<xsl:value-of select="name($type)"/>" </xsl:message> -->
     <xsl:choose>
       <xsl:when test="name($type) = 'primitiveType'">
         <xsl:choose>
@@ -201,7 +204,7 @@ Currently only for JPA 2.0 impementation of eclipselink it seems as if nested at
         </xsl:choose>
      </xsl:when>
       <xsl:otherwise>
-      <xsl:message> ++++++++  ERROR  +++++++ on attribute <xsl:value-of select="name"/> <xsl:value-of select="name($type)"/> is not supported.</xsl:message>
+      <xsl:message> ++++++++  ERROR  +++++++ on attribute=<xsl:value-of select="name"/> type=<xsl:value-of select="name($type)"/> is not supported.</xsl:message>
 // TODO    [NOT_SUPPORTED_ATTRIBUTE]
       </xsl:otherwise>
     </xsl:choose>
@@ -247,10 +250,12 @@ Currently only for JPA 2.0 impementation of eclipselink it seems as if nested at
 
 
   <xsl:template match="reference" mode="JPAAnnotation">
-    <xsl:variable name="type" select="key('element', datatype/vodml-ref)"/>
+    <xsl:variable name="type" select="$models/key('ellookup', datatype/vodml-ref)"/>
 
     <xsl:choose>
       <xsl:when test="name($type) = 'primitiveType' or name($type) = 'enumeration'">
+      <xsl:message> ++++++++  ERROR  +++++++ on reference=<xsl:value-of select="name"/> type=<xsl:value-of select="name($type)"/> is not supported.</xsl:message>
+      
 // TODO    [NOT_SUPPORTED_REFERENCE]
       </xsl:when>
       <xsl:otherwise>
@@ -272,7 +277,7 @@ Currently only for JPA 2.0 impementation of eclipselink it seems as if nested at
 
 
   <xsl:template match="collection" mode="JPAAnnotation">
-    <xsl:variable name="type" select="key('element', datatype/vodml-ref)"/>
+    <xsl:variable name="type" select="$models/key('ellookup', datatype/vodml-ref)"/>
 
     <xsl:choose>
       <xsl:when test="name($type) = 'primitiveType'">
@@ -546,7 +551,7 @@ template in common-ddl.xsl
     <xsl:param name="utypeprefix"/>
     <xsl:param name="nullable" select="'false'" />
 
-    <xsl:message>Entering attribute/nested, for <xsl:value-of select="name"/></xsl:message>
+<!--     <xsl:message>Entering attribute/nested, for <xsl:value-of select="name"/></xsl:message> -->
 
 
     <xsl:variable name="utype">
@@ -619,8 +624,8 @@ template in common-ddl.xsl
     <xsl:variable name="typeid">
   	  <xsl:value-of select="datatype/vodml-ref" />
   	</xsl:variable>	
-    <xsl:variable name="type" select="key('element',$typeid)"/>
-       <xsl:message>dataype = <xsl:value-of select="name($type)"/></xsl:message>
+    <xsl:variable name="type" select="$models/key('ellookup',$typeid)"/>
+<!--        <xsl:message>dataype = <xsl:value-of select="name($type)"/></xsl:message> -->
     <xsl:choose>
       <xsl:when test="name($type) = 'primitiveType' or name($type) = 'enumeration'">
         <xsl:variable name="sqltype">
@@ -664,7 +669,7 @@ template in common-ddl.xsl
           </xsl:apply-templates>
         </xsl:for-each>
         
-    		<xsl:if test="key('element',//extends[vodml-ref = $typeid]/../vodml-id)">
+    		<xsl:if test="$models/key('ellookup',//extends[vodml-ref = $typeid]/../vodml-id)">
 		      <xsl:message>**** WARNING *** Found subclasses of datatype <xsl:value-of select="name"/>. VO-URP does currently not properly support such patterns properly.</xsl:message>
 		    </xsl:if>
 

@@ -397,19 +397,6 @@
 	    </for>
 	  </target>
 -->	  
-	
-
-	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-	  <target name="run_vo-dml2java"   description="Generate  java classes for all models identified in mapping.file">
-	    <fail unless="mapping.config.file" message="Must define property 'mapping.config.file' in build.properties (the source VO-DML file) !" />
-	    <echo>run_vo-dml2pojo : starting generate Java code for all models in mapping file ${mapping.config.file}</echo>
-	    <xslt2 in="${mapping.config.file}" out="${java.gen}/run_java.txt" style="${xslt}/vo-dml2java.xsl">
-	      <param name="vo-dml_package" expression="${vodml.package}" />
-	    </xslt2>
-	   <!-- need a new prettifier 
-	    <ant target="format"/>
-	    -->
-	  </target>
 
 	
 	

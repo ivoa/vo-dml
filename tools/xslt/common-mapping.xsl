@@ -12,7 +12,8 @@
   
   <xsl:import href="common.xsl"/>
 
-
+<xsl:key name="ellookup" match="*[vodml-id]" use="concat(ancestor::vo-dml:model/name,':',vodml-id)"
+   composite="yes" />
  <!-- load all models at start -->
   <xsl:variable name="models">
       <xsl:for-each select="/map:mappedModels/model">
@@ -181,7 +182,9 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
      </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-   <xsl:template name="Element4vodml-ref" as="element()">
+  
+  
+   <xsl:template name="Element4vodml-ref" as="element()"> <!-- once rest of code working - can remove this and just use key directly -->
       <xsl:param name="vodml-ref" />
       <xsl:variable name="prefix" select="substring-before($vodml-ref,':')" />
       <xsl:if test="not($prefix) or $prefix=''">
@@ -189,8 +192,8 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
       </xsl:if>
       <xsl:variable name="vodml-id" select="substring-after($vodml-ref,':')" />
       <xsl:choose>
-         <xsl:when test="$models/vo-dml:model[name = $prefix]">
-            <xsl:copy-of select="$models/vo-dml:model[name = $prefix]//*[vodml-id=$vodml-id]" />
+         <xsl:when test="$models/key('ellookup',$vodml-ref)">
+            <xsl:copy-of select="$models/key('ellookup',$vodml-ref)" />
          </xsl:when>
          <xsl:otherwise>
            <xsl:message>**ERROR** failed to find '<xsl:value-of select="$vodml-ref" />'</xsl:message>

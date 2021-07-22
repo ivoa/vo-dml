@@ -52,10 +52,7 @@ being able to choose a more specific sub-type.
   
   <xsl:strip-space elements="*" />
   
-  <!-- xml index on vodml-id -->
-  <xsl:key name="element" match="*//vodml-id" use="."/>
-  <xsl:key name="package" match="*//package/vodml-id" use="."/>
-
+ 
   
   <!-- Input parameters -->
   <xsl:param name="lastModifiedText"/>
