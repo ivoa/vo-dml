@@ -14,7 +14,33 @@
 
 <sch:title>Schematron VO-DML Validator</sch:title>
 
-<sch:pattern name="Unique_vodml-id">
+<xsl:function name="fct:vo-dml_element" as="xs:string">
+    <!--  returns name of element containing the vodml-id identified by the vodml-ref -->
+        <xsl:param name="vodml-ref" />
+        <xsl:param name="model" />
+
+		<xsl:variable name="prefix" select="substring-before($vodml-ref,':')" />
+    <xsl:variable name="targetvodml-ref" select="substring-after($vodml-ref,concat($prefix,':'))" />
+        <xsl:choose>
+            <xsl:when test="$prefix = $model/name">
+                <xsl:value-of select="$model//*[vodml-id = $targetvodml-ref]/name()" />
+            </xsl:when>
+            <xsl:otherwise>
+            	<xsl:variable name="import" select="$model/import[name = $prefix]/url" />
+            	<xsl:choose>
+            	<xsl:when test="$import">
+            	  <xsl:variable name="doc" select="document($import)" />
+                  <xsl:value-of select="$doc//*[vodml-id = $targetvodml-ref]/name()" />
+            	</xsl:when>
+            	<xsl:otherwise>
+            	<xsl:value-of select="'ERROR'" />
+            	</xsl:otherwise>
+            	</xsl:choose>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+    
+    <sch:pattern name="Unique_vodml-id">
   <sch:rule context="vodml-id[not(../name() = 'vo-dml:model')]">
     <sch:let name="count" value="count(./following::vodml-id[. = current()])"/>
     <sch:assert test="$count = 0" flag="error">
@@ -147,31 +173,7 @@ Role '<sch:value-of select="../vodml-id"/>' with subsets relation of type '<sch:
 
 
 
-    <xsl:function name="fct:vo-dml_element" as="xs:string">
-    <!--  returns name of element containing the vodml-id identified by the vodml-ref -->
-        <xsl:param name="vodml-ref"/>
-        <xsl:param name="model"/>
-
-		<xsl:variable name="prefix" select="substring-before($vodml-ref,':')"/>
-    <xsl:variable name="targetvodml-ref" select="substring-after($vodml-ref,concat($prefix,':'))"/>
-        <xsl:choose>
-            <xsl:when test="$prefix = $model/name">
-                <xsl:value-of select="$model//*[vodml-id = $targetvodml-ref]/name()"/>
-            </xsl:when>
-            <xsl:otherwise>
-            	<xsl:variable name="import" select="$model/import[name = $prefix]/url"/>
-            	<xsl:choose>
-            	<xsl:when test="$import">
-            	  <xsl:variable name="doc" select="document($import)"/>
-                  <xsl:value-of select="$doc//*[vodml-id = $targetvodml-ref]/name()"/>
-            	</xsl:when>
-            	<xsl:otherwise>
-            	<xsl:value-of select="'ERROR'"/>
-            	</xsl:otherwise>
-            	</xsl:choose>
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:function>
+    
 
 
 
