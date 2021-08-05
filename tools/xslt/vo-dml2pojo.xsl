@@ -38,8 +38,8 @@
 
   <xsl:param name="lastModified"/>
   <xsl:param name="lastModifiedText"/>
-  <xsl:param name="output_root" select="resolve-uri('../../src/generated/java/',static-base-uri())"/>
-  <xsl:param name="vo-dml_package" select="'org.ivoa.vodml.model'"/>
+  <xsl:param name="output_root" select="resolve-uri('../gradletooling/sample/src/generated/java/',static-base-uri())"/>
+  <xsl:param name="vo-dml_package" select="'net .ivoa.vodml.model'"/>
   <xsl:variable name="mapping" select="." />
   
    

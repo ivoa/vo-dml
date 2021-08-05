@@ -585,6 +585,35 @@ It has some sample relationships etc to be used in documentation etc.</descripti
         </datatype>
       </constraint>
     </objectType>
+    <objectType>
+      <vodml-id>catalog.SourceCatalogue</vodml-id>
+      <name>SourceCatalogue</name>
+      <description></description>
+      <attribute>
+        <vodml-id>catalog.SourceCatalogue.name</vodml-id>
+        <name>name</name>
+        <description>the name of the catalogue</description>
+        <datatype>
+          <vodml-ref>ivoa:string</vodml-ref>
+        </datatype>
+        <multiplicity>
+          <minOccurs>1</minOccurs>
+          <maxOccurs>1</maxOccurs>
+        </multiplicity>
+      </attribute>
+      <composition>
+        <vodml-id>catalog.SourceCatalogue.entry</vodml-id>
+        <name>entry</name>
+        <description>the entries in the catalogue</description>
+        <datatype>
+          <vodml-ref>sample:catalog.AbstractSource</vodml-ref>
+        </datatype>
+        <multiplicity>
+          <minOccurs>0</minOccurs>
+          <maxOccurs>-1</maxOccurs>
+        </multiplicity>
+      </composition>
+    </objectType>
 
   </package>
 
