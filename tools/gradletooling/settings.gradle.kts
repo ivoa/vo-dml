@@ -1,6 +1,7 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
+        mavenCentral()
     }
     includeBuild("gradle-plugin") //get the gradle plugin
 }

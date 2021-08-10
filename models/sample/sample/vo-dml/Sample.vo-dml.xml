@@ -11,13 +11,13 @@ It has some sample relationships etc to be used in documentation etc.</descripti
   <lastModified>2018-03-01T08:13:45</lastModified>
   <import>
     <name>ivoa</name>
-    <url>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/vo-dml/IVOA-v1.0.vo-dml.xml</url>
-    <documentationURL>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/vo-dml/IVOA-v1.0.html</documentationURL>
+    <url>IVOA-v1.0.vo-dml.xml</url>
+    <documentationURL>IVOA-v1.0.html</documentationURL>
   </import>
   <import>
     <name>filter</name>
-    <url>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/sample/filter/vo-dml/Filter.vo-dml.xml</url>
-    <documentationURL>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/sample/filter/vo-dml/Filter.html</documentationURL>
+    <url>Filter.vo-dml.xml</url>
+    <documentationURL>Filter.html</documentationURL>
   </import>
 
   <package>

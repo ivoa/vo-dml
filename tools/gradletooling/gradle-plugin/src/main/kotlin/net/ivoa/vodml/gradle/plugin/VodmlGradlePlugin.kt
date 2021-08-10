@@ -65,6 +65,7 @@ class VodmlGradlePlugin: Plugin<Project> {
             )
             it.docDir.set(extension.outputDocDir)
             it.vodmlDir.set(extension.vodmlDir)
+            it.bindingFiles.setFrom(extension.bindingFiles)
         }
 
 

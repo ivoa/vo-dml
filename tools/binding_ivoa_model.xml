@@ -14,21 +14,16 @@ To add new models add new entries there and a corresponding >model> below.
 <vodml-base-location>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/xsd/vodml-base.xsd</vodml-base-location>
 <!-- 
 
- <vodml-base-location>file:////Users/pharriso/Work/ivoa/vo-dml/xsd/vodml-base.xsd</vodml-base-location>
+ <vodml-base-location>file:////Users/pharriso/Work/volute/projects/dm/vo-dml/xsd/vodml-base.xsd</vodml-base-location>
  -->
 
-<todo>
-<model>ivoa</model>
-<model>filter</model>
-<model>sample</model>
-</todo>
 
 <model>
 <name>ivoa</name>
 <url>https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/vo-dml/IVOA-v1.0.vo-dml.xml</url>
-<file>/Users/pharriso/Work/ivoa/vo-dml/models/ivoa/vo-dml/IVOA-v1.0.vo-dml.xml</file>
-<java-package>net.ivoa.dm.ivoa</java-package>
-<xsd-location>file:///Users/pharriso/Work/ivoa/vo-dml/models/ivoa/vo-dml/IVOA.xsd</xsd-location>
+<file>IVOA-v1.0.vo-dml.xml</file>
+<java-package>org.ivoa.dm.ivoa</java-package>
+<xsd-location>file:///Users/pharriso/Work/volute/projects/dm/vo-dml/models/ivoa/vo-dml/IVOA.xsd</xsd-location>
 <target-namespace>http://ivoa.net/dm/models/vo-dml/xsd/ivoa</target-namespace>
 <schema-location>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/vo-dml/IVOA.xsd</schema-location>
 <type-mapping>
@@ -73,34 +68,15 @@ To add new models add new entries there and a corresponding >model> below.
 </type-mapping>
 <type-mapping>
   <vodml-id>rational</vodml-id>
-  <java-type>vodml.stdtypes.Rational</java-type>
+  <java-type>org.ivoa.vodml.stdtypes.Rational</java-type>
   <xsd-type>xsd:string</xsd-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>complex</vodml-id>
-  <java-type>vodml.stdtypes.Complex</java-type>
+  <java-type>org.ivoa.vodml.stdtypes.Complex</java-type>
   <xsd-type>xsd:float</xsd-type>
 </type-mapping>
 </model>
 
-<model>
-<name>filter</name>
-<url>https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/sample/filter/vo-dml/Filter.vo-dml.xml</url>
-<file>/Users/pharriso/Work/ivoa/vo-dml/models/sample/filter/vo-dml/Filter.vo-dml.xml</file>
- <java-package>net.ivoa.dm.filter</java-package>
-<xsd-location>file:///Users/pharriso/Work/ivoa/vo-dml/models/sample/filter/vo-dml/Filter.xsd</xsd-location>
-<target-namespace>http://ivoa.net/dm/models/vo-dml/xsd/sample/filter</target-namespace>
-<schema-location>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/sample/filter/vo-dml/Filter.xsd</schema-location>
-</model>
-
-<model>
-<name>sample</name>
-<url>https://volute.g-vo.orgsvn/trunk/projects/dm/vo-dml/sample/sample/vo-dml/Sample.vo-dml.xml</url>
-<file>/Users/pharriso/Work/ivoa/vo-dml/models/sample/sample/vo-dml/Sample.vo-dml.xml</file>
-<java-package>net.ivoa.dm.sample</java-package>
-<xsd-location>file:///Users/pharriso/Work/ivoa/vo-dml/models/sample/sample/vo-dml/Sample.xsd</xsd-location>
-<target-namespace>http://ivoa.net/dm/models/vo-dml/xsd/sample/sample</target-namespace>
-<schema-location>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/sample/sample/vo-dml/Sample.xsd</schema-location>
-</model>
 
 </m:mappedModels>

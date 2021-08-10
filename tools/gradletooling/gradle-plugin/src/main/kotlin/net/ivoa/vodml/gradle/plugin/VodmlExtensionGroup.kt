@@ -21,7 +21,7 @@ interface VodmlExtensionGroup {
     val outputResourcesDir: DirectoryProperty
     val defaultPackage: Property<String>
     val generateEpisode: Property<Boolean>
-    val bindingFiles: FileCollection
+    val bindingFiles: ConfigurableFileCollection
 //    val options: ListProperty<String>
 //    val markGenerated: Property<Boolean>
 

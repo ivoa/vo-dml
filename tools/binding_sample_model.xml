@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<m:mappedModels xmlns:m="http://volute.g-vo.org/dm/vo-dml-mapping/v0.9">
+<!-- ========================================
+This is a sample file for mapping VO-DML models to XSD or Java using the corresponding 
+vo-dml2xsd.xsl and vo-dml2pojo.xsl scripts in the xslt/ folder. In fact it is the input to those scripts.
+Its <xsd-location> elements below need updating to values for you local context.
+in the <todo> you should un-comment the models that you want to transform.
+To add new models add new entries there and a corresponding >model> below.
+ -->
+
+<xsd-root-namespace>http://ivoa.net/dm/vo-dml/xsd/</xsd-root-namespace>
+
+<vodml-base-namespace>http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1</vodml-base-namespace>
+<vodml-base-location>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/xsd/vodml-base.xsd</vodml-base-location>
+<!-- 
+
+ <vodml-base-location>file:////Users/pharriso/Work/volute/projects/dm/vo-dml/xsd/vodml-base.xsd</vodml-base-location>
+ -->
+
+<model>
+<name>sample</name>
+<url>https://volute.g-vo.orgsvn/trunk/projects/dm/vo-dml/sample/sample/vo-dml/Sample.vo-dml.xml</url>
+<file>Sample.vo-dml.xml</file>
+<java-package>org.ivoa.dm.sample</java-package>
+<xsd-location>file:///Users/pharriso/Work/volute/projects/dm/vo-dml/models/sample/sample/vo-dml/Sample.xsd</xsd-location>
+<target-namespace>http://ivoa.net/dm/models/vo-dml/xsd/sample/sample</target-namespace>
+<schema-location>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/sample/sample/vo-dml/Sample.xsd</schema-location>
+</model>
+
+</m:mappedModels>

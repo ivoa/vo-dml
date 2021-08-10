@@ -16,7 +16,6 @@
 								xmlns:exsl="http://exslt.org/common"
                 extension-element-prefixes="exsl">
   
-  <xsl:import href="common.xsl"/>
 
   <xsl:param name="targetnamespace_root"/> 
 

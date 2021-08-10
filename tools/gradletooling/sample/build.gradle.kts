@@ -14,4 +14,10 @@ vodml {
 //    vodmlFiles.setFrom(project.files (
 //        vodmlDir.file("ivoa/vo-dml/IVOA-v1.0.vo-dml.xml")
 //            ))
+
+    bindingFiles.setFrom(
+        project.files(
+            layout.projectDirectory.file( "../../binding_ivoa_model.xml")
+        )
+    )
 }

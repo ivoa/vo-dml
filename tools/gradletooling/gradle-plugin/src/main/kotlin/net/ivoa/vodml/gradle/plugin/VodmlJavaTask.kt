@@ -22,6 +22,9 @@ import org.gradle.api.tasks.*
      @get:OutputDirectory
      val docDir : DirectoryProperty = project.objects.directoryProperty()
 
+     @get:InputFiles
+     val bindingFiles: ConfigurableFileCollection = project.objects.fileCollection()
+
      @TaskAction
      fun doDocumentation() {
          logger.info("Generating Java for VO-DML files ${vodmlFiles.files.joinToString { it.name }}")
@@ -29,8 +32,8 @@ import org.gradle.api.tasks.*
 
          vodmlFiles.forEach{
              val shortname = it.nameWithoutExtension
-             val outfile = docDir.file(shortname +".html")
-             Vodml2Html.doTransform(it.absoluteFile, outfile.get().asFile)
+             val outfile = docDir.file(shortname +".javatrans.txt")
+             Vodml2Java.doTransform(it.absoluteFile, mapOf("binding" to bindingFiles.files.joinToString(separator = ","){it.absolutePath}),outfile.get().asFile)
          }
 
      }

@@ -32,8 +32,11 @@ repositories {
 
 dependencies {
 
-    implementation("net.sf.saxon:Saxon-HE:10.5")
-    implementation("name.dmaus.schxslt:java:3.0")
+    implementation("net.sf.saxon:Saxon-HE:10.5") // for xslt 2.0
+    implementation("name.dmaus.schxslt:java:3.0") // for modern schematron
+ //   implementation("xml-resolver:xml-resolver:1.2") // for xml catalogues
+    implementation("org.xmlresolver:xmlresolver:3.0.2") // update on apache commons
+
 
     // Align versions of all Kotlin components
     compileOnly(platform("org.jetbrains.kotlin:kotlin-bom"))
