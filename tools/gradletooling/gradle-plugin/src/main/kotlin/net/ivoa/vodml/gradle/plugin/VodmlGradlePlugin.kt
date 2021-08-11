@@ -91,19 +91,17 @@ class VodmlGradlePlugin: Plugin<Project> {
             it.dependsOn.add(vodmlJavaTask)
         }
         //add the dependencies for JAXB and JPA - using the eclipse implementation
-        val dep = project.objects.listProperty(Dependency::class.java).convention(
-            listOf(
-                project.dependencies.create("org.glassfish.jaxb:jaxb-runtime:2.3.4"),
-                project.dependencies.create("org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.6"),
-                project.dependencies.create("org.eclipse.persistence:org.eclipse.persistence.moxy:2.7.6")
+       listOf("javax.xml.bind:jaxb-api:2.3.1",
+            "org.glassfish.jaxb:jaxb-runtime:2.3.4",
+            "org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.6",
+            "org.eclipse.persistence:org.eclipse.persistence.moxy:2.7.6" //alternative Jaxb runtime...
+        ).forEach {
+            project.dependencies.addProvider(
+                JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME,
+                project.objects.property(Dependency::class.java).convention(
+                    project.dependencies.create(it)
                 )
             )
-
-        project.configurations.named(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME).get().defaultDependencies {
-                it.addAllLater(dep)
-            }
-
-
-
+        }
     }
 }
