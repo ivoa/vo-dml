@@ -2,10 +2,8 @@ package net.ivoa.vodml.gradle.plugin
 
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileCollection
-import org.gradle.api.provider.ListProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.SourceSetContainer
 
 
 /*
@@ -22,6 +20,7 @@ interface VodmlExtensionGroup {
     val defaultPackage: Property<String>
     val generateEpisode: Property<Boolean>
     val bindingFiles: ConfigurableFileCollection
+    val catalogFile: RegularFileProperty
 //    val options: ListProperty<String>
 //    val markGenerated: Property<Boolean>
 

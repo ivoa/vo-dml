@@ -2,7 +2,6 @@ package net.ivoa.vodml.gradle.plugin
 
 import org.junit.jupiter.api.BeforeEach
 import java.io.File
-import kotlin.test.fail
 
 /*
  Ony really tests whether the xsl transforms run without exception.

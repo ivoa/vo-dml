@@ -3,6 +3,7 @@ package net.ivoa.vodml.gradle.plugin
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
 
 
@@ -20,10 +21,13 @@ import org.gradle.api.tasks.*
      val vodmlFiles: ConfigurableFileCollection = project.objects.fileCollection()
 
      @get:OutputDirectory
-     val docDir : DirectoryProperty = project.objects.directoryProperty()
+     val javaGenDir : DirectoryProperty = project.objects.directoryProperty()
 
      @get:InputFiles
      val bindingFiles: ConfigurableFileCollection = project.objects.fileCollection()
+
+     @get:InputFile
+     val configFile: RegularFileProperty = project.objects.fileProperty()
 
      @TaskAction
      fun doDocumentation() {
@@ -32,8 +36,12 @@ import org.gradle.api.tasks.*
 
          vodmlFiles.forEach{
              val shortname = it.nameWithoutExtension
-             val outfile = docDir.file(shortname +".javatrans.txt")
-             Vodml2Java.doTransform(it.absoluteFile, mapOf("binding" to bindingFiles.files.joinToString(separator = ","){it.absolutePath}),outfile.get().asFile)
+             val outfile = javaGenDir.file(shortname +".javatrans.txt")
+             Vodml2Java.doTransform(it.absoluteFile, mapOf(
+                 "binding" to bindingFiles.files.joinToString(separator = ","){it.absolutePath},
+                 "output_root" to javaGenDir.get().asFile.absolutePath
+             ),
+                 configFile.get().asFile, outfile.get().asFile)
          }
 
      }

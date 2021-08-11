@@ -19,7 +19,7 @@ To add new models add new entries there and a corresponding >model> below.
 
 <model>
 <name>filter</name>
-<url>http://net.ivoa/models/Filter.vo-dml.xml</url>
+<url>Filter.vo-dml.xml</url>
  <java-package>org.ivoa.dm.filter</java-package>
 <xsd-location>file:///Users/pharriso/Work/volute/projects/dm/vo-dml/models/sample/filter/vo-dml/Filter.xsd</xsd-location>
 <target-namespace>http://ivoa.net/dm/models/vo-dml/xsd/sample/filter</target-namespace>

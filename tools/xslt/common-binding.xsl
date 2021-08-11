@@ -131,6 +131,8 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
     <xsl:param name="length" select="''"/> 
     <xsl:param name="fullpath" select="'false'" /> 
 
+<!--     <xsl:message >Java Type for <xsl:value-of select="$vodml-ref"/></xsl:message>    -->
+   
  
     <xsl:variable name="mappedtype">
       <xsl:call-template name="findmapping">
@@ -144,7 +146,6 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
       <xsl:otherwise>
       <xsl:choose>
         <xsl:when test="$fullpath='true'">
-<!--         <xsl:message >Finding full path for <xsl:value-of select="$vodml-ref"/></xsl:message>   -->
           <xsl:call-template  name="fullpath">
             <xsl:with-param name="vodml-ref" select="$vodml-ref"/>
           </xsl:call-template>

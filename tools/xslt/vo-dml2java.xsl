@@ -38,7 +38,7 @@
 
   <xsl:param name="lastModified"/>
   <xsl:param name="lastModifiedText"/>
-  <xsl:param name="output_root" select="resolve-uri('../../src/generated/java/',static-base-uri())"/>
+  <xsl:param name="output_root" />
   <xsl:param name="vo-dml_package" select="'org.ivoa.vodml.model'"/>
   <xsl:param name="binding"/>
   <xsl:variable name="mapping">
@@ -58,6 +58,7 @@
       <xsl:for-each select="$mapping/map:mappedModels/model">
          <xsl:choose>
             <xsl:when test="file"> <!-- prefer local file for reading defn -->
+            <xsl:message>opening file <xsl:value-of select="file"/></xsl:message>
                <xsl:copy-of
                   select="document(file)/vo-dml:model" />
             </xsl:when>
@@ -85,19 +86,8 @@
   <xsl:template match="/">
   
   <xsl:message >Generating Java - considering models <xsl:value-of select="string-join($models/vo-dml:model/name,' and ')" /></xsl:message>
-  <xsl:for-each select="map:mappedModels/todo/model">
-  <xsl:message >Model: <xsl:value-of select="."/></xsl:message>
-  <xsl:variable name="prefix" select="."/>
-  <xsl:choose>
-    <xsl:when test="$mapping/map:mappedModels/model[name=$prefix]">
-      <xsl:apply-templates select="$models/vo-dml:model[name=$prefix]"/>
-    </xsl:when>
-   <xsl:otherwise>
-      <xsl:message>Model <xsl:value-of select="vodml-id"/> not in mapping, hence no Java classes are generated.</xsl:message>
-    </xsl:otherwise>
-  </xsl:choose>
-  </xsl:for-each> 
-</xsl:template>
+ <xsl:apply-templates/>
+ </xsl:template>
 
   <!-- model pattern : generates gen-log and processes nodes package and generates the ModelVersion class and persistence.xml -->
   <xsl:template match="vo-dml:model">
@@ -194,7 +184,7 @@
     </xsl:variable>
     <xsl:choose>
     <xsl:when test="not($mappedtype) or $mappedtype = ''" >
-      <xsl:variable name="file" select="concat($output_root, $dir, '/', name, '.java')"/>
+      <xsl:variable name="file" select="concat($output_root, '/', $dir, '/', name, '.java')"/>
 
     <!-- open file for this class -->
       <xsl:message >Opening Class file <xsl:value-of select="$file"/></xsl:message>
@@ -1190,6 +1180,8 @@ package <xsl:value-of select="$path"/>;
   <!-- find a java package path towards the type identified with the name -->
   <xsl:template name="fullpath">
     <xsl:param name="vodml-ref"/>
+            <xsl:message >Finding full path for <xsl:value-of select="$vodml-ref"/></xsl:message>  
+    
     <xsl:variable name="themodel" as="element()">
         <xsl:call-template name="getmodel"><xsl:with-param name="vodml-ref" select="$vodml-ref"/></xsl:call-template>
     </xsl:variable>

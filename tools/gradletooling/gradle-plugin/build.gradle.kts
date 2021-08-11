@@ -34,8 +34,7 @@ dependencies {
 
     implementation("net.sf.saxon:Saxon-HE:10.5") // for xslt 2.0
     implementation("name.dmaus.schxslt:java:3.0") // for modern schematron
- //   implementation("xml-resolver:xml-resolver:1.2") // for xml catalogues
-    implementation("org.xmlresolver:xmlresolver:3.0.2") // update on apache commons
+    implementation("org.xmlresolver:xmlresolver:3.0.2") // for xml catalogues - note that the apache xml-commons resolver is out of date
 
 
     // Align versions of all Kotlin components
@@ -53,10 +52,6 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.2")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:5.4.2")
 
-    //FIXME really only want to add these to the project that the plugin is used on...
-    implementation("org.glassfish.jaxb:jaxb-runtime:2.3.4")
-    implementation ("org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.6")
-    implementation ("org.eclipse.persistence:org.eclipse.persistence.moxy:2.7.6")
 
 
 }
@@ -73,6 +68,17 @@ gradlePlugin {
 
     }
 }
+
+java {
+    targetCompatibility =  JavaVersion.VERSION_1_8
+}
+
+//seem to need this hack if compiling on > jdk8 platform
+val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+    jvmTarget = JavaVersion.VERSION_1_8.toString()
+}
+// end of hack
 
 // Add a source set for the functional test suite
 val functionalTestSourceSet = sourceSets.create("functionalTest") {

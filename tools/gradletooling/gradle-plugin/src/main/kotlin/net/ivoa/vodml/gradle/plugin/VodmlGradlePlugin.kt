@@ -3,8 +3,14 @@ package net.ivoa.vodml.gradle.plugin
 import net.ivoa.vodml.gradle.plugin.internal.MIN_REQUIRED_GRADLE_VERSION
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.util.PatternSet
+import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.util.GradleVersion
 
 /**
@@ -56,17 +62,47 @@ class VodmlGradlePlugin: Plugin<Project> {
             it.vodmlDir.set(extension.vodmlDir)
         }
         // register the Java generation task
-        project.tasks.register(VODML_JAVA_TASK_NANE,VodmlJavaTask::class.java) {
-            it.description = "generate Java classes from VO-DML models"
-            it.vodmlFiles.setFrom(if (extension.vodmlFiles.isEmpty)
+        val vodmlJavaTask: TaskProvider<VodmlJavaTask> = project.tasks.register(VODML_JAVA_TASK_NANE,VodmlJavaTask::class.java) { task ->
+            task.description = "Generate Java classes from VO-DML models"
+            task.vodmlFiles.setFrom(if (extension.vodmlFiles.isEmpty)
                 extension.vodmlDir.asFileTree.matching(PatternSet().include("**/*.vo-dml.xml"))
             else
                 extension.vodmlFiles
             )
-            it.docDir.set(extension.outputDocDir)
-            it.vodmlDir.set(extension.vodmlDir)
-            it.bindingFiles.setFrom(extension.bindingFiles)
+            task.javaGenDir.set(extension.outputJavaDir)
+            task.vodmlDir.set(extension.vodmlDir)
+            task.bindingFiles.setFrom(extension.bindingFiles)
+            task.configFile.set(extension.catalogFile)
+
+            //add the generated source directory to the list of sources to compile IMPL - this feels a bit hacky
+            val sourceSets = project.properties["sourceSets"] as SourceSetContainer
+
+            sourceSets.named(SourceSet.MAIN_SOURCE_SET_NAME) {
+                it.java.srcDir(task.javaGenDir)
+            }
+
         }
+        //force java 8 - TODO support java version > 8
+        val toolchain = project.extensions.getByType(JavaPluginExtension::class.java).toolchain
+        toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+
+        // force java compile to depend on this task
+        project.tasks.named(JavaPlugin.COMPILE_JAVA_TASK_NAME) {
+            it.dependsOn.add(vodmlJavaTask)
+        }
+        //add the dependencies for JAXB and JPA - using the eclipse implementation
+        val dep = project.objects.listProperty(Dependency::class.java).convention(
+            listOf(
+                project.dependencies.create("org.glassfish.jaxb:jaxb-runtime:2.3.4"),
+                project.dependencies.create("org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.6"),
+                project.dependencies.create("org.eclipse.persistence:org.eclipse.persistence.moxy:2.7.6")
+                )
+            )
+
+        project.configurations.named(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME).get().defaultDependencies {
+                it.addAllLater(dep)
+            }
+
 
 
     }

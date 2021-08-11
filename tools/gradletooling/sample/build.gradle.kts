@@ -17,7 +17,11 @@ vodml {
 
     bindingFiles.setFrom(
         project.files(
-            layout.projectDirectory.file( "../../binding_ivoa_model.xml")
+            layout.projectDirectory.dir("../../").asFileTree.matching (
+                PatternSet().include("binding*model.xml")
+            )
         )
     )
+
+    catalogFile.set(project.file("../../catalog.xml"))
 }
