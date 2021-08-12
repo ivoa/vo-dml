@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<m:mappedModels xmlns:m="http://volute.g-vo.org/dm/vo-dml-mapping/v0.9">
+<m:mappedModels xmlns:m="http://www.ivoa.net/xml/vodml-binding/v0.9">
 
 <!-- ========================================
 This is a sample file for mapping VO-DML models to XSD using the corresponding 

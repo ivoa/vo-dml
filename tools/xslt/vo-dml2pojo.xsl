@@ -9,7 +9,7 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
                 xmlns:exsl="http://exslt.org/common"
-                xmlns:map="http://volute.g-vo.org/dm/vo-dml-mapping/v0.9"
+                xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9"
                 extension-element-prefixes="exsl"
                 exclude-result-prefixes="map" 
                 >

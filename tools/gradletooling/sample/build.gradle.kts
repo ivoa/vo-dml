@@ -25,3 +25,7 @@ vodml {
 
     catalogFile.set(project.file("../../catalog.xml"))
 }
+
+dependencies {
+    implementation("net.ivoa.vo-dml:vodml-runtime:0.1-SNAPSHOT")
+}

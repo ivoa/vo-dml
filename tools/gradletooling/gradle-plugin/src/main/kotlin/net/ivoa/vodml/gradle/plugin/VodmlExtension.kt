@@ -14,9 +14,9 @@ open class VodmlExtension @Inject constructor(objects: ObjectFactory, layout: Pr
     override val name = "Defaults"
     override val vodmlDir = objects.directoryProperty().convention(layout.projectDirectory.dir("src/main/vo-dml"))
     override val vodmlFiles = objects.fileCollection()
-    override val outputJavaDir = objects.directoryProperty().convention(layout.buildDirectory.dir("generated/sources/vodml/java"))
+    override val outputJavaDir = objects.directoryProperty().convention(layout.buildDirectory.dir("generated/sources/vodml/java/"))
     override val outputDocDir = objects.directoryProperty().convention(layout.buildDirectory.dir("generated/docs/vodml/"))
-    override val outputResourcesDir = objects.directoryProperty().convention(layout.buildDirectory.dir("generated/sources/vodml/resources"))
+    override val outputResourcesDir = objects.directoryProperty().convention(layout.buildDirectory.dir("generated/sources/vodml/resources/"))
     override val defaultPackage = objects.property(String::class.java).convention("vodml.generated")
     override val generateEpisode = objects.property(Boolean::class.java).convention(false)
     override val bindingFiles = objects.fileCollection()
