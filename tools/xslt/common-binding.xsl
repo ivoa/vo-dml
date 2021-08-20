@@ -11,9 +11,10 @@
 
 <xsl:include href="common.xsl"/>
 
-<xsl:key name="ellookup" match="*[vodml-id]" use="concat(ancestor::vo-dml:model/name,':',vodml-id)"
-   />
- 
+<xsl:key name="ellookup" match="*[vodml-id]" use="concat(ancestor::vo-dml:model/name,':',vodml-id)"/>
+
+    <xsl:key name="maplookup" match="type-mapping[vodml-id]" use="concat(ancestor::model/name,':',vodml-id)"/>
+
   <xsl:param name="targetnamespace_root"/>
 
   <xsl:template match="vo-dml:model" mode="xsd-path">
@@ -129,7 +130,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
   <xsl:template name="JavaType">
     <xsl:param name="vodml-ref"/> <!-- assumed to be fully qualified! i.e. also for elements in local model, the prefix is included! -->
     <xsl:param name="length" select="''"/> 
-    <xsl:param name="fullpath" select="'false'" /> 
+    <xsl:param name="fullpath" select="false()" />
 
 <!--     <xsl:message >Java Type for <xsl:value-of select="$vodml-ref"/></xsl:message>    -->
    
@@ -145,7 +146,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
       </xsl:when>
       <xsl:otherwise>
       <xsl:choose>
-        <xsl:when test="$fullpath='true'">
+        <xsl:when test="$fullpath">
           <xsl:call-template  name="fullpath">
             <xsl:with-param name="vodml-ref" select="$vodml-ref"/>
           </xsl:call-template>

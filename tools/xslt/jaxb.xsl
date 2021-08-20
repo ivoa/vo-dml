@@ -9,17 +9,13 @@
 <!-- 
   This XSLT is used by intermediate2java.xsl to generate JAXB annotations and JAXB specific java code.
   
-  Java 1.5+ is required by JAXB 2.1.
+  Java 1.8+ is required by JAXB 2.1.
 -->
 
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
 								xmlns:exsl="http://exslt.org/common"
                 extension-element-prefixes="exsl">
-  
-
-  <xsl:param name="targetnamespace_root"/> 
-
- 
 
 
   <xsl:template match="objectType|dataType" mode="JAXBAnnotation">
@@ -139,49 +135,20 @@ Ofcourse if we always use the schemas to validate XML documents this will still 
 
   
 
-  <xsl:template match="package" mode="jaxb.index">
+  <xsl:template match="vo-dml:model|package" mode="jaxb.index">
     <xsl:param name="dir"/>
-    <xsl:variable name="file" select="concat('src/', $dir, '/jaxb.index')"/>
-    <!-- open file for this class -->
-    <xsl:message >Opening file <xsl:value-of select="$file"/></xsl:message>
+    <xsl:variable name="file" select="concat($output_root, '/', $dir, '/jaxb.index')"/>
+    <!-- open file for this package -->
+    <xsl:message >Writing to jaxb index file <xsl:value-of select="$file"/></xsl:message>
 
     <xsl:result-document href="{$file}">
-      <xsl:for-each select="objectType">
+      <xsl:for-each select="objectType|dataType">
         <xsl:value-of select="name"/>&cr;
       </xsl:for-each>
     </xsl:result-document> 
   </xsl:template>
 
   
-
-  <xsl:template match="model" mode="jaxb.context.classpath">
-    <xsl:param name="root_package"/>
-    <xsl:variable name="file" select="'jaxb.context.classpath'"/>
-    <!-- open file for this class -->
-    <xsl:message >Opening file <xsl:value-of select="$file"/></xsl:message>
-
-    <xsl:result-document href="{$file}">
-      <xsl:text>jaxb.context.classpath=</xsl:text><xsl:value-of select="'org.ivoa.dm.model'"/>
-      <xsl:for-each select="package">
-        <xsl:apply-templates select="." mode="jaxb.context.classpath">
-          <xsl:with-param name="path" select="$root_package"/>
-        </xsl:apply-templates>
-      </xsl:for-each>
-    </xsl:result-document> 
-  </xsl:template>
-
-  <xsl:template match="package"  mode="jaxb.context.classpath">
-    <xsl:param name="path"/>
-    <xsl:variable name="thispath">
-      <xsl:value-of select="concat($path,'.',name)"/>
-    </xsl:variable>
-    <xsl:if test="objectType|dataType|enumeration">
-      <xsl:text>:</xsl:text><xsl:value-of select="$thispath"/>
-    </xsl:if>
-    <xsl:apply-templates select="package" mode="jaxb.context.classpath">
-      <xsl:with-param name="path" select="$thispath"/>
-    </xsl:apply-templates>
-  </xsl:template>
 
 
 </xsl:stylesheet>

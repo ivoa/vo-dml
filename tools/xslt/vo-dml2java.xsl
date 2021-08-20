@@ -26,13 +26,14 @@
 -->
 
   <xsl:import href="common-binding.xsl"/>
-  <xsl:import href="jaxb.xsl"/>
-  <xsl:import href="jpa.xsl"/>
+  <xsl:include href="jaxb.xsl"/>
+  <xsl:include href="jpa.xsl"/>
  
  
 
   <xsl:output method="text" encoding="UTF-8" indent="yes" />
   <xsl:output name="packageInfo" method="html" encoding="UTF-8" doctype-public="-//W3C//DTD HTML 4.01 Transitional//EN"/>
+    <xsl:output name="packageInfoJ" method="text" encoding="UTF-8"/>
 
   <xsl:strip-space elements="*" />
 
@@ -96,17 +97,24 @@
     <xsl:message>
 -------------------------------------------------------------------------------------------------------
 -- Generating Java code for model <xsl:value-of select="name"/> [<xsl:value-of select="title"/>].
--- last modification date of the UML model <xsl:value-of select="$lastModifiedText"/>
+-- last modification date of the model <xsl:value-of select="lastModified"/>
 -------------------------------------------------------------------------------------------------------
     </xsl:message>
 
     <xsl:variable name="prefix" select="name"/>
-    <xsl:variable name="root_package" select="$mapping/map:mappedModels/model[name=$prefix]/java-package"/>
-    <xsl:variable name="root_package_dir" select="replace($root_package,'[.]','/')"/>
-<!-- 
-    <xsl:message>root_package = <xsl:value-of select="$root_package"/></xsl:message>
-    <xsl:message>root_package_dir = <xsl:value-of select="$root_package_dir"/></xsl:message>
- -->
+      <xsl:if test="not($mapping/map:mappedModels/model[name=$prefix])">
+          <xsl:message terminate="yes">
+              There is no binding for model <xsl:value-of select="$prefix"/>
+          &cr;
+          </xsl:message>
+      </xsl:if>
+      <xsl:variable name="root_package" select="$mapping/map:mappedModels/model[name=$prefix]/java-package"/>
+      <xsl:variable name="root_package_dir" select="replace($root_package,'[.]','/')"/>
+
+      <!--
+          <xsl:message>root_package = <xsl:value-of select="$root_package"/></xsl:message>
+          <xsl:message>root_package_dir = <xsl:value-of select="$root_package_dir"/></xsl:message>
+       -->
     <xsl:apply-templates select="." mode="modelFactory">
       <xsl:with-param name="root_package" select="$root_package"/>
       <xsl:with-param name="root_package_dir" select="$root_package_dir"/>
@@ -116,7 +124,9 @@
       <xsl:with-param name="dir" select="$root_package_dir"/>
       <xsl:with-param name="path" select="$root_package"/>
     </xsl:apply-templates>
-    
+
+      <xsl:apply-templates select="." mode="jpaConfig" />
+
   </xsl:template>  
 
 
@@ -155,12 +165,20 @@
     </xsl:variable>
    
     <xsl:message>package = <xsl:value-of select="$newpath"></xsl:value-of></xsl:message>
-   
-    <xsl:apply-templates select="." mode="packageDesc">
-      <xsl:with-param name="dir" select="$newdir"/>
-    </xsl:apply-templates>
-   
-    <xsl:apply-templates select="objectType|dataType|enumeration|primitiveType" mode="file">
+
+      <xsl:apply-templates select="." mode="packageDesc">
+          <xsl:with-param name="dir" select="$newdir"/>
+          <xsl:with-param name="path" select="$newpath"/>
+      </xsl:apply-templates>
+
+      <xsl:apply-templates select="." mode="jaxb.index">
+          <xsl:with-param name="dir" select="$newdir"/>
+      </xsl:apply-templates>
+
+
+
+
+      <xsl:apply-templates select="objectType|dataType|enumeration|primitiveType" mode="file">
       <xsl:with-param name="dir" select="$newdir"/>
       <xsl:with-param name="path" select="$newpath"/>
     </xsl:apply-templates>
@@ -169,6 +187,7 @@
       <xsl:with-param name="dir" select="$newdir"/>
       <xsl:with-param name="path" select="$newpath"/>
     </xsl:apply-templates>
+
   </xsl:template>
 
 
@@ -189,7 +208,7 @@
       <xsl:variable name="file" select="concat($output_root, '/', $dir, '/', name, '.java')"/>
 
     <!-- open file for this class -->
-      <xsl:message >Opening Class file <xsl:value-of select="$file"/></xsl:message>
+      <xsl:message >Writing to Class file <xsl:value-of select="$file"/>  </xsl:message>
       
       <xsl:result-document href="{$file}">
         <xsl:apply-templates select="." mode="class">
@@ -250,16 +269,14 @@ package <xsl:value-of select="$path"/>;
       import <xsl:value-of select="$vo-dml_package"/>.ReferenceObject;
     </xsl:if>
     <xsl:apply-templates select="." mode="typeimports"/>
-
-    /**
-    * <xsl:value-of select="$vo-dml-type"/>: &bl;<xsl:value-of select="name" />
-    *
-    * <xsl:apply-templates select="." mode="desc" />
-    *
-    * <xsl:value-of select="$vodmlauthor"/>
-    */
-    
-    <xsl:apply-templates select="." mode="JPAAnnotation"/>    
+     /**
+      * <xsl:apply-templates select="." mode="desc" />
+      *
+      * <xsl:value-of select="$vo-dml-type"/>: &bl;<xsl:value-of select="name" />
+      *
+      * <xsl:value-of select="$vodmlauthor"/>
+      */
+    <xsl:apply-templates select="." mode="JPAAnnotation"/>
     <xsl:apply-templates select="." mode="JAXBAnnotation"/>
     <xsl:call-template name="vodmlAnnotation"/>
        public&bl;<xsl:if test="@abstract='true'">abstract</xsl:if>&bl;class <xsl:value-of select="name"/>&bl;
@@ -314,9 +331,9 @@ package <xsl:value-of select="$path"/>;
 package <xsl:value-of select="$path"/>;
 
       /**
-      * Enumeration <xsl:value-of select="name"/> :
-      *
       * <xsl:apply-templates select="." mode="desc" />
+      *
+      * Enumeration <xsl:value-of select="name"/> :
       *
       * <xsl:value-of select="$vodmlauthor"/>
       */
@@ -406,11 +423,11 @@ package <xsl:value-of select="$path"/>;
     </xsl:variable>
 package <xsl:value-of select="$path"/>;
         <xsl:apply-templates select="." mode="typeimports" />
-
+<!---->
 
       /**
-      * PrimitiveType <xsl:value-of select="name"/> :  
-      * <xsl:apply-templates select="." mode="desc" />
+      *  <xsl:apply-templates select="." mode="desc" />
+      *  PrimitiveType <xsl:value-of select="name"/> :
       *
       *  <xsl:value-of select="$vodmlauthor"/>
       */
@@ -468,8 +485,8 @@ package <xsl:value-of select="$path"/>;
   <xsl:template match="attribute" mode="declare">
     <xsl:variable name="type"><xsl:call-template name="JavaType"><xsl:with-param name="vodml-ref" select="datatype/vodml-ref"/></xsl:call-template></xsl:variable>
     /** 
-    * Attribute <xsl:value-of select="name"/> :
-    * <xsl:apply-templates select="." mode="desc" />
+    * <xsl:apply-templates select="." mode="desc" /> : Attribute <xsl:value-of select="name"/> :
+    *
     */
     <xsl:call-template name="vodmlAnnotation"/>
     <xsl:apply-templates select="." mode="JPAAnnotation"/>
@@ -558,8 +575,8 @@ package <xsl:value-of select="$path"/>;
     <xsl:call-template name="vodmlAnnotation"/>
     
     /** 
-    * composition <xsl:value-of select="name"/> :
     * <xsl:apply-templates select="." mode="desc" />
+    * composition <xsl:value-of select="name"/> :
     * (
     * Multiplicity : <xsl:value-of select="multiplicity"/>
     * )
@@ -773,7 +790,12 @@ package <xsl:value-of select="$path"/>;
 
   <xsl:template match="*" mode="desc">
     <xsl:choose>
-      <xsl:when test="count(description) > 0 and normalize-space(description) != 'TODO : Missing description : please, update your UML model asap.'"><xsl:value-of select="description" disable-output-escaping="yes"/></xsl:when>
+      <xsl:when test="count(description) > 0 and normalize-space(description) != 'TODO : Missing description : please, update your UML model asap.'">
+          <xsl:value-of select="description" disable-output-escaping="yes"/>
+          <xsl:if test="not(ends-with(desciption, '.'))">
+              <xsl:value-of select="'.'"/>
+          </xsl:if>
+      </xsl:when>
       <xsl:otherwise>
 <!--       <xsl:message >TODO : <xsl:value-of select="name"/> Missing description : please, update your VO-DML model asap.</xsl:message> -->
       </xsl:otherwise>
@@ -789,9 +811,9 @@ package <xsl:value-of select="$path"/>;
   <xsl:template match="vo-dml:model" mode="modelFactory">
     <xsl:param name="root_package"/>
     <xsl:param name="root_package_dir"/>
-    <xsl:variable name="file" select="concat($output_root, $root_package_dir,'/','ModelFactory.java')"/>
+    <xsl:variable name="file" select="concat($output_root,'/', $root_package_dir,'/','ModelFactory.java')"/>
     <!-- open file for this class -->
-    <xsl:message >Opening Factory file <xsl:value-of select="$file"/></xsl:message>
+    <xsl:message >Writing Factory file <xsl:value-of select="$file"/></xsl:message>
     <xsl:result-document href="{$file}">package <xsl:value-of select="$root_package"/>;
       <xsl:if test="descendant-or-self::objectType|descendant-or-self::dataType">
       import <xsl:value-of select="$vo-dml_package"/>.StructuredObject;
@@ -876,9 +898,10 @@ package <xsl:value-of select="$path"/>;
   <!-- package.html -->
   <xsl:template match="vo-dml:model|package" mode="packageDesc">
     <xsl:param name="dir"/>
-    <xsl:variable name="file" select="concat($output_root,$dir,'/package.html')"/>
+      <xsl:param name="path"/>
+    <xsl:variable name="file" select="concat($output_root,'/',$dir,'/package.html')"/>
     <!-- open file for this class -->
-    <xsl:message >Opening package file <xsl:value-of select="$file"/></xsl:message>
+    <xsl:message >Writing package file <xsl:value-of select="$file"/></xsl:message>
     <xsl:result-document href="{$file}" format="packageInfo">
       <html>
         <head>
@@ -890,6 +913,18 @@ package <xsl:value-of select="$path"/>;
         </body>
       </html>
     </xsl:result-document>
+      <xsl:variable name="file" select="concat($output_root,'/',$dir,'/package-info.java')"/>
+      <!-- open file for this class -->
+      <xsl:message >Writing package info file <xsl:value-of select="$file"/></xsl:message>
+      <xsl:variable name="ns" select="$mapping/map:mappedModels/model[name=current()/ancestor-or-self::vo-dml:model/name]/xml-targetnamespace"/>
+      <xsl:result-document href="{$file}" >
+@javax.xml.bind.annotation.XmlSchema(namespace = "<xsl:value-of select="$ns"/>", xmlns = {
+@javax.xml.bind.annotation.XmlNs(namespaceURI = "<xsl:value-of select="$ns"/>", prefix = "<xsl:value-of select="$ns/@tns"/>")
+  })
+package <xsl:value-of select="$path"/>;
+
+      </xsl:result-document>
+
   </xsl:template>
 
 
@@ -971,7 +1006,7 @@ package <xsl:value-of select="$path"/>;
   <!-- find a java package path towards the type identified with the name -->
   <xsl:template name="fullpath">
     <xsl:param name="vodml-ref"/>
-            <xsl:message >Finding full path for <xsl:value-of select="$vodml-ref"/></xsl:message>  
+     <!-- <xsl:message >Finding full path for <xsl:value-of select="$vodml-ref"/></xsl:message> -->
     
     <xsl:variable name="themodel" as="element()">
         <xsl:call-template name="getmodel"><xsl:with-param name="vodml-ref" select="$vodml-ref"/></xsl:call-template>

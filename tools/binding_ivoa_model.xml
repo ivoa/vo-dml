@@ -12,37 +12,37 @@ vo-dml2xsd.xsl and vo-dml2pojo.xsl scripts in the xslt/ folder. In fact it is th
 <xml-targetnamespace>http://ivoa.net/dm/models/vo-dml/xsd/ivoa</xml-targetnamespace>
 <type-mapping>
   <vodml-id>real</vodml-id>
-  <java-type>Double</java-type>
+  <java-type jpa-atomic="true">Double</java-type>
   <xsd-type>xsd:float</xsd-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>string</vodml-id>
-  <java-type>String</java-type>
+  <java-type jpa-atomic="true">String</java-type>
   <xsd-type>xsd:string</xsd-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>boolean</vodml-id>
-  <java-type>Boolean</java-type>
+  <java-type jpa-atomic="true">Boolean</java-type>
   <xsd-type>xsd:boolean</xsd-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>integer</vodml-id>
-  <java-type>Integer</java-type>
+  <java-type jpa-atomic="true">Integer</java-type>
   <xsd-type>xsd:int</xsd-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>nonnegativeInteger</vodml-id>
-  <java-type>Integer</java-type>
+  <java-type jpa-atomic="true">Integer</java-type>
   <xsd-type>xsd:nonNegativeInteger</xsd-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>anyURI</vodml-id>
-  <java-type>String</java-type>
+  <java-type jpa-atomic="true">String</java-type>
   <xsd-type>xsd:anyURI</xsd-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>datetime</vodml-id>
-  <java-type>java.util.Date</java-type>
+  <java-type jpa-atomic="true">java.util.Date</java-type>
   <xsd-type>xsd:dateTime</xsd-type>
 </type-mapping>
 <type-mapping>

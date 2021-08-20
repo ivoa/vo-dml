@@ -7,26 +7,20 @@
 ]>
 
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-				xmlns:exsl="http://exslt.org/common"
-				xmlns:fn="http://www.w3.org/2005/02/xpath-functions"
-            extension-element-prefixes="exsl">
+                xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
+                xmlns:exsl="http://exslt.org/common"
+                extension-element-prefixes="exsl">
 
 <!-- 
   This XSLT is used by intermediate2java.xsl to generate JPA annotations and JPA specific java code.
   
-  Java 1.5+ is required by JPA 1.0.
+  Java 1.8+ is required by JPA 2.2.
 -->
 
   <!-- common DDL templates used -->
-  <xsl:import href="common-ddl.xsl"/>
+  <xsl:include href="common-ddl.xsl"/>
 
   <xsl:output name="persistenceInfo" method="xml" encoding="UTF-8" indent="yes"  />
-
-  <xsl:param name="persistence.xml"/>
-  <xsl:param name="schemaPrefix" select="''"/>
-
-  <xsl:key name="element" match="*//*" use="vodml-id"/>
 
   <xsl:template match="objectType" mode="JPAAnnotation">
     <xsl:variable name="className" select="name" />
@@ -53,12 +47,9 @@
   @javax.persistence.Entity
   @javax.persistence.Table( name = "<xsl:apply-templates select="." mode="tableName"/>" )
 <!--  always generate discriminator column, looks nicer in the database. -->
-&cr;    
   <!-- JOINED strategy for inheritance -->
   @javax.persistence.Inheritance( strategy = javax.persistence.InheritanceType.JOINED )
   @javax.persistence.DiscriminatorColumn( name = "<xsl:value-of select="$discriminatorColumnName"/>", discriminatorType = javax.persistence.DiscriminatorType.STRING, length = <xsl:value-of select="$discriminatorColumnLength"/>)
-&cr;    
-
   <xsl:if test="$extMod = 1">
   @javax.persistence.DiscriminatorValue( "<xsl:value-of select="$className"/>" ) <!-- TODO decide whether this should be a path -->
   </xsl:if>
@@ -355,7 +346,6 @@ Currently only for JPA 2.0 impementation of eclipselink it seems as if nested at
         }
 		  </xsl:for-each>
     }
-
 		return true;
 	}
   </xsl:template>
@@ -364,138 +354,55 @@ Currently only for JPA 2.0 impementation of eclipselink it seems as if nested at
 
 
   <!-- persistence.xml configuration file -->  
-  <xsl:template match="model" mode="jpaConfig">
+  <xsl:template match="vo-dml:model" mode="jpaConfig">
     <xsl:variable name="file" select="'META-INF/persistence.xml'"/>
 
-    <!-- reading persistence-template.xml file : -->
-
-    <xsl:variable name="jpaConf" select="document($persistence.xml)"/>
-
-    <!-- open file for global jpa configuration -->
+    <!-- open file for jpa configuration -->
     <xsl:message >Opening file <xsl:value-of select="$file"/></xsl:message>
     <xsl:result-document href="{$file}" format="persistenceInfo">
-
-<xsl:apply-templates select="$jpaConf" mode="otherXml">
-  <xsl:with-param name="model" select="."/>
-</xsl:apply-templates>
-
+    <xsl:element name="persistence" namespace="http://java.sun.com/xml/ns/persistence">
+      <xsl:attribute name="version" select="'2.0'"/>
+      <xsl:element name="persistence-unit" namespace="http://java.sun.com/xml/ns/persistence">
+        <xsl:attribute name="name" select="concat('vodml_',name)"/>
+        <!-- we rely on eclipselink extensions -->
+        <xsl:element name="provider" namespace="http://java.sun.com/xml/ns/persistence">org.eclipse.persistence.jpa.PersistenceProvider</xsl:element>
+        <xsl:apply-templates select="*" mode="jpaConfig"/>
+        <!--do the other models -->
+        <xsl:apply-templates select="$models/vo-dml:model[name != current()/name]/*" mode="jpaConfig"/>
+        <xsl:element name="exclude-unlisted-classes" namespace="http://java.sun.com/xml/ns/persistence">true</xsl:element>
+      </xsl:element>
+    </xsl:element>
     </xsl:result-document>
   </xsl:template>
 
-
-
-
-  <xsl:template match="@*|node()" mode="otherXml">
-    <xsl:param name="model"/>
-    <xsl:param name="root_package" />
-
-    <xsl:choose>
-      <xsl:when test="name() = 'properties'">
-&cr;
-&cr;
-<xsl:comment>Base JPA entities</xsl:comment>
-&cr;
-&cr;
-    <xsl:element name="class" namespace="http://java.sun.com/xml/ns/persistence">
-      <xsl:text>org.ivoa.dm.model.Identity</xsl:text>
-    </xsl:element>
-    <xsl:element name="class" namespace="http://java.sun.com/xml/ns/persistence">
-      <xsl:text>org.ivoa.dm.model.MetadataObject</xsl:text>
-    </xsl:element>
-    <xsl:element name="class" namespace="http://java.sun.com/xml/ns/persistence">
-      <xsl:text>org.ivoa.dm.model.MetadataRootEntityObject</xsl:text>
-    </xsl:element>
-&cr;
-    <xsl:element name="class" namespace="http://java.sun.com/xml/ns/persistence">
-      <xsl:text>org.ivoa.tap.Schemas</xsl:text>
-    </xsl:element>
-    <xsl:element name="class" namespace="http://java.sun.com/xml/ns/persistence">
-      <xsl:text>org.ivoa.tap.Tables</xsl:text>
-    </xsl:element>
-    <xsl:element name="class" namespace="http://java.sun.com/xml/ns/persistence">
-      <xsl:text>org.ivoa.tap.Columns</xsl:text>
-    </xsl:element>
-&cr;
-&cr;
-<xsl:comment>Generated JPA entities (VO-URP)</xsl:comment>
-&cr;
-&cr;
-
-<xsl:for-each select="$model/package">
-  <xsl:call-template name="packageJpaConfig">
-    <xsl:with-param name="package" select="."/>
-    <xsl:with-param name="path" select="$root_package"/>
-  </xsl:call-template>
-</xsl:for-each>
-&cr;
-&cr;
-<xsl:comment>JPA Properties</xsl:comment>
-&cr;
-&cr;
-<xsl:element name="properties" namespace="http://java.sun.com/xml/ns/persistence">
-
-  <xsl:apply-templates select="child::*"  mode="otherXml"/>
-
-&cr;
-&cr;
-<xsl:comment>
-  &lt;property name="eclipseLink.cache.type.Cardinality" value="Full"/&gt;
-  &lt;property name="eclipseLink.cache.type.DataType" value="Full"/&gt;
-</xsl:comment>
-
-</xsl:element>
-
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:copy>
-          <xsl:apply-templates select="@*|node()"  mode="otherXml">
-            <xsl:with-param name="model" select="$model"/>
-          </xsl:apply-templates>        
-        </xsl:copy>    
-        </xsl:otherwise>
-    </xsl:choose>
-
+  <xsl:template match="package" mode="jpaConfig" >
+    <xsl:apply-templates select="*" mode="jpaConfig"/>
   </xsl:template>
 
-
-
-
-  <xsl:template name="packageJpaConfig">
-    <xsl:param name="package"/>
-    <xsl:param name="path"/>
-
-    <xsl:variable name="newpath">
-      <xsl:choose>
-        <xsl:when test="$path">
-          <xsl:value-of select="concat($path,'.',$package/name)"/>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:value-of select="$package/name"/>
-        </xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
-
-    <xsl:message>package = <xsl:value-of select="$newpath"></xsl:value-of></xsl:message>
-
-    <xsl:for-each select="$package/objectType|$package/dataType">
-      <xsl:element name="class" namespace="http://java.sun.com/xml/ns/persistence">
-        <xsl:value-of select="$newpath"/><xsl:text>.</xsl:text><xsl:value-of select="name"/>
-      </xsl:element>
-    </xsl:for-each>
-
-    <xsl:for-each select="$package/package">
-      <xsl:call-template name="packageJpaConfig">
-        <xsl:with-param name="package" select="."/>
-        <xsl:with-param name="path" select="$newpath"/>
+  <xsl:template name="jpaclassdecl">
+    <xsl:param name="vodml-ref"/>
+    <xsl:element name="class" namespace="http://java.sun.com/xml/ns/persistence">
+      <xsl:call-template name="JavaType">
+        <xsl:with-param name="vodml-ref" select="$vodml-ref"/>
+        <xsl:with-param name="fullpath" select="true()"/>
       </xsl:call-template>
-    </xsl:for-each>
-  </xsl:template>
+    </xsl:element>
 
+  </xsl:template>
+  <xsl:template match="objectType|dataType|enumeration|primitiveType" mode="jpaConfig">
+     <xsl:variable name="vodml-ref" select="concat(./ancestor::vo-dml:model/name,':',vodml-id)"/>
+<!--      <xsl:message>JPA persistence.xml <xsl:value-of select="concat($vodml-ref, ' ', $mapping/key('maplookup',$vodml-ref)/java-type)"/> </xsl:message>-->
+     <xsl:if test="not($mapping/key('maplookup',$vodml-ref)/java-type/@jpa-atomic)">
+     <xsl:call-template name="jpaclassdecl">
+       <xsl:with-param name="vodml-ref" select="$vodml-ref"/>
+     </xsl:call-template>
+     </xsl:if>
+  </xsl:template>
+  <xsl:template match="*" mode="jpaConfig"><!-- do nothing --></xsl:template>
 
   <!-- to deal wth nested datatypes there are various approaches.
   "Simple" nested embeddables/embeddeds are formally nor supported in JPA,
   though some implementors MAY support them. -->
-
 
 
   <!-- Create get/set methods for leaf-attributes in a nested dataType hierarchy.
@@ -680,22 +587,6 @@ template in common-ddl.xsl
     </xsl:choose>
     
   </xsl:template>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

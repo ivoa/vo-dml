@@ -93,8 +93,8 @@ class VodmlGradlePlugin: Plugin<Project> {
         //add the dependencies for JAXB and JPA - using the eclipse implementation
        listOf("javax.xml.bind:jaxb-api:2.3.1",
             "org.glassfish.jaxb:jaxb-runtime:2.3.4",
-            "org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.6",
-            "org.eclipse.persistence:org.eclipse.persistence.moxy:2.7.6" //alternative Jaxb runtime...
+            "org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.9",  // supports JPA 2.2
+            "org.eclipse.persistence:org.eclipse.persistence.moxy:2.7.9" //alternative Jaxb runtime...
         ).forEach {
             project.dependencies.addProvider(
                 JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME,
