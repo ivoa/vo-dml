@@ -8,7 +8,9 @@
 
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
+                xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
                 xmlns:exsl="http://exslt.org/common"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                 extension-element-prefixes="exsl">
 
 <!-- 
@@ -23,35 +25,24 @@
   <xsl:output name="persistenceInfo" method="xml" encoding="UTF-8" indent="yes"  />
 
   <xsl:template match="objectType" mode="JPAAnnotation">
-    <xsl:variable name="className" select="name" />
-    <xsl:variable name="xmiid" select="vodml-id" />
-    <xsl:variable name="hasChild">
-      <xsl:choose>
-        <xsl:when test="count(//extends[vodml-ref = $xmiid]) > 0">1</xsl:when>
-        <xsl:otherwise>0</xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
-    <xsl:variable name="extMod">
-      <xsl:choose>
-        <xsl:when test="count(extends) = 1">1</xsl:when>
-        <xsl:otherwise>0</xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
-    <xsl:variable name="hasName">
-      <xsl:choose>
-        <xsl:when test="count(attribute[name = 'name']) > 0">1</xsl:when>
-        <xsl:otherwise>0</xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
+    <xsl:variable name="className" select="name" /> <!-- might need to be javaified -->
+    <xsl:variable name="xmiid" select="concat(ancestor::vo-dml:model/name,':',vodml-id)" />
+    <xsl:variable name="hasChild" as="xsd:boolean"
+                  select="vf:hasChildren($xmiid)"/>
+    <xsl:variable name="extMod" as="xsd:boolean"
+                   select="count(extends) = 1"/>
+    <xsl:variable name="hasName" as="xsd:boolean" select ="count(attribute[name = 'name']) > 0"/>
 
   @javax.persistence.Entity
   @javax.persistence.Table( name = "<xsl:apply-templates select="." mode="tableName"/>" )
-<!--  always generate discriminator column, looks nicer in the database. -->
-  <!-- JOINED strategy for inheritance -->
+  <xsl:if test="@abstract or $hasChild" >
   @javax.persistence.Inheritance( strategy = javax.persistence.InheritanceType.JOINED )
-  @javax.persistence.DiscriminatorColumn( name = "<xsl:value-of select="$discriminatorColumnName"/>", discriminatorType = javax.persistence.DiscriminatorType.STRING, length = <xsl:value-of select="$discriminatorColumnLength"/>)
-  <xsl:if test="$extMod = 1">
-  @javax.persistence.DiscriminatorValue( "<xsl:value-of select="$className"/>" ) <!-- TODO decide whether this should be a path -->
+  </xsl:if>
+    <xsl:if test="count(vf:baseTypes($xmiid)) = 0 and(@abstract or $hasChild)">
+    @javax.persistence.DiscriminatorColumn( name = "<xsl:value-of select="$discriminatorColumnName"/>", discriminatorType = javax.persistence.DiscriminatorType.STRING, length = <xsl:value-of select="$discriminatorColumnLength"/>)
+    </xsl:if>
+    <xsl:if test="$extMod">
+  @javax.persistence.DiscriminatorValue( "<xsl:value-of select="$className"/>" ) <!-- TODO decide whether this should be a path - current is just default anyuway-->
   </xsl:if>
 <!-- Once JPA 2.0 with nested embeddable mapping is supported in Eclipselink we may revisit the next code. 
 For now it is commented out. -->
@@ -71,10 +62,9 @@ For now it is commented out. -->
   </xsl:if>
  -->
    @javax.persistence.NamedQueries( {
-    @javax.persistence.NamedQuery( name = "<xsl:value-of select="$className"/>.findById", query = "SELECT o FROM <xsl:value-of select="$className"/> o WHERE o.id = :id"),
-    @javax.persistence.NamedQuery( name = "<xsl:value-of select="$className"/>.findByPublisherDID", query = "SELECT o FROM <xsl:value-of select="$className"/> o WHERE o.identity.publisherDID = :publisherDID")
-  <xsl:if test="$hasName = 1">
-,     @javax.persistence.NamedQuery( name = "<xsl:value-of select="$className"/>.findByName", query = "SELECT o FROM <xsl:value-of select="$className"/> o WHERE o.name = :name") 
+    @javax.persistence.NamedQuery( name = "<xsl:value-of select="$className"/>.findById", query = "SELECT o FROM <xsl:value-of select="$className"/> o WHERE o.id = :id")
+  <xsl:if test="$hasName">
+,     @javax.persistence.NamedQuery( name = "<xsl:value-of select="$className"/>.findByName", query = "SELECT o FROM <xsl:value-of select="$className"/> o WHERE o.name = :name")
   </xsl:if>
   } )
   </xsl:template>
@@ -86,13 +76,13 @@ For now it is commented out. -->
     <xsl:param name="hasChild"/>
     <xsl:param name="hasExtends"/>
 
-    <xsl:if test="name() = 'objectType' and $hasExtends = 0 and $hasChild = 1">
+    <xsl:if test="name() = 'objectType' and $hasExtends and $hasChild">
     /** classType gives the discriminator value stored in the database for an inheritance hierarchy */
     @javax.persistence.Column( name = "<xsl:value-of select="$discriminatorColumnName"/>", insertable = false, updatable = false, nullable = false )
     protected String classType;
     </xsl:if>
 
-    <xsl:if test="name() = 'objectType' and $hasExtends = 0">
+    <xsl:if test="name() = 'objectType' and $hasExtends">
     /** jpaVersion gives the current version number for that entity (used by pessimistic / optimistic locking in JPA) */
     @javax.persistence.Version()
     @javax.persistence.Column( name = "OPTLOCK" )
@@ -137,7 +127,9 @@ For now it is commented out. -->
  -->
    </xsl:template>
 
-
+<xsl:template match="primitiveType" mode="JPAAnnotation">
+  <xsl:text>@javax.persistence.Embeddable</xsl:text>&cr;
+</xsl:template>
 
 
   <!-- template attribute : adds JPA annotations for primitive types, data types & enumerations -->
@@ -389,9 +381,9 @@ Currently only for JPA 2.0 impementation of eclipselink it seems as if nested at
     </xsl:element>
 
   </xsl:template>
-  <xsl:template match="objectType|dataType|enumeration|primitiveType" mode="jpaConfig">
+  <xsl:template match="objectType|dataType|primitiveType" mode="jpaConfig">
      <xsl:variable name="vodml-ref" select="concat(./ancestor::vo-dml:model/name,':',vodml-id)"/>
-<!--      <xsl:message>JPA persistence.xml <xsl:value-of select="concat($vodml-ref, ' ', $mapping/key('maplookup',$vodml-ref)/java-type)"/> </xsl:message>-->
+      <xsl:message>JPA persistence.xml <xsl:value-of select="concat($vodml-ref, ' ', $mapping/key('maplookup',$vodml-ref)/java-type)"/> </xsl:message>
      <xsl:if test="not($mapping/key('maplookup',$vodml-ref)/java-type/@jpa-atomic)">
      <xsl:call-template name="jpaclassdecl">
        <xsl:with-param name="vodml-ref" select="$vodml-ref"/>

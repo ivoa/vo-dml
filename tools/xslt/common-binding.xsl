@@ -6,14 +6,15 @@
 ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1">
 
 
 <xsl:include href="common.xsl"/>
 
 <xsl:key name="ellookup" match="*[vodml-id]" use="concat(ancestor::vo-dml:model/name,':',vodml-id)"/>
-
-    <xsl:key name="maplookup" match="type-mapping[vodml-id]" use="concat(ancestor::model/name,':',vodml-id)"/>
+<xsl:key name="maplookup" match="type-mapping[vodml-id]" use="concat(ancestor::model/name,':',vodml-id)"/>
 
   <xsl:param name="targetnamespace_root"/>
 
@@ -172,7 +173,6 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
       <xsl:if test="not($prefix) or $prefix=''">
          <xsl:message>!!!!!!! ERROR No prefix found in Element4vodml-ref for <xsl:value-of select="$vodml-ref" /></xsl:message>
       </xsl:if>
-      <xsl:variable name="vodml-id" select="substring-after($vodml-ref,':')" />
       <xsl:choose>
          <xsl:when test="$models/key('ellookup',$vodml-ref)">
             <xsl:copy-of select="$models/key('ellookup',$vodml-ref)" />
@@ -183,7 +183,55 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
       </xsl:choose>
    </xsl:template>
 
-    
-  
-  
+    <xsl:function name="vf:baseTypes">
+        <xsl:param name="vodml-ref"/>
+        <xsl:choose>
+            <xsl:when test="$models/key('ellookup',$vodml-ref)">
+                 <xsl:variable name="el" as="element()">
+                     <xsl:copy-of select="$models/key('ellookup',$vodml-ref)" />
+                 </xsl:variable>
+                 <xsl:choose>
+                     <xsl:when test="$el/extends">
+                         <xsl:sequence select="($el/extends/vodml-ref,vf:baseTypes($el/extends/vodml-ref))"/>
+                     </xsl:when>
+                 </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">type <xsl:value-of select="$vodml-ref"/> not in considered models</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:function>
+
+    <!-- this means does the model have children in inheritance hierarchy -->
+    <xsl:function name="vf:hasChildren" as="xsd:boolean">
+
+        <xsl:param name="vodml-ref"/>
+        <xsl:choose>
+            <xsl:when test="$models/key('ellookup',$vodml-ref)">
+                <xsl:value-of select="count($models//extends[vodml-ref = $vodml-ref])> 0"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">type <xsl:value-of select="$vodml-ref"/> not in considered models</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:function>
+
+
+    <!-- is the type used as a reference -->
+    <xsl:function name="vf:referredTo" as="xsd:boolean">
+        <xsl:param name="vodml-ref"/>
+        <xsl:choose>
+            <xsl:when test="$models/key('ellookup',$vodml-ref)">
+                <xsl:value-of select="count($models//reference/datatype[vodml-ref = $vodml-ref])> 0"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">type <xsl:value-of select="$vodml-ref"/> not in considered models</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:function>
+
+
 </xsl:stylesheet>

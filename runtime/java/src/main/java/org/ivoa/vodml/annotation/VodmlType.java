@@ -7,6 +7,7 @@ public enum VodmlType {
     objectType,
     attribute,
     composition,
-    dataType
+    dataType,
+    primitiveType
 
 }

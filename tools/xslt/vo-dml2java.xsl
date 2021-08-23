@@ -8,6 +8,7 @@
 
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
+                xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
                 xmlns:exsl="http://exslt.org/common"
                 xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9"
                 extension-element-prefixes="exsl"
@@ -76,20 +77,14 @@
       </xsl:for-each>
    </xsl:variable>
  
- 
-  
-   
-   
-  
-  
+
   <!-- next could be parameters -->
 
 
   <!-- main pattern : processes for root node model -->
   <xsl:template match="/">
-  
   <xsl:message >Generating Java - considering models <xsl:value-of select="string-join($models/vo-dml:model/name,' and ')" /></xsl:message>
- <xsl:apply-templates/>
+  <xsl:apply-templates/>
  </xsl:template>
 
   <!-- model pattern : generates gen-log and processes nodes package and generates the ModelVersion class and persistence.xml -->
@@ -115,10 +110,13 @@
           <xsl:message>root_package = <xsl:value-of select="$root_package"/></xsl:message>
           <xsl:message>root_package_dir = <xsl:value-of select="$root_package_dir"/></xsl:message>
        -->
+
+      <!-- don't do model factory for now
     <xsl:apply-templates select="." mode="modelFactory">
       <xsl:with-param name="root_package" select="$root_package"/>
       <xsl:with-param name="root_package_dir" select="$root_package_dir"/>
     </xsl:apply-templates>
+    -->
 
     <xsl:apply-templates select="." mode="content">
       <xsl:with-param name="dir" select="$root_package_dir"/>
@@ -196,7 +194,7 @@
     <xsl:param name="path"/>
 
     <xsl:variable name="vodml-id" select="vodml-id" />
-    <xsl:variable name="vodml-ref" select="concat(./ancestor::vo-dml:model/name,':',vodml-id)"/>
+    <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
     <xsl:variable name="mappedtype">
       <xsl:call-template name="findmappingInThisModel">
         <xsl:with-param name="modelname" select="./ancestor::vo-dml:model/name"/>
@@ -208,7 +206,7 @@
       <xsl:variable name="file" select="concat($output_root, '/', $dir, '/', name, '.java')"/>
 
     <!-- open file for this class -->
-      <xsl:message >Writing to Class file <xsl:value-of select="$file"/>  </xsl:message>
+      <xsl:message >Writing to Class file <xsl:value-of select="$file"/> base=<xsl:value-of select="vf:baseTypes($vodml-ref)"/> haschildren=<xsl:value-of select="vf:hasChildren($vodml-ref)"/></xsl:message>
       
       <xsl:result-document href="{$file}">
         <xsl:apply-templates select="." mode="class">
@@ -222,15 +220,18 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="objectType|dataType|primitiveType|enumeration" mode="typeimports">
-    <xsl:variable name="model" select="./ancestor::vo-dml:model"/>
-    <xsl:for-each select="distinct-values(extends/vodml-ref|attribute/datatype/vodml-ref|reference/datatype/vodml-ref|composition/datatype/vodml-ref)" >
-<!--  TODO filter out types in same package as this type -->    
-      <xsl:call-template name="TypeImport">
-        <xsl:with-param name="vodml-ref" select="."/>
-      </xsl:call-template>
-    </xsl:for-each>
-  </xsl:template>
+    <xsl:template match="objectType|dataType|primitiveType|enumeration" mode="typeimports">
+        <xsl:variable name="vodmlref" select="vf:asvodmlref(.)"/>
+        <xsl:variable name="modelp" select="concat(./ancestor::vo-dml:model/name,':', string-join(reverse(ancestor::package/name),'***'))"/>
+        <xsl:for-each select="distinct-values(extends/vodml-ref|attribute/datatype/vodml-ref|reference/datatype/vodml-ref|composition/datatype/vodml-ref)" >
+<!--           <xsl:message>import <xsl:value-of select="concat(.,' -> ',$modelp, ' ', not(starts-with(.,$modelp)))"/> </xsl:message>-->
+            <xsl:if test="not(starts-with(.,$modelp))">
+                <xsl:call-template name="TypeImport">
+                    <xsl:with-param name="vodml-ref" select="."/>
+                </xsl:call-template>
+            </xsl:if>
+        </xsl:for-each>
+    </xsl:template>
 
 
 
@@ -260,48 +261,54 @@ package <xsl:value-of select="$path"/>;
       import java.util.List;
       import java.util.ArrayList;
     </xsl:if>
-    
-    <xsl:if test="not(extends)">
-      import <xsl:value-of select="$baseclass"/>;
-    </xsl:if>
-    <xsl:if test="reference">
-      import <xsl:value-of select="$vo-dml_package"/>.ObjectID;
-      import <xsl:value-of select="$vo-dml_package"/>.ReferenceObject;
-    </xsl:if>
     <xsl:apply-templates select="." mode="typeimports"/>
-     /**
-      * <xsl:apply-templates select="." mode="desc" />
-      *
-      * <xsl:value-of select="$vo-dml-type"/>: &bl;<xsl:value-of select="name" />
-      *
-      * <xsl:value-of select="$vodmlauthor"/>
-      */
+/**
+* <xsl:apply-templates select="." mode="desc" />
+*
+* <xsl:value-of select="$vo-dml-type"/>: &bl;<xsl:value-of select="name" />
+*
+* <xsl:value-of select="$vodmlauthor"/>
+*/
     <xsl:apply-templates select="." mode="JPAAnnotation"/>
     <xsl:apply-templates select="." mode="JAXBAnnotation"/>
     <xsl:call-template name="vodmlAnnotation"/>
        public&bl;<xsl:if test="@abstract='true'">abstract</xsl:if>&bl;class <xsl:value-of select="name"/>&bl;
-    <xsl:choose>
-      <xsl:when test="extends">extends <xsl:call-template name="JavaType"><xsl:with-param name="vodml-ref" select="extends/vodml-ref"/></xsl:call-template></xsl:when>
-      <xsl:otherwise>extends <xsl:value-of select="$baseclass"/></xsl:otherwise>
-    </xsl:choose>
+      <xsl:if test="extends">extends <xsl:call-template name="JavaType"><xsl:with-param name="vodml-ref" select="extends/vodml-ref"/></xsl:call-template></xsl:if>
     &bl;{
+      <xsl:if test="local-name() eq 'objectType' and not (extends)" >
+          /**
+          * inserted database key
+          */
+          <xsl:choose>
+              <xsl:when test="vf:referredTo($vodml-ref)"> <!-- TODO - would be nice to actually use natural key if it exists - see https://github.com/ivoa/vo-dml/issues/4 -->
+          @javax.xml.bind.annotation.XmlID
+          @javax.persistence.Id
+          @javax.persistence.GeneratedValue
+          protected String id;
 
-      /**
-       * Return the vodml-id of the VO-DML type represented by this Class.
-       */
-       @Override
-       public String vodmlId()
-       {
-         return "<xsl:value-of select="vodml-id"/>";
-       }
-      /**
-       * Return the vodml-ref of the VO-DML type represented by this Class.
-       */
-       @Override
-       public String vodmlRef()
-       {
-         return "<xsl:value-of select="$vodml-ref"/>";
-       }
+          /**
+          * @return the id
+          */
+          public String getId() {
+          return id;
+          }
+              </xsl:when>
+              <xsl:otherwise>
+          @javax.xml.bind.annotation.XmlTransient
+          @javax.persistence.Id
+          @javax.persistence.GeneratedValue
+          protected Long id;
+
+          /**
+          * @return the id
+          */
+          public Long getId() {
+          return id;
+          }
+
+              </xsl:otherwise>
+          </xsl:choose>
+      </xsl:if>
 <!-- 
       /** serial uid = last modification date of the UML model */
       private static final long serialVersionUID = LAST_MODIFICATION_DATE;
@@ -388,20 +395,6 @@ package <xsl:value-of select="$path"/>;
           }
           throw new IllegalArgumentException("<xsl:value-of select="name"/>.fromValue : No enum const for the value : " + v);
         }
-      /**
-       * Return the vodmlId of the VO-DML type represented by this Class.
-       */
-       public String vodmlId()
-       {
-         return "<xsl:value-of select="vodml-id"/>";
-       }
-      /**
-       * Return the uytpe of the VO-DML type represented by this Enumeration.
-       */
-       public String vodmlRef()
-       {
-         return "<xsl:apply-templates select="vodml-id" mode="asvodml-ref"/>";
-       }
 
       }
   </xsl:template>
@@ -431,10 +424,13 @@ package <xsl:value-of select="$path"/>;
       *
       *  <xsl:value-of select="$vodmlauthor"/>
       */
+      <xsl:call-template name="vodmlAnnotation"/>
+      <xsl:apply-templates select="." mode="JPAAnnotation"/>
+      <xsl:apply-templates select="." mode="JAXBAnnotation"/>
       public class <xsl:value-of select="name"/>&bl;{
 
         /** string representation */
-        private final <xsl:value-of select="$valuetype"/> value;
+        private <xsl:value-of select="$valuetype"/> value;
 
         /**
          * Creates a new <xsl:value-of select="name"/> Primitive Type instance, wrapping a base type.
@@ -444,40 +440,30 @@ package <xsl:value-of select="$path"/>;
         public <xsl:value-of select="name"/>(final <xsl:value-of select="$valuetype"/> v) {
             this.value = v;
         }
+        /**
+         * no arg constructor.
+         */
+        protected <xsl:value-of select="name"/>() {}
 
         /**
-         * Return the string representation of this enum constant (value)
-         * @return string representation of this enum constant (value)
+         * Return the representation of this primitive (value)
+         * @return string representation of this primitive( value)
          */
         public final <xsl:value-of select="$valuetype"/> value() {
             return this.value;
         }
 
         /**
-         * Return the string representation of this enum constant (value)
+         * Return the string representation of this primitive value
          * @see #value()
-         * @return string representation of this enum constant (value)
+         * @return string representation of this primitive
          */
         @Override
         public final String toString() {
             return value().toString();
         }
               
-      /**
-       * Return the vodml-id of the VO-DML type represented by this Class.
-       */
-       public String vodmlId()
-       {
-         return "<xsl:value-of select="vodml-id"/>";
-       }
-      /**
-       * Return the vodml-ref of the VO-DML type represented by this Class.
-       */
-       public String vodmlRef()
-       {
-         return "<xsl:apply-templates select="vodml-id" mode="asvodml-ref"/>";
-       }
-        
+
       }
   </xsl:template>
 
@@ -619,7 +605,7 @@ package <xsl:value-of select="$path"/>;
     */
     public void add<xsl:value-of select="$name"/>(final <xsl:value-of select="$type"/> p<xsl:value-of select="$type"/>) {
       if(this.<xsl:value-of select="name"/> == null) {
-        this.<xsl:value-of select="name"/> = new ArrayList&lt;<xsl:value-of select="$type"/>&gt;();
+        this.<xsl:value-of select="name"/> = new ArrayList&lt;&gt;();
       }
 
     <xsl:if test="$datatype = 'objectType'"> <!-- FIXME ???-->
@@ -635,9 +621,6 @@ package <xsl:value-of select="$path"/>;
       }
     </xsl:if>
 
-      this.<xsl:value-of select="name"/>.add(p<xsl:value-of select="$type"/>);
-      p<xsl:value-of select="$type"/>.setContainer(this);
-      
     }
     </xsl:if>
   </xsl:template>
@@ -670,7 +653,6 @@ package <xsl:value-of select="$path"/>;
     <xsl:apply-templates select="." mode="JPAAnnotation"/>
     <xsl:apply-templates select="." mode="JAXBAnnotation"/>
     private <xsl:value-of select="$type"/>&bl;<xsl:value-of select="name"/> = null;
-    private ReferenceObject&bl;_ref_<xsl:value-of select="name"/> = null;
     </xsl:if>
   </xsl:template>
 
@@ -713,21 +695,6 @@ package <xsl:value-of select="$path"/>;
       </xsl:when>
       <xsl:otherwise>
         this.<xsl:value-of select="name"/> = p<xsl:value-of select="$name"/>;
-      </xsl:otherwise>
-    </xsl:choose>
-    }
-    /**
-    * Defines <xsl:value-of select="name"/> Reference
-    * @param p<xsl:value-of select="$name"/> reference to set
-    */
-    public void set<xsl:value-of select="$name"/>(final ReferenceObject p<xsl:value-of select="$name"/>) {
-    <xsl:choose>
-      <xsl:when test="subsets">
-        super.set<xsl:value-of select="$name"/>(p<xsl:value-of select="$name"/>);
-      </xsl:when>
-      <xsl:otherwise>
-        this._ref_<xsl:value-of select="name"/> = p<xsl:value-of select="$name"/>;
-        p<xsl:value-of select="$name"/>.setOwner(this);
       </xsl:otherwise>
     </xsl:choose>
     }
@@ -792,7 +759,7 @@ package <xsl:value-of select="$path"/>;
     <xsl:choose>
       <xsl:when test="count(description) > 0 and normalize-space(description) != 'TODO : Missing description : please, update your UML model asap.'">
           <xsl:value-of select="description" disable-output-escaping="yes"/>
-          <xsl:if test="not(ends-with(desciption, '.'))">
+          <xsl:if test="not(ends-with(normalize-space(description/text()), '.'))">
               <xsl:value-of select="'.'"/>
           </xsl:if>
       </xsl:when>
@@ -838,7 +805,7 @@ package <xsl:value-of select="$path"/>;
             return null;
           <xsl:for-each select="descendant-or-self::objectType|descendant-or-self::dataType" >
           <xsl:if test="not(@abstract = 'true')">
-            <xsl:variable name="vodml-ref"><xsl:apply-templates select="vodml-id" mode="asvodml-ref"/></xsl:variable>
+            <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
             <xsl:variable name="type">
               <xsl:call-template name="JavaType">
                 <xsl:with-param name="vodml-ref" select="$vodml-ref"/>
@@ -859,7 +826,7 @@ package <xsl:value-of select="$path"/>;
           if(vodmlRef == null)
             return null;
           <xsl:for-each select="descendant-or-self::enumeration">
-            <xsl:variable name="vodml-ref" select="concat(./ancestor::vo-dml:model/name,':',vodml-id)"/>
+            <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
           <xsl:if test="not(@abstract = 'true')">
           else if("<xsl:value-of select="$vodml-ref"/>".equals(vodmlRef))
             return <xsl:apply-templates select="." mode="path"/>.fromValue(value);
@@ -875,7 +842,7 @@ package <xsl:value-of select="$path"/>;
           if(vodmlRef == null)
             return null;
           <xsl:for-each select="descendant-or-self::primitiveType">
-            <xsl:variable name="vodml-ref" select="concat(./ancestor::vo-dml:model/name,':',vodml-id)"/>
+            <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
             <xsl:variable name="type">
               <xsl:call-template name="JavaType">
                 <xsl:with-param name="vodml-ref" select="$vodml-ref"/>
@@ -1027,7 +994,7 @@ package <xsl:value-of select="$path"/>;
 
   </xsl:template>
  <xsl:template name="vodmlAnnotation">
-  @org.ivoa.vodml.annotation.VoDml(ref="<xsl:value-of select='vodml-id'/>", type=org.ivoa.vodml.annotation.VodmlType.<xsl:value-of select='name(.)'/>)
+ @org.ivoa.vodml.annotation.VoDml(ref="<xsl:value-of select='concat(ancestor::vo-dml:model/name,":",vodml-id)'/>", type=org.ivoa.vodml.annotation.VodmlType.<xsl:value-of select='name(.)'/>)
  </xsl:template>
 
 

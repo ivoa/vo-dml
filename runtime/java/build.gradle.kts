@@ -9,6 +9,8 @@ version = "0.1-SNAPSHOT"
 
 dependencies {
     xjcPlugins("net.codesup.util:jaxb2-rich-contract-plugin:2.1.0")
+    implementation("jakarta.persistence:jakarta.persistence-api:2.2.3")
+
 }
 
 

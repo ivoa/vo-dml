@@ -14,17 +14,14 @@
 
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
-								xmlns:exsl="http://exslt.org/common"
+                xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
+
+                xmlns:exsl="http://exslt.org/common"
                 extension-element-prefixes="exsl">
 
 
   <xsl:template match="objectType|dataType" mode="JAXBAnnotation">
-    <xsl:variable name="namespace"> 
-      <xsl:call-template name="namespace-for-package">
-        <xsl:with-param name="packageid" select="..[name()='package']/vodml-id"/>
-      </xsl:call-template>
-    </xsl:variable>
-    <xsl:variable name="isContained">
+     <xsl:variable name="isContained">
       <xsl:apply-templates select="." mode="testrootelements">
         <xsl:with-param name="count" select="'0'"/>
       </xsl:apply-templates>
@@ -34,35 +31,31 @@
     </xsl:variable>
     
   @javax.xml.bind.annotation.XmlAccessorType( javax.xml.bind.annotation.XmlAccessType.NONE )  
-  @javax.xml.bind.annotation.XmlType( name = "<xsl:value-of select="name"/>"<xsl:apply-templates select="." mode="propOrder"/>, namespace = "<xsl:value-of select="$namespace"/>")
+  @javax.xml.bind.annotation.XmlType( name = "<xsl:value-of select="name"/>")
     <xsl:choose>
       <xsl:when test="number($isContained) = 0 and not(@abstract = 'true')">
-    @javax.xml.bind.annotation.XmlRootElement( name = "<xsl:value-of select="$rootelname"/>", namespace = "<xsl:value-of select="$targetnamespace_root"/>")
+    @javax.xml.bind.annotation.XmlRootElement( name = "<xsl:value-of select="$rootelname"/>")
       </xsl:when>
       <xsl:otherwise>
-<!-- always produce a JAXB annotation to be able to marshall fragments -->        
-<!-- GL 2009-05-12: do we really want this? Note that also DataType-s get this root element now.
-Ofcourse if we always use the schemas to validate XML documents this will still be prevented, but ... -->
-    @javax.xml.bind.annotation.XmlRootElement( name = "<xsl:value-of select="$rootelname"/>", namespace = "<xsl:value-of select="$targetnamespace_root"/>")
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
 
+  <xsl:template match="primitiveType" mode="JAXBAnnotation">
+    <!-- TODO do nothing? -->
+  </xsl:template>
 
-
-
-<!--   !!!! IMPORTANT !!!!
- The propOrder MUST be the same as the order in which the properties appear in the <sequence> in the the XML schema, intermediate2xsd.xsl.
- This order is {attribute,collection[not(subsets)],reference[not(subsets)]}.
- NB Might we prefer attribute,referemce, collection??? 
+<!--
+ have removed proporder for now
  -->
   <xsl:template match="objectType|dataType" mode="propOrder">
     <xsl:if test="attribute|collection|reference">
       <xsl:text>,propOrder={
       </xsl:text>
+      <!--IMPL this is all a bit long-winded, but keep structure in case want to do something different -->
         <xsl:for-each select="attribute,collection[not(subsets)],reference[not(subsets)]">
         <xsl:variable name="prop">
-          <xsl:if test="name()='reference'">p_</xsl:if><xsl:value-of select="name"/>
+           <xsl:value-of select="name"/>
         </xsl:variable>
         <xsl:text>"</xsl:text><xsl:value-of select="$prop"/><xsl:text>"</xsl:text><xsl:if test="position() != last()"><xsl:text>,</xsl:text></xsl:if>
         </xsl:for-each>
@@ -70,20 +63,10 @@ Ofcourse if we always use the schemas to validate XML documents this will still 
     </xsl:if>
   </xsl:template>
 
-
-
   <xsl:template match="enumeration" mode="JAXBAnnotation">
-    <xsl:variable name="namespace"> 
-      <xsl:call-template name="namespace-for-package">
-        <xsl:with-param name="packageid" select="..[name()='package']/vodml-id"/>
-      </xsl:call-template>
-    </xsl:variable>
-    @javax.xml.bind.annotation.XmlType( name = "<xsl:value-of select="name"/>", namespace = "<xsl:value-of select="$namespace"/>")
+    @javax.xml.bind.annotation.XmlType( name = "<xsl:value-of select="name"/>")
     @javax.xml.bind.annotation.XmlEnum
   </xsl:template>
-
-
-
 
   <!-- template attribute : adds JAXB annotations for primitive types, data types & enumerations -->
   <xsl:template match="attribute" mode="JAXBAnnotation">
@@ -91,39 +74,24 @@ Ofcourse if we always use the schemas to validate XML documents this will still 
     @javax.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
   </xsl:template>
 
-
-
-
-  <!-- reference can not be resolved directly by JAXB -->
+  <!-- reference resolved via JAXB -->
   <xsl:template match="reference" mode="JAXBAnnotation">
-    @javax.xml.bind.annotation.XmlTransient
+    @javax.xml.bind.annotation.XmlIDREF
   </xsl:template>
-
-
-
 
   <xsl:template match="reference" mode="JAXBAnnotation_reference">
     <xsl:variable name="type"><xsl:call-template name="JavaType"><xsl:with-param name="vodml-ref" select="datatype/vodml-ref"/></xsl:call-template></xsl:variable>
     @javax.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = Reference.class)
   </xsl:template>
 
-
-
-
   <xsl:template match="collection" mode="JAXBAnnotation">
     <xsl:variable name="type"><xsl:call-template name="JavaType"><xsl:with-param name="vodml-ref" select="datatype/vodml-ref"/></xsl:call-template></xsl:variable>
     @javax.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
   </xsl:template>
 
-
-
-
   <xsl:template match="literal" mode="JAXBAnnotation">
     @javax.xml.bind.annotation.XmlEnumValue("<xsl:value-of select="value"/>")
   </xsl:template>
-    
-
-
 
   <xsl:template match="attribute|reference|collection" mode="required">
     <xsl:choose>
@@ -131,9 +99,6 @@ Ofcourse if we always use the schemas to validate XML documents this will still 
       <xsl:otherwise>true</xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-
-
-  
 
   <xsl:template match="vo-dml:model|package" mode="jaxb.index">
     <xsl:param name="dir"/>
@@ -147,8 +112,4 @@ Ofcourse if we always use the schemas to validate XML documents this will still 
       </xsl:for-each>
     </xsl:result-document> 
   </xsl:template>
-
-  
-
-
 </xsl:stylesheet>
