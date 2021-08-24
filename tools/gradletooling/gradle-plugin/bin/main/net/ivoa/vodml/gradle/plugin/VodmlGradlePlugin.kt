@@ -51,15 +51,16 @@ class VodmlGradlePlugin: Plugin<Project> {
             it.vodmlDir.set(extension.vodmlDir)
         }
         // register the validate task
-        project.tasks.register(VODML_VAL_TASK_NANE,VodmlValidateTask::class.java) {
-            it.description = "validate VO-DML models"
-            it.vodmlFiles.setFrom(if (extension.vodmlFiles.isEmpty)
+        project.tasks.register(VODML_VAL_TASK_NANE,VodmlValidateTask::class.java) { task ->
+            task.description = "validate VO-DML models"
+            task.vodmlFiles.setFrom(if (extension.vodmlFiles.isEmpty)
                 extension.vodmlDir.asFileTree.matching(PatternSet().include("**/*.vo-dml.xml"))
             else
                 extension.vodmlFiles
             )
-            it.docDir.set(extension.outputDocDir)
-            it.vodmlDir.set(extension.vodmlDir)
+            task.docDir.set(extension.outputDocDir)
+            task.vodmlDir.set(extension.vodmlDir)
+            task.catalog.set(extension.catalogFile)
         }
         // register the Java generation task
         val vodmlJavaTask: TaskProvider<VodmlJavaTask> = project.tasks.register(VODML_JAVA_TASK_NANE,VodmlJavaTask::class.java) { task ->
@@ -72,7 +73,7 @@ class VodmlGradlePlugin: Plugin<Project> {
             task.javaGenDir.set(extension.outputJavaDir)
             task.vodmlDir.set(extension.vodmlDir)
             task.bindingFiles.setFrom(extension.bindingFiles)
-            task.configFile.set(extension.catalogFile)
+            task.catalogFile.set(extension.catalogFile)
 
             //add the generated source directory to the list of sources to compile IMPL - this feels a bit hacky
             val sourceSets = project.properties["sourceSets"] as SourceSetContainer

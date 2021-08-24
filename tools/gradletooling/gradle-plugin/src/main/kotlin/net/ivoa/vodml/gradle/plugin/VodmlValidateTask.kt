@@ -4,13 +4,16 @@ import name.dmaus.schxslt.Schematron
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
+import org.xmlresolver.CatalogResolver
+import org.xmlresolver.ResolverFeature
+import org.xmlresolver.XMLResolverConfiguration
 import javax.xml.transform.stream.StreamSource
 
 
 /*
  * Created on 04/08/2021 by Paul Harrison (paul.harrison@manchester.ac.uk).
- *FIXME need to understand the schematron more - this is not working with current schematron file
  */
 
  open class VodmlValidateTask : DefaultTask()
@@ -21,6 +24,9 @@ import javax.xml.transform.stream.StreamSource
      @get:InputFiles
      val vodmlFiles: ConfigurableFileCollection = project.objects.fileCollection()
 
+     @get:InputFile
+     val catalog: RegularFileProperty = project.objects.fileProperty()
+
      @get:OutputDirectory
      val docDir : DirectoryProperty = project.objects.directoryProperty()
 
@@ -29,14 +35,31 @@ import javax.xml.transform.stream.StreamSource
          logger.info("Validating VO-DML files ${vodmlFiles.files.joinToString { it.name }}")
          logger.info("Looked in ${vodmlDir.get()}")
 
-         val schematron = Schematron(StreamSource(this::class.java.getResourceAsStream("/xsd/vo-dml-v1.0.sch.xml")), null, net.sf.saxon.TransformerFactoryImpl(), HashMap())
+         val config = XMLResolverConfiguration()
+         config.setFeature(ResolverFeature.PREFER_PUBLIC, false)
+         if (catalog.isPresent and catalog.get().asFile.exists()) {
+             config.setFeature(ResolverFeature.CATALOG_FILES, listOf(catalog.get().asFile.absolutePath))
+         }
+         config.setFeature(ResolverFeature.URI_FOR_SYSTEM, true) // fall through to URI
+         val catalogResolver = CatalogResolver(config)
+
+         val transformerFactory = net.sf.saxon.TransformerFactoryImpl()
+         transformerFactory.uriResolver = org.xmlresolver.Resolver(catalogResolver)
+
+         val schematron = Schematron(StreamSource(this::class.java.getResourceAsStream("/xsd/vo-dml-v1.0.sch.xml")), null,
+             transformerFactory, HashMap())
 
          vodmlFiles.forEach{
              val shortname = it.nameWithoutExtension
              val outfile = docDir.file(shortname +".validation")
              val result = schematron.validate(StreamSource(it.absoluteFile))
              logger.info("$shortname validation=${result.isValid}")
-             TODO("need to do something with the validation result")
+             if (!result.isValid)
+             {
+                 //TODO should probably signal error to the task output...
+                 result.validationMessages.forEach { it2 -> logger.error(it2) }
+             }
+
          }
 
      }

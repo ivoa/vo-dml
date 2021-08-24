@@ -27,7 +27,7 @@ import org.gradle.api.tasks.*
      val bindingFiles: ConfigurableFileCollection = project.objects.fileCollection()
 
      @get:InputFile
-     val configFile: RegularFileProperty = project.objects.fileProperty()
+     val catalogFile: RegularFileProperty = project.objects.fileProperty()
 
      @TaskAction
      fun doDocumentation() {
@@ -41,7 +41,7 @@ import org.gradle.api.tasks.*
                  "binding" to bindingFiles.files.joinToString(separator = ","){it.absolutePath},
                  "output_root" to javaGenDir.get().asFile.absolutePath
              ),
-                 configFile.get().asFile, outfile.get().asFile)
+                 catalogFile.get().asFile, outfile.get().asFile)
          }
 
      }
