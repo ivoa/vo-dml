@@ -8,7 +8,7 @@ easier, as well as take advantage of the dependency management features and mave
 The general idea is that all that should be necessary to set up a new project is
 
 1. install gradle
-2. edit a build.gradle with reference to the plugin
+2. edit a build.gradle file with reference to the plugin
 
 ```kotlin
 plugins {

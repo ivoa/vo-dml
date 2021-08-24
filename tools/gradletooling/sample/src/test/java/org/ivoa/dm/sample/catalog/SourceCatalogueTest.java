@@ -2,6 +2,7 @@ package org.ivoa.dm.sample.catalog;
 
 import org.ivoa.dm.ivoa.RealQuantity;
 import org.ivoa.dm.ivoa.Unit;
+import org.ivoa.dm.sample.catalog.inner.SourceCatalogue;
 import org.javastro.ivoa.entities.jaxb.DescriptionValidator;
 import org.javastro.ivoa.entities.jaxb.JaxbAnnotationMeta;
 import org.w3c.dom.Document;
@@ -15,6 +16,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Arrays;
+
 /*
  * Created on 20/08/2021 by Paul Harrison (paul.harrison@manchester.ac.uk).
  */
@@ -27,19 +30,30 @@ class SourceCatalogueTest {
 
    @org.junit.jupiter.api.Test
    void sourceCatJaxBTest() throws JAXBException, ParserConfigurationException {
-      SourceCatalogue sc = new SourceCatalogue();
-      sc.setName("testCat");
-      SDSSSource cat1 = new SDSSSource();
-      LuminosityMeasurement lum = new LuminosityMeasurement();
-      lum.setDescription("lummeas");
-      lum.setType(LuminosityType.FLUX);
-      RealQuantity pValue = new RealQuantity();
-      pValue.setValue(2.5);
-      Unit unit = new Unit("blah");
-      pValue.setUnit(unit);
-      lum.setValue(pValue);
-      cat1.addLuminosity(lum);
-      sc.addEntry(cat1);
+       
+      final Unit jansky = new Unit("Jy");
+      SourceCatalogue sc = SourceCatalogue.builder(c -> {
+          c.name = "testCat";
+          c.entry = Arrays.asList(SDSSSource.builder(s -> {
+              s.name = "testSource";
+              s.luminosity = Arrays.asList(
+                        LuminosityMeasurement.builder(l ->{
+                          l.description = "lummeas";
+                          l.type = LuminosityType.FLUX;
+                          
+                        l.value = new RealQuantity(2.5, jansky );
+                      })
+                        ,LuminosityMeasurement.builder(l ->{
+                          l.description = "lummeas2";
+                          l.type = LuminosityType.FLUX;
+                          l.value = new RealQuantity(3.5, jansky );
+                      })
+                        
+                      );
+          }));
+      }
+      );
+              
 
       JAXBContext jc = JAXBContext.newInstance("org.ivoa.dm.sample.catalog");
       JaxbAnnotationMeta<SourceCatalogue> meta = JaxbAnnotationMeta.of(SourceCatalogue.class);
@@ -53,6 +67,6 @@ class SourceCatalogueTest {
       m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
       JAXBElement<SourceCatalogue> element = meta.element(sc);
       m.marshal(element, doc);
-      fail("test not finished");
+      fail("no proper test yet");
    }
 }

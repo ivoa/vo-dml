@@ -183,7 +183,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
       </xsl:choose>
    </xsl:template>
 
-    <xsl:function name="vf:baseTypes">
+    <xsl:function name="vf:baseTypes" as="element()*">
         <xsl:param name="vodml-ref"/>
         <xsl:choose>
             <xsl:when test="$models/key('ellookup',$vodml-ref)">
@@ -192,7 +192,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
                  </xsl:variable>
                  <xsl:choose>
                      <xsl:when test="$el/extends">
-                         <xsl:sequence select="($el/extends/vodml-ref,vf:baseTypes($el/extends/vodml-ref))"/>
+                         <xsl:sequence select="($models/key('ellookup',$el/extends/vodml-ref),vf:baseTypes($el/extends/vodml-ref))"/>
                      </xsl:when>
                  </xsl:choose>
             </xsl:when>
