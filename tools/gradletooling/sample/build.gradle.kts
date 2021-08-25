@@ -56,5 +56,5 @@ dependencies {
     implementation("org.javastro:ivoa-entities:0.9.3-SNAPSHOT")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.4.2")
-
+    testRuntimeOnly("ch.qos.logback:logback-classic:1.2.3")
 }
