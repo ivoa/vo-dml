@@ -1,5 +1,6 @@
 package org.ivoa.dm.sample.catalog;
 
+import org.ivoa.dm.filter.PhotometryFilter;
 import org.ivoa.dm.ivoa.RealQuantity;
 import org.ivoa.dm.ivoa.Unit;
 import org.ivoa.dm.sample.catalog.inner.SourceCatalogue;
@@ -22,8 +23,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
 
@@ -41,18 +40,42 @@ class SourceCatalogueTest {
    void sourceCatJaxBTest() throws JAXBException, ParserConfigurationException, TransformerException {
        
       final Unit jansky = new Unit("Jy");
+      final Unit degree = new Unit("degree");
+      final Unit GHz= new Unit("GHz");
+      final SkyCoordinateFrame frame = new SkyCoordinateFrame().withName("J2000").withEquinox("J2000.0");
+
+    final AlignedEllipse ellipseError = new AlignedEllipse(.2, .1);
+    SDSSSource sdss = new SDSSSource().withPositionError(ellipseError);// UNUSED, but just checking position error subsetting.
+    sdss.setPositionError(ellipseError);
+    AlignedEllipse theError = sdss.getpositionError();
+    
       SourceCatalogue sc = SourceCatalogue.builder(c -> {
           c.name = "testCat";
           c.entry = Arrays.asList(SDSSSource.builder(s -> {
               s.name = "testSource";
+              s.position = SkyCoordinate.builder(co -> {
+                 co.frame = frame;
+                 co.latitude = new RealQuantity(52.5, degree );
+                 co.longitude = new RealQuantity(2.5, degree );
+              });
+              s.positionError = ellipseError;//note subsetting forces compile need AlignedEllipse
+              
               s.luminosity = Arrays.asList(
                         LuminosityMeasurement.builder(l ->{
                           l.description = "lummeas";
                           l.type = LuminosityType.FLUX;                         
                           l.value = new RealQuantity(2.5, jansky );
-                      })
+                           l.filter = PhotometryFilter.builder(fl -> {
+                              fl.bandName ="C-Band";
+                              fl.spectralLocation = new RealQuantity(5.0,GHz);
+                           });
+                        })
                         ,LuminosityMeasurement.builder(l ->{
                           l.description = "lummeas2";
+                          l.filter = PhotometryFilter.builder(fl -> {
+                             fl.bandName ="L-Band";
+                             fl.spectralLocation = new RealQuantity(1.5,GHz);
+                          });
                           l.type = LuminosityType.FLUX;
                           l.value = new RealQuantity(3.5, jansky );
                       })

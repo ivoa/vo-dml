@@ -12,6 +12,7 @@
                 xmlns:exsl="http://exslt.org/common"
                 xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 extension-element-prefixes="exsl"
                 exclude-result-prefixes="map" 
                 >
@@ -236,23 +237,39 @@
         </xsl:for-each>
     </xsl:template>
 
-    <xsl:template name="allMembers">
+
+    <!-- returns the vodml-refs of the members including inherited ones -->
+    <xsl:template name="allInheritedMembers" as="xsd:string*">
         <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
         <xsl:variable name="supers" select="(.,vf:baseTypes($vodml-ref))"/>
-<!--        <xsl:message>allmembers = <xsl:value-of select="$vodml-ref"/> supers=<xsl:value-of select="$supers/name"/></xsl:message>-->
-        <xsl:copy-of select="$supers/attribute,$supers/composition,$supers/reference" /><!-- note that this cannot be sequence or different things happen with for-each and just $x/y expressions in terms of ordering -->
+        <xsl:sequence>
+            <xsl:for-each select="$supers/attribute,$supers/composition,$supers/reference">
+               <xsl:value-of select="vf:asvodmlref(.)"/>
+            </xsl:for-each>
+        </xsl:sequence>
     </xsl:template>
 
     <xsl:template match="objectType|dataType" mode="builder">
-        <xsl:variable name="members" as="element()*">
-            <xsl:call-template name="allMembers"/>
+        <xsl:variable name="members" as="xsd:string*">
+            <xsl:call-template name="allInheritedMembers"/>
         </xsl:variable>
+        <xsl:variable name="this" select="."/>
+
         public static class <xsl:value-of select="name"/>Builder {
            <xsl:for-each select="$members">
+               <xsl:variable name="m" select="$models/key('ellookup',current())"/>
            /**
-            * <xsl:apply-templates select="." mode="desc"/>
-           */
-           public <xsl:apply-templates select="." mode="paramDecl"/>;
+           * <xsl:apply-templates select="$m" mode="desc"/>
+           */<xsl:choose>
+                   <xsl:when test="$this/constraint[ends-with(@xsi:type,':SubsettedRole')]/role[vodml-ref = current()]">
+                       <xsl:variable name="type"><xsl:call-template name="JavaType"><xsl:with-param name="vodml-ref" select="$this/constraint/datatype/vodml-ref"/></xsl:call-template></xsl:variable>
+           public <xsl:value-of select="concat(' ',$type, ' ', $models/key('ellookup',$this/constraint/role/vodml-ref)/name)"/>;
+                   </xsl:when>
+                   <xsl:otherwise>
+           public <xsl:apply-templates select="$m" mode="paramDecl"/>;
+                   </xsl:otherwise>
+               </xsl:choose>
+
            </xsl:for-each>
 
            public <xsl:value-of select="name"/>Builder with (java.util.function.Consumer &lt;<xsl:value-of select="name"/>Builder&gt; f)
@@ -263,7 +280,7 @@
            public <xsl:value-of select="name"/> create()
            {
              return new <xsl:value-of select="name"/> (
-             <xsl:value-of select="string-join($members/name, ',')" />
+             <xsl:value-of select="string-join(for $v in $members return tokenize($v,'[.]')[last()], ',')" />
              );
            }
          }
@@ -278,12 +295,24 @@
        is easier to generate than calling super constructors with their appropriate parameters.
     -->
     <xsl:template match="objectType|dataType" mode="constructor">
-        <xsl:variable name="members" as="element()*"  >
-            <xsl:call-template name="allMembers" />
+        <xsl:variable name="members" as="xsd:string*"  >
+            <xsl:call-template name="allInheritedMembers" />
         </xsl:variable>
+        <xsl:variable name="this" select="."/>
         <xsl:variable name="decls" as="xsd:string*">
                 <xsl:for-each select="$members">
-                <xsl:apply-templates select="." mode="paramDecl"/>
+                    <xsl:choose>
+                        <xsl:when test="$this/constraint[ends-with(@xsi:type,':SubsettedRole')]/role[vodml-ref = current()]">
+                            <xsl:variable name="type"><xsl:call-template name="JavaType"><xsl:with-param name="vodml-ref" select="$this/constraint/datatype/vodml-ref"/></xsl:call-template></xsl:variable>
+                            <xsl:value-of select="concat('final ',$type, ' ', tokenize($this/constraint/role/vodml-ref, '[.]' )[last()])"/>
+                        </xsl:when>
+                        <xsl:otherwise><xsl:value-of>
+                            <xsl:text>final </xsl:text>
+                            <xsl:apply-templates select="$models/key('ellookup',current())" mode="paramDecl"/>
+                        </xsl:value-of>
+                        </xsl:otherwise>
+                    </xsl:choose>
+
                 </xsl:for-each>
         </xsl:variable>
         <xsl:if test="count($members) > 0">
@@ -291,11 +320,12 @@
         * full parameter constructor.
         */
         public  <xsl:value-of select="name"/> (
-          <xsl:value-of select="string-join($decls,',')"/>
+          <xsl:value-of select="string-join($decls,', ')"/>
         )
         {
-           <xsl:for-each select="$members/name">
-               this.<xsl:value-of select="."/> = <xsl:value-of select="."/>;
+           <xsl:for-each select="$members">
+               <xsl:variable name="name" select="$models/key('ellookup',current())/name"/>
+           this.<xsl:value-of select="$name"/> = <xsl:value-of select="$name"/>;
            </xsl:for-each>
         }
         </xsl:if>
@@ -388,7 +418,7 @@
       }
       <xsl:apply-templates select="." mode="constructor"/>
 
-      <xsl:apply-templates select="attribute|reference|composition" mode="getset"/>
+      <xsl:apply-templates select="attribute|reference|composition|constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="getset"/>
 
       <xsl:if test="not(@abstract)">
       <xsl:apply-templates select="." mode="builder"/>
@@ -549,45 +579,63 @@ package <xsl:value-of select="$path"/>;
     protected <xsl:value-of select="$type"/><xsl:if test="contains(multiplicity,'*')">[]</xsl:if>&bl;<xsl:value-of select="name"/>;
   </xsl:template>
 
+  <xsl:template match="constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="getset">
+      <xsl:variable name="type"><xsl:call-template name="JavaType"><xsl:with-param name="vodml-ref" select="datatype/vodml-ref"/></xsl:call-template></xsl:variable>
 
+      <xsl:variable name="name" select="tokenize(role/vodml-ref/text(),'[.]')[last()]"/>
+      <xsl:call-template name="doGetSet">
+          <xsl:with-param name="name" select="$name"/>
+          <xsl:with-param name="type" select="$type"/>
+      </xsl:call-template>
+
+  </xsl:template>
 
 
   <xsl:template match="attribute" mode="getset">
-    <xsl:variable name="type"><xsl:call-template name="JavaType"><xsl:with-param name="vodml-ref" select="datatype/vodml-ref"/></xsl:call-template></xsl:variable>
-    <xsl:variable name="name">
-      <xsl:call-template name="upperFirst">
-        <xsl:with-param name="val" select="name"/>
-      </xsl:call-template>
-    </xsl:variable>
-    /**
-    * Returns <xsl:value-of select="name"/> Attribute
-    * @return <xsl:value-of select="name"/> Attribute
-    */
-    public <xsl:value-of select="$type"/><xsl:if test="contains(multiplicity,'*')">[]</xsl:if>&bl;get<xsl:value-of select="$name"/>() {
-    return this.<xsl:value-of select="name"/>;
-    }
-    /**
-    * Defines <xsl:value-of select="name"/> Attribute
-    * @param p<xsl:value-of select="$name"/> value to set
-    */
-    public void set<xsl:value-of select="$name"/>(final <xsl:value-of select="$type"/><xsl:if test="contains(multiplicity,'*')">[]</xsl:if> p<xsl:value-of select="$name"/>) {
-    this.<xsl:value-of select="name"/> = p<xsl:value-of select="$name"/>;
-    }
+    <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>  
+    <xsl:variable name="type"><xsl:call-template name="JavaType"><xsl:with-param name="vodml-ref" select="datatype/vodml-ref"/></xsl:call-template></xsl:variable><xsl:variable name="name" select="name"/>
 
-      public <xsl:call-template name="JavaType">
-      <xsl:with-param name="vodml-ref" select="vf:asvodmlref(parent::*)"/>
-       </xsl:call-template> with<xsl:value-of select="$name"/>(final <xsl:value-of select="$type"/><xsl:if test="contains(multiplicity,'*')">[]</xsl:if> p<xsl:value-of select="$name"/>) {
-      this.<xsl:value-of select="name"/> = p<xsl:value-of select="$name"/>;
-      return this;
-      }
-<!-- uncomment next if we decide to try out property access for nested embeddables. -->
-<!-- 
-    <xsl:variable name="datatype" select="key('element',datatype/vodml-ref)"/>
-    <xsl:if test="../name() = 'dataType' and name($datatype) = 'dataType'">
-      <xsl:apply-templates select="." mode="nestedgetset"/>
-    </xsl:if> 
- -->
+<!--      <xsl:message>attribute <xsl:value-of select="concat($vodml-ref,' from ', parent::*/name,' ', parent::*/@abstract, ' ', vf:isSubSetted($vodml-ref) )" /></xsl:message>-->
+      <xsl:if test="not(parent::*/@abstract and vf:isSubSetted($vodml-ref))">
+          <xsl:call-template name="doGetSet">
+              <xsl:with-param name="name" select="name"/>
+              <xsl:with-param name="type" select="$type"/>
+          </xsl:call-template>
+       </xsl:if>
    </xsl:template>
+
+    <xsl:template name="doGetSet">
+        <xsl:param name="name"/>
+        <xsl:param name="type"/>
+
+        <xsl:variable name="upName">
+            <xsl:call-template name="upperFirst">
+                <xsl:with-param name="val" select="$name"/>
+            </xsl:call-template>
+        </xsl:variable>
+        /**
+        * Returns <xsl:value-of select="$name"/> Attribute
+        * @return <xsl:value-of select="$name"/> Attribute
+        */
+        public <xsl:value-of select="$type"/><xsl:if test="contains(multiplicity,'*')">[]</xsl:if>&bl;get<xsl:value-of select="$name"/>() {
+        return (<xsl:value-of select="$type"/>)this.<xsl:value-of select="$name"/>;
+        }
+        /**
+        * Defines <xsl:value-of select="$name"/> Attribute
+        * @param p<xsl:value-of select="$upName"/> value to set
+        */
+        public void set<xsl:value-of select="$upName"/>(final <xsl:value-of select="$type"/><xsl:if test="contains(multiplicity,'*')">[]</xsl:if> p<xsl:value-of select="$upName"/>) {
+        this.<xsl:value-of select="$name"/> = p<xsl:value-of select="$upName"/>;
+        }
+
+        public <xsl:call-template name="JavaType">
+        <xsl:with-param name="vodml-ref" select="vf:asvodmlref(parent::*)"/>
+    </xsl:call-template> with<xsl:value-of select="$upName"/>(final <xsl:value-of select="$type"/><xsl:if test="contains(multiplicity,'*')">[]</xsl:if> p<xsl:value-of select="$upName"/>) {
+        this.<xsl:value-of select="$name"/> = p<xsl:value-of select="$upName"/>;
+        return this;
+        }
+
+    </xsl:template>
 
   <xsl:template match="attribute" mode="setProperty">
     <xsl:variable name="type"><xsl:call-template name="JavaType"><xsl:with-param name="vodml-ref" select="datatype/vodml-ref"/></xsl:call-template></xsl:variable>
@@ -634,7 +682,6 @@ package <xsl:value-of select="$path"/>;
   <xsl:template match="composition" mode="declare">
       <!-- FIXME a composition as a list allows ? multiplicity to be broken -->
     <xsl:variable name="type"><xsl:call-template name="JavaType"><xsl:with-param name="vodml-ref" select="datatype/vodml-ref"/></xsl:call-template></xsl:variable>
-    <xsl:if test="not(subsets)">
     <xsl:call-template name="vodmlAnnotation"/>
     
     /** 
@@ -647,7 +694,6 @@ package <xsl:value-of select="$path"/>;
     <xsl:apply-templates select="." mode="JAXBAnnotation"/>
     <xsl:apply-templates select="." mode="JPAAnnotation"/>
     protected List&lt;<xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="name"/> = null;
-    </xsl:if>
   </xsl:template>
 
 
@@ -662,7 +708,6 @@ package <xsl:value-of select="$path"/>;
     </xsl:variable>
     <xsl:variable name="datatype" select="substring-after(datatype/vodml-ref,':')"/>
     
-    <xsl:if test="not(subsets)">
     /**
     * Returns <xsl:value-of select="name"/> composition
     * @return <xsl:value-of select="name"/> composition
@@ -688,7 +733,6 @@ package <xsl:value-of select="$path"/>;
       }
       this.<xsl:value-of select="name"/>.add(p<xsl:value-of select="$type"/>);
     }
-    </xsl:if>
   </xsl:template>
 
   <xsl:template match="composition" mode="add2composition">
@@ -707,7 +751,6 @@ package <xsl:value-of select="$path"/>;
 
 
   <xsl:template match="reference" mode="declare">
-  <xsl:if test="not(subsets)">
     <xsl:variable name="type"><xsl:call-template name="JavaType"><xsl:with-param name="vodml-ref" select="datatype/vodml-ref"/></xsl:call-template></xsl:variable>
     /** 
     * ReferenceObject <xsl:value-of select="name"/> :
@@ -719,7 +762,6 @@ package <xsl:value-of select="$path"/>;
     <xsl:apply-templates select="." mode="JPAAnnotation"/>
     <xsl:apply-templates select="." mode="JAXBAnnotation"/>
     protected <xsl:value-of select="$type"/>&bl;<xsl:value-of select="name"/> = null;
-    </xsl:if>
   </xsl:template>
 
 
@@ -741,28 +783,14 @@ package <xsl:value-of select="$path"/>;
     * @return <xsl:value-of select="name"/> Reference
     */
     public <xsl:value-of select="$type"/>&bl;get<xsl:value-of select="$name"/>() {
-    <xsl:choose>
-      <xsl:when test="subsets">
-        return (<xsl:value-of select="$type"/>)super.get<xsl:value-of select="$name"/>();
-      </xsl:when>
-      <xsl:otherwise>
         return this.<xsl:value-of select="name"/>;
-      </xsl:otherwise>
-    </xsl:choose>
     }
     /**
     * Defines <xsl:value-of select="name"/> Reference
     * @param p<xsl:value-of select="$name"/> reference to set
     */
     public void set<xsl:value-of select="$name"/>(final <xsl:value-of select="$type"/> p<xsl:value-of select="$name"/>) {
-    <xsl:choose>
-      <xsl:when test="subsets">
-        super.set<xsl:value-of select="$name"/>(p<xsl:value-of select="$name"/>);
-      </xsl:when>
-      <xsl:otherwise>
         this.<xsl:value-of select="name"/> = p<xsl:value-of select="$name"/>;
-      </xsl:otherwise>
-    </xsl:choose>
     }
   </xsl:template>
 

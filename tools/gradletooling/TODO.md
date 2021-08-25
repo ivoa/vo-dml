@@ -20,3 +20,4 @@ VODML Tooling TODO
 * builders
   * add convenience builders for the lists.
   * try to make it difficult to keep creating references...
+  * ~~nothing is currently forcing the subsetting~~

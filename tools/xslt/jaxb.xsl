@@ -53,7 +53,7 @@
       <xsl:text>,propOrder={
       </xsl:text>
       <!--IMPL this is all a bit long-winded, but keep structure in case want to do something different -->
-        <xsl:for-each select="attribute,composition[not(subsets)],reference[not(subsets)]">
+        <xsl:for-each select="attribute,composition,reference">
         <xsl:variable name="prop">
            <xsl:value-of select="name"/>
         </xsl:variable>

@@ -8,6 +8,7 @@
                 xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                 xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1">
 
 
@@ -232,5 +233,18 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
         </xsl:choose>
     </xsl:function>
 
+    <!-- is the type subsetted -->
+    <xsl:function name="vf:isSubSetted" as="xsd:boolean">
+        <xsl:param name="vodml-ref"/>
+        <xsl:choose>
+            <xsl:when test="$models/key('ellookup',$vodml-ref)">
+                <!--note that comparison below ignores vodml namepace prefix - slighly dangerous, but only slightly -->
+                <xsl:value-of select="count($models//constraint[ends-with(@xsi:type,':SubsettedRole')]/role[vodml-ref = $vodml-ref])> 0"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">type <xsl:value-of select="$vodml-ref"/> not in considered models</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
 
 </xsl:stylesheet>
