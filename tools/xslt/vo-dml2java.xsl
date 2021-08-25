@@ -239,7 +239,7 @@
     <xsl:template name="allMembers">
         <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
         <xsl:variable name="supers" select="(.,vf:baseTypes($vodml-ref))"/>
-        <xsl:message>allmembers = <xsl:value-of select="$vodml-ref"/> supers=<xsl:value-of select="$supers/name"/></xsl:message>
+<!--        <xsl:message>allmembers = <xsl:value-of select="$vodml-ref"/> supers=<xsl:value-of select="$supers/name"/></xsl:message>-->
         <xsl:copy-of select="$supers/attribute,$supers/composition,$supers/reference" /><!-- note that this cannot be sequence or different things happen with for-each and just $x/y expressions in terms of ordering -->
     </xsl:template>
 
@@ -497,7 +497,8 @@ package <xsl:value-of select="$path"/>;
       <xsl:apply-templates select="." mode="JAXBAnnotation"/>
       public class <xsl:value-of select="name"/>&bl;{
 
-        /** string representation */
+        /**  representation */
+        @javax.xml.bind.annotation.XmlValue
         private <xsl:value-of select="$valuetype"/> value;
 
         /**
@@ -539,7 +540,7 @@ package <xsl:value-of select="$path"/>;
   <xsl:template match="attribute" mode="declare">
     <xsl:variable name="type"><xsl:call-template name="JavaType"><xsl:with-param name="vodml-ref" select="datatype/vodml-ref"/></xsl:call-template></xsl:variable>
     /** 
-    * <xsl:apply-templates select="." mode="desc" /> : Attribute <xsl:value-of select="name"/> :
+    * <xsl:apply-templates select="." mode="desc" /> : Attribute <xsl:value-of select="name"/> : multiplicity <xsl:apply-templates select="multiplicity" mode="tostring"/>
     *
     */
     <xsl:call-template name="vodmlAnnotation"/>
@@ -640,9 +641,11 @@ package <xsl:value-of select="$path"/>;
     * <xsl:apply-templates select="." mode="desc" />
     * composition <xsl:value-of select="name"/> :
     * (
-    * Multiplicity : <xsl:value-of select="multiplicity"/>
+    * Multiplicity : <xsl:apply-templates select="multiplicity" mode="tostring"/>
     * )
     */
+    <xsl:apply-templates select="." mode="JAXBAnnotation"/>
+    <xsl:apply-templates select="." mode="JPAAnnotation"/>
     protected List&lt;<xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="name"/> = null;
     </xsl:if>
   </xsl:template>
@@ -710,7 +713,7 @@ package <xsl:value-of select="$path"/>;
     * ReferenceObject <xsl:value-of select="name"/> :
     * <xsl:apply-templates select="." mode="desc" />
     * (
-    * Multiplicity : <xsl:value-of select="multiplicity"/>
+    * Multiplicity : <xsl:apply-templates select="multiplicity" mode="tostring"/>
     * )
     */
     <xsl:apply-templates select="." mode="JPAAnnotation"/>

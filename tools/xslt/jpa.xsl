@@ -222,7 +222,7 @@ Currently only for JPA 2.0 impementation of eclipselink it seems as if nested at
 
 
 
-  <xsl:template match="attribute|reference|collection" mode="nullable">
+  <xsl:template match="attribute|reference|composition" mode="nullable">
     <xsl:choose>
       <xsl:when test="starts-with(multiplicity, '0')">true</xsl:when>
       <xsl:otherwise>false</xsl:otherwise>
@@ -259,7 +259,7 @@ Currently only for JPA 2.0 impementation of eclipselink it seems as if nested at
 
 
 
-  <xsl:template match="collection" mode="JPAAnnotation">
+  <xsl:template match="composition" mode="JPAAnnotation">
     <xsl:variable name="type" select="$models/key('ellookup', datatype/vodml-ref)"/>
 
     <xsl:choose>
@@ -282,7 +282,7 @@ Currently only for JPA 2.0 impementation of eclipselink it seems as if nested at
       </xsl:when>
       <xsl:otherwise>
     @javax.persistence.OrderBy( value = "rank" )
-    @javax.persistence.OneToMany( cascade = javax.persistence.CascadeType.ALL, fetch = javax.persistence.FetchType.LAZY, mappedBy="container" )
+    @javax.persistence.OneToMany( cascade = javax.persistence.CascadeType.ALL, fetch = javax.persistence.FetchType.LAZY, mappedBy="id" )
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -383,7 +383,7 @@ Currently only for JPA 2.0 impementation of eclipselink it seems as if nested at
   </xsl:template>
   <xsl:template match="objectType|dataType|primitiveType" mode="jpaConfig">
      <xsl:variable name="vodml-ref" select="concat(./ancestor::vo-dml:model/name,':',vodml-id)"/>
-      <xsl:message>JPA persistence.xml <xsl:value-of select="concat($vodml-ref, ' ', $mapping/key('maplookup',$vodml-ref)/java-type)"/> </xsl:message>
+<!--      <xsl:message>JPA persistence.xml <xsl:value-of select="concat($vodml-ref, ' ', $mapping/key('maplookup',$vodml-ref)/java-type)"/> </xsl:message>-->
      <xsl:if test="not($mapping/key('maplookup',$vodml-ref)/java-type/@jpa-atomic)">
      <xsl:call-template name="jpaclassdecl">
        <xsl:with-param name="vodml-ref" select="$vodml-ref"/>

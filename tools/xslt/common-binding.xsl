@@ -230,7 +230,6 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
                 <xsl:message terminate="yes">type <xsl:value-of select="$vodml-ref"/> not in considered models</xsl:message>
             </xsl:otherwise>
         </xsl:choose>
-
     </xsl:function>
 
 

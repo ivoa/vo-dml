@@ -42,18 +42,18 @@
   </xsl:template>
 
   <xsl:template match="primitiveType" mode="JAXBAnnotation">
-    <!-- TODO do nothing? -->
+    @javax.xml.bind.annotation.XmlType( name = "<xsl:value-of select="name"/>")
   </xsl:template>
 
 <!--
  have removed proporder for now
  -->
   <xsl:template match="objectType|dataType" mode="propOrder">
-    <xsl:if test="attribute|collection|reference">
+    <xsl:if test="attribute|composition|reference">
       <xsl:text>,propOrder={
       </xsl:text>
       <!--IMPL this is all a bit long-winded, but keep structure in case want to do something different -->
-        <xsl:for-each select="attribute,collection[not(subsets)],reference[not(subsets)]">
+        <xsl:for-each select="attribute,composition[not(subsets)],reference[not(subsets)]">
         <xsl:variable name="prop">
            <xsl:value-of select="name"/>
         </xsl:variable>
@@ -84,7 +84,7 @@
     @javax.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = Reference.class)
   </xsl:template>
 
-  <xsl:template match="collection" mode="JAXBAnnotation">
+  <xsl:template match="composition" mode="JAXBAnnotation">
     <xsl:variable name="type"><xsl:call-template name="JavaType"><xsl:with-param name="vodml-ref" select="datatype/vodml-ref"/></xsl:call-template></xsl:variable>
     @javax.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
   </xsl:template>
@@ -93,7 +93,7 @@
     @javax.xml.bind.annotation.XmlEnumValue("<xsl:value-of select="value"/>")
   </xsl:template>
 
-  <xsl:template match="attribute|reference|collection" mode="required">
+  <xsl:template match="attribute|reference|composition" mode="required">
     <xsl:choose>
       <xsl:when test="starts-with(multiplicity, '0')">false</xsl:when>
       <xsl:otherwise>true</xsl:otherwise>
