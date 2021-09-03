@@ -7,6 +7,6 @@ vo-dml2xsd.xsl and vo-dml2pojo.xsl scripts in the xslt/ folder. In fact it is th
 <model>
 <name>filter</name>
 <file>Filter.vo-dml.xml</file><java-package>org.ivoa.dm.filter</java-package>
-<xml-targetnamespace>http://ivoa.net/dm/models/vo-dml/xsd/sample/filter</xml-targetnamespace>
+<xml-targetnamespace prefix="ivoa">http://ivoa.net/dm/models/vo-dml/xsd/sample/filter</xml-targetnamespace>
 </model>
 </m:mappedModels>

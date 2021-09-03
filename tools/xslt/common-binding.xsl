@@ -73,32 +73,7 @@
 
 
   
-  <!-- Does not really properly count number of contained types in hierarchy, 
-  but at least will provide 0 if there are none. -->
-  <xsl:template match="objectType" mode="testrootelements">
-    <xsl:param name="count" select="0"/>
-    <xsl:variable name="xmiid" select="@xmiid"/>
-    <xsl:choose>
-      <xsl:when test="container">
-        <xsl:value-of select="number($count)+1"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:variable name="childcount" >
-          <xsl:choose>
-            <xsl:when test="/model//objectType[extends/@xmiidref = $xmiid]">
-              <xsl:apply-templates select="/model//objectType[extends/@xmiidref = $xmiid]" mode="testrootelements">
-                <xsl:with-param name="count" select="$count"/>
-              </xsl:apply-templates>
-            </xsl:when>
-            <xsl:otherwise>
-              <xsl:value-of select="0"/>
-            </xsl:otherwise>
-          </xsl:choose>
-        </xsl:variable>
-        <xsl:value-of select="number($count)+number($childcount)"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
+
   
 <!--  Do we potentially want to generate root elements even for dadaType-s?
 See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode="JAXBAnnotation">
@@ -126,17 +101,22 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
     </xsl:if>
     <xsl:copy-of select="$models/vo-dml:model[name=$modelname]"/>
     </xsl:template>
-  
-  
+
+    <xsl:function name="vf:JavaType" as="xsd:string">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:value-of select="vf:FullJavaType($vodml-ref,false())"/>
+    </xsl:function>
+    <xsl:function name="vf:QualifiedJavaType" as="xsd:string">
+    <xsl:param name="vodml-ref" as="xsd:string"/> <!-- assumed to be fully qualified! i.e. also for elements in local model, the prefix is included! -->
+        <xsl:value-of select="vf:FullJavaType($vodml-ref,true())"/>
+    </xsl:function>
     <!-- find JavaType for given vodml-ref, starting from provided model element -->
-  <xsl:template name="JavaType">
-    <xsl:param name="vodml-ref"/> <!-- assumed to be fully qualified! i.e. also for elements in local model, the prefix is included! -->
-    <xsl:param name="length" select="''"/> 
-    <xsl:param name="fullpath" select="false()" />
+  <xsl:function name="vf:FullJavaType" as="xsd:string">
+    <xsl:param name="vodml-ref" as="xsd:string"/> <!-- assumed to be fully qualified! i.e. also for elements in local model, the prefix is included! -->
+    <xsl:param name="fullpath" as="xsd:boolean"/>
 
 <!--     <xsl:message >Java Type for <xsl:value-of select="$vodml-ref"/></xsl:message>    -->
-   
- 
+
     <xsl:variable name="mappedtype">
       <xsl:call-template name="findmapping">
         <xsl:with-param name="vodml-ref" select="$vodml-ref"/>
@@ -154,35 +134,29 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
           </xsl:call-template>
         </xsl:when>
         <xsl:otherwise>
-        
-        <xsl:variable name="type" as="element()">
-          <xsl:call-template name="Element4vodml-ref">
-            <xsl:with-param name="vodml-ref" select="$vodml-ref"/>
-          </xsl:call-template>
-        </xsl:variable> 
-          <xsl:value-of select="$type/name"/>
+            <xsl:value-of select="$models/key('ellookup',$vodml-ref)/name"/>
         </xsl:otherwise>
       </xsl:choose>
      </xsl:otherwise>
     </xsl:choose>
-  </xsl:template>
+  </xsl:function>
   
   
-   <xsl:template name="Element4vodml-ref" as="element()"> <!-- once rest of code working - can remove this and just use key directly -->
-      <xsl:param name="vodml-ref" />
+   <xsl:function name="vf:Element4vodml-ref" as="element()">
+      <xsl:param name="vodml-ref" as="xsd:string" />
       <xsl:variable name="prefix" select="substring-before($vodml-ref,':')" />
       <xsl:if test="not($prefix) or $prefix=''">
-         <xsl:message>!!!!!!! ERROR No prefix found in Element4vodml-ref for <xsl:value-of select="$vodml-ref" /></xsl:message>
+         <xsl:message terminate="yes">!!!!!!! ERROR No prefix found in Element4vodml-ref for <xsl:value-of select="$vodml-ref" /></xsl:message>
       </xsl:if>
       <xsl:choose>
          <xsl:when test="$models/key('ellookup',$vodml-ref)">
             <xsl:copy-of select="$models/key('ellookup',$vodml-ref)" />
          </xsl:when>
          <xsl:otherwise>
-           <xsl:message>**ERROR** failed to find '<xsl:value-of select="$vodml-ref" />'</xsl:message>
+           <xsl:message terminate="yes">**ERROR** failed to find '<xsl:value-of select="$vodml-ref" />'</xsl:message>
          </xsl:otherwise>
       </xsl:choose>
-   </xsl:template>
+   </xsl:function>
 
     <xsl:function name="vf:baseTypes" as="element()*">
         <xsl:param name="vodml-ref"/>
@@ -204,6 +178,33 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
 
     </xsl:function>
 
+
+    <!-- is the type (or supertypes) contained anywhere -->
+    <xsl:function name="vf:isContained" as="xsd:boolean">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:choose>
+            <xsl:when test="$models/key('ellookup',$vodml-ref)">
+                <xsl:variable name="el" as="element()">
+                    <xsl:copy-of select="$models/key('ellookup',$vodml-ref)" />
+                </xsl:variable>
+<!--                <xsl:message>contained <xsl:value-of select="concat($vodml-ref, ' ', count($models//(attribute|composition)/datatype[vodml-ref=$vodml-ref])>0)"/> </xsl:message>-->
+                <xsl:choose>
+                    <xsl:when test="not($el/extends)">
+                        <xsl:value-of select="count($models//(attribute|composition)/datatype[vodml-ref=$vodml-ref])>0"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="count($models//(attribute|composition)/datatype[vodml-ref=$vodml-ref])>0 or vf:isContained($el/extends/vodml-ref)"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">type <xsl:value-of select="$vodml-ref"/> not in considered models</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:function>
+
+
     <!-- this means does the model have children in inheritance hierarchy -->
     <xsl:function name="vf:hasChildren" as="xsd:boolean">
 
@@ -222,16 +223,19 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
 
     <!-- is the type used as a reference -->
     <xsl:function name="vf:referredTo" as="xsd:boolean">
-        <xsl:param name="vodml-ref"/>
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+
         <xsl:choose>
             <xsl:when test="$models/key('ellookup',$vodml-ref)">
+<!--                <xsl:message>refs <xsl:value-of select="concat ($vodml-ref,' ',count($models//reference/datatype[vodml-ref = $vodml-ref])> 0)"/></xsl:message>-->
                 <xsl:value-of select="count($models//reference/datatype[vodml-ref = $vodml-ref])> 0"/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:message terminate="yes">type <xsl:value-of select="$vodml-ref"/> not in considered models</xsl:message>
+                <xsl:message terminate="yes">type '<xsl:value-of select="$vodml-ref"/>' not in considered models</xsl:message>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
+
 
     <!-- is the type subsetted -->
     <xsl:function name="vf:isSubSetted" as="xsd:boolean">
@@ -242,9 +246,29 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
                 <xsl:value-of select="count($models//constraint[ends-with(@xsi:type,':SubsettedRole')]/role[vodml-ref = $vodml-ref])> 0"/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:message terminate="yes">type <xsl:value-of select="$vodml-ref"/> not in considered models</xsl:message>
+                <xsl:message terminate="yes">type '<xsl:value-of select="$vodml-ref"/>' not in considered models</xsl:message>
             </xsl:otherwise>
         </xsl:choose>
+    </xsl:function>
+
+    <xsl:function name="vf:importedModelNames" as="xsd:string*">
+        <xsl:param name="model" as="element()"/>
+        <xsl:for-each select="$model/import">  <!--TODO  implement recursive model lookup (still not sure it this is expected see https://github.com/ivoa/vo-dml/issues/7) -->
+            <xsl:value-of select="document(url)/vo-dml:model/name"/>
+        </xsl:for-each>
+    </xsl:function>
+
+    <xsl:function name="vf:asvodmlref" as="xsd:string">
+        <xsl:param name="el" as="element()"/>
+        <xsl:value-of select="concat($el/ancestor::vo-dml:model/name,':',$el/vodml-id/text())"/>
+    </xsl:function>
+    <xsl:function name="vf:upperFirst" as="xsd:string">
+        <xsl:param name="s" as="xsd:string"/>
+        <xsl:value-of select="concat(upper-case(substring($s,1,1)),substring($s,2))"/>
+    </xsl:function>
+    <xsl:function name="vf:lowerFirst" as="xsd:string">
+        <xsl:param name="s" as="xsd:string"/>
+        <xsl:value-of select="concat(lower-case(substring($s,1,1)),substring($s,2))"/>
     </xsl:function>
 
 </xsl:stylesheet>

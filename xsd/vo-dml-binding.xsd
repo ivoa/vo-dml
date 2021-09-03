@@ -29,7 +29,11 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9" attributeFormDefaul
   <xsd:complexType name="xmlnsMapping">
     <xsd:simpleContent>
       <xsd:extension base="xsd:anyURI">
-        <xsd:attribute name="tns" type="xsd:NCName"/>
+        <xsd:attribute name="prefix" type="xsd:NCName">
+          <xsd:annotation>
+            <xsd:documentation>The namespace prefix to use in generated code</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>

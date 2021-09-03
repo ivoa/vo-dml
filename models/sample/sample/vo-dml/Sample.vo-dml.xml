@@ -10,14 +10,14 @@
       <version>1.0</version>
       <lastModified>2021-08-23T15:59:30Z</lastModified>
       <import>
-    <name>ivoa</name>
+        <name>blah</name><!--not used by schematron any more... -->
         <url>IVOA-v1.0.vo-dml.xml</url>
-    <documentationURL>IVOA-v1.0.html</documentationURL>
+    <documentationURL>blah</documentationURL> <!--nor this I reckon -->
       </import>
       <import>
-    <name>filter</name>
+    <name>blah</name>
         <url>Filter.vo-dml.xml</url>
-    <documentationURL>Filter.html</documentationURL>
+    <documentationURL>blah</documentationURL>
       </import>
             <package>
                <vodml-id>catalog</vodml-id>
@@ -431,6 +431,9 @@
                                <minOccurs>1</minOccurs>
                                <maxOccurs>1</maxOccurs>
                              </multiplicity>
+                               <constraint xsi:type="vo-dml:NaturalKey">
+                                   <Position>1</Position>
+                               </constraint>
                            </attribute>
                            <attribute>
                              <vodml-id>catalog.SkyCoordinateFrame.documentURI</vodml-id>

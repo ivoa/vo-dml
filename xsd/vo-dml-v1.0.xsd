@@ -3,7 +3,7 @@
             xmlns="http://www.ivoa.net/xml/VODML/v1"
             targetNamespace="http://www.ivoa.net/xml/VODML/v1"
             attributeFormDefault="unqualified" elementFormDefault="unqualified"
-            version="1.0">
+            version="1.1">
 <!-- Change log:
 2017-09-23: 
 - added version attribute in schema 
@@ -687,22 +687,19 @@ TBD continue based on VO-DML specification document.
     <xsd:complexContent>
       <xsd:extension base="Role">
         <xsd:sequence>
-          <xsd:element name="semanticconcept" type="SemanticConcept" minOccurs="0">
-            <xsd:annotation>
-              <xsd:documentation>
-                It is possible to assign a SemanticConcept to an attribute definition.
-                This means that the values of the attribute have to comply with the definition of the 
-                SemanticConcept.
-                This can be done in two manners. Either the SemanticConcept
-                gives a link to a semantic vocabulary, in which case the value must be a
-                concept defined in that vocabulary.
-                Or it defines a topConcept, in which case the value must be a  concept that is explicitly
-                declared to be (narrower than)
-                that concept, or a concept that is narrower than that concept.
-                FOr details on the interpretation see the VO-DML document.
-              </xsd:documentation>
-            </xsd:annotation>
-          </xsd:element>
+           <xsd:element name="semanticconcept" type="SemanticConcept" minOccurs="0">
+              <xsd:annotation>
+                 <xsd:documentation>
+                    It is possible to assign a SemanticConcept to an attribute definition. This means that the values of the
+                    attribute have to comply with the definition of the SemanticConcept. This can be done in two manners. Either
+                    the SemanticConcept gives a link to a semantic vocabulary, in which case the value must be a concept defined
+                    in that vocabulary. Or it defines a topConcept, in which case the value must be a concept that is explicitly
+                    declared to be (narrower than) that concept, or a concept that is narrower than that concept. FOr details on
+                    the interpretation see the VO-DML document.
+                 </xsd:documentation>
+              </xsd:annotation>
+           </xsd:element>
+           <xsd:element name="constraint" type="Constraint" minOccurs="0" maxOccurs="1"></xsd:element>
         </xsd:sequence>
       </xsd:extension>
     </xsd:complexContent>
@@ -927,8 +924,29 @@ TBD continue based on VO-DML specification document.
     </xsd:complexContent>
     
     </xsd:complexType>
-
-  <!-- Begin of element declaration(s) -->
+    
+    <xsd:complexType name="NaturalKey">
+       <xsd:annotation>
+          <xsd:documentation>
+             This constraint is used to indicate that an attribute is a natural key for its owning ObjectType, meaning that the
+             attribute value should be globally unique. This may be applied multiple times to indicate that only a composition
+             of several attributes make the globally unique key.
+          </xsd:documentation>
+       </xsd:annotation>
+       <xsd:complexContent>
+          <xsd:extension base="Constraint">
+             <xsd:sequence>
+                <xsd:element name="Position" type="xsd:positiveInteger">
+                        <xsd:annotation>
+                           <xsd:documentation>In the case where multiple attribute values make up the natural key, this
+                           value indicates the ordinal number of this particular key in the compound key.</xsd:documentation>
+                        </xsd:annotation>
+                </xsd:element>
+             </xsd:sequence>
+          </xsd:extension>
+       </xsd:complexContent>
+    </xsd:complexType>
+    <!-- Begin of element declaration(s) -->
   <xsd:element name="model" type="Model">
     <xsd:annotation>
       <xsd:documentation>

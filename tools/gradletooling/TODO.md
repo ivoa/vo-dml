@@ -3,7 +3,7 @@ VODML Tooling TODO
 
 # vodml
 
-* 
+* used twice in composition schematron rule should not necessarily matter
 
 # gradle plugin
 
@@ -20,4 +20,6 @@ VODML Tooling TODO
 * builders
   * add convenience builders for the lists.
   * try to make it difficult to keep creating references...
-  * ~~nothing is currently forcing the subsetting~~
+  *~~nothing is currently forcing the subsetting~~
+* jaxb
+  * idrefs referred to objects are not being output - http://stackoverflow.com/questions/12914382/marshalling-unmarshalling-fields-to-tag-with-attributes-using-jaxb 

@@ -4,9 +4,11 @@ package org.ivoa.vodml.annotation;
  */
 
 public enum VodmlType {
+    model,
     objectType,
     attribute,
     composition,
+    reference,
     dataType,
     primitiveType
 

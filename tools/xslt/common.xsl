@@ -138,10 +138,6 @@
     <xsl:value-of select="concat(./ancestor::vo-dml:model/name,':',.)" />
   </xsl:template>
 
-  <xsl:function name="vf:asvodmlref" as="xsd:string">
-    <xsl:param name="el" />
-    <xsl:value-of select="concat($el/ancestor::vo-dml:model/name,':',$el/vodml-id/text())"/>
-  </xsl:function>
 
 
   <xsl:template match="multiplicity" mode="tostring">

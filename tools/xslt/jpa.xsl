@@ -11,6 +11,7 @@
                 xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
                 xmlns:exsl="http://exslt.org/common"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 extension-element-prefixes="exsl">
 
 <!-- 
@@ -32,6 +33,13 @@
     <xsl:variable name="extMod" as="xsd:boolean"
                    select="count(extends) = 1"/>
     <xsl:variable name="hasName" as="xsd:boolean" select ="count(attribute[name = 'name']) > 0"/>
+
+    <xsl:variable name="idname">
+      <xsl:choose>
+        <xsl:when test=" attribute/constraint[ends-with(@xsi:type,':NaturalKey')]"><xsl:value-of select=" attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"/></xsl:when>
+        <xsl:otherwise>_id</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
 
   @javax.persistence.Entity
   @javax.persistence.Table( name = "<xsl:apply-templates select="." mode="tableName"/>" )
@@ -62,7 +70,7 @@ For now it is commented out. -->
   </xsl:if>
  -->
    @javax.persistence.NamedQueries( {
-    @javax.persistence.NamedQuery( name = "<xsl:value-of select="$className"/>.findById", query = "SELECT o FROM <xsl:value-of select="$className"/> o WHERE o.id = :id")
+    @javax.persistence.NamedQuery( name = "<xsl:value-of select="$className"/>.findById", query = "SELECT o FROM <xsl:value-of select="$className"/> o WHERE o.<xsl:value-of select="$idname"/> = :id")
   <xsl:if test="$hasName">
 ,     @javax.persistence.NamedQuery( name = "<xsl:value-of select="$className"/>.findByName", query = "SELECT o FROM <xsl:value-of select="$className"/> o WHERE o.name = :name")
   </xsl:if>
@@ -90,7 +98,7 @@ For now it is commented out. -->
     </xsl:if>
 
     <xsl:if test="container">
-      <xsl:variable name="type"><xsl:call-template name="JavaType"><xsl:with-param name="vodml-ref" select="container/vodml-ref"/></xsl:call-template></xsl:variable>
+      <xsl:variable name="type" select="vf:JavaType(container/vodml-ref)"/>
     /** container gives the parent entity which owns a collection containing instances of this class */
     @javax.persistence.ManyToOne( cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.MERGE, javax.persistence.CascadeType.REFRESH } )
     @javax.persistence.JoinColumn( name = "containerId", referencedColumnName = "id", nullable = false )
@@ -139,6 +147,9 @@ For now it is commented out. -->
 <!-- currently the choose element never gets to first element
 enable that again if we want (and are able) to use property access using get/set methods.
 Currently only for JPA 2.0 impementation of eclipselink it seems as if nested attributeoverride-s at least comppile and weave-->
+    <xsl:if test="constraint[ends-with(@xsi:type,':NaturalKey')]"><!-- TODO deal with compound keys -->
+      @javax.persistence.Id
+    </xsl:if>
     <xsl:choose>
       <xsl:when test="../name() = 'dataType' and 0 = 1">
         <xsl:text>@javax.persistence.Basic</xsl:text>
@@ -281,8 +292,10 @@ Currently only for JPA 2.0 impementation of eclipselink it seems as if nested at
 /* TODO: [NOT_SUPPORTED_COLLECTION = <xsl:value-of select="name($type)"/>] */
       </xsl:when>
       <xsl:otherwise>
+        <xsl:if test="isOrdered">
     @javax.persistence.OrderBy( value = "rank" )
-    @javax.persistence.OneToMany( cascade = javax.persistence.CascadeType.ALL, fetch = javax.persistence.FetchType.LAZY, mappedBy="id" )
+        </xsl:if>
+    @javax.persistence.OneToMany( cascade = javax.persistence.CascadeType.ALL, fetch = javax.persistence.FetchType.LAZY )
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -374,10 +387,8 @@ Currently only for JPA 2.0 impementation of eclipselink it seems as if nested at
   <xsl:template name="jpaclassdecl">
     <xsl:param name="vodml-ref"/>
     <xsl:element name="class" namespace="http://java.sun.com/xml/ns/persistence">
-      <xsl:call-template name="JavaType">
-        <xsl:with-param name="vodml-ref" select="$vodml-ref"/>
-        <xsl:with-param name="fullpath" select="true()"/>
-      </xsl:call-template>
+
+      <xsl:value-of select="vf:QualifiedJavaType($vodml-ref)"/>
     </xsl:element>
 
   </xsl:template>
@@ -533,11 +544,7 @@ template in common-ddl.xsl
             <xsl:with-param name="constraints" select="constraints"/>
           </xsl:call-template>
         </xsl:variable>
-        <xsl:variable name="javaType">
-        	<xsl:call-template name="JavaType">
-        	  <xsl:with-param name="vodml-ref" select="$typeid"/>
-        	</xsl:call-template>
-        </xsl:variable>
+        <xsl:variable name="javaType" select="vf:JavaType($typeid)"/>
     
         <nested>
           <attroverride><xsl:value-of select="$attroverride"/></attroverride>
