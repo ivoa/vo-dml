@@ -6,7 +6,7 @@ import java.util.Date;
 import org.ivoa.vodml.annotation.VoDml;
 import org.ivoa.vodml.annotation.VodmlType;
 
-import javax.persistence.Embeddable;
+import javax.persistence.*;
 
 /**
  * UML PrimitiveType duration : Represents an interval of time from beginning to

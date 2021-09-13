@@ -9,11 +9,10 @@ version = "0.1-SNAPSHOT"
 
 dependencies {
     xjcPlugins("net.codesup.util:jaxb2-rich-contract-plugin:2.1.0")
-    implementation("jakarta.persistence:jakarta.persistence-api:2.2.3")
+ //   implementation("jakarta.persistence:jakarta.persistence-api:3.0.0") // more modern, but perhaps not quite ready
+    implementation("javax.persistence:javax.persistence-api:2.2")
     implementation("org.slf4j:slf4j-api:1.7.32")
     testRuntimeOnly("ch.qos.logback:logback-classic:1.2.3")
-
-
 }
 
 

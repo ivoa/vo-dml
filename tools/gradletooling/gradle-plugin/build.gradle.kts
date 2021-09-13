@@ -61,7 +61,7 @@ gradlePlugin {
     // Define the plugin
     val vodml by plugins.creating {
         id = "net.ivoa.vodml-tools"
-        displayName = "VO-DML gradle plugin"
+        displayName = "VO-DML gradle plugin "
         version = "0.1-SNAPSHOT"
         implementationClass = "net.ivoa.vodml.gradle.plugin.VodmlGradlePlugin"
         description = "machinery for generating code and documentation from VO-DML models"

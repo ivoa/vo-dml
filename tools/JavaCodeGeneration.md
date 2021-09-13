@@ -99,3 +99,21 @@ machinery above (apart from the JAXBContext) is not necessary, and individual Ob
 written.
 
 ### Reading and Writing from RDBs
+
+The generated code has JPA annotations to allow storing in RDBs with compliant systems.
+
+#### Embeddable dataTypes
+
+The most natural way to represent dataTypes in JPA is as embeddable, this means that they do
+not have a separate "identity" and are simply represented as columns within the parent entity table.
+The problem with this is that JPA does not specifically allow inheritance of embeddables (though nor does it disallow). 
+As a consequence the support for inherited embeddables is not uniform in JPA providers.
+
+Hibernate seems to support the concept of embeddable hierarchies reasonably well by
+naturally using the @MappedSuperclass annotation - although there is an irritation in that 
+the full flexibility of having optional attributes that are dataTypes is not supported as all columns re
+made non-nullable - I have submitted a bug https://hibernate.atlassian.net/browse/HHH-14818
+
+There are also eclipselink bugs that mean that the suggested way of doing inherited embeddables does not seem to work.
+
+

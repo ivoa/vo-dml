@@ -479,6 +479,14 @@
                            <extends>
                               <vodml-ref>sample:catalog.AbstractSource</vodml-ref>
                            </extends>
+                            <constraint xsi:type="vo-dml:SubsettedRole">
+                                <role>
+                                    <vodml-ref>sample:catalog.AbstractSource.positionError</vodml-ref>
+                                </role>
+                                <datatype>
+                                    <vodml-ref>sample:catalog.CircleError</vodml-ref>
+                                </datatype>
+                            </constraint>
                         </objectType>
                         <objectType>
                            <vodml-id>catalog.TwoMassSource</vodml-id>

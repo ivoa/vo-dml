@@ -15,6 +15,10 @@
   This XSLT script contains common xsl:templates used by other XSLT scripts.
 -->
 
+  <xsl:variable name="cr">
+<xsl:text>
+</xsl:text>
+  </xsl:variable>
 
   <xsl:template name="upperFirst">
     <xsl:param name="val"/>

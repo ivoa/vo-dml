@@ -215,7 +215,7 @@
       <xsl:variable name="file" select="concat($output_root, '/', $dir, '/', name, '.java')"/>
 
     <!-- open file for this class -->
-      <xsl:message >Writing to Class file <xsl:value-of select="$file"/> base=<xsl:value-of select="vf:baseTypes($vodml-ref)/name"/> haschildren=<xsl:value-of select="vf:hasChildren($vodml-ref)"/></xsl:message>
+      <xsl:message >Writing to Class file <xsl:value-of select="$file"/> base=<xsl:value-of select="vf:baseTypes($vodml-ref)/name"/> haschildren=<xsl:value-of select="vf:hasSubTypes($vodml-ref)"/></xsl:message>
       
       <xsl:result-document href="{$file}">
         <xsl:apply-templates select="." mode="class">
@@ -240,6 +240,7 @@
                 </xsl:call-template>
             </xsl:if>
         </xsl:for-each>
+        import javax.persistence.*;
     </xsl:template>
 
 
@@ -380,8 +381,9 @@
           * inserted database key
           */
           @javax.xml.bind.annotation.XmlTransient
-          @javax.persistence.Id
-          @javax.persistence.GeneratedValue
+          @Id
+          @GeneratedValue
+          @Column(name = "ID")
           protected Long _id = (long) 0;
 
           /**
@@ -456,7 +458,9 @@
       <xsl:if test="not(@abstract)">
       <xsl:apply-templates select="." mode="builder"/>
       </xsl:if>
-      
+<!--      <xsl:if test="local-name() eq 'dataType'">-->
+<!--          <xsl:apply-templates select="." mode="JPAConverter"/>-->
+<!--      </xsl:if>-->
 }
   </xsl:template>
 
@@ -556,7 +560,9 @@ package <xsl:value-of select="$path"/>;
       <xsl:call-template name="vodmlAnnotation"/>
       <xsl:apply-templates select="." mode="JPAAnnotation"/>
       <xsl:apply-templates select="." mode="JAXBAnnotation"/>
-      public class <xsl:value-of select="name"/>&bl;{
+      public class <xsl:value-of select="name"/>&bl; implements java.io.Serializable {
+
+        private static final long serialVersionUID = 1L;
 
         /**  representation */
         @javax.xml.bind.annotation.XmlValue
@@ -614,6 +620,9 @@ package <xsl:value-of select="$path"/>;
       <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
 
       <xsl:variable name="name" select="tokenize(role/vodml-ref/text(),'[.]')[last()]"/>
+      <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)[local-name() eq 'dataType']">
+        @Embedded
+      </xsl:if>
       <xsl:call-template name="doGetSet">
           <xsl:with-param name="name" select="$name"/>
           <xsl:with-param name="type" select="$type"/>
@@ -1008,11 +1017,8 @@ package <xsl:value-of select="$path"/>;
         <xsl:message>Looking for vodml-ref <xsl:value-of select="$vodml-ref"/></xsl:message>
  -->    
     <xsl:variable name="vodml-id" select="substring-after($vodml-ref,':')"/>
-    <xsl:variable name="mappedtype">
-      <xsl:call-template name="findmapping">
-        <xsl:with-param name="vodml-ref" select="$vodml-ref"/>
-      </xsl:call-template>
-    </xsl:variable>
+    <xsl:variable name="mappedtype" select="vf:findmapping($vodml-ref)" />
+
 <!--     <xsl:message>TypeImprt: mappedtype =  "<xsl:value-of select="$mappedtype"/>"</xsl:message> -->
    <xsl:choose>
       <xsl:when test="$mappedtype != ''">
@@ -1064,18 +1070,6 @@ package <xsl:value-of select="$path"/>;
 
 
  
-  <!-- Find a mapping for the given vodml-id, in the provided model -->
-  <xsl:template name="findmappingInThisModel">
-    <xsl:param name="modelname"/>
-    <xsl:param name="vodml-id"/>
-        <xsl:value-of select="$mapping/map:mappedModels/model[name=$modelname]/type-mapping[vodml-id=$vodml-id]/java-type"/>
-  </xsl:template>
-
-  <xsl:template name="findmapping">
-    <xsl:param name="vodml-ref"/>
-    <xsl:variable name="modelname" select="substring-before($vodml-ref,':')" />
-    <xsl:value-of select="$mapping/map:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/java-type"/>
-  </xsl:template>
 
   <!-- find a java package path towards the type identified with the name -->
   <xsl:template name="fullpath">
