@@ -4,7 +4,7 @@ plugins {
     id("com.github.bjornvester.xjc") version "1.6.0"
 }
 group = "net.ivoa.vo-dml"
-version = "0.1-SNAPSHOT"
+version = "0.1"
 
 
 dependencies {

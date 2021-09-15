@@ -1,3 +1,4 @@
+
 /*
 Build for vodml gradle plugin. Written in Kotlin as that allows for better IDEA integration
  */
@@ -8,7 +9,12 @@ plugins {
 
     // Apply the Kotlin JVM plugin to add support for Kotlin.
     id("org.jetbrains.kotlin.jvm") version "1.4.31"
+    `maven-publish`
+//    id("com.gradle.plugin-publish") version "0.14.0"
 }
+
+group = "net.ivoa.vo-dml"
+version = "0.1"
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -56,17 +62,28 @@ dependencies {
 
 }
 
+//pluginBundle {
+//    website = "https://www.ivoa.net/documents/VODML/"
+//    vcsUrl = "https://github.com/ivoa/vo-dml"
+//    tags = listOf("vodml", "ivoa")
+//
+// }
+
 
 gradlePlugin {
     // Define the plugin
-    val vodml by plugins.creating {
-        id = "net.ivoa.vodml-tools"
-        displayName = "VO-DML gradle plugin "
-        version = "0.1-SNAPSHOT"
-        implementationClass = "net.ivoa.vodml.gradle.plugin.VodmlGradlePlugin"
-        description = "machinery for generating code and documentation from VO-DML models"
+    plugins{
+        create("vodmltools") {
+            id = "net.ivoa.vo-dml.vodmltools"
+            displayName = "VO-DML gradle plugin "
+            implementationClass = "net.ivoa.vodml.gradle.plugin.VodmlGradlePlugin"
+            description = "machinery for generating code and documentation from VO-DML models"
+
+        }
 
     }
+    isAutomatedPublishing = true
+
 }
 
 java {
@@ -108,8 +125,22 @@ tasks.check {
     dependsOn(functionalTest)
 }
 
-// not working for some reason....
-//publishing {
+
+publishing {
+
+    repositories {
+        //publish to GitHub repositories rather than the gradle repository for now.
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/ivoa/vo-dml")
+            credentials {
+                // put these properties in ~/.gradle/gradle.properties (or be ready for running in github actions )
+                username = project.findProperty("GitHub.user") as String? ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("GitHub.key") as String? ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+
 //    // Used to publish the plugin locally for testing.  To consume the plugin
 //    // from here, the applying project needs to add this as a plugin repo.
 //    // See https://docs.gradle.org/current/userguide/publishing_gradle_plugins.html#custom-plugin-repositories
@@ -124,4 +155,4 @@ tasks.check {
 //            url = uri( "${gradle.gradleUserHomeDir}/tmp/plugins" )
 //        }
 //    }
-//}
+}
