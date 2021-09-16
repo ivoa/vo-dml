@@ -10,7 +10,7 @@ plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
     id("org.jetbrains.kotlin.jvm") version "1.4.31"
     `maven-publish`
-//    id("com.gradle.plugin-publish") version "0.14.0"
+    id("com.gradle.plugin-publish") version "0.16.0"
 }
 
 group = "net.ivoa.vo-dml"
@@ -62,12 +62,12 @@ dependencies {
 
 }
 
-//pluginBundle {
-//    website = "https://www.ivoa.net/documents/VODML/"
-//    vcsUrl = "https://github.com/ivoa/vo-dml"
-//    tags = listOf("vodml", "ivoa")
-//
-// }
+pluginBundle {
+    website = "https://www.ivoa.net/documents/VODML/"
+    vcsUrl = "https://github.com/ivoa/vo-dml"
+    tags = listOf("vodml", "ivoa")
+
+ }
 
 
 gradlePlugin {
@@ -127,19 +127,6 @@ tasks.check {
 
 
 publishing {
-
-    repositories {
-        //publish to GitHub repositories rather than the gradle repository for now.
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/ivoa/vo-dml")
-            credentials {
-                // put these properties in ~/.gradle/gradle.properties (or be ready for running in github actions )
-                username = project.findProperty("GitHub.user") as String? ?: System.getenv("GITHUB_ACTOR")
-                password = project.findProperty("GitHub.key") as String? ?: System.getenv("GITHUB_TOKEN")
-            }
-        }
-    }
 
 //    // Used to publish the plugin locally for testing.  To consume the plugin
 //    // from here, the applying project needs to add this as a plugin repo.
