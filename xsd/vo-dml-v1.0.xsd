@@ -3,12 +3,11 @@
             xmlns="http://www.ivoa.net/xml/VODML/v1"
             targetNamespace="http://www.ivoa.net/xml/VODML/v1"
             attributeFormDefault="unqualified" elementFormDefault="unqualified"
-            version="1.1">
-<!-- Change log:
+            version="1.1-WD">
+<!--
 2017-09-23: 
 - added version attribute in schema 
 - removed minor version from targetNamespace and default xmlns declaration
-
 -->
   <xsd:annotation>
     <xsd:documentation>
@@ -188,154 +187,134 @@ TBD continue based on VO-DML specification document.
   <!-- +++++++++++++++++++ End of 'ReferencableElement section' +++++++++++++++++++ -->
 
   <!-- +++++++++++++++++++ Begin of Model elements section +++++++++++++++++++ -->
-    <xsd:complexType name="Model">
+  <xsd:complexType name="Model">
+     <xsd:annotation>
+        <xsd:documentation>
+           Represents a complete data model and is the type of the (single) declared root element for VO-DML/XML representation
+           documents.
+        </xsd:documentation>
+     </xsd:annotation>
+     <xsd:sequence>
+        <xsd:element name="name" type="ModelName" minOccurs="1" maxOccurs="1">
+           <xsd:annotation>
+              <xsd:documentation>
+                 Short name of the model. NOTE this name MUST be used as prefix in any utype reference to elements in this model.
+              </xsd:documentation>
+           </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1">
+           <xsd:annotation>
+              <xsd:documentation>The description of the model.</xsd:documentation>
+           </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="identifier" type="xsd:string" minOccurs="0" maxOccurs="1">
+           <xsd:annotation>
+              <xsd:documentation>
+                 A string holding the identifier by which the model is registered in an IVOA compatible registry. Its structure
+                 must therefore conform to the IVOA Identifier specification in http://www.ivoa.net/documents/IVOAIdentifiers/. If
+                 the model is an IVOA standard, the naming authority for the identifier should be the IVOA DM working group.
+              </xsd:documentation>
+           </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="uri" type="xsd:anyURI" minOccurs="1" maxOccurs="1">
+           <xsd:annotation>
+              <xsd:documentation>
+                 Each model has an associated model URI that MUST be used to reference it, for example in ModelImports or in
+                 VOTable annotations. Dereferencing the model URI and following redirects yields the latest VO-DML for the data
+                 model
+              </xsd:documentation>
+           </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="title" type="xsd:string" minOccurs="1" maxOccurs="1">
+           <xsd:annotation>
+              <xsd:documentation>The title of the model by which it is officially known.</xsd:documentation>
+           </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="author" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+           <xsd:annotation>
+              <xsd:documentation>
+                 List of authors of the model, only defined by name so far. TBD could be expanded with email, affiliation and so
+                 on.
+              </xsd:documentation>
+           </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="version" type="xsd:string" minOccurs="1">
+           <xsd:annotation>
+              <xsd:documentation>Label giving the version of the model.</xsd:documentation>
+           </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="previousVersion" type="xsd:anyURI" minOccurs="0">
+           <xsd:annotation>
+              <xsd:documentation>
+                 URI identifying a VO-DML model that is the version from which the current version of model is derived. TBD could
+                 be an IVO Identifier once models get properly registered?
+              </xsd:documentation>
+           </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="lastModified" type="xsd:dateTime">
+           <xsd:annotation>
+              <xsd:documentation>Timestamp when the last change to the current model was made.</xsd:documentation>
+           </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="import" type="ModelImport" minOccurs="0" maxOccurs="unbounded">
+           <xsd:annotation>
+              <xsd:documentation>
+                 An 'import' element indicates a dependency on an external, predefined VO-DML data model. Types from that model
+                 may be used for referencing, extension and assignment to attributes. Types from the external model MUST NOT be
+                 used for composition relationships. 'identification' relations to elements from that model may be used to
+                 indicate some kind of equivalence between elements in the current model and the external elements.
+              </xsd:documentation>
+              <xsd:documentation>
+                 TBD We might require that every data model MUST include a version of the IVOA data model to gain access to the
+                 standard primitive types and some other types. We may require that that standard model should be included
+                 *completely*, i.e. including all its type definitions explicitly. This would be similar to treating it as a UML
+                 Profile, rather than an import. This would mean that the most common type assignments for attributes can be
+                 checked within the model and not require importing the remote model during validation.
+              </xsd:documentation>
+           </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="primitiveType" type="PrimitiveType" minOccurs="0" maxOccurs="unbounded">
+           <xsd:annotation>
+              <xsd:documentation>
+                 Collection of PrimitiveType definitions directly under the model, i.e. not contained in a Package.
+              </xsd:documentation>
+           </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="enumeration" type="Enumeration" minOccurs="0" maxOccurs="unbounded">
+           <xsd:annotation>
+              <xsd:documentation>
+                 Collection of Enumeration definitions directly under the model, i.e. not contained in a Package.
+              </xsd:documentation>
+           </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="dataType" type="DataType" minOccurs="0" maxOccurs="unbounded">
+           <xsd:annotation>
+              <xsd:documentation>
+                 Collection of DataType definitions directly under the model, i.e. not contained in a Package.
+              </xsd:documentation>
+           </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="objectType" type="ObjectType" minOccurs="0" maxOccurs="unbounded">
+           <xsd:annotation>
+              <xsd:documentation>
+                 Collection of ObjectType definitions directly under the model, i.e. not contained in a Package.
+              </xsd:documentation>
+           </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="package" type="Package" minOccurs="0" maxOccurs="unbounded">
+           <xsd:annotation>
+              <xsd:documentation>
+                 The collection of packages which can contain further detailed name spacing to the type definitions in the model.
+              </xsd:documentation>
+           </xsd:annotation>
+        </xsd:element>
+     </xsd:sequence>
+     <xsd:attribute name="vodmlVersion" type="xsd:string" use="optional">
         <xsd:annotation>
-            <xsd:documentation>
-                Represents a complete data model and is the type of the (single) declared root element for
-                VO-DML/XML representation documents.
-            </xsd:documentation>
-    </xsd:annotation>
-        <xsd:sequence>
-            <xsd:element name="name" type="ModelName" minOccurs="1" maxOccurs="1">
-                <xsd:annotation>
-                    <xsd:documentation>
-                        Short name of the model.
-                        NOTE this name MUST be used as prefix in any utype reference to elements in this model.
-                    </xsd:documentation>
-        </xsd:annotation>
-            </xsd:element>
-            <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1">
-                <xsd:annotation>
-                    <xsd:documentation>
-                        The description of the model.
-                    </xsd:documentation>
-                </xsd:annotation>
-            </xsd:element>
-            <xsd:element name="identifier" type="xsd:string" minOccurs="0" maxOccurs="1">
-                <xsd:annotation>
-                    <xsd:documentation>
-                        A string holding the identifier by which the model is registered in an 
-                        IVOA compatible registry. Its structure must therefore conform to the IVOA Identifier 
-                        specification in http://www.ivoa.net/documents/IVOAIdentifiers/. 
-                        If the model is an IVOA standard, the naming authority for the identifier should be the 
-                        IVOA DM working group. 
-
-                    </xsd:documentation>
-                </xsd:annotation>
-            </xsd:element>
-            <xsd:element name="uri" type="xsd:anyURI" minOccurs="1" maxOccurs="1">
-              <xsd:annotation>
-                <xsd:documentation>
-                Each model has an associated model URI that MUST be used to reference it, for example in ModelImports 
-                or in VOTable annotations. 
-                Dereferencing the model URI and following redirects yields the latest VO-DML for the data model
-                </xsd:documentation>
-              </xsd:annotation>
-            </xsd:element>
-            <xsd:element name="title" type="xsd:string" minOccurs="1" maxOccurs="1">
-                <xsd:annotation>
-          <xsd:documentation>
-              The title of the model by which it is officially known.
-          </xsd:documentation>
-                </xsd:annotation>
-            </xsd:element>
-            <xsd:element name="author" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
-                <xsd:annotation>
-                    <xsd:documentation>
-                    List of authors of the model, only defined by name so far.
-            TBD could be expanded with email, affiliation and so on.
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:element>
-      <xsd:element name="version" type="xsd:string" minOccurs="1">
-        <xsd:annotation>
-          <xsd:documentation>
-            Label giving the version of the model.
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:element>
-      <xsd:element name="previousVersion" type="xsd:anyURI" minOccurs="0">
-        <xsd:annotation>
-          <xsd:documentation>
-            URI identifying a VO-DML model that is the version from which the current version of model is derived.
-            TBD could be an IVO Identifier once models get properly registered?
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:element>
-      <xsd:element name="lastModified" type="xsd:dateTime">
-        <xsd:annotation>
-          <xsd:documentation>
-            Timestamp when the last change to the current model was made.
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:element>
-      <xsd:element name="import" type="ModelImport" minOccurs="0" maxOccurs="unbounded">
-        <xsd:annotation>
-          <xsd:documentation>
-            An 'import' element indicates a dependency on an external, predefined VO-DML data model.
-            Types from that model may be used for referencing, extension and assignment to
-            attributes.
-            Types from the external model MUST NOT be used for
-            composition relationships.
-            'identification' relations to elements from that model may be used to indicate some kind of
-            equivalence between
-            elements in the current model and the external elements.
-          </xsd:documentation>
-          <xsd:documentation>
-            TBD We might require that every data model MUST include a version of the IVOA data model
-            to gain access to the standard
-            primitive types and some other types.
-            We may require that that standard model should be included *completely*,
-            i.e. including all its type definitions explicitly.
-            This would be similar to treating it as a UML Profile, rather than an import.
-            This would mean that the most common type assignments for attributes
-            can be checked within the model and not require
-            importing the remote model during validation.
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:element>
-            <xsd:element name="primitiveType" type="PrimitiveType" minOccurs="0" maxOccurs="unbounded">
-                <xsd:annotation>
-                    <xsd:documentation>
-                        Collection of PrimitiveType definitions directly under the model, i.e. not contained in a
-                        Package.
-                    </xsd:documentation>
-                </xsd:annotation>
-            </xsd:element>
-            <xsd:element name="enumeration" type="Enumeration" minOccurs="0" maxOccurs="unbounded">
-                <xsd:annotation>
-                    <xsd:documentation>
-                        Collection of Enumeration definitions directly under the model, i.e. not contained in a Package.
-                    </xsd:documentation>
-                </xsd:annotation>
-            </xsd:element>
-            <xsd:element name="dataType" type="DataType" minOccurs="0" maxOccurs="unbounded">
-                <xsd:annotation>
-                    <xsd:documentation>
-                        Collection of DataType definitions directly under the model, i.e. not contained in a Package.
-                    </xsd:documentation>
-                </xsd:annotation>
-            </xsd:element>
-            <xsd:element name="objectType" type="ObjectType" minOccurs="0" maxOccurs="unbounded">
-                <xsd:annotation>
-                    <xsd:documentation>
-                        Collection of ObjectType definitions directly under the model, i.e. not contained in a Package.
-                    </xsd:documentation>
-                </xsd:annotation>
-            </xsd:element>
-            <xsd:element name="package" type="Package" minOccurs="0" maxOccurs="unbounded">
-                <xsd:annotation>
-                    <xsd:documentation>
-                        The collection of packages which can contain further detailed name spacing to
-                        the type definitions in the model.
-                    </xsd:documentation>
-                </xsd:annotation>
-            </xsd:element>
-        </xsd:sequence>
-    </xsd:complexType>
-
-
-    <xsd:complexType name="ModelImport">
+           <xsd:documentation>the actual version of vodml that this model uses</xsd:documentation>
+        </xsd:annotation></xsd:attribute>
+  </xsd:complexType>
+  <xsd:complexType name="ModelImport">
     <xsd:annotation>
       <xsd:documentation>
         A "proxy" for an external model that is being used by the current model. 
@@ -699,7 +678,7 @@ TBD continue based on VO-DML specification document.
                  </xsd:documentation>
               </xsd:annotation>
            </xsd:element>
-           <xsd:element name="constraint" type="Constraint" minOccurs="0" maxOccurs="1"></xsd:element>
+           <xsd:element name="constraint" type="Constraint" minOccurs="0" maxOccurs="1"></xsd:element><!-- TODO - allow more than one constraint? -->
         </xsd:sequence>
       </xsd:extension>
     </xsd:complexContent>
@@ -936,7 +915,7 @@ TBD continue based on VO-DML specification document.
        <xsd:complexContent>
           <xsd:extension base="Constraint">
              <xsd:sequence>
-                <xsd:element name="Position" type="xsd:positiveInteger">
+                <xsd:element name="position" type="xsd:positiveInteger">
                         <xsd:annotation>
                            <xsd:documentation>In the case where multiple attribute values make up the natural key, this
                            value indicates the ordinal number of this particular key in the compound key.</xsd:documentation>
