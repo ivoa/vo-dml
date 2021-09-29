@@ -24,7 +24,8 @@ public class Rational {
     /**
      * Creates a new rational DataType instance, wrapping a base type.
      *
-     * @param v
+     * @param _n numerator
+     * @param _d demominator
      */
     public Rational(final int _n, final int _d) {
         this.numerator = _n;
@@ -32,7 +33,7 @@ public class Rational {
     }
 
     /**
-     * TODO Implement better parser.<br/>
+     * TODO Implement better parser.
      * 
      * @param sv
      */
@@ -50,7 +51,7 @@ public class Rational {
     }
 
     /**
-     * Return the string representation of this Rational.<br/>
+     * Return the string representation of this Rational.
      */
     @Override
     public final String toString() {

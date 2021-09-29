@@ -26,7 +26,8 @@ public class Complex {
     /**
      * Creates a new complex Primitive Type instance, wrapping a base type.
      *
-     * @param v
+     * @param _re real part
+     * @param _im imqginary part
      */
     public Complex(final double _re, final double _im) {
         this.re = _re;
@@ -34,7 +35,7 @@ public class Complex {
     }
 
     /**
-     * TODO Implement better parser.<br/>
+     * TODO Implement better parser
      * 
      * @param sv
      */
@@ -52,10 +53,9 @@ public class Complex {
     }
 
     /**
-     * Return the string representation of this enum constant (value)
+     * Return the string representation.
      * 
-     * @see #value()
-     * @return string representation of this enum constant (value)
+     * @return string representation of the complex.
      */
     @Override
     public final String toString() {

@@ -44,7 +44,7 @@ public class Util {
      * add them to the corresponding set that is the value of the map
      * FIXME - this is probably better just looking for classes....
      * @param modelInstance the vodml model instance to be searched. 
-     * @param l the map of Class -> Set correspondences;
+     * @param l the map of Class -&gt; Set correspondences;
      */
     @SuppressWarnings("rawtypes")
     public static void findReferences(final Object modelInstance, final Map<Class, Set> l)

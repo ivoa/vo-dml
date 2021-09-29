@@ -2,8 +2,10 @@ plugins {
     java
     `maven-publish`
     id("com.github.bjornvester.xjc") version "1.6.0"
+    id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
+    signing
 }
-group = "net.ivoa.vo-dml"
+group = "org.javastro.ivoa.vo-dml"
 version = "0.1"
 
 
@@ -16,21 +18,21 @@ dependencies {
 }
 
 
-xjc {
-    xsdDir.set(layout.projectDirectory.dir("../../xsd"))
-    xsdFiles = files(xsdDir.file("vo-dml-v1.0.xsd"))
-    defaultPackage.set("net.ivoa.vodml.metamodel")
-    options.addAll("-Xfluent-builder",
-                             "-Xmeta",
-                                "-extended=y")
-
-}
+//xjc {
+//    xsdDir.set(layout.projectDirectory.dir("../../xsd"))
+//    xsdFiles = files(xsdDir.file("vo-dml-v1.0.xsd"))
+//    defaultPackage.set("net.ivoa.vodml.metamodel")
+//    options.addAll("-Xfluent-builder",
+//                             "-Xmeta",
+//                                "-extended=y")
+//
+//}
 
 java {
     modularity.inferModulePath.set(false) // still can only build on java 1.8
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
-//    withJavadocJar()
+    withJavadocJar()
     withSourcesJar()
 }
 
@@ -41,8 +43,16 @@ tasks.test {
 
 tasks.named("sourcesJar") //explicitly add the fact that sources jar depends on the generation.
 {
-    dependsOn(tasks.named("xjc"))
+ // don't do the generation yet - might not be the best representation
+ //    dependsOn(tasks.named("xjc"))
 }
+
+nexusPublishing {
+    repositories {
+        sonatype()
+    }
+}
+
 
 publishing {
     publications {
@@ -56,6 +66,40 @@ publishing {
                     fromResolutionResult()
                 }
             }
+            pom {
+                name.set("VO-DML Runtime")
+                description.set("Library needed as dependency for java code generated from VO-DML")
+                url.set("https://www.ivoa.net/documents/VODML/")
+                licenses {
+                    license {
+                        name.set("The Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("pahjbo")
+                        name.set("Paul Harrison")
+                        email.set("paul.harrison@manchester.ac.uk")
+                    }
+                }
+                scm {
+                    connection.set("scm:git:git://github.com/ivoa/vo-dml.git")
+                    developerConnection.set("scm:git:ssh://github.com/ivoa/vo-dml.git")
+                    url.set("https://github.com/ivoa/vo-dml")
+                }
+            }
         }
     }
+}
+
+
+signing {
+    setRequired { !project.version.toString().endsWith("-SNAPSHOT") && !project.hasProperty("skipSigning") }
+    useGpgCmd()
+    sign(publishing.publications["mavenJava"])
+}
+//do not generate extra load on Nexus with new staging repository if signing fails
+tasks.withType<io.github.gradlenexus.publishplugin.InitializeNexusStagingRepository>().configureEach{
+    shouldRunAfter(tasks.withType<Sign>())
 }
