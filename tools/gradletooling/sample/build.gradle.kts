@@ -2,7 +2,7 @@
  * 
  */
 plugins {
-    id("net.ivoa.vo-dml.vodmltools")
+    id("net.ivoa.vo-dml.vodmltools") version "0.2"
     id ("com.diffplug.spotless") version "5.14.2"
 
 }
