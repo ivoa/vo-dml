@@ -3,6 +3,7 @@ package net.ivoa.vodml.gradle.plugin
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
 import java.util.concurrent.TimeUnit
 
@@ -19,6 +20,9 @@ import java.util.concurrent.TimeUnit
      @get:InputFiles
      val vodmlFiles: ConfigurableFileCollection = project.objects.fileCollection()
 
+     @get:InputFile
+     val catalogFile: RegularFileProperty = project.objects.fileProperty()
+
      @get:OutputDirectory
      val docDir : DirectoryProperty = project.objects.directoryProperty()
 
@@ -32,7 +36,7 @@ import java.util.concurrent.TimeUnit
              var outfile = docDir.file(shortname +".html")
              Vodml2Html.doTransform(it.absoluteFile, outfile.get().asFile)
              outfile = docDir.file(shortname +".graphml")
-             Vodml2Gml.doTransform(it.absoluteFile, outfile.get().asFile)
+             Vodml2Gml.doTransform(it.absoluteFile, emptyMap(), catalogFile.get().asFile, outfile.get().asFile)
              outfile = docDir.file(shortname +".gvd")
              Vodml2Gvd.doTransform(it.absoluteFile, outfile.get().asFile)
              val proc = ProcessBuilder(listOf(

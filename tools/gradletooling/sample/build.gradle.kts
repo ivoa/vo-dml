@@ -14,7 +14,7 @@ repositories {
 }
 
 group = "net.ivoa.vo-dml"
-version = "0.1-SNAPSHOT"
+version = "0.2-SNAPSHOT"
 
 vodml {
     vodmlDir.set(layout.projectDirectory.dir("../../../models/")) // do the models in place, rather than use the symbolic links in subdirs of here

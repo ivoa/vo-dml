@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
 This XSLT script transforms a data model from our
-intermediate representation to a graphml representation with exgtensions that can
+intermediate representation to a graphml representation with extensions that can
 be read by https://www.yworks.com/products/yed to allow interactive editing.
 
 derived from the vo-dml2gvd.xsl file
@@ -27,6 +27,12 @@ derived from the vo-dml2gvd.xsl file
 
   <xsl:param name="project.name"/>
   <xsl:param name="usesubgraph" select="'F'"/>
+    <xsl:variable name="imported">
+        <xsl:for-each select="vodml:model/import">
+            <xsl:message>importing <xsl:value-of select="url"/> </xsl:message>
+            <xsl:copy-of select="document(url)/vodml:model"/>
+        </xsl:for-each>
+    </xsl:variable>
   
   <xsl:variable name="packages" select="//package/vodml-id"/>
   <xsl:variable name="sq"><xsl:text>'</xsl:text></xsl:variable>
@@ -57,10 +63,18 @@ derived from the vo-dml2gvd.xsl file
   
   <xsl:element name="graph" namespace="http://graphml.graphdrawing.org/xmlns/graphml">
   <xsl:attribute name="edgedefault">directed</xsl:attribute>
-  <!-- nodes first -->
-   <xsl:apply-templates select="*"/>
-   <!--edges-->
-   <xsl:apply-templates select="//extends"/>
+      <xsl:comment>nodes</xsl:comment>
+     <xsl:apply-templates select="*"/>
+      <xsl:comment>imported nodes</xsl:comment>
+      <!-- TODO would be nice to have difference colours for the imported nodes -->
+      <xsl:for-each  select="distinct-values((//extends|//reference/datatype|//composition/datatype)[substring-before(vodml-ref,':') != /vodml:model/name])">
+          <xsl:message>imported ref to <xsl:value-of select="."/> </xsl:message>
+          <xsl:apply-templates select="$imported/vodml:model[name=substring-before(current(),':')]//*[vodml-id = substring-after(current(),':')]"/>
+      </xsl:for-each>
+
+      <xsl:comment>edges</xsl:comment>
+
+      <xsl:apply-templates select="//extends"/>
    <xsl:apply-templates select="//objectType/composition"/>
    <xsl:apply-templates select="//reference"/>
    
@@ -126,29 +140,7 @@ derived from the vo-dml2gvd.xsl file
   </xsl:template>
 
   
-  <xsl:template match="vodml:model" mode="importedtypes">
-  
-    <xsl:variable name="vodmlrefs" select="(//extends|//reference/datatype|//composition/datatype)[substring-before(vodml-ref,':') != /vodml:model/name]"/> <!-- Define the variable with the node path. -->
-<!-- 
-must create next as variable to select from inside the atomic context of the distinct-values
- -->
-    <xsl:variable name="imports" select="/vodml:model/import"/>
-    <xsl:for-each select="distinct-values($vodmlrefs)">
-      <xsl:variable name="vodmlref" select="."/>
-      <xsl:variable name="prefix" select="substring-before($vodmlref,':')"/>
-      <xsl:variable name="vodml-id" select="substring-after($vodmlref,':')"/>
-      <xsl:variable name="docURL" select="$imports[name = $prefix]/documentationURL"/>
-      <xsl:message>
-<!--       <xsl:element name="a"><xsl:attribute name="href" select="concat($docURL,'#',$vodml-id)"/><xsl:value-of select="$vodml-id"/></xsl:element>
-  -->     <xsl:value-of select="concat($docURL,'#',$vodml-id)"/>
-      </xsl:message>
 
-    <xsl:variable name="label">
-        <xsl:apply-templates select="." mode="nodelabel"/>
-    </xsl:variable>
-    </xsl:for-each>
-  </xsl:template>
-  
   <xsl:template match="objectType|dataType|enumeration|primitiveType">
     <xsl:variable name="nodename">
         <xsl:apply-templates select="." mode="nodename"/>
