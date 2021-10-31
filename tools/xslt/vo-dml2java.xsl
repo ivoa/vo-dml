@@ -268,8 +268,8 @@
            * <xsl:apply-templates select="$m" mode="desc"/>
            */<xsl:choose>
                    <xsl:when test="$this/constraint[ends-with(@xsi:type,':SubsettedRole')]/role[vodml-ref = current()]">
-                       <xsl:variable name="type" select="vf:JavaType($this/constraint/datatype/vodml-ref)"/>
-           public <xsl:value-of select="concat(' ',$type, ' ', $models/key('ellookup',$this/constraint/role/vodml-ref)/name)"/>;
+                       <xsl:variable name="type" select="vf:JavaType($this/constraint[role/vodml-ref = current()]/datatype/vodml-ref)"/>
+           public <xsl:value-of select="concat(' ',$type, ' ', $models/key('ellookup',current())/name)"/>;
                    </xsl:when>
                    <xsl:otherwise>
            public <xsl:apply-templates select="$m" mode="paramDecl"/>;
@@ -309,8 +309,8 @@
                 <xsl:for-each select="$members">
                     <xsl:choose>
                         <xsl:when test="$this/constraint[ends-with(@xsi:type,':SubsettedRole')]/role[vodml-ref = current()]">
-                            <xsl:variable name="type" select="vf:JavaType($this/constraint/datatype/vodml-ref)"/>
-                            <xsl:value-of select="concat('final ',$type, ' ', tokenize($this/constraint/role/vodml-ref, '[.]' )[last()])"/>
+                            <xsl:variable name="type" select="vf:JavaType($this/constraint[role/vodml-ref=current()]/datatype/vodml-ref)"/>
+                            <xsl:value-of select="concat('final ',$type, ' ', tokenize(current(), '[.]' )[last()])"/>
                         </xsl:when>
                         <xsl:otherwise><xsl:value-of>
                             <xsl:text>final </xsl:text>
