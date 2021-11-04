@@ -95,7 +95,7 @@ with the `public <T> List<T> getContent(Class<T> c)` method.
 
 Finally, there is a static `public static boolean hasReferences()` method which
 can be used to check if the model has any references - if it does not then much of the 
-machinery above (apart from the JAXBContext) is not necessary, and individual ObjectTypes may be 
+machinery above (apart from the JAXBContext) is necessary, and individual ObjectTypes may be 
 written.
 
 ### Reading and Writing from RDBs

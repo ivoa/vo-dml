@@ -155,16 +155,10 @@
       @Id
     </xsl:if>
       <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
-    <xsl:choose>
-      <xsl:when test="../name() = 'dataType' and 0 = 1">
-        <xsl:text>@Basic</xsl:text>
-      </xsl:when>
-      <xsl:otherwise>
-          <xsl:variable name="name" select="name"/>
-        <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
-       
+      <xsl:variable name="name" select="name"/>
+      <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
+      <xsl:choose>
 <!--     <xsl:message>****jpa attr  ref=<xsl:value-of select="datatype/vodml-ref"/> type="<xsl:value-of select="name($type)"/>" </xsl:message> -->
-    <xsl:choose>
       <xsl:when test="name($type) = 'primitiveType'">
         <xsl:choose>
           <xsl:when test="number(constraints/maxLength) = -1">
@@ -196,7 +190,6 @@
         <xsl:choose>
           <xsl:when test="not(vf:isSubSetted($vodml-ref))">
           @Embedded
-
               <xsl:variable name="attovers" as="xsd:string*">
               <xsl:for-each select="($type/attribute, vf:baseTypes(vf:asvodmlref($type))/attribute)">
                   <xsl:variable name="attr" select="."/>
@@ -230,8 +223,6 @@
       // TODO    [NOT_SUPPORTED_ATTRIBUTE]
             </xsl:otherwise>
           </xsl:choose>
-                </xsl:otherwise>
-              </xsl:choose>
         </xsl:template>
 
     <xsl:template match="dataType" mode="attrovercols" as="xsd:string*"> <!-- TODO need to check if any of the dataTypes are mapped - would need a specific mapping field as cannot know the value attribute -->
@@ -302,7 +293,7 @@
   @Transient
   </xsl:template>
 
-  <xsl:template match="composition" mode="JPAAnnotation">
+  <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="JPAAnnotation">
     <xsl:variable name="type" select="$models/key('ellookup', datatype/vodml-ref)"/>
 
     <xsl:choose>
@@ -314,7 +305,7 @@
       <xsl:variable name="columns">
         <xsl:apply-templates select="." mode="columns"/>
       </xsl:variable> 
-     <xsl:for-each select="exsl:node-set($columns)/column">
+     <xsl:for-each select="$columns/column">
     @ElementCollection
     @CollectionTable( name = "<xsl:value-of select="$tableName"/>", joinColumns = @JoinColumn(name="containerId") )
     @Column( name = "<xsl:value-of select="name"/>" )
@@ -324,6 +315,7 @@
 /* TODO: [NOT_SUPPORTED_COLLECTION = <xsl:value-of select="name($type)"/>] */
       </xsl:when>
       <xsl:otherwise>
+
         <xsl:if test="isOrdered">
     @OrderBy( value = "rank" )
         </xsl:if>
@@ -332,10 +324,15 @@
     </xsl:choose>
   </xsl:template>
 
+    <xsl:template match="composition[multiplicity/maxOccurs =1]" mode="JPAAnnotation">
+     @OneToOne
+  </xsl:template>
 
 
 
-  <xsl:template name="enumPattern">
+
+
+    <xsl:template name="enumPattern">
     <xsl:param name="columnName"/>
 
     @Basic( optional=<xsl:apply-templates select="." mode="nullable"/> )

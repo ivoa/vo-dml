@@ -63,7 +63,7 @@
   </xsl:template>
 
   <!-- template attribute : adds JAXB annotations for primitive types, data types & enumerations -->
-  <xsl:template match="attribute" mode="JAXBAnnotation">
+  <xsl:template match="attribute|composition[multiplicity/maxOccurs = 1]" mode="JAXBAnnotation">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
     @javax.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
     <xsl:if test="constraint[ends-with(@xsi:type,':NaturalKey')]"><!-- TODO deal with compound keys -->
@@ -81,7 +81,7 @@
     @javax.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = Reference.class)
   </xsl:template>
 
-  <xsl:template match="composition" mode="JAXBAnnotation">
+  <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="JAXBAnnotation">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
     @javax.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
   </xsl:template>

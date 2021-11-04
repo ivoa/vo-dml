@@ -269,7 +269,16 @@
            */<xsl:choose>
                    <xsl:when test="$this/constraint[ends-with(@xsi:type,':SubsettedRole')]/role[vodml-ref = current()]">
                        <xsl:variable name="type" select="vf:JavaType($this/constraint[role/vodml-ref = current()]/datatype/vodml-ref)"/>
+
+                       <xsl:choose>
+                           <xsl:when test="$models/key('memblookup',current())/multiplicity[maxOccurs != 1]">
+           public <xsl:value-of select="concat(' java.util.List',$lt,$type,$gt, ' ', $models/key('ellookup',current())/name)"/>;
+                           </xsl:when>
+                           <xsl:otherwise>
            public <xsl:value-of select="concat(' ',$type, ' ', $models/key('ellookup',current())/name)"/>;
+                           </xsl:otherwise>
+                       </xsl:choose>
+
                    </xsl:when>
                    <xsl:otherwise>
            public <xsl:apply-templates select="$m" mode="paramDecl"/>;
@@ -309,8 +318,17 @@
                 <xsl:for-each select="$members">
                     <xsl:choose>
                         <xsl:when test="$this/constraint[ends-with(@xsi:type,':SubsettedRole')]/role[vodml-ref = current()]">
+                           
                             <xsl:variable name="type" select="vf:JavaType($this/constraint[role/vodml-ref=current()]/datatype/vodml-ref)"/>
-                            <xsl:value-of select="concat('final ',$type, ' ', tokenize(current(), '[.]' )[last()])"/>
+                            <xsl:choose>
+                                <xsl:when test="$models/key('memblookup',current())/multiplicity[maxOccurs != 1]">
+                                    <xsl:value-of select="concat('final java.util.List', $lt, $type, $gt, ' ', tokenize(current(), '[.]' )[last()])"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="concat('final ',$type, ' ', tokenize(current(), '[.]' )[last()])"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+
                         </xsl:when>
                         <xsl:otherwise><xsl:value-of>
                             <xsl:text>final </xsl:text>
@@ -340,8 +358,16 @@
   <xsl:template match="attribute|composition|reference" mode="paramDecl">
       <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
       <xsl:choose>
-          <xsl:when test="name()='composition'"><!-- FIXME should not always be a list -->
-              <xsl:value-of select="concat('java.util.List',$lt,$type,$gt, ' ',name)" />
+          <xsl:when test="name()='composition' and multiplicity/maxOccurs != 1" >
+              <xsl:choose>
+                  <xsl:when test="vf:isSubSetted(vf:asvodmlref(.))">
+                      <xsl:value-of select="concat('java.util.List',$lt,'? extends ',$type,$gt, ' ',name)" />
+                  </xsl:when>
+                  <xsl:otherwise>
+                      <xsl:value-of select="concat('java.util.List',$lt,$type,$gt, ' ',name)" />
+                  </xsl:otherwise>
+              </xsl:choose>
+
           </xsl:when>
           <xsl:otherwise>
               <xsl:value-of select="concat($type, ' ',name)" />
@@ -613,11 +639,10 @@ package <xsl:value-of select="$path"/>;
     <xsl:call-template name="vodmlAnnotation"/>
     <xsl:apply-templates select="." mode="JPAAnnotation"/>
     <xsl:apply-templates select="." mode="JAXBAnnotation"/>
-    protected <xsl:value-of select="$type"/><xsl:if test="contains(multiplicity,'*')">[]</xsl:if>&bl;<xsl:value-of select="name"/>;
+    protected <xsl:value-of select="$type"/><xsl:if test="number(multiplicity/maxOccurs) gt 1">[]</xsl:if>&bl;<xsl:value-of select="name"/>;
   </xsl:template>
 
   <xsl:template match="constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="getset">
-      <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
 
       <xsl:variable name="name" select="tokenize(role/vodml-ref/text(),'[.]')[last()]"/>
       <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)[local-name() eq 'dataType']">
@@ -625,51 +650,57 @@ package <xsl:value-of select="$path"/>;
       </xsl:if>
       <xsl:call-template name="doGetSet">
           <xsl:with-param name="name" select="$name"/>
-          <xsl:with-param name="type" select="$type"/>
+          <xsl:with-param name="mult" select="$models/key('memblookup',current()/role/vodml-ref)/multiplicity"/>
       </xsl:call-template>
 
   </xsl:template>
 
 
-  <xsl:template match="attribute" mode="getset">
-    <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>  
-    <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/><xsl:variable name="name" select="name"/>
-
+  <xsl:template match="(attribute|composition[multiplicity/maxOccurs = 1])" mode="getset">
+    <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
 <!--      <xsl:message>attribute <xsl:value-of select="concat($vodml-ref,' from ', parent::*/name,' ', parent::*/@abstract, ' ', vf:isSubSetted($vodml-ref) )" /></xsl:message>-->
       <xsl:if test="not(parent::*/@abstract and vf:isSubSetted($vodml-ref))">
-          <xsl:call-template name="doGetSet">
-              <xsl:with-param name="name" select="name"/>
-              <xsl:with-param name="type" select="$type"/>
-          </xsl:call-template>
+          <xsl:call-template name="doGetSet"/>
        </xsl:if>
 
    </xsl:template>
 
     <xsl:template name="doGetSet">
-        <xsl:param name="name"/>
-        <xsl:param name="type"/>
+        <xsl:param name="name" select="name"/>
+        <xsl:param name="type" select="vf:JavaType(datatype/vodml-ref)"/>
+        <xsl:param name="mult" select="multiplicity"/>
 
         <xsl:variable name="upName">
             <xsl:call-template name="upperFirst">
                 <xsl:with-param name="val" select="$name"/>
             </xsl:call-template>
         </xsl:variable>
+        <xsl:variable name="fulltype">
+            <xsl:choose>
+                <xsl:when test="$mult/maxOccurs != 1"><xsl:value-of select="concat('java.util.List',$lt,$type,$gt)"/></xsl:when><!--TODO think about arrays -->
+                <xsl:otherwise><xsl:value-of select="$type"/></xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
         /**
         * Returns <xsl:value-of select="$name"/> Attribute
         * @return <xsl:value-of select="$name"/> Attribute
         */
-        public <xsl:value-of select="$type"/><xsl:if test="contains(multiplicity,'*')">[]</xsl:if>&bl;get<xsl:value-of select="$upName"/>() {
-        return (<xsl:value-of select="$type"/>)this.<xsl:value-of select="$name"/>;
+        <xsl:if test="$mult/maxOccurs != 1">@SuppressWarnings("unchecked")</xsl:if><!--the cast should be ok even for the list-->
+        public <xsl:value-of select="$fulltype"/>&bl;get<xsl:value-of select="$upName"/>() {
+        return (<xsl:value-of select="$fulltype"/>)this.<xsl:value-of select="$name"/>;
         }
+        <!-- cannot need to rely on most generic set if list of subsetted type, because of type erasure - IMPL might be able to do something clever with type argument on the base class, but gets tricky if there is more than one level of subclassing -->
+        <xsl:if test="not(parent::*/extends and current()[ends-with(@xsi:type,':SubsettedRole')] and $mult/maxOccurs != 1)">
         /**
         * Defines <xsl:value-of select="$name"/> Attribute
         * @param p<xsl:value-of select="$upName"/> value to set
         */
-        public void set<xsl:value-of select="$upName"/>(final <xsl:value-of select="$type"/><xsl:if test="contains(multiplicity,'*')">[]</xsl:if> p<xsl:value-of select="$upName"/>) {
+        public void set<xsl:value-of select="$upName"/>(final <xsl:value-of select="$fulltype"/> p<xsl:value-of select="$upName"/>) {
         this.<xsl:value-of select="$name"/> = p<xsl:value-of select="$upName"/>;
         }
+        </xsl:if>
 
-        public <xsl:value-of select="vf:JavaType(vf:asvodmlref(parent::*))"/>&bl;with<xsl:value-of select="$upName"/>(final <xsl:value-of select="$type"/><xsl:if test="contains(multiplicity,'*')">[]</xsl:if> p<xsl:value-of select="$upName"/>) {
+        public <xsl:value-of select="vf:JavaType(vf:asvodmlref(parent::*))"/>&bl;with<xsl:value-of select="$upName"/>(final <xsl:value-of select="$fulltype"/> p<xsl:value-of select="$upName"/>) {
         this.<xsl:value-of select="$name"/> = p<xsl:value-of select="$upName"/>;
         return this;
         }
@@ -714,8 +745,7 @@ package <xsl:value-of select="$path"/>;
 
 
 
-  <xsl:template match="composition" mode="declare">
-      <!-- FIXME a composition as a list allows ? multiplicity to be broken -->
+  <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="declare">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
     /**
     * <xsl:apply-templates select="." mode="desc" />
@@ -727,13 +757,37 @@ package <xsl:value-of select="$path"/>;
     <xsl:apply-templates select="." mode="JAXBAnnotation"/>
     <xsl:apply-templates select="." mode="JPAAnnotation"/>
     <xsl:call-template name="vodmlAnnotation"/>
-    protected List&lt;<xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="name"/> = null;
+      <xsl:choose>
+          <xsl:when test="vf:isSubSetted(vf:asvodmlref(.))">
+     protected List&lt;? extends <xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="name"/> = null; // IMPL is subsetted
+          </xsl:when>
+          <xsl:otherwise>
+     protected List&lt;<xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="name"/> = null;
+          </xsl:otherwise>
+      </xsl:choose>
+
   </xsl:template>
 
+    <xsl:template match="composition[multiplicity/maxOccurs = 1]" mode="declare">
+        <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
+        /**
+        * <xsl:apply-templates select="." mode="desc" />
+        * composition <xsl:value-of select="name"/> :
+        * (
+        * Multiplicity : <xsl:apply-templates select="multiplicity" mode="tostring"/>
+        * )
+        */
+        <xsl:apply-templates select="." mode="JAXBAnnotation"/>
+        <xsl:apply-templates select="." mode="JPAAnnotation"/>
+        <xsl:call-template name="vodmlAnnotation"/>
+        protected <xsl:value-of select="$type"/>&bl;<xsl:value-of select="name"/> = null;
+    </xsl:template>
 
 
-<!-- define methods for getting/setting and adding to composition -->
-  <xsl:template match="composition" mode="getset">
+
+
+    <!-- define methods for getting/setting and adding to composition -->
+  <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="getset">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
     <xsl:variable name="name">
       <xsl:call-template name="upperFirst">
@@ -746,19 +800,33 @@ package <xsl:value-of select="$path"/>;
     * Returns <xsl:value-of select="name"/> composition
     * @return <xsl:value-of select="name"/> composition
     */
-    public List&lt;<xsl:value-of select="$type"/>&gt;&bl;get<xsl:value-of select="$name"/>() {
+      <xsl:choose>
+      <xsl:when test="vf:isSubSetted(vf:asvodmlref(.))">
+      public List&lt;? extends <xsl:value-of select="$type"/>&gt;&bl;get<xsl:value-of select="$name"/>() { // is subsetted
+      </xsl:when>
+      <xsl:otherwise>
+      public List&lt;<xsl:value-of select="$type"/>&gt;&bl;get<xsl:value-of select="$name"/>() {
+      </xsl:otherwise>
+      </xsl:choose>
     return this.<xsl:value-of select="name"/>;
     }
     /**
     * Defines <xsl:value-of select="name"/> composition
     * @param p<xsl:value-of select="$name"/> composition to set
     */
+    <xsl:choose>
+        <xsl:when test="vf:isSubSetted(vf:asvodmlref(.))">
+    public void set<xsl:value-of select="$name"/>(final List&lt;? extends <xsl:value-of select="$type"/>&gt; p<xsl:value-of select="$name"/>) {
+        </xsl:when>
+        <xsl:otherwise>
     public void set<xsl:value-of select="$name"/>(final List&lt;<xsl:value-of select="$type"/>&gt; p<xsl:value-of select="$name"/>) {
+        </xsl:otherwise>
+    </xsl:choose>
     this.<xsl:value-of select="name"/> = p<xsl:value-of select="$name"/>;
     }
+    <xsl:if test="not(vf:isSubSetted(vf:asvodmlref(.)))">
     /**
     * Add a <xsl:value-of select="$type"/> to the composition
-    * Note: if the composition is big, set the rank value before adding the item to the composition
     * @param p<xsl:value-of select="$type"/>&bl;<xsl:value-of select="$type"/> to add
     */
     public void add<xsl:value-of select="$name"/>(final <xsl:value-of select="$type"/> p<xsl:value-of select="$type"/>) {
@@ -767,9 +835,10 @@ package <xsl:value-of select="$path"/>;
       }
       this.<xsl:value-of select="name"/>.add(p<xsl:value-of select="$type"/>);
     }
+    </xsl:if>
   </xsl:template>
 
-  <xsl:template match="composition" mode="add2composition">
+  <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="add2composition">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
     <xsl:variable name="name">
       <xsl:call-template name="upperFirst">

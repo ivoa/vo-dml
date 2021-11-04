@@ -10,7 +10,7 @@ VODML Tooling TODO
 
 * get binding files from dependent jars...
 * write some documentation
-* publish in gradle repository
+* ~~publish in gradle repository~~
 * can remove all the ant stuff - including the libs and schematron dirs
 
 # Java Production

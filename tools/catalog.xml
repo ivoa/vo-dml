@@ -7,9 +7,12 @@
       <uri
          name="Filter.vo-dml.xml"
          uri="sample/filter/vo-dml/Filter.vo-dml.xml"/>
-      <uri
-         name="Sample.vo-dml.xml"
-         uri="sample/sample/vo-dml/Sample.vo-dml.xml"/>
+       <uri
+               name="Sample.vo-dml.xml"
+               uri="sample/sample/vo-dml/Sample.vo-dml.xml"/>
+       <uri
+               name="like_coords-v1.0.vo-dml.xml"
+               uri="sample/test/like_coords-v1.0.vo-dml.xml"/>
 
    </group>
 </catalog>

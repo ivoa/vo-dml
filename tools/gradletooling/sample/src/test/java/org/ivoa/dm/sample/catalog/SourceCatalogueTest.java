@@ -150,9 +150,6 @@ class SourceCatalogueTest {
 //        assertTrue(mvalidation.valid, "errors on whole model");
 
 
-
-
-
         DocumentBuilderFactory dbf = DocumentBuilderFactory
                 .newInstance();
         dbf.setNamespaceAware(true);

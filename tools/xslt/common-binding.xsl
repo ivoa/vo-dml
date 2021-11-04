@@ -15,6 +15,7 @@
 <xsl:include href="common.xsl"/>
 
 <xsl:key name="ellookup" match="*[vodml-id]" use="concat(ancestor::vo-dml:model/name,':',vodml-id)"/>
+<xsl:key name="memblookup" match="*/*[vodml-id]" use="concat(ancestor::vo-dml:model/name,':',vodml-id)"/>
 <xsl:key name="maplookup" match="type-mapping[vodml-id]" use="concat(ancestor::model/name,':',vodml-id)"/>
 
   <xsl:param name="targetnamespace_root"/>
@@ -298,7 +299,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
         <xsl:param name="vodml-ref"/>
         <xsl:choose>
             <xsl:when test="$models/key('ellookup',$vodml-ref)">
-                <!--note that comparison below ignores vodml namepace prefix - slighly dangerous, but only slightly -->
+                <!--note that comparison below ignores vodml namespace prefix - slightly dangerous, but only slightly -->
                 <xsl:value-of select="count($models//constraint[ends-with(@xsi:type,':SubsettedRole')]/role[vodml-ref = $vodml-ref])> 0"/>
             </xsl:when>
             <xsl:otherwise>

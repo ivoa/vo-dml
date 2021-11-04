@@ -22,6 +22,7 @@ vodml {
     vodmlFiles.setFrom(project.files (
         vodmlDir.file("ivoa/vo-dml/IVOA-v1.0.vo-dml.xml"),
         vodmlDir.file("sample/filter/vo-dml/Filter.vo-dml.xml"),
+        vodmlDir.file("sample/test/like_coords-v1.0.vo-dml.xml"),
         vodmlDir.file("sample/sample/vo-dml/Sample.vo-dml.xml")
             ))
 
@@ -36,7 +37,7 @@ vodml {
     catalogFile.set(project.file("../../catalog.xml"))
 }
 
-//FIXME spotless not working in compoasite project build - possibly https://github.com/diffplug/spotless/issues/860
+//FIXME spotless not working in composite project build - possibly https://github.com/diffplug/spotless/issues/860
 // use to reformat the generated code nicely.
 spotless {
     java {

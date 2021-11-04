@@ -1,4 +1,4 @@
-VO-DML Gradle Plugin
+VO-DML Gradle Plugin 0.2
 =====================
 
 The gradle plugin is intended to replace all the functionality of the 
@@ -13,7 +13,7 @@ The general idea is that all that should be necessary to set up a new project is
 
 ```kotlin
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.1"
+    id("net.ivoa.vo-dml.vodmltools") version "0.2"
 }
 ```
 
@@ -40,7 +40,7 @@ referenced in maven with the following co-ordinates
 * vodmlDir - the default is `src/main/vo-dml`
 * vodmlFiles - this is set by default to be all the `*.vo-dml.xml` files in the vodmlDir, but can be indificutally set
 * catalogFile - the default is `catalog.xml` and such a file is necessary even when the vodml files are in default place
-  as there the rest of the tooling is designed to only use the filename for inclusions and refernces.
+  as the rest of the tooling is designed to only use the filename for inclusions and references.
 ```xml
 <?xml version="1.0"?>
 <catalog  xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">  
@@ -81,3 +81,8 @@ gradle publishToSonatype closeSonatypeStagingRepository
 ```
 
 which can then be checked and released in the https://oss.sonatype.org/ GUI.
+
+
+## Changes
+
+* 0.2 java generation changed to cope with STC coords.
