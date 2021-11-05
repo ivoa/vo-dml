@@ -1,12 +1,21 @@
 package org.ivoa.dm.sample.catalog;
 
+import static org.ivoa.dm.filter.PhotometryFilter.createPhotometryFilter;
+import static org.ivoa.dm.sample.catalog.LuminosityMeasurement.createLuminosityMeasurement;
+import static org.ivoa.dm.sample.catalog.SDSSSource.createSDSSSource;
+import static org.ivoa.dm.sample.catalog.SkyCoordinate.createSkyCoordinate;
+import static org.ivoa.dm.sample.catalog.inner.SourceCatalogue.createSourceCatalogue;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -28,7 +37,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.ivoa.dm.filter.PhotometryFilter;
 import org.ivoa.dm.ivoa.RealQuantity;
 import org.ivoa.dm.ivoa.Unit;
 import org.ivoa.dm.sample.SampleModel;
@@ -60,12 +68,12 @@ class SourceCatalogueTest {
         sdss.setPositionError(ellipseError);
         AlignedEllipse theError = sdss.getPositionError();
 
-        sc = SourceCatalogue.builder(c -> {
+        sc = createSourceCatalogue(c -> {
             c.name = "testCat";
-            c.entry = Arrays.asList(SDSSSource.builder(s -> {
+            c.entry = Arrays.asList(createSDSSSource(s -> {
                 s.name = "testSource";
                 s.classification = SourceClassification.AGN;
-                s.position = SkyCoordinate.builder(co -> {
+                s.position = createSkyCoordinate(co -> {
                     co.frame = frame;
                     co.latitude = new RealQuantity(52.5, degree );
                     co.longitude = new RealQuantity(2.5, degree );
@@ -73,12 +81,12 @@ class SourceCatalogueTest {
                 s.positionError = ellipseError;//note subsetting forces compile need AlignedEllipse
 
                 s.luminosity = Arrays.asList(
-                        LuminosityMeasurement.builder(l ->{
+                        createLuminosityMeasurement(l ->{
                             l.description = "lummeas";
                             l.type = LuminosityType.FLUX;                         
                             l.value = new RealQuantity(2.5, jansky );
                             l.error = new RealQuantity(.25, jansky );
-                            l.filter = PhotometryFilter.builder(fl -> {
+                            l.filter = createPhotometryFilter(fl -> {
                                 fl.bandName ="C-Band";
                                 fl.spectralLocation = new RealQuantity(5.0,GHz);
                                 fl.dataValidityFrom = new Date();
@@ -88,9 +96,9 @@ class SourceCatalogueTest {
                             });
                             
                         })
-                        ,LuminosityMeasurement.builder(l ->{
+                        ,createLuminosityMeasurement(l ->{
                             l.description = "lummeas2";
-                            l.filter = PhotometryFilter.builder(fl -> {
+                            l.filter = createPhotometryFilter(fl -> {
                                 fl.bandName ="L-Band";
                                 fl.spectralLocation = new RealQuantity(1.5,GHz);
                                 fl.dataValidityFrom = new Date();

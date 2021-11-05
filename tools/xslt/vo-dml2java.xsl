@@ -260,7 +260,9 @@
             <xsl:call-template name="allInheritedMembers"/>
         </xsl:variable>
         <xsl:variable name="this" select="."/>
-
+        /**
+          A builder class for <xsl:value-of select="name"/> principally to be used in the functional builder pattern.
+        */
         public static class <xsl:value-of select="name"/>Builder {
            <xsl:for-each select="$members">
                <xsl:variable name="m" select="$models/key('ellookup',current())"/>
@@ -287,11 +289,14 @@
 
            </xsl:for-each>
 
-           public <xsl:value-of select="name"/>Builder with (java.util.function.Consumer &lt;<xsl:value-of select="name"/>Builder&gt; f)
+           private <xsl:value-of select="name"/>Builder with (java.util.function.Consumer &lt;<xsl:value-of select="name"/>Builder&gt; f)
            {
              f.accept(this);
              return this;
            }
+           /**
+             create a <xsl:value-of select="name"/> from this builder.
+           */
            public <xsl:value-of select="name"/> create()
            {
              return new <xsl:value-of select="name"/> (
@@ -299,7 +304,10 @@
              );
            }
          }
-         public static <xsl:value-of select="name"/>&bl;builder (java.util.function.Consumer &lt;<xsl:value-of select="name"/>Builder&gt; f)
+         /**
+           create a <xsl:value-of select="name"/> in functional builder style.
+         */
+         public static <xsl:value-of select="name"/>&bl;create<xsl:value-of select="name"/> (java.util.function.Consumer &lt;<xsl:value-of select="name"/>Builder&gt; f)
          {
              return new <xsl:value-of select="name"/>Builder().with(f).create();
          }

@@ -29,7 +29,7 @@ In addition, there are several other ways of creating objects
 A constructor with all the possible properties included is
 
 ```java
-A a = new A(x,y,z);
+A a = new A(x,y);
 ```
 
 #### Fluent with
@@ -42,8 +42,10 @@ A a = new A().withX(x).withY(y);
 
 #### Fluent functional builder
 
+A static builder that takes a functional argument.
+
 ```java
-A a = A.builder( b -> {
+A a = A.createA( b -> {
          b.x = x;
          b.y = y;
          }
