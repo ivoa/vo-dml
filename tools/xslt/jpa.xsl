@@ -159,27 +159,34 @@
       <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
       <xsl:choose>
 <!--     <xsl:message>****jpa attr  ref=<xsl:value-of select="datatype/vodml-ref"/> type="<xsl:value-of select="name($type)"/>" </xsl:message> -->
-      <xsl:when test="name($type) = 'primitiveType'">
-        <xsl:choose>
-          <xsl:when test="number(constraints/maxLength) = -1">
-    @Basic( fetch = FetchType.EAGER, optional = <xsl:apply-templates select="." mode="nullable"/> )
-    @Lob
-    @Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
-          </xsl:when>
-          <xsl:when test="number(constraints/maxLength) > 0">
-    @Basic( optional = <xsl:apply-templates select="." mode="nullable"/> )
-    @Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/>, length = <xsl:value-of select="constraints/maxLength"/> )
-          </xsl:when>
-          <xsl:when test="$type/name = 'datetime'">
-    @Basic( optional = <xsl:apply-templates select="." mode="nullable"/> )
-    @Temporal( TemporalType.TIMESTAMP )
-    @Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
-          </xsl:when>
-          <xsl:otherwise>
-    @Basic( optional = <xsl:apply-templates select="." mode="nullable"/> )
-    @Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
-          </xsl:otherwise>
-        </xsl:choose>
+          <xsl:when test="name($type) = 'primitiveType'">
+              <xsl:choose>
+                  <xsl:when test="xsd:int(multiplicity/maxOccurs) = -1">
+                      <xsl:variable name="tableName">
+                          <xsl:apply-templates select=".." mode="tableName"/><xsl:text>_</xsl:text><xsl:value-of select="$name"/>
+                      </xsl:variable>
+      @ElementCollection
+      @CollectionTable(name = "<xsl:value-of select="$tableName"/>", joinColumns = @JoinColumn(name="containerId") )
+      @Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
+                  </xsl:when>
+                  <xsl:when test="xsd:int(multiplicity/maxOccurs) gt 1">
+      //FIXME - how to do arrays for JPA.
+                  </xsl:when>
+                  <xsl:otherwise>
+                      <xsl:choose>
+                          <xsl:when test="$type/name = 'datetime'">
+      @Basic( optional = <xsl:apply-templates select="." mode="nullable"/> )
+      @Temporal( TemporalType.TIMESTAMP )
+      @Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
+                          </xsl:when>
+                          <xsl:otherwise>
+      @Basic( optional = <xsl:apply-templates select="." mode="nullable"/> )
+      @Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
+                          </xsl:otherwise>
+                      </xsl:choose>
+                  </xsl:otherwise>
+              </xsl:choose>
+
       </xsl:when>
       <xsl:when test="name($type) = 'enumeration'">
         <xsl:call-template name="enumPattern">
@@ -294,7 +301,7 @@
   </xsl:template>
 
   <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="JPAAnnotation">
-    <xsl:variable name="type" select="$models/key('ellookup', datatype/vodml-ref)"/>
+    <xsl:variable name="type" select="$models/key('ellookup', current()/datatype/vodml-ref)"/>
 
     <xsl:choose>
       <xsl:when test="name($type) = 'primitiveType'">
@@ -319,7 +326,7 @@
         <xsl:if test="isOrdered">
     @OrderBy( value = "rank" )
         </xsl:if>
-    @OneToMany( cascade = CascadeType.ALL, fetch = FetchType.LAZY )
+    @OneToMany( cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity=<xsl:value-of select="concat(vf:JavaType(datatype/vodml-ref),'.class')" />)
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>

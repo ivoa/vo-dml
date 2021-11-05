@@ -378,7 +378,18 @@
 
           </xsl:when>
           <xsl:otherwise>
-              <xsl:value-of select="concat($type, ' ',name)" />
+              <xsl:choose>
+                  <xsl:when test="xsd:int(multiplicity/maxOccurs) gt 1">
+                      <xsl:value-of select="concat($type, '[] ',name)" />
+                  </xsl:when>
+                  <xsl:when test="multiplicity/maxOccurs = -1">
+                      <xsl:value-of select="concat('java.util.List',$lt,$type,$gt, ' ',name)" />
+                  </xsl:when>
+                  <xsl:otherwise>
+                      <xsl:value-of select="concat($type, ' ',name)" />
+                  </xsl:otherwise>
+              </xsl:choose>
+
           </xsl:otherwise>
       </xsl:choose>
 
@@ -647,7 +658,17 @@ package <xsl:value-of select="$path"/>;
     <xsl:call-template name="vodmlAnnotation"/>
     <xsl:apply-templates select="." mode="JPAAnnotation"/>
     <xsl:apply-templates select="." mode="JAXBAnnotation"/>
-    protected <xsl:value-of select="$type"/><xsl:if test="number(multiplicity/maxOccurs) gt 1">[]</xsl:if>&bl;<xsl:value-of select="name"/>;
+    <xsl:choose>
+        <xsl:when test="xsd:int(multiplicity/maxOccurs) gt 1">
+    protected <xsl:value-of select="concat($type,'[] ',name)"/>;
+        </xsl:when>
+        <xsl:when test="xsd:int(multiplicity/maxOccurs) lt 0">
+    protected <xsl:value-of select="concat('java.util.List',$lt,$type,$gt,' ',name)"/>;
+        </xsl:when>
+        <xsl:otherwise>
+    protected <xsl:value-of select="concat($type,' ',name)"/>;
+        </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template match="constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="getset">
@@ -685,7 +706,8 @@ package <xsl:value-of select="$path"/>;
         </xsl:variable>
         <xsl:variable name="fulltype">
             <xsl:choose>
-                <xsl:when test="$mult/maxOccurs != 1"><xsl:value-of select="concat('java.util.List',$lt,$type,$gt)"/></xsl:when><!--TODO think about arrays -->
+                <xsl:when test="xsd:int($mult/maxOccurs) =-1"><xsl:value-of select="concat('java.util.List',$lt,$type,$gt)"/></xsl:when><!--TODO think about arrays -->
+                <xsl:when test="xsd:int($mult/maxOccurs)  gt 1"><xsl:value-of select="concat($type,'[]')"/></xsl:when>
                 <xsl:otherwise><xsl:value-of select="$type"/></xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
