@@ -579,7 +579,8 @@ package <xsl:value-of select="$path"/>;
           <xsl:value-of select="vf:JavaType(extends/vodml-ref)"/>
         </xsl:when>
         <xsl:otherwise>
-        <xsl:value-of select="'Object'"/>
+            <xsl:message>Primitive type <xsl:value-of select="name"/> is being represented as a String - in general it is probably best to specialize primitive types with the binding mechanism to get desired representation/behavious</xsl:message>
+            <xsl:value-of select="'String'"/>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
