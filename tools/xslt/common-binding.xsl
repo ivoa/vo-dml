@@ -105,7 +105,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
 
     <xsl:function name="vf:JavaType" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/>
-        <xsl:value-of select="vf:FullJavaType($vodml-ref,false())"/>
+        <xsl:value-of select="vf:FullJavaType($vodml-ref,true())"/>
     </xsl:function>
     <xsl:function name="vf:QualifiedJavaType" as="xsd:string">
     <xsl:param name="vodml-ref" as="xsd:string"/> <!-- assumed to be fully qualified! i.e. also for elements in local model, the prefix is included! -->

@@ -230,17 +230,8 @@
   </xsl:template>
 
     <xsl:template match="objectType|dataType|primitiveType|enumeration" mode="typeimports">
-        <xsl:variable name="vodmlref" select="vf:asvodmlref(.)"/>
-        <xsl:variable name="modelp" select="concat(./ancestor::vo-dml:model/name,':', string-join(reverse(ancestor::package/name),'***'))"/>
-        <xsl:for-each select="distinct-values(extends/vodml-ref|attribute/datatype/vodml-ref|reference/datatype/vodml-ref|composition/datatype/vodml-ref)" >
-<!--           <xsl:message>import <xsl:value-of select="concat(.,' -> ',$modelp, ' ', not(starts-with(.,$modelp)))"/> </xsl:message>-->
-            <xsl:if test="not(starts-with(.,$modelp))">
-                <xsl:call-template name="TypeImport">
-                    <xsl:with-param name="vodml-ref" select="."/>
-                </xsl:call-template>
-            </xsl:if>
-        </xsl:for-each>
-        import javax.persistence.*;
+        <!-- do not import types - always refer to fully qualified - makes life easier -->
+       import javax.persistence.*;
     </xsl:template>
 
 
@@ -857,13 +848,13 @@ package <xsl:value-of select="$path"/>;
     <xsl:if test="not(vf:isSubSetted(vf:asvodmlref(.)))">
     /**
     * Add a <xsl:value-of select="$type"/> to the composition
-    * @param p<xsl:value-of select="$type"/>&bl;<xsl:value-of select="$type"/> to add
+    * @param p&bl;<xsl:value-of select="$type"/> to add
     */
-    public void add<xsl:value-of select="$name"/>(final <xsl:value-of select="$type"/> p<xsl:value-of select="$type"/>) {
+    public void add<xsl:value-of select="$name"/>(final <xsl:value-of select="$type"/> p) {
       if(this.<xsl:value-of select="name"/> == null) {
         this.<xsl:value-of select="name"/> = new ArrayList&lt;&gt;();
       }
-      this.<xsl:value-of select="name"/>.add(p<xsl:value-of select="$type"/>);
+      this.<xsl:value-of select="name"/>.add(p);
     }
     </xsl:if>
   </xsl:template>
