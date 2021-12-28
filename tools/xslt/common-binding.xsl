@@ -284,8 +284,15 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
 
         <xsl:choose>
             <xsl:when test="$models/key('ellookup',$vodml-ref)">
-<!--                <xsl:message>refs <xsl:value-of select="concat ($vodml-ref,' ',count($models//reference/datatype[vodml-ref = $vodml-ref])> 0)"/></xsl:message>-->
-                <xsl:value-of select="count($models//reference/datatype[vodml-ref = $vodml-ref])> 0"/>
+                  <xsl:variable name="hier" as="xsd:string *">
+                      <xsl:sequence>
+                      <xsl:for-each  select="(vf:baseTypes($vodml-ref),$models/key('ellookup',$vodml-ref),vf:subTypes($vodml-ref))">
+                          <xsl:value-of select="vf:asvodmlref(.)"/>
+                      </xsl:for-each>
+                      </xsl:sequence>
+                  </xsl:variable>
+<!--                <xsl:message>refs <xsl:value-of select="concat ($vodml-ref,' ',count($models//reference/datatype[vodml-ref = $hier])> 0,' h=',string-join($hier,','))"/></xsl:message>-->
+                <xsl:value-of select="count($models//reference/datatype[vodml-ref = $hier])> 0"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:message terminate="yes">type '<xsl:value-of select="$vodml-ref"/>' not in considered models</xsl:message>
