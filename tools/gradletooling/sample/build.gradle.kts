@@ -3,7 +3,7 @@
  */
 plugins {
     id("net.ivoa.vo-dml.vodmltools") version "0.2"
-    id ("com.diffplug.spotless") version "5.14.2"
+//    id ("com.diffplug.spotless") version "5.17.1"
 
 }
 
@@ -39,14 +39,14 @@ vodml {
 
 //FIXME spotless not working in composite project build - possibly https://github.com/diffplug/spotless/issues/860
 // use to reformat the generated code nicely.
-spotless {
-    java {
-        target(vodml.outputJavaDir.asFileTree.matching(
-            PatternSet().include("**/*.java")
-        ))
-        googleJavaFormat("1.11.0")
-    }
-}
+//spotless {
+//    java {
+//        target(vodml.outputJavaDir.asFileTree.matching(
+//            PatternSet().include("**/*.java")
+//        ))
+//        googleJavaFormat("1.12.0")
+//    }
+//}
 
 tasks.test {
     useJUnitPlatform()
@@ -62,4 +62,6 @@ dependencies {
     testRuntimeOnly("ch.qos.logback:logback-classic:1.2.3")
 
     testImplementation("org.apache.derby:derby:10.14.2.0")
+    compileOnly("com.google.googlejavaformat:google-java-format:1.12.0")
+
 }

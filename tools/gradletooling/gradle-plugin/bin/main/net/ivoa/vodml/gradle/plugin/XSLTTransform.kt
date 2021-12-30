@@ -63,7 +63,7 @@ abstract class XSLTTransformer( val script: String,  val method: String) {
         if (catalog != null) {
             config.setFeature(ResolverFeature.CATALOG_FILES, listOf(catalog.absolutePath ))
         }
-        config.setFeature(ResolverFeature.URI_FOR_SYSTEM, true) // fall through to URI
+        config.setFeature(ResolverFeature.URI_FOR_SYSTEM, false) // don't automatically use URI as system to prevent surprises
         val catalogResolver = CatalogResolver(config)
         trans.uriResolver = org.xmlresolver.Resolver(catalogResolver)
         trans.transform(StreamSource(vodmlFile), out)

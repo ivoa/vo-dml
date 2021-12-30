@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "net.ivoa.vo-dml"
-version = "0.2"
+version = "0.2.1"
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -123,6 +123,10 @@ tasks.withType<Test>().configureEach {
 tasks.check {
     // Run the functional tests as part of `check`
     dependsOn(functionalTest)
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 

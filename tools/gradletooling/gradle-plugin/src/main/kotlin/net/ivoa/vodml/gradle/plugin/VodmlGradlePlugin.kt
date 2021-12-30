@@ -97,12 +97,12 @@ class VodmlGradlePlugin: Plugin<Project> {
         {
             it.dependsOn.add(vodmlJavaTask)
         }
-        //add the dependencies for JAXB and JPA - using the eclipse implementation
+        //add the dependencies for JAXB and JPA - using the hibernate implementation
        listOf("javax.xml.bind:jaxb-api:2.3.1",
-            "org.glassfish.jaxb:jaxb-runtime:2.3.4",
+            "org.glassfish.jaxb:jaxb-runtime:2.3.5",
 //            "org.eclipse.persistence:org.eclipse.persistence.jpa:3.0.2",  // supports JPA 2.2
 //            "org.eclipse.persistence:org.eclipse.persistence.moxy:3.0.2", //alternative Jaxb runtime...
-             "org.hibernate:hibernate-core:5.5.7.Final"
+             "org.hibernate:hibernate-core:5.6.2.Final"
 //             ,"jakarta.persistence:jakarta.persistence-api:3.0.0"
         ).forEach {
             project.dependencies.addProvider(

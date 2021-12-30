@@ -1,4 +1,4 @@
-VO-DML Gradle Plugin 0.2
+VO-DML Gradle Plugin 0.2.1
 =====================
 
 The gradle plugin is intended to replace all the functionality of the 
@@ -86,3 +86,4 @@ which can then be checked and released in the https://oss.sonatype.org/ GUI.
 ## Changes
 
 * 0.2 java generation changed to cope with STC coords.
+* 0.2.1 minor updates so that proposalDM generation works

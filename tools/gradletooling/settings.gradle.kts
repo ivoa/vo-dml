@@ -1,9 +1,6 @@
 
 pluginManagement {
     repositories {
-        maven {
-            url = uri("https://maven.pkg.github.com/ivoa")
-        }
         gradlePluginPortal()
         mavenCentral()
     }
