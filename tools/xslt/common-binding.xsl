@@ -168,10 +168,10 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
         <xsl:value-of select="$mapping/map:mappedModels/model[name=$modelname]/type-mapping[vodml-id=$vodml-id]/java-type"/>
     </xsl:template>
 
-    <xsl:function name="vf:findmapping" as="xsd:string">
+    <xsl:function name="vf:findmapping" as="element()?"><!-- note allowed empty sequence -->
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:variable name="modelname" select="substring-before($vodml-ref,':')" />
-        <xsl:value-of select="$mapping/map:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/java-type"/>
+        <xsl:copy-of select="$mapping/map:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/java-type"/>
     </xsl:function>
 
     <xsl:function name="vf:hasMapping" as="xsd:boolean">

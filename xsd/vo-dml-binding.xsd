@@ -67,9 +67,14 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9" attributeFormDefaul
 <xsd:complexType name="JavaMapping">
   <xsd:simpleContent>
     <xsd:extension base="JavaName">
-      <xsd:attribute name="jpa-atomic" type="xsd:boolean" default="false"> 
+      <xsd:attribute name="jpa-atomic" type="xsd:boolean" default="false">
         <xsd:annotation>
-           <xsd:documentation>if this is true the type is atomic for JPA (does not appear in persistence.xml)</xsd:documentation>
+          <xsd:documentation>if this is true the type is atomic for JPA (does not appear in persistence.xml)</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="primitive-value-field" type="xsd:string" >
+        <xsd:annotation>
+          <xsd:documentation>if a mapped primitive does not map to a java primitive, then this specifies what the value fieldname is</xsd:documentation>
         </xsd:annotation>
       </xsd:attribute>
     </xsd:extension>
