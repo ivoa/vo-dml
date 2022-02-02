@@ -211,7 +211,7 @@
       public static JAXBContext contextFactory()  throws JAXBException
       {
       <xsl:variable name="packages" as="xsd:string*">
-        <xsl:apply-templates select="." mode="JAXBContext"/>
+        <xsl:apply-templates select="$models" mode="JAXBContext"/>
       </xsl:variable>
          return JAXBContext.newInstance("<xsl:value-of select="string-join($packages,':')"/>" );
       }

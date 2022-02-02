@@ -344,7 +344,7 @@
   </xsl:template>
 
     <xsl:template match="composition[multiplicity/maxOccurs =1]" mode="JPAAnnotation">
-     @OneToOne
+     @OneToOne(cascade = CascadeType.ALL)
   </xsl:template>
 
 
