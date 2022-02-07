@@ -11,6 +11,8 @@ package org.ivoa.vodml.nav;
 
 import org.ivoa.vodml.annotation.VodmlType;
 
+import java.util.Objects;
+
 /**
  *  .
  * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
@@ -34,9 +36,19 @@ public final class VodmlTypeInfo {
      * the kind
      */
     public final VodmlType kind;
-    
-    
-   
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        VodmlTypeInfo that = (VodmlTypeInfo) o;
+        return vodmlRef.equals(that.vodmlRef) && kind == that.kind;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(vodmlRef, kind);
+    }
 
     /**
      * {@inheritDoc}

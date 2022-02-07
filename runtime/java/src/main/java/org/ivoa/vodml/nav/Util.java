@@ -42,7 +42,7 @@ public class Util {
     /**
      * Will find all the references referred to by the vodml-ref in the key of the map and 
      * add them to the corresponding set that is the value of the map
-     * FIXME - this is probably better just looking for classes....
+     *
      * @param modelInstance the vodml model instance to be searched. 
      * @param l the map of Class -&gt; Set correspondences;
      */
@@ -59,9 +59,20 @@ public class Util {
                 if(v.kind == VodmlType.reference) {
 
                     if(classes.contains(o.getClass()))
+
                     {
                         Set s = l.get(o.getClass());
                         s.add(o);
+                    } else if (o.getClass().getSuperclass() != Object.class) //deal with superclasses
+                    {
+                        for ( Class c : classes)
+                        {
+                            if(c.isAssignableFrom(o.getClass())){
+                                Set s = l.get(c);
+                                s.add(o);
+                                break; // IMPL only do the first encountered - this might not be the best - would need vodml level processing logic to do better.
+                            }
+                        }
                     }
                 }
 
