@@ -118,8 +118,8 @@
   things derived from quantity cannot be embedded in the final using model -->
   <xsl:template match="dataType" mode="JPAConverter">
       <!-- https://wiki.eclipse.org/EclipseLink/UserGuide/JPA/Basic_JPA_Development/Entities/Embeddable#Inheritance
+      https://www.eclipse.org/forums/index.php/t/239667/
       claims it is possible to do embeddable inheritance - causes NPE
-
       hibernate does https://stackoverflow.com/questions/29278249/hibernate-embeddable-class-which-extends-another-embeddable-class-properties-->
     <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
     <xsl:if test="vf:hasSubTypes($vodml-ref) or count(vf:baseTypes($vodml-ref))>0">
@@ -138,11 +138,9 @@
              </xsl:for-each>
            </xsl:otherwise>
          </xsl:choose>
-      
 
       }
-
-      }
+     }
     </xsl:if>
   </xsl:template>
 
@@ -150,53 +148,65 @@
   <!-- template attribute : adds JPA annotations for primitive types, data types & enumerations -->
   <!-- Note: this template uses field access and should be used by objectType-s.
   For dataType attributes we (attempt to) use embedded types. -->
-  <xsl:template match="attribute" mode="JPAAnnotation">
-    <xsl:if test="constraint[ends-with(@xsi:type,':NaturalKey')]"><!-- TODO deal with compound keys -->
-      @Id
-    </xsl:if>
-      <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
-      <xsl:variable name="name" select="name"/>
-      <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
-      <xsl:choose>
-<!--     <xsl:message>****jpa attr  ref=<xsl:value-of select="datatype/vodml-ref"/> type="<xsl:value-of select="name($type)"/>" </xsl:message> -->
-          <xsl:when test="name($type) = 'primitiveType'">
-              <xsl:choose>
-                  <xsl:when test="xsd:int(multiplicity/maxOccurs) = -1">
-                      <xsl:variable name="tableName">
-                          <xsl:apply-templates select=".." mode="tableName"/><xsl:text>_</xsl:text><xsl:value-of select="$name"/>
-                      </xsl:variable>
-      @ElementCollection
-      @CollectionTable(name = "<xsl:value-of select="$tableName"/>", joinColumns = @JoinColumn(name="containerId") )
-      @Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
-                  </xsl:when>
-                  <xsl:when test="xsd:int(multiplicity/maxOccurs) gt 1">
-      //FIXME - how to do arrays for JPA.
-                  </xsl:when>
-                  <xsl:otherwise>
-                      <xsl:choose>
-                          <xsl:when test="$type/name = 'datetime'">
-      @Basic( optional = <xsl:apply-templates select="." mode="nullable"/> )
-      @Temporal( TemporalType.TIMESTAMP )
-      @Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
-                          </xsl:when>
-                          <xsl:otherwise>
-      @Basic( optional = <xsl:apply-templates select="." mode="nullable"/> )
-      @Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
-                          </xsl:otherwise>
-                      </xsl:choose>
-                  </xsl:otherwise>
-              </xsl:choose>
+    <xsl:template match="attribute" mode="JPAAnnotation">
+        <xsl:if test="constraint[ends-with(@xsi:type,':NaturalKey')]"><!-- TODO deal with compound keys -->
+            @Id
+        </xsl:if>
+        <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
+        <xsl:variable name="name" select="name"/>
+        <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
+        <xsl:variable name="thisattr"  select="."/>
+        <xsl:choose>
+            <!--     <xsl:message>****jpa attr  ref=<xsl:value-of select="datatype/vodml-ref"/> type="<xsl:value-of select="name($type)"/>" </xsl:message> -->
+            <xsl:when test="name($type) = 'primitiveType'">
+                <xsl:choose>
+                    <xsl:when test="xsd:int(multiplicity/maxOccurs) = -1">
+                        <xsl:variable name="tableName">
+                            <xsl:apply-templates select=".." mode="tableName"/><xsl:text>_</xsl:text><xsl:value-of select="$name"/>
+                        </xsl:variable>
+        @ElementCollection
+        @CollectionTable(name = "<xsl:value-of select="$tableName"/>", joinColumns = @JoinColumn(name="containerId") )
+        @Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
+                    </xsl:when>
+                    <xsl:when test="xsd:int(multiplicity/maxOccurs) gt 1">
+        //FIXME - how to do arrays for JPA.
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when test="$type/name = 'datetime'">
+        @Basic( optional = <xsl:apply-templates select="." mode="nullable"/> )
+        @Temporal( TemporalType.TIMESTAMP )
+        @Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
+                            </xsl:when>
+                            <xsl:otherwise>
+        @Basic( optional = <xsl:apply-templates select="." mode="nullable"/> )
+        @Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
 
-      </xsl:when>
-      <xsl:when test="name($type) = 'enumeration'">
+            </xsl:when>
+            <xsl:when test="name($type) = 'enumeration'">
         <xsl:call-template name="enumPattern">
           <xsl:with-param name="columnName"><xsl:apply-templates select="." mode="columnName"/></xsl:with-param>
         </xsl:call-template>
       </xsl:when>
-      <xsl:when test="name($type) = 'dataType'">
-        <xsl:choose>
+          <xsl:when test="name($type) = 'dataType'">
+          <xsl:choose>
+              <xsl:when test="xsd:int(multiplicity/maxOccurs) = -1">
+                  <xsl:variable name="tableName">
+                      <xsl:apply-templates select=".." mode="tableName"/><xsl:text>_</xsl:text><xsl:value-of select="$name"/>
+                  </xsl:variable>
+      @ElementCollection
+      @CollectionTable(name = "<xsl:value-of select="$tableName"/>", joinColumns = @JoinColumn(name="containerId") )
+      @Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
+              </xsl:when>
+              <xsl:otherwise>
+
+          <xsl:choose>
           <xsl:when test="not(vf:isSubSetted($vodml-ref))">
-          @Embedded
+      @Embedded
               <xsl:variable name="attovers" as="xsd:string*">
               <xsl:for-each select="($type/attribute, vf:baseTypes(vf:asvodmlref($type))/attribute)">
                   <xsl:variable name="attr" select="."/>
@@ -210,27 +220,29 @@
                           <xsl:value-of select="string-join(tokenize(.,'_')[position() != 1],'.')"/>
                       </xsl:variable>
                       <xsl:variable name="colsubs" select="."/>
-                      @AttributeOverride(name="<xsl:value-of select='$attsubst'/>", column = @Column(name="<xsl:value-of select='$colsubs'/>"))
+      @AttributeOverride(name="<xsl:value-of select='$attsubst'/>", column = @Column(name="<xsl:value-of select='$colsubs'/>",  nullable =<xsl:apply-templates select="$thisattr" mode="nullable"/> ))
                       </xsl:variable>
                       <xsl:value-of select="$tmp"/>
                   </xsl:for-each>
               </xsl:for-each>
               </xsl:variable>
-              @AttributeOverrides( {
+      @AttributeOverrides( {
                      <xsl:value-of select="string-join($attovers,concat(',',$cr))"/>
-                     })
+             })
                 </xsl:when>
-                <xsl:otherwise>
-                @Transient
+                <xsl:otherwise>//subsetted
+      @Transient
                 </xsl:otherwise>
-              </xsl:choose>
-           </xsl:when>
-            <xsl:otherwise>
-            <xsl:message> ++++++++  ERROR  +++++++ on attribute=<xsl:value-of select="name"/> type=<xsl:value-of select="name($type)"/> is not supported.</xsl:message>
-      // TODO    [NOT_SUPPORTED_ATTRIBUTE]
-            </xsl:otherwise>
+               </xsl:choose>
+              </xsl:otherwise>
           </xsl:choose>
-        </xsl:template>
+          </xsl:when>
+            <xsl:otherwise>
+                <xsl:message> ++++++++  ERROR  +++++++ on attribute=<xsl:value-of select="name"/> type=<xsl:value-of select="name($type)"/> is not supported.</xsl:message>
+        // TODO    [NOT_SUPPORTED_ATTRIBUTE]
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
 
     <xsl:template match="dataType" mode="attrovercols" as="xsd:string*">
         <xsl:param name="prefix" as="xsd:string"/>
@@ -251,6 +263,7 @@
             </xsl:choose>
         </xsl:for-each>
     </xsl:template>
+
     <xsl:template match="primitiveType" mode="attrovercols" as="xsd:string*">
         <xsl:param name="prefix" as="xsd:string"/>
 <!--        <xsl:message>** attrovercols <xsl:value-of select="concat(name(),' ',name,' *** ',$prefix)"/></xsl:message>-->
