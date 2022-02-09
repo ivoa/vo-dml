@@ -6,7 +6,7 @@ plugins {
     signing
 }
 group = "org.javastro.ivoa.vo-dml"
-version = "0.2-SNAPSHOT"
+version = "0.1.1"
 
 
 dependencies {
@@ -43,8 +43,7 @@ tasks.test {
 
 tasks.named("sourcesJar") //explicitly add the fact that sources jar depends on the generation.
 {
- // don't do the generation yet - might not be the best representation
- //    dependsOn(tasks.named("xjc"))
+     dependsOn(tasks.named("xjc"))
 }
 
 nexusPublishing {

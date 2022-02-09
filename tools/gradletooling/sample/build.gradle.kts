@@ -2,7 +2,7 @@
  * 
  */
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.2"
+    id("net.ivoa.vo-dml.vodmltools") version "0.2.2"
 //    id ("com.diffplug.spotless") version "5.17.1"
 
 }
@@ -53,8 +53,6 @@ tasks.test {
 }
 
 dependencies {
-    implementation("org.javastro.ivoa.vo-dml:vodml-runtime:0.1")
-//    implementation("org.javastro:ivoa-entities:0.9.3-SNAPSHOT")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.1")
 

@@ -18,4 +18,4 @@ The "official" processing engine is driven by [ant](https://ant.apache.org) as d
 [README](./tools/README.txt). There is an alternative [gradle](https://gradle.org) driven engine
 [being developed](./tools/gradletooling), with more details [here](./tools/gradletooling/ReadMe.md)
 
-_note that this has been moved from https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/_
+_note that this project was moved from https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/_

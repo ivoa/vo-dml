@@ -30,6 +30,7 @@ import javax.xml.transform.stream.StreamSource
      @get:OutputDirectory
      val docDir : DirectoryProperty = project.objects.directoryProperty()
 
+
      @TaskAction
      fun doValidation() {
          logger.info("Validating VO-DML files ${vodmlFiles.files.joinToString { it.name }}")
@@ -48,6 +49,8 @@ import javax.xml.transform.stream.StreamSource
 
          val schematron = Schematron(StreamSource(this::class.java.getResourceAsStream("/xsd/vo-dml-v1.0.sch.xml")), null,
              transformerFactory, HashMap())
+
+
 
          vodmlFiles.forEach{
              val shortname = it.nameWithoutExtension

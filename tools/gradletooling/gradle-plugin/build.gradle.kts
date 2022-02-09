@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "net.ivoa.vo-dml"
-version = "0.2.1"
+version = "0.2.2"
 
 repositories {
     // Use Maven Central for resolving dependencies.

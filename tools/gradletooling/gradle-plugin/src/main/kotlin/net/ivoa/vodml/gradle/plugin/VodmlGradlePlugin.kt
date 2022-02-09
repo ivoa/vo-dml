@@ -62,6 +62,7 @@ class VodmlGradlePlugin: Plugin<Project> {
             task.docDir.set(extension.outputDocDir)
             task.vodmlDir.set(extension.vodmlDir)
             task.catalog.set(extension.catalogFile)
+            task.outputs.upToDateWhen { false } //IMPL because this is mainly an info task at the moment -i.e. results shown on stdout
         }
         // register the Java generation task
         val vodmlJavaTask: TaskProvider<VodmlJavaTask> = project.tasks.register(VODML_JAVA_TASK_NANE,VodmlJavaTask::class.java) { task ->
@@ -98,12 +99,13 @@ class VodmlGradlePlugin: Plugin<Project> {
             it.dependsOn.add(vodmlJavaTask)
         }
         //add the dependencies for JAXB and JPA - using the hibernate implementation
-       listOf("javax.xml.bind:jaxb-api:2.3.1",
+       listOf("org.javastro.ivoa.vo-dml:vodml-runtime:0.1.1",
+            "javax.xml.bind:jaxb-api:2.3.1",
             "org.glassfish.jaxb:jaxb-runtime:2.3.5",
-//            "org.eclipse.persistence:org.eclipse.persistence.jpa:3.0.2",  // supports JPA 2.2
+//             "org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.10",  // supports JPA 2.2
 //            "org.eclipse.persistence:org.eclipse.persistence.moxy:3.0.2", //alternative Jaxb runtime...
-             "org.hibernate:hibernate-core:5.6.2.Final"
-//             ,"jakarta.persistence:jakarta.persistence-api:3.0.0"
+             "org.hibernate:hibernate-core:5.6.5.Final"
+//             ,"jakarta.persistence:jakarta.persistence-api:3.0.0" // dont use until go to hibernate 6
         ).forEach {
             project.dependencies.addProvider(
                 JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME,

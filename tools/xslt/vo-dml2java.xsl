@@ -215,7 +215,7 @@
       <xsl:variable name="file" select="concat($output_root, '/', $dir, '/', name, '.java')"/>
 
     <!-- open file for this class -->
-      <xsl:message >Writing to Class file <xsl:value-of select="$file"/> base=<xsl:value-of select="vf:baseTypes($vodml-ref)/name"/> haschildren=<xsl:value-of select="vf:hasSubTypes($vodml-ref)"/></xsl:message>
+      <xsl:message >Writing to Class file <xsl:value-of select="$file"/> base=<xsl:value-of select="vf:baseTypes($vodml-ref)/name"/> haschildren=<xsl:value-of select="vf:hasSubTypes($vodml-ref)"/> contained=<xsl:value-of select="vf:isContained($vodml-ref)"/> referredto=<xsl:value-of select="vf:referredTo($vodml-ref)"/> </xsl:message>
       
       <xsl:result-document href="{$file}">
         <xsl:apply-templates select="." mode="class">

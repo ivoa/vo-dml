@@ -145,6 +145,11 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
         <xsl:value-of select="concat($el/ancestor::vo-dml:model/name,':',$el/vodml-id/text())"/>
     </xsl:function>
 
+    <xsl:function name="vf:isOptional" as="xsd:boolean">
+        <xsl:param name="el" as="element()"/>
+        <xsl:sequence select="number($el/multiplicity/minOccurs) = 0 and number($el/multiplicity/maxOccurs) = 1" />
+    </xsl:function>
+
     <!-- this function should be avoided as it only returns a copy of the asked for element - i.e. the element is not in context of model -->
    <xsl:function name="vf:Element4vodml-ref" as="element()">
       <xsl:param name="vodml-ref" as="xsd:string" />
