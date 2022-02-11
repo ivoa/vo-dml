@@ -4,6 +4,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import java.util.concurrent.TimeUnit
 
@@ -26,6 +27,9 @@ import java.util.concurrent.TimeUnit
      @get:OutputDirectory
      val docDir : DirectoryProperty = project.objects.directoryProperty()
 
+     @Input @Optional
+     val modelsToDocument : Property<String> = project.objects.property(String::class.java)
+
      @TaskAction
      fun doDocumentation() {
          logger.info("Documenting VO-DML files ${vodmlFiles.files.joinToString { it.name }}")
@@ -37,6 +41,10 @@ import java.util.concurrent.TimeUnit
              Vodml2Html.doTransform(it.absoluteFile, outfile.get().asFile)
              outfile = docDir.file(shortname +".graphml")
              Vodml2Gml.doTransform(it.absoluteFile, emptyMap(), catalogFile.get().asFile, outfile.get().asFile)
+             outfile = docDir.file(shortname +"_desc.tex" )
+             val params = if (modelsToDocument.isPresent) mapOf("modelsToDocument" to modelsToDocument.get()) else emptyMap()
+             Vodml2Latex.doTransform(it.absoluteFile, params, catalogFile.get().asFile, outfile.get().asFile)
+             logger.info("doing graphviz generation")
              outfile = docDir.file(shortname +".gvd")
              Vodml2Gvd.doTransform(it.absoluteFile, outfile.get().asFile)
              val proc = ProcessBuilder(listOf(

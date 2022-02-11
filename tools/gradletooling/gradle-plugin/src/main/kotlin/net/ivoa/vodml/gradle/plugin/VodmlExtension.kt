@@ -3,6 +3,8 @@ package net.ivoa.vodml.gradle.plugin
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 import javax.inject.Inject
 
 
@@ -21,6 +23,7 @@ open class VodmlExtension @Inject constructor(objects: ObjectFactory, layout: Pr
     override val generateEpisode = objects.property(Boolean::class.java).convention(false)
     override val bindingFiles = objects.fileCollection()
     override val catalogFile = objects.fileProperty().convention(layout.projectDirectory.file("catalog.xml"))
+    override val modelsToDocument: Property<String> = objects.property(String::class.java)
 
 //    override val options = objects.listProperty(String::class.java)
 //    override val markGenerated = objects.property(Boolean::class.java).convention(false)
@@ -36,6 +39,7 @@ open class VodmlExtension @Inject constructor(objects: ObjectFactory, layout: Pr
                 defaultPackage.convention(this@VodmlExtension.defaultPackage)
                 generateEpisode.convention(this@VodmlExtension.generateEpisode)
                 catalogFile.convention(this@VodmlExtension.catalogFile)
+                modelsToDocument.convention("");
             }
         }
 

@@ -3,6 +3,7 @@ package net.ivoa.vodml.gradle.plugin
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 
 
@@ -21,6 +22,7 @@ interface VodmlExtensionGroup {
     val generateEpisode: Property<Boolean>
     val bindingFiles: ConfigurableFileCollection
     val catalogFile: RegularFileProperty
+    val modelsToDocument: Property<String>//use the model prefixes to specify which models have cross references in documentation (separate models with ,)
 //    val options: ListProperty<String>
 //    val markGenerated: Property<Boolean>
 

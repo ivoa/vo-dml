@@ -641,7 +641,7 @@ package <xsl:value-of select="$path"/>;
   </xsl:template>
 
 
-  <xsl:template match="attribute" mode="declare">
+  <xsl:template match="attribute|reference" mode="declare">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
     /** 
     * <xsl:apply-templates select="." mode="desc" /> : Attribute <xsl:value-of select="name"/> : multiplicity <xsl:apply-templates select="multiplicity" mode="tostring"/>

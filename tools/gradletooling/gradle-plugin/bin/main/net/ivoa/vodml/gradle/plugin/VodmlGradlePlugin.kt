@@ -50,6 +50,7 @@ class VodmlGradlePlugin: Plugin<Project> {
             it.docDir.set(extension.outputDocDir)
             it.vodmlDir.set(extension.vodmlDir)
             it.catalogFile.set(extension.catalogFile)
+            it.modelsToDocument.set(extension.modelsToDocument)
         }
         // register the validate task
         project.tasks.register(VODML_VAL_TASK_NANE,VodmlValidateTask::class.java) { task ->
