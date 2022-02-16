@@ -27,7 +27,7 @@ import javax.xml.transform.stream.StreamSource
      @get:InputFile
      val catalog: RegularFileProperty = project.objects.fileProperty()
 
-     @get:OutputDirectory
+     @get:[OutputDirectory]
      val docDir : DirectoryProperty = project.objects.directoryProperty()
 
 

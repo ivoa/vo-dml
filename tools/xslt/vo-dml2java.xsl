@@ -641,7 +641,8 @@ package <xsl:value-of select="$path"/>;
   </xsl:template>
 
 
-  <xsl:template match="attribute|reference" mode="declare">
+
+  <xsl:template match="attribute" mode="declare">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
     /** 
     * <xsl:apply-templates select="." mode="desc" /> : Attribute <xsl:value-of select="name"/> : multiplicity <xsl:apply-templates select="multiplicity" mode="tostring"/>
@@ -875,7 +876,7 @@ package <xsl:value-of select="$path"/>;
 
 
 
-  <xsl:template match="reference" mode="declare">
+  <xsl:template match="reference" mode="declare"><!-- IMPL could be the same as attribute - actually more usefully so if reference allowed to have >1 multiplicity -->
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
     /** 
     * ReferenceObject <xsl:value-of select="name"/> :

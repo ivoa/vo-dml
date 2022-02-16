@@ -1,8 +1,8 @@
-VO-DML Gradle Plugin 0.2.2
+VO-DML Gradle Plugin 0.3.0
 ==========================
 
 The gradle plugin is intended to replace all the functionality of the 
-previous ant based build, but to use gradle conventions to make the configuration
+previous ant-based build, but to use gradle conventions to make the configuration
 easier, as well as take advantage of the dependency management features and maven repositories.
 
 The general idea is that all that should be necessary to set up a new project is
@@ -12,7 +12,7 @@ The general idea is that all that should be necessary to set up a new project is
 
 ```kotlin
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.2.2"
+    id("net.ivoa.vo-dml.vodmltools") version "0.3.0"
 }
 ```
 3. create the basic catalog and binding files for the model (see below in the configuration section) 
@@ -30,7 +30,7 @@ dependencies along with the necessary JAXB and JPA libraries.
 ## configurable plugin properties
 
 * vodmlDir - the default is `src/main/vo-dml`
-* vodmlFiles - this is set by default to be all the `*.vo-dml.xml` files in the vodmlDir, but can be indificutally set
+* vodmlFiles - this is set by default to be all the `*.vo-dml.xml` files in the vodmlDir, but can be individually set
 * catalogFile - the default is `catalog.xml` and such a file is necessary even when the vodml files are in default place
   as the rest of the tooling is designed to only use the filename for inclusions and references.
 ```xml
@@ -62,6 +62,18 @@ This is a sample file for mapping VO-DML models to XSD or Java using the gradle 
 * outputJavaDir - where the generated Java is created - the default is `build/generated/sources/vodml/java/` and it should not 
   be necessary to ever alter this as gradle will integrate this automatically into the various source paths.
 
+## VODSL support
+
+There is a `vodslToVodml` task that will convert models authored in [vodsl](https://github.com/pahjbo/vodsl) into standard VO-DML.
+
+the configurable properties within the vodml extension are;
+
+* vodslDir - the default is `src/main/vodsl`
+* vodslFiles - this is set by default to be all the `*.vodsl` files in the vodslDir, but can be individually set.
+
+the task will write the VO-DML files into the vodmlDir
+
+
 ## Publishing the Java runtime to Maven Central
 
 The runtime is published to the `org.javastro` owned part of the maven central repository 
@@ -80,3 +92,4 @@ which can then be checked and released in the https://oss.sonatype.org/ GUI.
 * 0.2 java generation changed to cope with STC coords.
 * 0.2.1 minor updates so that proposalDM generation works
 * 0.2.2 make sure that the jpa override will work for mapped primitives - added extra attribute on the mapping
+* 0.3.0 add the vodslToVodml task

@@ -23,6 +23,8 @@ interface VodmlExtensionGroup {
     val bindingFiles: ConfigurableFileCollection
     val catalogFile: RegularFileProperty
     val modelsToDocument: Property<String>//use the model prefixes to specify which models have cross references in documentation (separate models with ,)
+    val vodslDir :  DirectoryProperty
+    val vodslFiles : ConfigurableFileCollection
 //    val options: ListProperty<String>
 //    val markGenerated: Property<Boolean>
 

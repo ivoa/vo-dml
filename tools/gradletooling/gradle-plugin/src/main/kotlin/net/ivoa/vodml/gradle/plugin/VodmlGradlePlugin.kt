@@ -24,6 +24,7 @@ class VodmlGradlePlugin: Plugin<Project> {
         const val VODML_DOC_TASK_NANE = "vodmlDoc"
         const val VODML_VAL_TASK_NANE = "vodmlValidate"
         const val VODML_JAVA_TASK_NANE = "vodmlGenerateJava"
+        const val VODML_VODSL_TASK_NAME = "vodslToVodml"
     }
     override fun apply(project: Project) {
         project.logger.info("Applying $VODML_PLUGIN_ID to project ${project.name}")
@@ -65,6 +66,18 @@ class VodmlGradlePlugin: Plugin<Project> {
             task.catalog.set(extension.catalogFile)
             task.outputs.upToDateWhen { false } //IMPL because this is mainly an info task at the moment -i.e. results shown on stdout
         }
+
+
+        project.tasks.register(VODML_VODSL_TASK_NAME, VodslTask::class.java) { task ->
+            task.description = "convert VODSL to VO-DML"
+            task.vodslFiles.setFrom(if (extension.vodslFiles.isEmpty)
+                extension.vodslDir.asFileTree.matching(PatternSet().include("**/*.vodsl"))
+            else
+                extension.vodslFiles
+            )
+            task.vodmlDir.set(extension.vodmlDir)
+        }
+
         // register the Java generation task
         val vodmlJavaTask: TaskProvider<VodmlJavaTask> = project.tasks.register(VODML_JAVA_TASK_NANE,VodmlJavaTask::class.java) { task ->
             task.description = "Generate Java classes from VO-DML models"

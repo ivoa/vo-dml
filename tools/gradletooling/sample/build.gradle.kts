@@ -2,15 +2,15 @@
  * 
  */
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.2.3"
+    id("net.ivoa.vo-dml.vodmltools") version "0.3.0"
 //    id ("com.diffplug.spotless") version "5.17.1"
 
 }
 
 
 repositories {
-    mavenCentral()
     mavenLocal() // TODO remove this when releasing - just here to pick up local vodml-runtime
+    mavenCentral()
 }
 
 group = "net.ivoa.vo-dml"

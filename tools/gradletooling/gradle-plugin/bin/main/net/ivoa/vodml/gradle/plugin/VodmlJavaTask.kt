@@ -43,8 +43,5 @@ import org.gradle.api.tasks.*
              ),
                  catalogFile.get().asFile, outfile.get().asFile)
          }
-
      }
-
-
  }

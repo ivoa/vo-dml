@@ -92,7 +92,7 @@ public class AbstractTest {
           props.put("hibernate.hbm2ddl.schema-generation.script.append", "false");
           
           props.put("javax.persistence.schema-generation.create-source", "metadata");
-          props.put("javax.persistence.schema-generation.database.action", "drop-and-create");
+          props.put("javax.persistence.schema-generation.database.action", "create");
           props.put("javax.persistence.schema-generation.scripts.action", "drop-and-create");
           props.put("javax.persistence.jdbc.user", "");
     //        props.put(PersistenceUnitProperties.CACHE_SHARED_, "false");

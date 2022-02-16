@@ -1,6 +1,8 @@
 package net.ivoa.vodml.gradle.plugin
 
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -24,6 +26,10 @@ open class VodmlExtension @Inject constructor(objects: ObjectFactory, layout: Pr
     override val bindingFiles = objects.fileCollection()
     override val catalogFile = objects.fileProperty().convention(layout.projectDirectory.file("catalog.xml"))
     override val modelsToDocument: Property<String> = objects.property(String::class.java)
+    override val vodslDir: DirectoryProperty = objects.directoryProperty().convention(layout.projectDirectory.dir("src/main/vodsl"))
+    override val vodslFiles = objects.fileCollection()
+
+
 
 //    override val options = objects.listProperty(String::class.java)
 //    override val markGenerated = objects.property(Boolean::class.java).convention(false)
@@ -39,7 +45,8 @@ open class VodmlExtension @Inject constructor(objects: ObjectFactory, layout: Pr
                 defaultPackage.convention(this@VodmlExtension.defaultPackage)
                 generateEpisode.convention(this@VodmlExtension.generateEpisode)
                 catalogFile.convention(this@VodmlExtension.catalogFile)
-                modelsToDocument.convention("");
+                modelsToDocument.convention("")
+                vodslDir.convention(this@VodmlExtension.vodslDir)
             }
         }
 

@@ -1,6 +1,7 @@
 
 pluginManagement {
     repositories {
+        mavenLocal()
         gradlePluginPortal()
         mavenCentral()
     }
@@ -10,6 +11,7 @@ pluginManagement {
 // == Define locations for components ==
 dependencyResolutionManagement {
     repositories {
+        mavenLocal()
         mavenCentral()
     }
 
