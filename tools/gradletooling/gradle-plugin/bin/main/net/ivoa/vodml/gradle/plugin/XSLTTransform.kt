@@ -28,6 +28,9 @@ abstract class XSLTTransformer( val script: String,  val method: String) {
     fun doTransform(vodmlFile: File,  output: File) {
         doTransform(vodmlFile,  emptyMap(), null, output)
     }
+    fun doTransform(vodmlFile: File,  params: Map<String,String> ,output: File) {
+        doTransform(vodmlFile, params, null, output)
+    }
     fun doTransform(vodmlFile: File, params: Map<String,String>, catalog: File?, output: File) {
         logger.info("doing $script transform with params")
         params.forEach{

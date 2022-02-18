@@ -1,4 +1,4 @@
-VO-DML Gradle Plugin 0.3.0
+VO-DML Gradle Plugin 0.3.1
 ==========================
 
 The gradle plugin is intended to replace all the functionality of the 
@@ -12,7 +12,7 @@ The general idea is that all that should be necessary to set up a new project is
 
 ```kotlin
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.3.0"
+    id("net.ivoa.vo-dml.vodmltools") version "0.3.1"
 }
 ```
 3. create the basic catalog and binding files for the model (see below in the configuration section) 
@@ -92,4 +92,4 @@ which can then be checked and released in the https://oss.sonatype.org/ GUI.
 * 0.2 java generation changed to cope with STC coords.
 * 0.2.1 minor updates so that proposalDM generation works
 * 0.2.2 make sure that the jpa override will work for mapped primitives - added extra attribute on the mapping
-* 0.3.0 add the vodslToVodml task
+* 0.3.1 add the vodslToVodml task (0.3.0 would not publish because of SNAPSHOT dependency)

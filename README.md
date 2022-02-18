@@ -14,8 +14,11 @@ The various subdirectories
 * [tools](./tools)    : All resources required to process VO-DML files
 * [runtime](./runtime) : support code for using code generated from models in various languages
 
-The "official" processing engine is driven by [ant](https://ant.apache.org) as described in the tools directory
-[README](./tools/README.txt). There is an alternative [gradle](https://gradle.org) driven engine
-[being developed](./tools/gradletooling), with more details [here](./tools/gradletooling/ReadMe.md)
+The most up to date way of processing models is the [gradle](https://gradle.org) driven engine
+[in tools/gradletooling directory](./tools/gradletooling), with more details on its use [here](./tools/gradletooling/ReadMe.md)
+
+The old processing engine driven by [ant](https://ant.apache.org) is still available and is described in the tools directory
+[README](./tools/README.txt).
+
 
 _note that this project was moved from https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/_
