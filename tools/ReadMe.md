@@ -5,7 +5,11 @@ The gradle plugin is intended to replace all the functionality of the
 previous ant-based build, but to use gradle conventions to make the configuration
 easier, as well as take advantage of the dependency management features and maven repositories.
 
-The general idea is that all that should be necessary to set up a new project is
+Note that it is not necessary to check-out this vodml repository, but 
+use the feature that gradle can automatically download dependencies. 
+So, in general, a new data model should be started in its own git repository and configured
+as below.
+
 
 1. Install gradle (even this is not strictly necessary if you use the top level `gradlew` command - though  gradle installation is needed if working directly in some of the sub-projects)
 2. Edit a `build.gradle.kts` file with reference to the plugin
@@ -109,3 +113,5 @@ which can then be checked and released in the https://oss.sonatype.org/ GUI.
 * 0.2.2 make sure that the jpa override will work for mapped primitives - added extra attribute on the mapping
 * 0.3.1 add the vodslToVodml task (0.3.0 would not publish because of SNAPSHOT dependency)
 * 0.3.2 add the XmiTask type
+
+_TODO - there is still some information in the [README.txt](./README.txt) file that should be incorporated in these instructions_
