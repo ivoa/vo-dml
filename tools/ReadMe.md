@@ -5,8 +5,7 @@ The gradle plugin is intended to replace all the functionality of the
 previous ant-based build, but to use gradle conventions to make the configuration
 easier, as well as take advantage of the dependency management features and maven repositories.
 
-Note that it is not necessary to check-out this vodml repository, but 
-use the feature that gradle can automatically download dependencies. 
+Note that it is not necessary to check-out this vodml repository as the plugin will be downloaded automatically from the gradle repository. 
 So, in general, a new data model should be started in its own git repository and configured
 as below.
 
