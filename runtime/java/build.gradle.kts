@@ -92,11 +92,15 @@ publishing {
     }
 }
 
+println ("java property skipSigning= " + project.hasProperty("skipSigning"))
 
 signing {
     setRequired { !project.version.toString().endsWith("-SNAPSHOT") && !project.hasProperty("skipSigning") }
-    useGpgCmd()
-    sign(publishing.publications["mavenJava"])
+
+    if (!project.hasProperty("skipSigning")) {
+        useGpgCmd()
+        sign(publishing.publications["mavenJava"])
+    }
 }
 //do not generate extra load on Nexus with new staging repository if signing fails
 tasks.withType<io.github.gradlenexus.publishplugin.InitializeNexusStagingRepository>().configureEach{

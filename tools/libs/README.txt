@@ -1,3 +1,6 @@
+FIXME - this libs directory can be deleted once the gradle tool is dominant
+
+
 Laurent Bourges - Nov 27, 2012
 
 ---------------------------------------

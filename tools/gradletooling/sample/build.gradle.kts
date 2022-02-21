@@ -1,8 +1,10 @@
+import org.gradle.kotlin.dsl.support.classFilePathCandidatesFor
+
 /*
  * 
  */
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.3.1"
+    id("net.ivoa.vo-dml.vodmltools") version "0.3.2"
 //    id ("com.diffplug.spotless") version "5.17.1"
 
 }
@@ -35,6 +37,18 @@ vodml {
     )
 
     catalogFile.set(project.file("../../catalog.xml"))
+}
+
+
+
+/*
+below is an example of how to create a task to do the UML XMI to VODML
+*/
+tasks.register("UmlToVodml", net.ivoa.vodml.gradle.plugin.XmiTask::class.java) {
+    xmiScript.set("xmi2vo-dml_MD_CE_12.1.xsl") // the conversion script
+    xmiFile.set(file("../../../models/ivoa/vo-dml/IVOA-v1.0_MD12.1.xml")) //the UML XMI to convert
+    vodmlFile.set(file("test.vo-dml.xml")) // the output VO-DML file.
+    description = "convert UML to VO-DML"
 }
 
 //FIXME spotless not working in composite project build - possibly https://github.com/diffplug/spotless/issues/860
