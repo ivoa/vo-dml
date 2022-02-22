@@ -1,4 +1,4 @@
-VO-DML Gradle Plugin 0.3.2
+VO-DML Gradle Plugin 0.3.3
 ==========================
 
 The gradle plugin is intended to replace all the functionality of the 
@@ -15,7 +15,7 @@ as below.
 
 ```kotlin
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.3.2"
+    id("net.ivoa.vo-dml.vodmltools") version "0.3.3"
 }
 ```
 3. create the basic catalog and binding files for the model (see below in the configuration section) 
@@ -24,7 +24,7 @@ If you have the VO-DML files in the default place (see [sample build file](gradl
 there should be 3 tasks
 
 * vodmlValidate - runs validation on the models.
-* vodmlDoc - generate standard documentation.
+* vodmlDoc - generate standard documentation. This will produce a model diagram, latex and html formatted documentation
 * vodmlGenerateJava - generate java classes. See [generated code guide](JavaCodeGeneration.md) for details of how to use the generated java code.
 
 The generated Java code depends on the VO-DML java runtime library, which the plugin will automatically add to the
@@ -112,5 +112,6 @@ which can then be checked and released in the https://oss.sonatype.org/ GUI.
 * 0.2.2 make sure that the jpa override will work for mapped primitives - added extra attribute on the mapping
 * 0.3.1 add the vodslToVodml task (0.3.0 would not publish because of SNAPSHOT dependency)
 * 0.3.2 add the XmiTask type
+* 0.3.3 bugfix for html document generation
 
 _TODO - there is still some information in the [README.txt](./README.txt) file that should be incorporated in these instructions_

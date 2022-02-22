@@ -4,7 +4,7 @@ import org.gradle.kotlin.dsl.support.classFilePathCandidatesFor
  * 
  */
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.3.2"
+    id("net.ivoa.vo-dml.vodmltools") version "0.3.3"
 //    id ("com.diffplug.spotless") version "5.17.1"
 
 }

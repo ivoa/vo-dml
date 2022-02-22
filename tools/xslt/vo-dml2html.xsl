@@ -68,8 +68,107 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 <title>
 <xsl:value-of select="title"/>
 </title>
-    <link rel="stylesheet" href="http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/style/ivoa_wg.css" type="text/css"/>
-    <link rel="stylesheet" href="http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/style/xmi.css" type="text/css"/>
+    <link rel="stylesheet" href="https://www.ivoa.net/misc/ivoa_wd.css" type="text/css"/>
+    <style type="text/css">
+
+      .table-title {
+      background-color:#9999cc;
+      color : #ffffff;
+      font-family : Verdana, Helvetica;
+      font-size : 12pt;
+      font-weight : bold;
+      }
+
+      .objecttype-title {
+      background-color:#9999cc;
+      color : #ffffff;
+      font-family : Verdana, Helvetica;
+      font-size : 12pt;
+      font-weight : bold;
+      }
+
+      .objecttype-name {
+      background-color:#ffffe0;
+      color : #6633cc;
+      font-family : Verdana, Helvetica;
+      font-size : 12pt;
+      font-weight : bold;
+      }
+
+
+      .datatype-title {
+      background-color:#9999cc;
+      color : #ffffff;
+      font-family : Verdana, Helvetica;
+      font-size : 12pt;
+      font-weight : bold;
+      }
+
+      .datatype-name {
+      background-color:#ffffe0;
+      color : #6633cc;
+      font-family : Verdana, Helvetica;
+      font-size : 12pt;
+      font-weight : bold;
+      font-style : italic;
+      }
+
+      .info-title {
+      background-color:#f0f0f0;
+      color : #888888;
+      font-family : Verdana, Helvetica;
+      font-size : 11pt;
+      font-weight : bold;
+      text-align : left;
+      }
+
+      .info {
+      background-color:#f0f0f0;
+      color : #000000;
+      font-family : Verdana, Helvetica;
+      font-size : 10pt;
+      text-align : left;
+      }
+
+
+      .objecttype-feature {
+      background-color:#f0f0f0;
+      color : #848484;
+      font-family : Verdana, Helvetica;
+      font-size : 12pt;
+      font-weight : bold;
+      text-align : left;
+      }
+
+      .feature-heading {
+      color : #000099;
+      background-color:#ffffe0;
+      font-family : Verdana, Helvetica;
+      font-weight : bold;
+      font-size : 10pt;
+      }
+
+      .feature-detail {
+      color : #000000;
+      background-color:#ffffff;
+      font-family : Verdana, Helvetica;
+      font-size : 10pt;
+      text-align : left;
+      }
+
+      .datatype {
+      color : blue;
+      }
+
+
+      .index-title {
+      color : #000080;
+      font-family : Verdana, Helvetica;
+      font-size : 12pt;
+      font-weight : bold;
+      }
+
+    </style>
 </head>
 <body>
   
@@ -262,7 +361,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         </xsl:if>
       </xsl:element>
       <xsl:if test="$graphviz_map">
-        <xsl:value-of select="$graphviz_map"/>
+        <xsl:copy-of select="document($graphviz_map)"/>
       </xsl:if>
   </xsl:template>
   

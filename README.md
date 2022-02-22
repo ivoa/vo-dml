@@ -7,11 +7,11 @@ language.
 
 The various subdirectories
 
-* [doc](./doc)      : The IVOA standard document source
+* [doc](./doc)      : The IVOA standard document source.
 * [models](./models)   : The core IVOA data model along with a small example model.
-* [xsd](./xsd)      : XML schemas
+* [xsd](./xsd)      : XML schemas associated with VO-DML.
 * [templates](./templates): UML tool metamodel templates for various tools.
-* [tools](./tools)    : All resources required to process VO-DML files
+* [tools](./tools)    : All resources required to process VO-DML files.
 * [runtime](./runtime) : support code for using code generated from models in various languages
 
 The most up to date way of processing VO-DML models is to use the [gradle](https://gradle.org) driven engine
