@@ -1,5 +1,5 @@
-VO-DML Gradle Plugin 0.3.3
-==========================
+Using the VO-DML Gradle Plugin 0.3.3
+================================
 
 The gradle plugin is intended to replace all the functionality of the 
 previous ant-based build, but to use gradle conventions to make the configuration
@@ -10,7 +10,7 @@ So, in general, a new data model should be started in its own git repository and
 as below.
 
 
-1. Install gradle (even this is not strictly necessary if you use the top level `gradlew` command - though  gradle installation is needed if working directly in some of the sub-projects)
+1. [Install gradle](https://gradle.org/install/) 
 2. Edit a `build.gradle.kts` file with reference to the plugin
 
 ```kotlin
@@ -20,7 +20,7 @@ plugins {
 ```
 3. create the basic catalog and binding files for the model (see below in the configuration section) 
 
-If you have the VO-DML files in the default place (see [sample build file](gradletooling/sample/build.gradle.kts) for some more hints on how that can be configured), 
+There is nothing else to do if the VO-DML files in the default place (see [sample build file](gradletooling/sample/build.gradle.kts) for some more hints on how that can be configured). 
 there should be 3 tasks
 
 * vodmlValidate - runs validation on the models.
@@ -79,7 +79,7 @@ the task will write the VO-DML files into the vodmlDir
 ## XMI support
 
 As there are several UML tools and the XMI produced by each is slightly different,
-there is not a specific XMI to VO-DML task, but rather a `net.ivoa.vodml.gradle.plugin.XmiTask`
+there is not a specific XMI to VO-DML task, but rather a base `net.ivoa.vodml.gradle.plugin.XmiTask`
 that can be customized with the correct XSLT in the `build.gradle.kts`
 
 ```kotlin
@@ -91,18 +91,7 @@ tasks.register("UmlToVodml", net.ivoa.vodml.gradle.plugin.XmiTask::class.java) {
 }
 ```
 
-
-## Publishing the Java runtime to Maven Central
-
-The runtime is published to the `org.javastro` owned part of the maven central repository 
-
-In the runtime directory the following will create a staging repository
-
-```shell
-gradle publishToSonatype closeSonatypeStagingRepository
-```
-
-which can then be checked and released in the https://oss.sonatype.org/ GUI.
+_TODO - there is still some information in the [README.txt](./README.txt) file that should be incorporated in these instructions_
 
 
 ## Changes
@@ -114,4 +103,5 @@ which can then be checked and released in the https://oss.sonatype.org/ GUI.
 * 0.3.2 add the XmiTask type
 * 0.3.3 bugfix for html document generation
 
-_TODO - there is still some information in the [README.txt](./README.txt) file that should be incorporated in these instructions_
+
+## Information for [developers of the plugin itself](./Developing.md)

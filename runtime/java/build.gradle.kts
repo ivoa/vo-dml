@@ -1,7 +1,7 @@
 plugins {
     java
     `maven-publish`
-    id("com.github.bjornvester.xjc") version "1.6.0"
+//    id("com.github.bjornvester.xjc") version "1.6.0"
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
     signing
 }
@@ -10,7 +10,7 @@ version = "0.1.1"
 
 
 dependencies {
-    xjcPlugins("net.codesup.util:jaxb2-rich-contract-plugin:2.1.0")
+//    xjcPlugins("net.codesup.util:jaxb2-rich-contract-plugin:2.1.0")
  //   implementation("jakarta.persistence:jakarta.persistence-api:3.0.0") // more modern, but perhaps not quite ready
     implementation("javax.persistence:javax.persistence-api:2.2")
     implementation("org.slf4j:slf4j-api:1.7.32")
@@ -43,7 +43,7 @@ tasks.test {
 
 tasks.named("sourcesJar") //explicitly add the fact that sources jar depends on the generation.
 {
-     dependsOn(tasks.named("xjc"))
+ //    dependsOn(tasks.named("xjc"))
 }
 
 nexusPublishing {
