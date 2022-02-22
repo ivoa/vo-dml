@@ -41,7 +41,7 @@ being able to choose a more specific sub-type.
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
-                xmlns:map="http://volute.g-vo.org/dm/vo-dml-mapping/v0.9"
+                xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9"
                 xmlns:vodml-base="http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1"
                 exclude-result-prefixes="map" 
                 >

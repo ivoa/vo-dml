@@ -10,8 +10,8 @@
   <lastModified>2018-03-01T08:13:05</lastModified>
   <import>
     <name>ivoa</name>
-    <url>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/vo-dml/IVOA-v1.0.vo-dml.xml</url>
-    <documentationURL>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/vo-dml/IVOA-v1.0.html</documentationURL>
+    <url>IVOA-v1.0.vo-dml.xml</url>
+    <documentationURL>IVOA-v1.0.html</documentationURL>
   </import>
   <objectType>
     <vodml-id>PhotometricSystem</vodml-id>
@@ -73,25 +73,11 @@
         <vodml-ref>ivoa:string</vodml-ref>
       </datatype>
       <multiplicity>
-        <minOccurs>1</minOccurs>
+        <minOccurs>0</minOccurs>
         <maxOccurs>1</maxOccurs>
       </multiplicity>
     </attribute>
-    <attribute>
-      <vodml-id>PhotometryFilter.identifier</vodml-id>
-      <name>identifier</name>
-      <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-      <datatype>
-        <vodml-ref>ivoa:string</vodml-ref>
-      </datatype>
-      <multiplicity>
-        <minOccurs>1</minOccurs>
-        <maxOccurs>1</maxOccurs>
-      </multiplicity>
-    </attribute>
-    <attribute>
+   <attribute>
       <vodml-id>PhotometryFilter.name</vodml-id>
       <name>name</name>
       <description>Filter Name in the instrumental

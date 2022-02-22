@@ -1,215 +1,177 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vo-dml:model xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://www.ivoa.net/xml/VODML/v1 http://www.ivoa.net/xml/VODML/vo-dml-v1.xsd">
-  <name>sample</name>
-  <description>This is a sample data model. It contains the IVOA UML Profile and imports the IVOA_Profile data model with primitive types.
-It has some sample relationships etc to be used in documentation etc.</description>
-  <uri/>
+              xsi:schemaLocation="http://www.ivoa.net/xml/VODML/v1 file:/Users/pharriso/Work/ivoa/vo-dml/xsd/vo-dml-v1.0.xsd">	<!-- file generated from VODSL -->
+      <name>sample</name>
+      <description>This is a sample data model. It contains the IVOA UML Profile and imports the IVOA_Profile data model with primitive types.
+      It has some sample relationships etc to be used in documentation etc.</description> 
+      <uri/>
   <title>Sample VO-DML data model.</title>
-  <version>1.0</version>
-  <lastModified>2018-03-01T08:13:45</lastModified>
-  <import>
-    <name>ivoa</name>
-    <url>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/vo-dml/IVOA-v1.0.vo-dml.xml</url>
-    <documentationURL>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/ivoa/vo-dml/IVOA-v1.0.html</documentationURL>
-  </import>
-  <import>
-    <name>filter</name>
-    <url>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/sample/filter/vo-dml/Filter.vo-dml.xml</url>
-    <documentationURL>http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/models/sample/filter/vo-dml/Filter.html</documentationURL>
-  </import>
-
-  <package>
-    <vodml-id>catalog</vodml-id>
-    <name>catalog</name>
-    <enumeration>
-      <vodml-id>catalog.LuminosityType</vodml-id>
-      <name>LuminosityType</name>
-      <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-      <literal>
-        <vodml-id>catalog.LuminosityType.magnitude</vodml-id>
-        <name>magnitude</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-      </literal>
-      <literal>
-        <vodml-id>catalog.LuminosityType.flux</vodml-id>
-        <name>flux</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-      </literal>
-    </enumeration>
-
-    <enumeration>
-      <vodml-id>catalog.SourceClassification</vodml-id>
-      <name>SourceClassification</name>
-      <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-      <literal>
-        <vodml-id>catalog.SourceClassification.star</vodml-id>
-        <name>star</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-      </literal>
-      <literal>
-        <vodml-id>catalog.SourceClassification.galaxy</vodml-id>
-        <name>galaxy</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-      </literal>
-      <literal>
-        <vodml-id>catalog.SourceClassification.AGN</vodml-id>
-        <name>AGN</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-      </literal>
-      <literal>
-        <vodml-id>catalog.SourceClassification.planet</vodml-id>
-        <name>planet</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-      </literal>
-      <literal>
-        <vodml-id>catalog.SourceClassification.unknown</vodml-id>
-        <name>unknown</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-      </literal>
-    </enumeration>
-
-    <dataType>
-      <vodml-id>catalog.AlignedEllipse</vodml-id>
-      <name>AlignedEllipse</name>
-      <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-      <extends>
-        <vodml-ref>sample:catalog.SkyError</vodml-ref>
-      </extends>
-      <attribute>
-        <vodml-id>catalog.AlignedEllipse.longError</vodml-id>
-        <name>longError</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-        <datatype>
-          <vodml-ref>ivoa:real</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>1</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
-      </attribute>
-      <attribute>
-        <vodml-id>catalog.AlignedEllipse.latError</vodml-id>
-        <name>latError</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-        <datatype>
-          <vodml-ref>ivoa:real</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>1</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
-      </attribute>
-    </dataType>
-
-    <dataType>
-      <vodml-id>catalog.CircleError</vodml-id>
-      <name>CircleError</name>
-      <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-      <extends>
-        <vodml-ref>sample:catalog.SkyError</vodml-ref>
-      </extends>
-      <attribute>
-        <vodml-id>catalog.CircleError.radius</vodml-id>
-        <name>radius</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-        <datatype>
-          <vodml-ref>ivoa:real</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>1</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
-      </attribute>
-    </dataType>
-
-    <dataType>
-      <vodml-id>catalog.GenericEllipse</vodml-id>
-      <name>GenericEllipse</name>
-      <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-      <extends>
-        <vodml-ref>sample:catalog.SkyError</vodml-ref>
-      </extends>
+      <version>1.0</version>
+      <lastModified>2021-08-23T15:59:30Z</lastModified>
+      <import>
+        <name>blah</name><!--not used by schematron any more... -->
+        <url>IVOA-v1.0.vo-dml.xml</url>
+    <documentationURL>blah</documentationURL> <!--nor this I reckon -->
+      </import>
+      <import>
+    <name>blah</name>
+        <url>Filter.vo-dml.xml</url>
+    <documentationURL>blah</documentationURL>
+      </import>
+            <package>
+               <vodml-id>catalog</vodml-id>
+               <name>catalog</name>
+                        <enumeration>
+                           <vodml-id>catalog.LuminosityType</vodml-id>
+                           <name>LuminosityType</name>
+                           <description></description>	    
+                              <literal>
+                                <vodml-id>catalog.LuminosityType.magnitude</vodml-id>
+                                <name>magnitude</name>
+                                <description></description>	    
+                              </literal>	
+                              <literal>
+                                <vodml-id>catalog.LuminosityType.flux</vodml-id>
+                                <name>flux</name>
+                                <description></description>	    
+                              </literal>	
+                        </enumeration>
+                        <enumeration>
+                           <vodml-id>catalog.SourceClassification</vodml-id>
+                           <name>SourceClassification</name>
+                           <description></description>	    
+                              <literal>
+                                <vodml-id>catalog.SourceClassification.star</vodml-id>
+                                <name>star</name>
+                                <description></description>	    
+                              </literal>	
+                              <literal>
+                                <vodml-id>catalog.SourceClassification.galaxy</vodml-id>
+                                <name>galaxy</name>
+                                <description></description>	    
+                              </literal>	
+                              <literal>
+                                <vodml-id>catalog.SourceClassification.AGN</vodml-id>
+                                <name>AGN</name>
+                                <description></description>	    
+                              </literal>	
+                              <literal>
+                                <vodml-id>catalog.SourceClassification.planet</vodml-id>
+                                <name>planet</name>
+                                <description></description>	    
+                              </literal>	
+                              <literal>
+                                <vodml-id>catalog.SourceClassification.unknown</vodml-id>
+                                <name>unknown</name>
+                                <description></description>	    
+                              </literal>	
+                        </enumeration>
+                        <dataType>
+                          <vodml-id>catalog.AlignedEllipse</vodml-id>
+                          <name>AlignedEllipse</name>
+                          <description></description>	    
+                           <extends>
+                              <vodml-ref>sample:catalog.SkyError</vodml-ref>
+                           </extends>
+                        <attribute>
+                          <vodml-id>catalog.AlignedEllipse.longError</vodml-id>
+                          <name>longError</name>
+                          <description></description>	    
+                          <datatype>
+                             <vodml-ref>ivoa:real</vodml-ref>
+                          </datatype>
+                          <multiplicity>
+                            <minOccurs>1</minOccurs>
+                            <maxOccurs>1</maxOccurs>
+                          </multiplicity>
+                        </attribute>
+                        <attribute>
+                          <vodml-id>catalog.AlignedEllipse.latError</vodml-id>
+                          <name>latError</name>
+                          <description></description>	    
+                          <datatype>
+                             <vodml-ref>ivoa:real</vodml-ref>
+                          </datatype>
+                          <multiplicity>
+                            <minOccurs>1</minOccurs>
+                            <maxOccurs>1</maxOccurs>
+                          </multiplicity>
+                        </attribute>
+                        </dataType>
+                        <dataType>
+                          <vodml-id>catalog.CircleError</vodml-id>
+                          <name>CircleError</name>
+                          <description></description>	    
+                           <extends>
+                              <vodml-ref>sample:catalog.SkyError</vodml-ref>
+                           </extends>
+                        <attribute>
+                          <vodml-id>catalog.CircleError.radius</vodml-id>
+                          <name>radius</name>
+                          <description></description>	    
+                          <datatype>
+                             <vodml-ref>ivoa:real</vodml-ref>
+                          </datatype>
+                          <multiplicity>
+                            <minOccurs>1</minOccurs>
+                            <maxOccurs>1</maxOccurs>
+                          </multiplicity>
+                        </attribute>
+                        </dataType>
+                        <dataType>
+                          <vodml-id>catalog.GenericEllipse</vodml-id>
+                          <name>GenericEllipse</name>
+                          <description></description>	    
+                           <extends>
+                              <vodml-ref>sample:catalog.SkyError</vodml-ref>
+                           </extends>
       <constraint>
         <description>self.major&gt;=self.minor</description>
       </constraint>
       <constraint>
         <description>self.minor &gt;= 0</description>
       </constraint>
-      <attribute>
-        <vodml-id>catalog.GenericEllipse.major</vodml-id>
-        <name>major</name>
-        <description>major axis of error ellipse</description>
-        <datatype>
-          <vodml-ref>ivoa:real</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>1</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
-      </attribute>
-      <attribute>
-        <vodml-id>catalog.GenericEllipse.minor</vodml-id>
-        <name>minor</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-        <datatype>
-          <vodml-ref>ivoa:real</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>1</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
-      </attribute>
-      <attribute>
-        <vodml-id>catalog.GenericEllipse.pa</vodml-id>
-        <name>pa</name>
-        <description>Position angle of error ellipse in coordinate system of position.</description>
-        <datatype>
-          <vodml-ref>ivoa:real</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>1</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
-      </attribute>
-    </dataType>
-
-    <dataType>
-      <vodml-id>catalog.SkyCoordinate</vodml-id>
-      <name>SkyCoordinate</name>
+                        <attribute>
+                          <vodml-id>catalog.GenericEllipse.major</vodml-id>
+                          <name>major</name>
+                          <description>major axis of error ellipse</description>	    
+                          <datatype>
+                             <vodml-ref>ivoa:real</vodml-ref>
+                          </datatype>
+                          <multiplicity>
+                            <minOccurs>1</minOccurs>
+                            <maxOccurs>1</maxOccurs>
+                          </multiplicity>
+                        </attribute>
+                        <attribute>
+                          <vodml-id>catalog.GenericEllipse.minor</vodml-id>
+                          <name>minor</name>
+                          <description>minor axis of error ellipse</description>	    
+                          <datatype>
+                             <vodml-ref>ivoa:real</vodml-ref>
+                          </datatype>
+                          <multiplicity>
+                            <minOccurs>1</minOccurs>
+                            <maxOccurs>1</maxOccurs>
+                          </multiplicity>
+                        </attribute>
+                        <attribute>
+                          <vodml-id>catalog.GenericEllipse.pa</vodml-id>
+                          <name>pa</name>
+                          <description>Position angle of error ellipse in coordinate system of position.</description>	    
+                          <datatype>
+                             <vodml-ref>ivoa:real</vodml-ref>
+                          </datatype>
+                          <multiplicity>
+                            <minOccurs>1</minOccurs>
+                            <maxOccurs>1</maxOccurs>
+                          </multiplicity>
+                        </attribute>
+                        </dataType>
+                        <dataType>
+                          <vodml-id>catalog.SkyCoordinate</vodml-id>
+                          <name>SkyCoordinate</name>
       <description>
           TODO : Missing description : please, update your UML model asap.
         </description>
@@ -219,61 +181,55 @@ It has some sample relationships etc to be used in documentation etc.</descripti
       <constraint>
         <description>0&lt;=self.longitude.value &lt; 360 </description>
       </constraint>
-      <attribute>
-        <vodml-id>catalog.SkyCoordinate.longitude</vodml-id>
-        <name>longitude</name>
-        <description>The longitude part of this position in units of degrees.</description>
-        <datatype>
-          <vodml-ref>ivoa:RealQuantity</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>1</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
-      </attribute>
-      <attribute>
-        <vodml-id>catalog.SkyCoordinate.latitude</vodml-id>
-        <name>latitude</name>
-        <description>The latitude part of this position in units of degrees.</description>
-        <datatype>
-          <vodml-ref>ivoa:RealQuantity</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>1</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
-      </attribute>
-      <reference>
-        <vodml-id>catalog.SkyCoordinate.frame</vodml-id>
-        <name>frame</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-        <datatype>
-          <vodml-ref>sample:catalog.SkyCoordinateFrame</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>1</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
-      </reference>
-    </dataType>
-
-    <dataType abstract="true">
-      <vodml-id>catalog.SkyError</vodml-id>
-      <name>SkyError</name>
-      <description>Error of a position on the sky.</description>
-    </dataType>
-
-    <objectType abstract="true">
-      <vodml-id>catalog.AbstractSource</vodml-id>
-      <name>AbstractSource</name>
-      <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-      <extends>
-        <vodml-ref>sample:catalog.AstroObject</vodml-ref>
-      </extends>
+                        <attribute>
+                          <vodml-id>catalog.SkyCoordinate.longitude</vodml-id>
+                          <name>longitude</name>
+                          <description>The longitude part of this position in units of degrees.</description>	    
+                          <datatype>
+                             <vodml-ref>ivoa:RealQuantity</vodml-ref>
+                          </datatype>
+                          <multiplicity>
+                            <minOccurs>1</minOccurs>
+                            <maxOccurs>1</maxOccurs>
+                          </multiplicity>
+                        </attribute>
+                        <attribute>
+                          <vodml-id>catalog.SkyCoordinate.latitude</vodml-id>
+                          <name>latitude</name>
+                          <description>The latitude part of this position in units of degrees.</description>	    
+                          <datatype>
+                             <vodml-ref>ivoa:RealQuantity</vodml-ref>
+                          </datatype>
+                          <multiplicity>
+                            <minOccurs>1</minOccurs>
+                            <maxOccurs>1</maxOccurs>
+                          </multiplicity>
+                        </attribute>
+                           <reference>
+                             <vodml-id>catalog.SkyCoordinate.frame</vodml-id>
+                             <name>frame</name>
+                             <description></description>	    
+                             <datatype>
+                               <vodml-ref>sample:catalog.SkyCoordinateFrame</vodml-ref>
+                             </datatype>
+                             <multiplicity>
+                               <minOccurs>1</minOccurs>
+                               <maxOccurs>1</maxOccurs>
+                             </multiplicity>
+                           </reference>
+                        </dataType>
+                        <dataType abstract='true'>
+                          <vodml-id>catalog.SkyError</vodml-id>
+                          <name>SkyError</name>
+                          <description>Error of a position on the sky.</description>	    
+                        </dataType>
+                        <objectType abstract='true'>
+                           <vodml-id>catalog.AbstractSource</vodml-id>
+                           <name>AbstractSource</name>
+                           <description></description>	    
+                           <extends>
+                              <vodml-ref>sample:catalog.AstroObject</vodml-ref>
+                           </extends>
       <constraint xsi:type="vo-dml:SubsettedRole">
         <role>
           <vodml-ref>sample:catalog.AstroObject.label</vodml-ref>
@@ -285,307 +241,367 @@ It has some sample relationships etc to be used in documentation etc.</descripti
           <topConcept>http://purl.org/astronomy/vocab/DataObjectTypes/Source</topConcept>
         </semanticconcept>
       </constraint>
-      <attribute>
-        <vodml-id>catalog.AbstractSource.name</vodml-id>
-        <name>name</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-        <datatype>
-          <vodml-ref>ivoa:string</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>1</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
-      </attribute>
-      <attribute>
-        <vodml-id>catalog.AbstractSource.description</vodml-id>
-        <name>description</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-        <datatype>
-          <vodml-ref>ivoa:string</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>0</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
-      </attribute>
-      <attribute>
-        <vodml-id>catalog.AbstractSource.position</vodml-id>
-        <name>position</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-        <datatype>
-          <vodml-ref>sample:catalog.SkyCoordinate</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>1</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
-      </attribute>
-      <attribute>
-        <vodml-id>catalog.AbstractSource.positionError</vodml-id>
-        <name>positionError</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-        <datatype>
-          <vodml-ref>sample:catalog.SkyError</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>0</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
-      </attribute>
-      <attribute>
-        <vodml-id>catalog.AbstractSource.classification</vodml-id>
-        <name>classification</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-        <datatype>
-          <vodml-ref>sample:catalog.SourceClassification</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>1</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
-      </attribute>
-      <composition>
-        <vodml-id>catalog.AbstractSource.luminosity</vodml-id>
-        <name>luminosity</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-        <datatype>
-          <vodml-ref>sample:catalog.LuminosityMeasurement</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>0</minOccurs>
-          <maxOccurs>-1</maxOccurs>
-        </multiplicity>
-      </composition>
-    </objectType>
-
-    <objectType abstract="true">
-      <vodml-id>catalog.AstroObject</vodml-id>
-      <name>AstroObject</name>
-      <description>Generic base class for all astronomical objects.</description>
-      <attribute>
-        <vodml-id>catalog.AstroObject.label</vodml-id>
-        <name>label</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-        <datatype>
-          <vodml-ref>ivoa:string</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>0</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
+                           <attribute>
+                             <vodml-id>catalog.AbstractSource.name</vodml-id>
+                             <name>name</name>
+                             <description></description>	    
+                             <datatype>
+                                <vodml-ref>ivoa:string</vodml-ref>
+                             </datatype>
+                             <multiplicity>
+                               <minOccurs>1</minOccurs>
+                               <maxOccurs>1</maxOccurs>
+                             </multiplicity>
+                           </attribute>
+                           <attribute>
+                             <vodml-id>catalog.AbstractSource.description</vodml-id>
+                             <name>description</name>
+                             <description></description>	    
+                             <datatype>
+                                <vodml-ref>ivoa:string</vodml-ref>
+                             </datatype>
+                             <multiplicity>
+                               <minOccurs>0</minOccurs>
+                               <maxOccurs>1</maxOccurs>
+                             </multiplicity>
+                           </attribute>
+                           <attribute>
+                             <vodml-id>catalog.AbstractSource.position</vodml-id>
+                             <name>position</name>
+                             <description></description>	    
+                             <datatype>
+                                <vodml-ref>sample:catalog.SkyCoordinate</vodml-ref>
+                             </datatype>
+                             <multiplicity>
+                               <minOccurs>1</minOccurs>
+                               <maxOccurs>1</maxOccurs>
+                             </multiplicity>
+                           </attribute>
+                           <attribute>
+                             <vodml-id>catalog.AbstractSource.positionError</vodml-id>
+                             <name>positionError</name>
+                             <description></description>	    
+                             <datatype>
+                                <vodml-ref>sample:catalog.SkyError</vodml-ref>
+                             </datatype>
+                             <multiplicity>
+                               <minOccurs>0</minOccurs>
+                               <maxOccurs>1</maxOccurs>
+                             </multiplicity>
+                           </attribute>
+                           <attribute>
+                             <vodml-id>catalog.AbstractSource.classification</vodml-id>
+                             <name>classification</name>
+                             <description></description>	    
+                             <datatype>
+                                <vodml-ref>sample:catalog.SourceClassification</vodml-ref>
+                             </datatype>
+                             <multiplicity>
+                               <minOccurs>1</minOccurs>
+                               <maxOccurs>1</maxOccurs>
+                             </multiplicity>
+                           </attribute>
+                           <composition>
+                             <vodml-id>catalog.AbstractSource.luminosity</vodml-id>
+                             <name>luminosity</name>
+                             <description></description>	    
+                             <datatype>
+                                <vodml-ref>sample:catalog.LuminosityMeasurement</vodml-ref>
+                             </datatype>
+                             <multiplicity>
+                               <minOccurs>0</minOccurs>
+                               <maxOccurs>-1</maxOccurs>
+                             </multiplicity>
+                           </composition>
+                        </objectType>
+                        <objectType abstract='true'>
+                           <vodml-id>catalog.AstroObject</vodml-id>
+                           <name>AstroObject</name>
+                           <description>Generic base class for all astronomical objects.</description>	    
+                           <attribute>
+                             <vodml-id>catalog.AstroObject.label</vodml-id>
+                             <name>label</name>
+                             <description></description>	    
+                             <datatype>
+                                <vodml-ref>ivoa:string</vodml-ref>
+                             </datatype>
+                             <multiplicity>
+                               <minOccurs>0</minOccurs>
+                               <maxOccurs>1</maxOccurs>
+                             </multiplicity>
         <semanticconcept>
           <topConcept>http://purl.org/astronomy/vocab/DataObjectTypes/DataObjectType</topConcept>
           <vocabularyURI>http://purl.org/astronomy/vocab/DataObjectTypes</vocabularyURI>
         </semanticconcept>
-      </attribute>
-    </objectType>
-
-    <objectType>
-      <vodml-id>catalog.LuminosityMeasurement</vodml-id>
-      <name>LuminosityMeasurement</name>
-      <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-      <attribute>
-        <vodml-id>catalog.LuminosityMeasurement.value</vodml-id>
-        <name>value</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-        <datatype>
-          <vodml-ref>ivoa:RealQuantity</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>1</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
-      </attribute>
-      <attribute>
-        <vodml-id>catalog.LuminosityMeasurement.error</vodml-id>
-        <name>error</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-        <datatype>
-          <vodml-ref>ivoa:RealQuantity</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>0</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
-      </attribute>
-      <attribute>
-        <vodml-id>catalog.LuminosityMeasurement.description</vodml-id>
-        <name>description</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-        <datatype>
-          <vodml-ref>ivoa:string</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>0</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
-      </attribute>
-      <attribute>
-        <vodml-id>catalog.LuminosityMeasurement.type</vodml-id>
-        <name>type</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-        <datatype>
-          <vodml-ref>sample:catalog.LuminosityType</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>1</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
-      </attribute>
-      <reference>
-        <vodml-id>catalog.LuminosityMeasurement.filter</vodml-id>
-        <name>filter</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-        <datatype>
-          <vodml-ref>filter:PhotometryFilter</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>1</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
-      </reference>
-    </objectType>
-
-    <objectType>
-      <vodml-id>catalog.SDSSSource</vodml-id>
-      <name>SDSSSource</name>
-      <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-      <extends>
-        <vodml-ref>sample:catalog.AbstractSource</vodml-ref>
-      </extends>
-      <constraint xsi:type="vo-dml:SubsettedRole">
-        <role>
-          <vodml-ref>sample:catalog.AbstractSource.positionError</vodml-ref>
-        </role>
-        <datatype>
-          <vodml-ref>sample:catalog.AlignedEllipse</vodml-ref>
-        </datatype>
-      </constraint>
-    </objectType>
-
-    <objectType>
-      <vodml-id>catalog.SkyCoordinateFrame</vodml-id>
-      <name>SkyCoordinateFrame</name>
-      <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-      <attribute>
-        <vodml-id>catalog.SkyCoordinateFrame.name</vodml-id>
-        <name>name</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-        <datatype>
-          <vodml-ref>ivoa:string</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>1</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
-      </attribute>
-      <attribute>
-        <vodml-id>catalog.SkyCoordinateFrame.documentURI</vodml-id>
-        <name>documentURI</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-        <datatype>
-          <vodml-ref>ivoa:anyURI</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>1</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
-      </attribute>
-      <attribute>
-        <vodml-id>catalog.SkyCoordinateFrame.equinox</vodml-id>
-        <name>equinox</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-        <datatype>
-          <vodml-ref>ivoa:string</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>0</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
-      </attribute>
-      <attribute>
-        <vodml-id>catalog.SkyCoordinateFrame.system</vodml-id>
-        <name>system</name>
-        <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-        <datatype>
-          <vodml-ref>ivoa:string</vodml-ref>
-        </datatype>
-        <multiplicity>
-          <minOccurs>0</minOccurs>
-          <maxOccurs>1</maxOccurs>
-        </multiplicity>
-      </attribute>
-    </objectType>
-
-    <objectType>
-      <vodml-id>catalog.Source</vodml-id>
-      <name>Source</name>
-      <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-      <extends>
-        <vodml-ref>sample:catalog.AbstractSource</vodml-ref>
-      </extends>
-    </objectType>
-
-    <objectType>
-      <vodml-id>catalog.TwoMassSource</vodml-id>
-      <name>TwoMassSource</name>
-      <description>
-          TODO : Missing description : please, update your UML model asap.
-        </description>
-      <extends>
-        <vodml-ref>sample:catalog.AbstractSource</vodml-ref>
-      </extends>
-      <constraint xsi:type="vo-dml:SubsettedRole">
-        <role>
-          <vodml-ref>sample:catalog.AbstractSource.positionError</vodml-ref>
-        </role>
-        <datatype>
-          <vodml-ref>sample:catalog.GenericEllipse</vodml-ref>
-        </datatype>
-      </constraint>
-    </objectType>
-
-  </package>
-
+                           </attribute>
+                        </objectType>
+                        <objectType>
+                           <vodml-id>catalog.LuminosityMeasurement</vodml-id>
+                           <name>LuminosityMeasurement</name>
+                           <description></description>	    
+                           <attribute>
+                             <vodml-id>catalog.LuminosityMeasurement.value</vodml-id>
+                             <name>value</name>
+                             <description></description>	    
+                             <datatype>
+                                <vodml-ref>ivoa:RealQuantity</vodml-ref>
+                             </datatype>
+                             <multiplicity>
+                               <minOccurs>1</minOccurs>
+                               <maxOccurs>1</maxOccurs>
+                             </multiplicity>
+                           </attribute>
+                           <attribute>
+                             <vodml-id>catalog.LuminosityMeasurement.error</vodml-id>
+                             <name>error</name>
+                             <description></description>	    
+                             <datatype>
+                                <vodml-ref>ivoa:RealQuantity</vodml-ref>
+                             </datatype>
+                             <multiplicity>
+                               <minOccurs>0</minOccurs>
+                               <maxOccurs>1</maxOccurs>
+                             </multiplicity>
+                           </attribute>
+                           <attribute>
+                             <vodml-id>catalog.LuminosityMeasurement.description</vodml-id>
+                             <name>description</name>
+                             <description></description>	    
+                             <datatype>
+                                <vodml-ref>ivoa:string</vodml-ref>
+                             </datatype>
+                             <multiplicity>
+                               <minOccurs>0</minOccurs>
+                               <maxOccurs>1</maxOccurs>
+                             </multiplicity>
+                           </attribute>
+                           <attribute>
+                             <vodml-id>catalog.LuminosityMeasurement.type</vodml-id>
+                             <name>type</name>
+                             <description></description>	    
+                             <datatype>
+                                <vodml-ref>sample:catalog.LuminosityType</vodml-ref>
+                             </datatype>
+                             <multiplicity>
+                               <minOccurs>1</minOccurs>
+                               <maxOccurs>1</maxOccurs>
+                             </multiplicity>
+                           </attribute>
+                           <reference>
+                             <vodml-id>catalog.LuminosityMeasurement.filter</vodml-id>
+                             <name>filter</name>
+                             <description></description>	    
+                             <datatype>
+                               <vodml-ref>filter:PhotometryFilter</vodml-ref>
+                             </datatype>
+                             <multiplicity>
+                               <minOccurs>1</minOccurs>
+                               <maxOccurs>1</maxOccurs>
+                             </multiplicity>
+                           </reference>
+                        </objectType>
+                        <objectType>
+                           <vodml-id>catalog.SDSSSource</vodml-id>
+                           <name>SDSSSource</name>
+                           <description></description>	    
+                           <extends>
+                              <vodml-ref>sample:catalog.AbstractSource</vodml-ref>
+                           </extends>
+                           <constraint xsi:type="vo-dml:SubsettedRole">
+                              <role>
+                                 <vodml-ref>sample:catalog.AbstractSource.positionError</vodml-ref>
+                              </role>
+                              <datatype>
+                                 <vodml-ref>sample:catalog.AlignedEllipse</vodml-ref>
+                              </datatype>
+                           </constraint>
+                        </objectType>
+                        <objectType>
+                           <vodml-id>catalog.SkyCoordinateFrame</vodml-id>
+                           <name>SkyCoordinateFrame</name>
+                           <description></description>	    
+                           <attribute>
+                             <vodml-id>catalog.SkyCoordinateFrame.name</vodml-id>
+                             <name>name</name>
+                             <description></description>	    
+                             <datatype>
+                                <vodml-ref>ivoa:string</vodml-ref>
+                             </datatype>
+                             <multiplicity>
+                               <minOccurs>1</minOccurs>
+                               <maxOccurs>1</maxOccurs>
+                             </multiplicity>
+                               <constraint xsi:type="vo-dml:NaturalKey">
+                                   <position>1</position>
+                               </constraint>
+                           </attribute>
+                           <attribute>
+                             <vodml-id>catalog.SkyCoordinateFrame.documentURI</vodml-id>
+                             <name>documentURI</name>
+                             <description></description>	    
+                             <datatype>
+                                <vodml-ref>ivoa:anyURI</vodml-ref>
+                             </datatype>
+                             <multiplicity>
+                               <minOccurs>1</minOccurs>
+                               <maxOccurs>1</maxOccurs>
+                             </multiplicity>
+                           </attribute>
+                           <attribute>
+                             <vodml-id>catalog.SkyCoordinateFrame.equinox</vodml-id>
+                             <name>equinox</name>
+                             <description></description>	    
+                             <datatype>
+                                <vodml-ref>ivoa:string</vodml-ref>
+                             </datatype>
+                             <multiplicity>
+                               <minOccurs>0</minOccurs>
+                               <maxOccurs>1</maxOccurs>
+                             </multiplicity>
+                           </attribute>
+                           <attribute>
+                             <vodml-id>catalog.SkyCoordinateFrame.system</vodml-id>
+                             <name>system</name>
+                             <description></description>	    
+                             <datatype>
+                                <vodml-ref>ivoa:string</vodml-ref>
+                             </datatype>
+                             <multiplicity>
+                               <minOccurs>0</minOccurs>
+                               <maxOccurs>1</maxOccurs>
+                             </multiplicity>
+                           </attribute>
+                        </objectType>
+                        <objectType>
+                           <vodml-id>catalog.Source</vodml-id>
+                           <name>Source</name>
+                           <description></description>	    
+                           <extends>
+                              <vodml-ref>sample:catalog.AbstractSource</vodml-ref>
+                           </extends>
+                            <constraint xsi:type="vo-dml:SubsettedRole">
+                                <role>
+                                    <vodml-ref>sample:catalog.AbstractSource.positionError</vodml-ref>
+                                </role>
+                                <datatype>
+                                    <vodml-ref>sample:catalog.CircleError</vodml-ref>
+                                </datatype>
+                            </constraint>
+                        </objectType>
+                        <objectType>
+                           <vodml-id>catalog.TwoMassSource</vodml-id>
+                           <name>TwoMassSource</name>
+                           <description></description>	    
+                           <extends>
+                              <vodml-ref>sample:catalog.AbstractSource</vodml-ref>
+                           </extends>
+                           <constraint xsi:type="vo-dml:SubsettedRole">
+                              <role>
+                                 <vodml-ref>sample:catalog.AbstractSource.positionError</vodml-ref>
+                              </role>
+                              <datatype>
+                                 <vodml-ref>sample:catalog.GenericEllipse</vodml-ref>
+                              </datatype>
+                           </constraint>
+                        </objectType>
+                        <package>
+                           <vodml-id>catalog.inner</vodml-id>
+                           <name>inner</name>
+                           <description></description>	    
+                                    <objectType>
+                                       <vodml-id>catalog.inner.Testing</vodml-id>
+                                       <name>Testing</name>
+                                       <description>Testing the ideas of arrays..</description>	    
+                                       <attribute>
+                                         <vodml-id>catalog.inner.Testing.plain</vodml-id>
+                                         <name>plain</name>
+                                         <description>a single string</description>	    
+                                         <datatype>
+                                            <vodml-ref>ivoa:string</vodml-ref>
+                                         </datatype>
+                                         <multiplicity>
+                                           <minOccurs>1</minOccurs>
+                                           <maxOccurs>1</maxOccurs>
+                                         </multiplicity>
+                                       </attribute>
+                                       <attribute>
+                                         <vodml-id>catalog.inner.Testing.arrayIsh</vodml-id>
+                                         <name>arrayIsh</name>
+                                         <description>an array with 3 elements</description>	    
+                                         <datatype>
+                                            <vodml-ref>ivoa:string</vodml-ref>
+                                         </datatype>
+                                         <multiplicity>
+                                           <minOccurs>3</minOccurs>
+                                           <maxOccurs>3</maxOccurs>
+                                         </multiplicity>
+                                       </attribute>
+                                       <attribute>
+                                         <vodml-id>catalog.inner.Testing.unbounded</vodml-id>
+                                         <name>unbounded</name>
+                                         <description>an array with many elements</description>	    
+                                         <datatype>
+                                            <vodml-ref>ivoa:string</vodml-ref>
+                                         </datatype>
+                                         <multiplicity>
+                                           <minOccurs>0</minOccurs>
+                                           <maxOccurs>-1</maxOccurs>
+                                         </multiplicity>
+                                       </attribute>
+                                    </objectType>
+                                    <objectType>
+                                       <vodml-id>catalog.inner.SourceCatalogue</vodml-id>
+                                       <name>SourceCatalogue</name>
+                                       <description></description>	    
+                                       <attribute>
+                                         <vodml-id>catalog.inner.SourceCatalogue.name</vodml-id>
+                                         <name>name</name>
+                                         <description>the name of the catalogue</description>	    
+                                         <datatype>
+                                            <vodml-ref>ivoa:string</vodml-ref>
+                                         </datatype>
+                                         <multiplicity>
+                                           <minOccurs>1</minOccurs>
+                                           <maxOccurs>1</maxOccurs>
+                                         </multiplicity>
+                                       </attribute>
+                                       <composition>
+                                         <vodml-id>catalog.inner.SourceCatalogue.entry</vodml-id>
+                                         <name>entry</name>
+                                         <description>the entries in the catalogue</description>	    
+                                         <datatype>
+                                            <vodml-ref>sample:catalog.AbstractSource</vodml-ref>
+                                         </datatype>
+                                         <multiplicity>
+                                           <minOccurs>0</minOccurs>
+                                           <maxOccurs>-1</maxOccurs>
+                                         </multiplicity>
+                                       </composition>
+                                       <composition>
+                                         <vodml-id>catalog.inner.SourceCatalogue.aTest</vodml-id>
+                                         <name>aTest</name>
+                                         <description>try this out</description>	    
+                                         <datatype>
+                                            <vodml-ref>sample:catalog.inner.Testing</vodml-ref>
+                                         </datatype>
+                                         <multiplicity>
+                                           <minOccurs>1</minOccurs>
+                                           <maxOccurs>1</maxOccurs>
+                                         </multiplicity>
+                                       </composition>
+                                       <composition>
+                                         <vodml-id>catalog.inner.SourceCatalogue.aTestMore</vodml-id>
+                                         <name>aTestMore</name>
+                                         <description>a try with more than one</description>	    
+                                         <datatype>
+                                            <vodml-ref>sample:catalog.inner.Testing</vodml-ref>
+                                         </datatype>
+                                         <multiplicity>
+                                           <minOccurs>0</minOccurs>
+                                           <maxOccurs>-1</maxOccurs>
+                                         </multiplicity>
+                                       </composition>
+                                    </objectType>
+                        </package>
+            </package>
 </vo-dml:model>

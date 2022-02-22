@@ -104,7 +104,7 @@
   </xsl:template>
 
   <xsl:template match="objectType|collection" mode="tableName_noschema">
-    <xsl:value-of select="concat('t_',name)"/>
+    <xsl:value-of select="name"/>
   </xsl:template>
 
 

@@ -5,7 +5,7 @@
 <!ENTITY bl "<xsl:text> </xsl:text>">
 ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:map="http://volute.g-vo.org/dm/vo-dml-mapping/v0.9"
+                xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9"
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1">
 
 
@@ -13,14 +13,15 @@
   <xsl:import href="common.xsl"/>
 
 <xsl:key name="ellookup" match="*[vodml-id]" use="concat(ancestor::vo-dml:model/name,':',vodml-id)"
-   composite="yes" />
+   /><!--    composite="yes"  -->
+
  <!-- load all models at start -->
   <xsl:variable name="models">
       <xsl:for-each select="/map:mappedModels/model">
          <xsl:choose>
             <xsl:when test="file"> <!-- prefer local file for reading defn -->
-               <xsl:copy-of
-                  select="document(file)/vo-dml:model" />
+                <xsl:message><xsl:value-of select="file"/> </xsl:message>
+               <xsl:copy-of select="document(file)/vo-dml:model"/>
             </xsl:when>
             <xsl:when test="url">
                <xsl:copy-of

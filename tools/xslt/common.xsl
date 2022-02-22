@@ -5,12 +5,20 @@
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 xmlns:uml="http://schema.omg.org/spec/UML/2.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-              	xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1">
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              	xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
+                xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
+
+>
 
 <!-- 
   This XSLT script contains common xsl:templates used by other XSLT scripts.
 -->
 
+  <xsl:variable name="cr">
+<xsl:text>
+</xsl:text>
+  </xsl:variable>
 
   <xsl:template name="upperFirst">
     <xsl:param name="val"/>
@@ -133,6 +141,7 @@
   <xsl:template match="vodml-id" mode="asvodml-ref">
     <xsl:value-of select="concat(./ancestor::vo-dml:model/name,':',.)" />
   </xsl:template>
+
 
 
   <xsl:template match="multiplicity" mode="tostring">

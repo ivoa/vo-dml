@@ -1,0 +1,89 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.ivoa.net/xml/vodml-binding/v0.9" 
+targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9" attributeFormDefault="unqualified"
+  elementFormDefault="unqualified">
+
+<xsd:annotation>
+  <xsd:documentation>
+  TODO: decide whether we want a syntax for the utype attributes.
+  </xsd:documentation>
+</xsd:annotation>
+
+<xsd:complexType name="MappedModels">
+  <xsd:sequence>
+  <xsd:element name="model" type="ModelMapping" minOccurs="0" maxOccurs="unbounded"/>
+  </xsd:sequence>
+</xsd:complexType>
+  
+
+<xsd:complexType name="ModelMapping">
+  <xsd:sequence>
+  <xsd:element name="name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+  <xsd:element name="file" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+
+  <xsd:element name="java-package" type="JavaName" minOccurs="0" maxOccurs="1"/>
+  <xsd:element name="xml-targetnamespace" type="xmlnsMapping" minOccurs="0" maxOccurs="1"/>
+
+  <xsd:element name="type-mapping" type="TypeMapping" minOccurs="0" maxOccurs="unbounded"/>
+  </xsd:sequence>
+</xsd:complexType>
+  <xsd:complexType name="xmlnsMapping">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:anyURI">
+        <xsd:attribute name="prefix" type="xsd:NCName">
+          <xsd:annotation>
+            <xsd:documentation>The namespace prefix to use in generated code</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+<xsd:complexType name="TypeMapping">
+  <xsd:sequence>
+    <xsd:element name="vodml-id" type="xsd:string" minOccurs="1"/>
+    <xsd:element name="java-type" type="JavaMapping" minOccurs="0"/>
+    <xsd:element name="xsd-type" type="xsd:string" minOccurs="0">
+      <xsd:annotation>
+        <xsd:documentation>
+        Maps to XSD predefined type such as xsd:string etc.
+        SHould NOT have 'xsd' or 'xs' prefix, this must be supplied by generator.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:element>
+  </xsd:sequence>
+</xsd:complexType>
+
+<xsd:simpleType name="JavaName">
+  <xsd:restriction base="xsd:string">
+    <xsd:pattern value="[\w\-\d]{1}\w*(.[\w\-\d]{1}\w*)*">
+      <xsd:annotation>
+        <xsd:documentation>
+        TBD is this correct pattern for Java Package *and* class names?
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:pattern>
+  </xsd:restriction>
+</xsd:simpleType>  
+<xsd:complexType name="JavaMapping">
+  <xsd:simpleContent>
+    <xsd:extension base="JavaName">
+      <xsd:attribute name="jpa-atomic" type="xsd:boolean" default="false">
+        <xsd:annotation>
+          <xsd:documentation>if this is true the type is atomic for JPA (does not appear in persistence.xml)</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="primitive-value-field" type="xsd:string" >
+        <xsd:annotation>
+          <xsd:documentation>if a mapped primitive does not map to a java primitive, then this specifies what the value fieldname is</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:extension>
+  </xsd:simpleContent>
+
+</xsd:complexType>
+
+<xsd:element name="mappedModels" type="MappedModels"/>
+
+
+
+</xsd:schema>

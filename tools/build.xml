@@ -44,7 +44,7 @@
   <presetdef name="xslt2">
     <!-- The processor=SaxonLiaison setting causes our custom XSLTLiaison class to be used. -->
     <!-- This works around bug #41314: http://issues.apache.org/bugzilla/show_bug.cgi?id=41314 -->
-    <xslt force="true" classpath="./libs/saxon9.jar:./libs/ant-trax.jar:./libs" processor="SaxonLiaison">
+    <xslt force="true" >
       <outputproperty name="{http://saxon.sf.net/}indent-spaces" value="2" />
     </xslt>
   </presetdef>
@@ -411,7 +411,26 @@
     <ant target="format"/>
     -->
   </target>
-  
+	<xmlcatalog id="modelcat">
+		 <catalogpath>
+		 	  <fileset dir="." id="fileid">
+		 	     <include name="catalog.xml"/>
+		 	       </fileset>
+	    </catalogpath>
+   </xmlcatalog>
+	<target name="vodml2java"   description="Generate Java Classes">
+	    <fail unless="mapping.config.file" message="Must define property 'mapping.config.file' in build.properties (the source VO-DML file) !" />
+	    <echo>run_vo-dml2java : starting generate Java code for all models</echo>
+	    <xslt2 in="../models/sample/sample/vo-dml/Sample.vo-dml.xml" out="${java.gen}/run_pojo.txt" style="${xslt}/vo-dml2java.xsl" >
+	      <param name="binding" expression="../binding_filter_model.xml, ../binding_sample_model.xml, ../binding_ivoa_model.xml" />
+	    	
+	    	<xmlcatalog refid="modelcat"/>
+	    </xslt2>
+	   <!-- need a new prettifier 
+	    <ant target="format"/>
+	    -->
+	  </target>
+ 
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <target name="run_vo-dml2xsd"   description="Generate XML schema files for all models identified in mapping.file">
     <fail unless="mapping.config.file" message="Must define property 'mapping.file' in build.properties (the source VO-DML file) !" />
