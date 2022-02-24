@@ -1,5 +1,9 @@
 Using the VO-DML Gradle Plugin 0.3.3
-================================
+===================================
+
+The aim of this plugin is to process VO-DML models to produce documentation and source code that
+implements the model and has the capability of serialising instances of the model to XML and 
+relational databases.
 
 The gradle plugin is intended to replace all the functionality of the 
 previous ant-based build, but to use gradle conventions to make the configuration
@@ -20,11 +24,16 @@ plugins {
 ```
 3. create the basic catalog and binding files for the model (see below in the configuration section) 
 
-There is nothing else to do if the VO-DML files in the default place (see [sample build file](gradletooling/sample/build.gradle.kts) for some more hints on how that can be configured). 
-there should be 3 tasks
+There is nothing else that needs to be done if the VO-DML files in the default place 
+(see [sample build file](gradletooling/sample/build.gradle.kts) for some more 
+hints on how gradle flexibility allows finding of the files
+to be configured in a variety of ways). 
+
+There are 3 associated tasks
 
 * vodmlValidate - runs validation on the models.
-* vodmlDoc - generate standard documentation. This will produce a model diagram, latex and html formatted documentation
+* vodmlDoc - generate standard documentation. This will produce a model diagram, latex and html formatted documentation, as well as a graphml representation of the model 
+  that can be hand edited with https://www.yworks.com/products/yed for nicer looking model diagrams.
 * vodmlGenerateJava - generate java classes. See [generated code guide](JavaCodeGeneration.md) for details of how to use the generated java code.
 
 The generated Java code depends on the VO-DML java runtime library, which the plugin will automatically add to the
@@ -50,7 +59,7 @@ dependencies along with the necessary JAXB and JPA libraries.
 ```xml
 <m:mappedModels xmlns:m="http://www.ivoa.net/xml/vodml-binding/v0.9">
 <!-- ========================================
-This is a sample file for mapping VO-DML models to XSD or Java using the gradle tooling
+This is a minimal sample file for mapping VO-DML models to XSD or Java using the gradle tooling
  -->
 
 <model>
@@ -61,6 +70,11 @@ This is a sample file for mapping VO-DML models to XSD or Java using the gradle 
 </model>
 </m:mappedModels>
 ```
+
+The [schema](../xsd/vo-dml-binding.xsd) for the binding file shows what elements are allowed. The [binding file for the base IVOA model](./binding_ivoa_model.xml)
+shows extensive use of the binding features, where it is possible to ignore the automated code generation entirely and substitute
+hand-written code.
+
 * outputDocDir - where the generated documentation is created - default `build/generated/docs/vodml/`
 * outputJavaDir - where the generated Java is created - the default is `build/generated/sources/vodml/java/` and it should not 
   be necessary to ever alter this as gradle will integrate this automatically into the various source paths.
@@ -74,7 +88,7 @@ the configurable properties within the vodml extension are;
 * vodslDir - the default is `src/main/vodsl`
 * vodslFiles - this is set by default to be all the `*.vodsl` files in the vodslDir, but can be individually set.
 
-the task will write the VO-DML files into the vodmlDir
+the task will write the VO-DML files into the `vodmlDir`
 
 ## XMI support
 
@@ -90,6 +104,8 @@ tasks.register("UmlToVodml", net.ivoa.vodml.gradle.plugin.XmiTask::class.java) {
     description = "convert UML to VO-DML"
 }
 ```
+The available conversion scripts are those in the [xslt](./xslt) directory with `xmi2vo-dml` as part of their name.
+
 
 _TODO - there is still some information in the [README.txt](./README.txt) file that should be incorporated in these instructions_
 
