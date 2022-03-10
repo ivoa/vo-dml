@@ -14,7 +14,7 @@ So, in general, a new data model should be started in its own git repository and
 as below.
 
 
-1. [Install gradle](https://gradle.org/install/) 
+1. [Install gradle](https://gradle.org/install/) and run `gradle init` and make choices for a library written in java.
 2. Edit a `build.gradle.kts` file with reference to the plugin
 
 ```kotlin
