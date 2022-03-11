@@ -10,6 +10,7 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.util.PatternSet
+import org.gradle.jvm.tasks.Jar
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.util.GradleVersion
 
@@ -32,15 +33,10 @@ class VodmlGradlePlugin: Plugin<Project> {
             "The $VODML_PLUGIN_ID plugin requires Gradle $MIN_REQUIRED_GRADLE_VERSION or higher."
         }
         project.plugins.apply(JavaPlugin::class.java) // add the java plugin as we are going to generate java eventually
+
         val extension = project.extensions.create(VODML_EXTENSION_NAME, VodmlExtension::class.java)
 
-        // Register a task
-        project.tasks.register("greeting") { task ->
-            task.doLast {
-                println("Hello from plugin 'vodml'")
-            }
-        }
-        // register the doc task
+         // register the doc task
         project.tasks.register(VODML_DOC_TASK_NANE,VodmlDocTask::class.java) {
             it.description = "create documentation for VO-DML models"
             it.vodmlFiles.setFrom(if (extension.vodmlFiles.isEmpty)
@@ -88,7 +84,11 @@ class VodmlGradlePlugin: Plugin<Project> {
             )
             task.javaGenDir.set(extension.outputJavaDir)
             task.vodmlDir.set(extension.vodmlDir)
-            task.bindingFiles.setFrom(extension.bindingFiles)
+            task.bindingFiles.setFrom(if (extension.bindingFiles.isEmpty)
+                project.projectDir.listFiles{f -> f.name.endsWith("vodml-binding.xml")}
+            else
+                extension.bindingFiles
+            )
             task.catalogFile.set(extension.catalogFile)
 
             //add the generated source directory to the list of sources to compile IMPL - this feels a bit hacky
@@ -98,11 +98,23 @@ class VodmlGradlePlugin: Plugin<Project> {
                 it.java.srcDir(task.javaGenDir)
                 it.resources.srcDir(task.javaGenDir)
             }
+            // add the vo-dml and binding files to the jar setup
+            val jartask = project.tasks.named(JavaPlugin.JAR_TASK_NAME).get() as Jar
+            jartask.from(task.vodmlFiles)
+            jartask.from(task.bindingFiles)
+            jartask.manifest {
+                it.attributes(mapOf(
+                    "VODML-source" to task.vodmlFiles.files.joinToString{file -> file.name},
+                    "VODML-binding" to task.bindingFiles.files.joinToString { file -> file.name }
+                ))
+            }
 
         }
         //force java 8 - TODO support java version > 8
         val toolchain = project.extensions.getByType(JavaPluginExtension::class.java).toolchain
         toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+
+
 
         // force java compile to depend on this task
         project.tasks.named(JavaPlugin.COMPILE_JAVA_TASK_NAME) {
@@ -112,6 +124,10 @@ class VodmlGradlePlugin: Plugin<Project> {
         {
             it.dependsOn.add(vodmlJavaTask)
         }
+
+
+
+
         //add the dependencies for JAXB and JPA - using the hibernate implementation
        listOf("org.javastro.ivoa.vo-dml:vodml-runtime:0.1.1",
             "javax.xml.bind:jaxb-api:2.3.1",

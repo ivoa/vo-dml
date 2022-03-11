@@ -30,9 +30,10 @@ import org.gradle.api.tasks.*
      val catalogFile: RegularFileProperty = project.objects.fileProperty()
 
      @TaskAction
-     fun doDocumentation() {
+     fun doGeneration() {
          logger.info("Generating Java for VO-DML files ${vodmlFiles.files.joinToString { it.name }}")
          logger.info("Looked in ${vodmlDir.get()}")
+
 
          vodmlFiles.forEach{
              val shortname = it.nameWithoutExtension
