@@ -1,4 +1,4 @@
-Using the VO-DML Gradle Plugin 0.3.3
+Using the VO-DML Gradle Plugin 0.3.4
 ===================================
 
 The aim of this plugin is to process VO-DML models to produce documentation and source code that
@@ -19,7 +19,7 @@ as below.
 
 ```kotlin
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.3.3"
+    id("net.ivoa.vo-dml.vodmltools") version "0.3.4"
 }
 ```
 3. create the basic catalog and binding files for the model (see below in the configuration section) 
@@ -71,7 +71,7 @@ This is a minimal sample file for mapping VO-DML models to XSD or Java using the
 </m:mappedModels>
 ```
 
-The [schema](../xsd/vo-dml-binding.xsd) for the binding file shows what elements are allowed. The [binding file for the base IVOA model](./binding_ivoa_model.xml)
+The [schema](../xsd/vo-dml-binding.xsd) for the binding file shows what elements are allowed. The [binding file for the base IVOA model](../models/ivoa/vo-dml/ivoa_base.vodml-binding.xml)
 shows extensive use of the binding features, where it is possible to ignore the automated code generation entirely and substitute
 hand-written code.
 
@@ -118,6 +118,7 @@ _TODO - there is still some information in the [README.txt](./README.txt) file t
 * 0.3.1 add the vodslToVodml task (0.3.0 would not publish because of SNAPSHOT dependency)
 * 0.3.2 add the XmiTask type
 * 0.3.3 bugfix for html document generation
+* 0.3.4 the plugin now saves binding files to the created jar and then uses them if they are in dependency tree.
 
 
 ## Information for [developers of the plugin itself](./Developing.md)

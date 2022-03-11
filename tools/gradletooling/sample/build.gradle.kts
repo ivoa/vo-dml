@@ -4,7 +4,7 @@ import org.gradle.kotlin.dsl.support.classFilePathCandidatesFor
  * 
  */
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.3.3"
+    id("net.ivoa.vo-dml.vodmltools") version "0.3.4"
 //    id ("com.diffplug.spotless") version "5.17.1"
 
 }
@@ -22,7 +22,6 @@ vodml {
     vodmlDir.set(layout.projectDirectory.dir("../../../models/")) // do the models in place, rather than use the symbolic links in subdirs of here
 // just act on one file
     vodmlFiles.setFrom(project.files (
-        vodmlDir.file("ivoa/vo-dml/IVOA-v1.0.vo-dml.xml"),
         vodmlDir.file("sample/filter/vo-dml/Filter.vo-dml.xml"),
         vodmlDir.file("sample/test/like_coords-v1.0.vo-dml.xml"),
         vodmlDir.file("sample/sample/vo-dml/Sample.vo-dml.xml")
@@ -38,7 +37,6 @@ vodml {
 
     catalogFile.set(project.file("../../catalog.xml"))
 }
-
 
 
 /*
@@ -67,6 +65,7 @@ tasks.test {
 }
 
 dependencies {
+    implementation("org.javastro.ivoa.vo-dml:ivoa-base:1.0-SNAPSHOT")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.1")
 
@@ -77,3 +76,13 @@ dependencies {
     compileOnly("com.google.googlejavaformat:google-java-format:1.12.0")
 
 }
+
+//FIXME - just for exploring...
+tasks.register("myinfo") {
+    doLast {
+        sourceSets.forEach {
+            println(it.name)
+        }
+    }
+}
+

@@ -1,6 +1,7 @@
 tasks.register("doAll"){
     dependsOn(
         gradle.includedBuild("java").task(":publishToMavenLocal"),
+        gradle.includedBuild("ivoa").task(":publishToMavenLocal"),
         gradle.includedBuild("gradletooling").task(":vodml-sample:test")
     )
 

@@ -1,53 +1,46 @@
 plugins {
-    java
+    id("net.ivoa.vo-dml.vodmltools") version "0.3.4"
+//    id ("com.diffplug.spotless") version "5.17.1"
     `maven-publish`
-//    id("com.github.bjornvester.xjc") version "1.6.0"
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
     signing
+
 }
+
+
+repositories {
+    mavenLocal() // TODO remove this when releasing - just here to pick up local vodml-runtime
+    mavenCentral()
+}
+
 group = "org.javastro.ivoa.vo-dml"
-version = "0.1.1"
+version = "1.0-SNAPSHOT"
 
+vodml {
+    vodmlDir.set(file("vo-dml"))
+    bindingFiles.setFrom(file("vo-dml/ivoa_base.vodml-binding.xml")
+    )
 
-dependencies {
-//    xjcPlugins("net.codesup.util:jaxb2-rich-contract-plugin:2.1.0")
- //   implementation("jakarta.persistence:jakarta.persistence-api:3.0.0") // more modern, but perhaps not quite ready
-    implementation("javax.persistence:javax.persistence-api:2.2")
-    implementation("org.slf4j:slf4j-api:1.7.32")
-    testRuntimeOnly("ch.qos.logback:logback-classic:1.2.3")
-}
-
-
-//xjc {
-//    xsdDir.set(layout.projectDirectory.dir("../../xsd"))
-//    xsdFiles = files(xsdDir.file("vo-dml-v1.0.xsd"))
-//    defaultPackage.set("net.ivoa.vodml.metamodel")
-//    options.addAll("-Xfluent-builder",
-//                             "-Xmeta",
-//                                "-extended=y")
-//
-//}
-
-java {
-    modularity.inferModulePath.set(false) // still can only build on java 1.8
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-    withJavadocJar()
-    withSourcesJar()
+    catalogFile.set(project.file("../../tools/catalog.xml"))
 }
 
 tasks.test {
     useJUnitPlatform()
 }
 
+dependencies {
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.1")
 
-tasks.named("sourcesJar") //explicitly add the fact that sources jar depends on the generation.
-{
- //    dependsOn(tasks.named("xjc"))
+    implementation("org.slf4j:slf4j-api:1.7.32")
+    testRuntimeOnly("ch.qos.logback:logback-classic:1.2.3")
+
+    testImplementation("org.apache.derby:derby:10.14.2.0")
+    compileOnly("com.google.googlejavaformat:google-java-format:1.12.0")
+
 }
 
-
-//publishing
+//publishing - IMPL would be nice to factor this out in some way....
 nexusPublishing {
     repositories {
         sonatype()
@@ -68,8 +61,8 @@ publishing {
                 }
             }
             pom {
-                name.set("VO-DML Runtime")
-                description.set("Library needed as dependency for java code generated from VO-DML")
+                name.set("VO-DML IVOA Base Model")
+                description.set("The code generated from the IVOA base model that is included in most other models")
                 url.set("https://www.ivoa.net/documents/VODML/")
                 licenses {
                     license {
