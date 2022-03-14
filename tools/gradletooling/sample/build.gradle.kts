@@ -76,12 +76,3 @@ dependencies {
 
 }
 
-//FIXME - just for exploring...
-tasks.register("myinfo") {
-    doLast {
-        sourceSets.forEach {
-            println(it.name)
-        }
-    }
-}
-
