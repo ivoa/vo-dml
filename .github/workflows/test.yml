@@ -30,4 +30,5 @@ jobs:
         with:
           arguments: |
               doAll
+              --rerun-tasks
               -PskipSigning=True
