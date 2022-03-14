@@ -8,6 +8,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
 import java.io.File
+import java.nio.file.Paths
 import java.util.jar.JarInputStream
 import javax.inject.Inject
 
@@ -34,7 +35,7 @@ import javax.inject.Inject
      @get:InputFiles
      val bindingFiles: ConfigurableFileCollection = project.objects.fileCollection()
 
-     @get:InputFile
+     @get:InputFile @Optional
      val catalogFile: RegularFileProperty = project.objects.fileProperty()
 
      @TaskAction
@@ -52,6 +53,16 @@ import javax.inject.Inject
             val ft = ao.zipTree(it).matching(org.gradle.api.tasks.util.PatternSet().include(bindingFileName(it)))
          }
 
+         val actualCatalog = if (catalogFile.isPresent) catalogFile.get().asFile
+                else createCatalog(project.file(Paths.get(project.buildDir.absolutePath,"tmp", "catalog.xml")),
+             vodmlFiles.files.plus (
+                 externalModelJars.flatMap{ f ->
+                     ao.zipTree(f).matching(org.gradle.api.tasks.util.PatternSet().include(vodmlFileName(f))).files
+                            }
+                     )
+         )
+
+
          vodmlFiles.forEach{  v ->
              val shortname = v.nameWithoutExtension
              val outfile = javaGenDir.file("$shortname.javatrans.txt")
@@ -59,7 +70,7 @@ import javax.inject.Inject
                  "binding" to allBinding.joinToString(separator = ","){it.absolutePath},
                  "output_root" to javaGenDir.get().asFile.absolutePath
              ),
-                 catalogFile.get().asFile, outfile.get().asFile)
+                 actualCatalog, outfile.get().asFile)
          }
      }
      private val hasVodml = fun (f: File): Boolean {
@@ -70,5 +81,32 @@ import javax.inject.Inject
      private val bindingFileName = fun (f: File): String {
          val js = JarInputStream(f.inputStream())
          return (js.manifest.mainAttributes.getValue("VODML-binding") )
+     }
+     private val vodmlFileName = fun (f: File): String {
+         val js = JarInputStream(f.inputStream())
+         return (js.manifest.mainAttributes.getValue("VODML-source") )
+     }
+
+     private fun createCatalog(cat : File, v: Iterable<File> ): File {
+         cat.bufferedWriter().use { out ->
+             out.write(
+                 """
+                     <?xml version="1.0"?>
+                     <catalog  xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+                        <group  prefer="system"  >
+                        
+                 """.trimIndent()
+             )
+             v.forEach {
+                  out.write("   <uri name=\"${it.name}\" uri=\"${it.absolutePath}\"/>\n")
+             }
+             out.write(
+                 """
+                        </group>
+                     </catalog>
+                 """.trimIndent()
+                 )
+         }
+        return cat;
      }
  }

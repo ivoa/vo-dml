@@ -35,7 +35,6 @@ vodml {
         )
     )
 
-    catalogFile.set(project.file("../../catalog.xml"))
 }
 
 

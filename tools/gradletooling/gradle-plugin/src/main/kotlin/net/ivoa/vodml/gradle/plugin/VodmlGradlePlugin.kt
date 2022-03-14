@@ -114,8 +114,6 @@ class VodmlGradlePlugin: Plugin<Project> {
         val toolchain = project.extensions.getByType(JavaPluginExtension::class.java).toolchain
         toolchain.languageVersion.set(JavaLanguageVersion.of(8))
 
-
-
         // force java compile to depend on this task
         project.tasks.named(JavaPlugin.COMPILE_JAVA_TASK_NAME) {
             it.dependsOn.add(vodmlJavaTask)

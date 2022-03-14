@@ -21,7 +21,6 @@ vodml {
     bindingFiles.setFrom(file("vo-dml/ivoa_base.vodml-binding.xml")
     )
 
-    catalogFile.set(project.file("../../tools/catalog.xml"))
 }
 
 tasks.test {
