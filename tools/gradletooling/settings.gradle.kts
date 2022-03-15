@@ -16,6 +16,7 @@ dependencyResolutionManagement {
     }
 
 }
+includeBuild("../../models/ivoa")
 rootProject.name="gradletooling"
 include("sample")
 

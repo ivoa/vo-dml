@@ -16,4 +16,5 @@ dependencyResolutionManagement {
     }
 
 }
+includeBuild("../../runtime/java")
 rootProject.name="ivoa-base"

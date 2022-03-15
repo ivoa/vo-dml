@@ -49,12 +49,9 @@ import javax.inject.Inject
          }
          val allBinding  = bindingFiles.files.plus(extBinding)
 
-         externalModelJars.forEach{
-            val ft = ao.zipTree(it).matching(org.gradle.api.tasks.util.PatternSet().include(bindingFileName(it)))
-         }
-
+         val tmpdir = project.mkdir(Paths.get(project.buildDir.absolutePath,"tmp",))
          val actualCatalog = if (catalogFile.isPresent) catalogFile.get().asFile
-                else createCatalog(project.file(Paths.get(project.buildDir.absolutePath,"tmp", "catalog.xml")),
+                else createCatalog(project.file(Paths.get(tmpdir.absolutePath, "catalog.xml")),
              vodmlFiles.files.plus (
                  externalModelJars.flatMap{ f ->
                      ao.zipTree(f).matching(org.gradle.api.tasks.util.PatternSet().include(vodmlFileName(f))).files

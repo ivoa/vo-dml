@@ -64,7 +64,7 @@ tasks.test {
 }
 
 dependencies {
-    implementation("org.javastro.ivoa.vo-dml:ivoa-base:1.0-SNAPSHOT")
+    implementation("org.javastro.ivoa.vo-dml:ivoa-base")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.1")
 
