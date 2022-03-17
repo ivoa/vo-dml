@@ -430,7 +430,7 @@
       <xsl:attribute name="version" select="'2.0'"/>
       <xsl:element name="persistence-unit" namespace="http://java.sun.com/xml/ns/persistence">
         <xsl:attribute name="name" select="concat('vodml_',name)"/>
-        <xsl:comment>we rely on eclipselink extensions</xsl:comment>
+        <xsl:comment>we rely on hibernate extensions</xsl:comment>
         <xsl:element name="provider" namespace="http://java.sun.com/xml/ns/persistence">org.hibernate.jpa.HibernatePersistenceProvider<!--org.eclipse.persistence.jpa.PersistenceProvider--></xsl:element>
         <xsl:apply-templates select="*" mode="jpaConfig"/>
         <!--do the other models -->

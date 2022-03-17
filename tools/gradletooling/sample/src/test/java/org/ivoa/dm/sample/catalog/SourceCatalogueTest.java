@@ -131,7 +131,7 @@ class SourceCatalogueTest extends AbstractTest {
         AlignedEllipse perr = src.getPositionError();
         assertEquals(0.2, perr.longError);
         assertTrue(!src.getLuminosity().get(0).getFilter().getBandName().equals(
-        src.getLuminosity().get(1).getFilter().getBandName()),"failure to distiguish references");
+        src.getLuminosity().get(1).getFilter().getBandName()),"failure to distinguish references");
         
 
         SchemaOutputResolver sor = new MySchemaOutputResolver();
@@ -141,7 +141,7 @@ class SourceCatalogueTest extends AbstractTest {
 
     @org.junit.jupiter.api.Test
     void sourceCatJPATest() {
-                javax.persistence.EntityManager em = setupDB("vodml_sample");
+       javax.persistence.EntityManager em = setupDB(SampleModel.pu_name());
         em.getTransaction().begin();
         em.persist(sc);
         em.getTransaction().commit();

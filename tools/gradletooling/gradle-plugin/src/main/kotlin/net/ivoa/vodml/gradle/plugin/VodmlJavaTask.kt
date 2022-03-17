@@ -60,12 +60,14 @@ import javax.inject.Inject
          )
 
 
+         var index = 0;
          vodmlFiles.forEach{  v ->
              val shortname = v.nameWithoutExtension
              val outfile = javaGenDir.file("$shortname.javatrans.txt")
              Vodml2Java.doTransform(v.absoluteFile, mapOf(
                  "binding" to allBinding.joinToString(separator = ","){it.absolutePath},
-                 "output_root" to javaGenDir.get().asFile.absolutePath
+                 "output_root" to javaGenDir.get().asFile.absolutePath,
+                 "isMain" to (if (index++ == 0 ) "True" else "False") // first is the Main
              ),
                  actualCatalog, outfile.get().asFile)
          }
