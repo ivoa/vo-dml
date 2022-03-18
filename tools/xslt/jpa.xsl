@@ -439,6 +439,10 @@
       </xsl:element>
     </xsl:element>
     </xsl:result-document>
+      <!-- add beans.xml - for quarkus https://quarkus.io/guides/hibernate-orm#defining-entities-in-external-projects-or-jars - hopefully benign-->
+      <xsl:result-document href="META-INF/beans.xml" format="persistenceInfo">
+          <xsl:comment>this has been put here for quarkus</xsl:comment>
+      </xsl:result-document>
   </xsl:template>
 
   <xsl:template match="package" mode="jpaConfig" >

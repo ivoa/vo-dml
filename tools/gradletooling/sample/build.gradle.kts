@@ -4,7 +4,7 @@ import org.gradle.kotlin.dsl.support.classFilePathCandidatesFor
  * 
  */
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.3.4"
+    id("net.ivoa.vo-dml.vodmltools") version "0.3.5"
 //    id ("com.diffplug.spotless") version "5.17.1"
 
 }
@@ -22,9 +22,9 @@ vodml {
     vodmlDir.set(layout.projectDirectory.dir("../../../models/")) // do the models in place, rather than use the symbolic links in subdirs of here
 // just act on one file
     vodmlFiles.setFrom(project.files (
+        vodmlDir.file("sample/sample/vo-dml/Sample.vo-dml.xml"),
         vodmlDir.file("sample/filter/vo-dml/Filter.vo-dml.xml"),
-        vodmlDir.file("sample/test/like_coords-v1.0.vo-dml.xml"),
-        vodmlDir.file("sample/sample/vo-dml/Sample.vo-dml.xml")
+        vodmlDir.file("sample/test/like_coords-v1.0.vo-dml.xml")
             ))
 
     bindingFiles.setFrom(

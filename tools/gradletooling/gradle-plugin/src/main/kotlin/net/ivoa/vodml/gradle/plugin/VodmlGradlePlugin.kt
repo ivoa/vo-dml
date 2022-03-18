@@ -4,6 +4,7 @@ import net.ivoa.vodml.gradle.plugin.internal.MIN_REQUIRED_GRADLE_VERSION
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.SourceSet
@@ -32,7 +33,7 @@ class VodmlGradlePlugin: Plugin<Project> {
         check(GradleVersion.current() >= MIN_REQUIRED_GRADLE_VERSION) {
             "The $VODML_PLUGIN_ID plugin requires Gradle $MIN_REQUIRED_GRADLE_VERSION or higher."
         }
-        project.plugins.apply(JavaPlugin::class.java) // add the java plugin as we are going to generate java eventually
+        project.plugins.apply(JavaLibraryPlugin::class.java) // add the java plugin as we are going to generate java eventually
 
         val extension = project.extensions.create(VODML_EXTENSION_NAME, VodmlExtension::class.java)
 
@@ -136,7 +137,7 @@ class VodmlGradlePlugin: Plugin<Project> {
 //             ,"jakarta.persistence:jakarta.persistence-api:3.0.0" // dont use until go to hibernate 6
         ).forEach {
             project.dependencies.addProvider(
-                JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME,
+                JavaPlugin.API_CONFIGURATION_NAME,
                 project.objects.property(Dependency::class.java).convention(
                     project.dependencies.create(it)
                 )
