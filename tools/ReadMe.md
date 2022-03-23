@@ -1,4 +1,4 @@
-Using the VO-DML Gradle Plugin 0.3.3
+Using the VO-DML Gradle Plugin 0.3.5
 ===================================
 
 The aim of this plugin is to process VO-DML models to produce documentation and source code that
@@ -19,10 +19,10 @@ as below.
 
 ```kotlin
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.3.3"
+    id("net.ivoa.vo-dml.vodmltools") version "0.3.5"
 }
 ```
-3. create the basic catalog and binding files for the model (see below in the configuration section) 
+3. create the  binding files for the model (see below in the configuration section) 
 
 There is nothing else that needs to be done if the VO-DML files in the default place 
 (see [sample build file](gradletooling/sample/build.gradle.kts) for some more 
@@ -43,18 +43,6 @@ dependencies along with the necessary JAXB and JPA libraries.
 
 * vodmlDir - the default is `src/main/vo-dml`
 * vodmlFiles - this is set by default to be all the `*.vo-dml.xml` files in the vodmlDir, but can be individually set
-* catalogFile - the default is `catalog.xml` and such a file is necessary even when the vodml files are in default place
-  as the rest of the tooling is designed to use only the filename (no path) for inclusions and references.
-```xml
-<?xml version="1.0"?>
-<catalog  xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">  
-   <group  prefer="system" >
-       <uri
-               name="IVOA-v1.0.vo-dml.xml"
-               uri="src/main/vo-dml/IVOA-v1.0.vo-dml.xml"/>
-   </group>
-</catalog>
-```
 * bindingFiles - the files that specify the mapping details between the models and the generated code.
 ```xml
 <m:mappedModels xmlns:m="http://www.ivoa.net/xml/vodml-binding/v0.9">
@@ -71,13 +59,26 @@ This is a minimal sample file for mapping VO-DML models to XSD or Java using the
 </m:mappedModels>
 ```
 
-The [schema](../xsd/vo-dml-binding.xsd) for the binding file shows what elements are allowed. The [binding file for the base IVOA model](./binding_ivoa_model.xml)
+The [schema](../xsd/vo-dml-binding.xsd) for the binding file shows what elements are allowed. The [binding file for the base IVOA model](../models/ivoa/vo-dml/ivoa_base.vodml-binding.xml)
 shows extensive use of the binding features, where it is possible to ignore the automated code generation entirely and substitute
 hand-written code.
 
 * outputDocDir - where the generated documentation is created - default `build/generated/docs/vodml/`
 * outputJavaDir - where the generated Java is created - the default is `build/generated/sources/vodml/java/` and it should not 
   be necessary to ever alter this as gradle will integrate this automatically into the various source paths.
+* catalogFile - in general it is not necessary to set this, as the plugin will create a catalogue file automatically from the vodmlDir and vodmlFiles properties (as well as including files in any dependencies that also contain VO-DML models)
+  A catalogue file is necessary as the rest of the tooling is designed to use only the filename (no path) for inclusions and references.
+  If it is desired to create a file manually for a special purpose, then the file should have the format as below - it should be noted that all references to model files will have to be specified if this is done.
+```xml
+<?xml version="1.0"?>
+<catalog  xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">  
+   <group  prefer="system" >
+       <uri
+               name="IVOA-v1.0.vo-dml.xml"
+               uri="src/main/vo-dml/IVOA-v1.0.vo-dml.xml"/>
+   </group>
+</catalog>
+```
 
 ## VODSL support
 
@@ -118,6 +119,7 @@ _TODO - there is still some information in the [README.txt](./README.txt) file t
 * 0.3.1 add the vodslToVodml task (0.3.0 would not publish because of SNAPSHOT dependency)
 * 0.3.2 add the XmiTask type
 * 0.3.3 bugfix for html document generation
-
+* 0.3.4 the plugin now saves VO-DML and binding files to the created jar and then uses them if they are in dependency tree.
+* 0.3.5 better working in the inherited data-model case.
 
 ## Information for [developers of the plugin itself](./Developing.md)

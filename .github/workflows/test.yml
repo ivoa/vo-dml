@@ -25,9 +25,24 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
-      - name: Test with Gradle
+      - name: Build java runtime with Gradle
         uses: gradle/gradle-build-action@v2.1.3
         with:
+          cache-disabled: false
           arguments: |
-              doAll
-              -PskipSigning=True
+            :java:jar  
+            -PskipSigning=True
+      - name: Build ivoa model with Gradle
+        uses: gradle/gradle-build-action@v2.1.3
+        with:
+          cache-disabled: false
+          arguments: |
+            :ivoa:jar  
+            -PskipSigning=True
+      - name: Test sample model with Gradle
+        uses: gradle/gradle-build-action@v2.1.3
+        with:
+          cache-disabled: false
+          arguments: |
+            :gradletooling:vodml-sample:test
+            -PskipSigning=True
