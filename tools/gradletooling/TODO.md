@@ -10,10 +10,10 @@ VODML Tooling TODO
 
 # gradle plugin
 
-* get binding files from dependent jars...
+* ~~get binding files from dependent jars~~
 * write some documentation
 * ~~publish in gradle repository~~
-* can remove all the ant stuff - including the libs and schematron dirs
+* ~~can remove all the ant stuff - including the libs and schematron dirs~~
 
 # Java Production
 
@@ -38,6 +38,7 @@ VODML Tooling TODO
   * embedded are not nullable - means that datatype with optional multiplicity is not handled well (i.e cannot be null!) https://hibernate.atlassian.net/browse/HHH-14818
     * see https://stackoverflow.com/questions/40979957/how-can-i-prevent-jpa-from-setting-an-embeddable-object-to-null-just-because-all?noredirect=1&lq=1 for the description of opposite
     * the way that this was worked around in proposalDM is to make the RealQuanity have nullable content - not ideal, but not too bad as unlikely to want to create a RealQuantity without both val and unit.
+    * https://docs.jboss.org/hibernate/orm/5.4/userguide/html_single/Hibernate_User_Guide.html#fetching-strategies-dynamic-fetching-entity-graph
 * STC
   * epoch - not really defined as something that is used properly
   * equinox in spaceframe (only used for a few..)
