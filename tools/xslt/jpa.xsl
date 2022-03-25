@@ -52,7 +52,7 @@
     @DiscriminatorColumn( name = "<xsl:value-of select="$discriminatorColumnName"/>", discriminatorType = DiscriminatorType.STRING, length = <xsl:value-of select="$discriminatorColumnLength"/>)
     </xsl:if>
     <xsl:if test="$extMod">
-  @DiscriminatorValue( "<xsl:value-of select="$className"/>" ) <!-- TODO decide whether this should be a path - current is just default anyuway-->
+  @DiscriminatorValue( "<xsl:value-of select="$className"/>" ) <!-- TODO decide whether this should be a path - current is just default anyway-->
   </xsl:if>
   @NamedQueries( {
     @NamedQuery( name = "<xsl:value-of select="$className"/>.findById", query = "SELECT o FROM <xsl:value-of select="$className"/> o WHERE o.<xsl:value-of select="$idname"/> = :id")
@@ -60,8 +60,19 @@
 ,     @NamedQuery( name = "<xsl:value-of select="$className"/>.findByName", query = "SELECT o FROM <xsl:value-of select="$className"/> o WHERE o.name = :name")
   </xsl:if>
   } )
- </xsl:template>
+      <xsl:if test="reference[multiplicity/maxOccurs != 1]|composition[multiplicity/maxOccurs != 1]">
+          @NamedEntityGraph(
+             name="<xsl:value-of select="concat($className,'_loadAll')"/>",
+             attributeNodes = {
+               <xsl:for-each select="reference[multiplicity/maxOccurs != 1]|composition[multiplicity/maxOccurs != 1]">
+                   @NamedAttributeNode(value="<xsl:value-of select='name'/>")<xsl:if test="position() != last()">,</xsl:if>
+               </xsl:for-each>
+            }
+          <!-- TODO need to think about subgraphs -->
+          )
+      </xsl:if>
 
+ </xsl:template>
 
 
 
@@ -352,6 +363,7 @@
     @OrderBy( value = "rank" )
         </xsl:if>
     @OneToMany( cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity=<xsl:value-of select="concat(vf:JavaType(datatype/vodml-ref),'.class')" />)
+    @org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
