@@ -37,23 +37,17 @@ import java.util.concurrent.TimeUnit
 
          vodmlFiles.forEach{
              val shortname = it.nameWithoutExtension
-             var outfile = docDir.file(shortname +".html")
-             Vodml2Html.doTransform(it.absoluteFile, outfile.get().asFile)
-             outfile = docDir.file(shortname +".graphml")
-             Vodml2Gml.doTransform(it.absoluteFile, emptyMap(), catalogFile.get().asFile, outfile.get().asFile)
-             outfile = docDir.file(shortname +"_desc.tex" )
-             val params = if (modelsToDocument.isPresent) mapOf("modelsToDocument" to modelsToDocument.get()) else emptyMap()
-             Vodml2Latex.doTransform(it.absoluteFile, params, catalogFile.get().asFile, outfile.get().asFile)
              logger.info("doing graphviz generation")
-             outfile = docDir.file(shortname +".gvd")
+             var outfile = docDir.file(shortname +".gvd")
              Vodml2Gvd.doTransform(it.absoluteFile, outfile.get().asFile)
+
              val proc = ProcessBuilder(listOf(
                  "dot",
                  "-Tcmapx",
                  "-o${shortname +".map"}",
-                  "-Tpng",
+                 "-Tpng",
                  "-o${shortname +".png"}",
-                  outfile.get().asFile.absolutePath
+                 outfile.get().asFile.absolutePath
              ))
                  .directory(docDir.get().asFile)
                  .redirectOutput(ProcessBuilder.Redirect.PIPE)
@@ -64,7 +58,17 @@ import java.util.concurrent.TimeUnit
 
              logger.info(proc.inputStream.bufferedReader().readText())
              if (proc.exitValue() != 0)
-                logger.error(proc.errorStream.bufferedReader().readText())
+                 logger.error(proc.errorStream.bufferedReader().readText())
+
+             outfile = docDir.file(shortname +".html")
+             Vodml2Html.doTransform(it.absoluteFile, mapOf("graphviz_png" to  shortname +".png",
+                                                            "graphviz_map" to docDir.file(shortname +".map").get().asFile.absolutePath),
+                       catalogFile.get().asFile, outfile.get().asFile)
+             outfile = docDir.file(shortname +".graphml")
+             Vodml2Gml.doTransform(it.absoluteFile, emptyMap(), catalogFile.get().asFile, outfile.get().asFile)
+             outfile = docDir.file(shortname +"_desc.tex" )
+             val params = if (modelsToDocument.isPresent) mapOf("modelsToDocument" to modelsToDocument.get()) else emptyMap()
+             Vodml2Latex.doTransform(it.absoluteFile, params, catalogFile.get().asFile, outfile.get().asFile)
 
          }
 

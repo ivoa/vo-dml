@@ -14,8 +14,7 @@
 
 <xsl:include href="common.xsl"/>
 
-<xsl:key name="ellookup" match="*[vodml-id]" use="concat(ancestor::vo-dml:model/name,':',vodml-id)"/>
-<xsl:key name="memblookup" match="*/*[vodml-id]" use="concat(ancestor::vo-dml:model/name,':',vodml-id)"/>
+<xsl:key name="ellookup" match="//*[vodml-id]" use="concat(ancestor::vo-dml:model/name,':',vodml-id)"/>
 <xsl:key name="maplookup" match="type-mapping[vodml-id]" use="concat(ancestor::model/name,':',vodml-id)"/>
 
   <xsl:param name="targetnamespace_root"/>
@@ -185,7 +184,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
         <xsl:value-of select="count($mapping/map:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/java-type) > 0"/>
     </xsl:function>
 
-
+<!-- return the base types for current type - note that this does not return the types in strict hierarchy order (not sure why!) -->
     <xsl:function name="vf:baseTypes" as="element()*">
         <xsl:param name="vodml-ref"/>
         <xsl:choose>
@@ -195,7 +194,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
                  </xsl:variable>
                  <xsl:choose>
                      <xsl:when test="$el/extends">
-                         <xsl:sequence select="($models/key('ellookup',$el/extends/vodml-ref),vf:baseTypes($el/extends/vodml-ref))"/>
+                         <xsl:sequence select="($models/key('ellookup',$el/extends/vodml-ref),vf:baseTypes($el/extends/vodml-ref))" />
                      </xsl:when>
                  </xsl:choose>
             </xsl:when>
@@ -205,6 +204,28 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
         </xsl:choose>
 
     </xsl:function>
+
+    <!--just returning the IDs will work in hierarchy order, but then need to use in for-each -->
+    <xsl:function name="vf:baseTypeIds" as="xsd:string*">
+        <xsl:param name="vodml-ref"/>
+        <xsl:choose>
+            <xsl:when test="$models/key('ellookup',$vodml-ref)">
+                <xsl:variable name="el" as="element()">
+                    <xsl:copy-of select="$models/key('ellookup',$vodml-ref)" />
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="$el/extends">
+                        <xsl:sequence select="($el/extends/vodml-ref,vf:baseTypeIds($el/extends/vodml-ref))"/>
+                    </xsl:when>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">type <xsl:value-of select="$vodml-ref"/> not in considered models for base types</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:function>
+
 
     <xsl:function name="vf:subTypes" as="element()*">
         <xsl:param name="vodml-ref"/>
@@ -325,18 +346,87 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
 
     </xsl:function>
 
-    <!-- is the attribute subsetted -->
+    <!-- is the attribute subsetted - for it to be truly subsetted it needs to be subtyped too-->
     <xsl:function name="vf:isSubSetted" as="xsd:boolean">
-        <xsl:param name="vodml-ref"/>
+        <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:choose>
             <xsl:when test="$models/key('ellookup',$vodml-ref)">
+
                 <!--note that comparison below ignores vodml namespace prefix - slightly dangerous, but only slightly -->
-                <xsl:value-of select="count($models//constraint[ends-with(@xsi:type,':SubsettedRole')]/role[vodml-ref = $vodml-ref])> 0"/>
+                <!-- also note that the datatype checking is just done on not exact equivalence, not if strictly a subtype -->
+                <xsl:value-of select="count($models//*[constraint[ends-with(@xsi:type,':SubsettedRole') and
+                          role[vodml-ref = $vodml-ref] and datatype[vodml-ref != $models/key('ellookup',$vodml-ref)/datatype/vodml-ref ]]])> 0"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:message terminate="yes">type '<xsl:value-of select="$vodml-ref"/>' not in considered models</xsl:message>
             </xsl:otherwise>
         </xsl:choose>
+    </xsl:function>
+
+    <xsl:function name="vf:isSubSettedInHierarchy" as="xsd:boolean">
+        <xsl:param name="type"  as="xsd:string" />
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="subsets" select="vf:subSettingInSuperHierarchy($type)" as="element()*"/>
+        <xsl:message>is_ssinhier <xsl:value-of select="concat('type=',$type, ' ref=', $vodml-ref)"/>"</xsl:message>
+        <xsl:value-of select="count($subsets[role/vodml-ref = $vodml-ref]) > 0" />
+    </xsl:function>
+
+    <!-- Thiis will return all the subsets found in the hierarchy - will not return subset when it is the same type as the thing it subsets
+     qlso shouuld take care of multiple levels of subsetting...-->
+    <xsl:function name="vf:subSettingInSuperHierarchy" as="element()*">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+<!--        <xsl:message select="concat('subsetting in hierarchy for=',$vodml-ref)"/>-->
+        <xsl:choose>
+            <xsl:when test="$models/key('ellookup',$vodml-ref)">
+                <!-- have to do this to get types in hierarchical order -->
+                <xsl:variable name="typenames" as="xsd:string*" select="($vodml-ref,vf:baseTypeIds($vodml-ref))"/>
+                <!-- TODO need to worry about the cases where a subset is subset again -->
+                <xsl:variable name="allsubsets" select="$models/key('ellookup',$typenames)/constraint[ends-with(@xsi:type,':SubsettedRole')]" as="element()*"/>
+<!--                <xsl:message>supertypenames=<xsl:value-of select="string-join($typenames,',')"/> subsets=<xsl:value-of select="string-join($allsubsets,',')"/></xsl:message>-->
+
+                    <!-- cannot see hy this will not work - actually because of the context in key() call
+                   <xsl:copy-of select="$allsubsets[datatype/vodml-ref != $models/key('ellookup',role/vodml-ref)/datatype/vodml-ref]"/>
+                    so doing for loop below-->
+                   <xsl:for-each select="$allsubsets">
+                       <xsl:variable name="subsetted" select="$models/key('ellookup',current()/role/vodml-ref)/datatype/vodml-ref"/>
+                       <xsl:if test="current()/datatype/vodml-ref/text() != $subsetted">
+                           <xsl:copy-of select="."/>
+                       </xsl:if>
+                   </xsl:for-each>
+              </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">type '<xsl:value-of select="$vodml-ref"/>' not in considered models</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:function>
+
+
+    <!-- This will return all the subsets found in the hierarchy - will not return subset when it is the same type as the thing it subsets
+  -->
+    <xsl:function name="vf:subSettingInSubHierarchy" as="element()*">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <!--        <xsl:message select="concat('subsetting in hierarchy for=',$vodml-ref)"/>-->
+        <xsl:choose>
+            <xsl:when test="$models/key('ellookup',$vodml-ref)">
+                <xsl:variable name="allsubsets" select="vf:subTypes($vodml-ref)/constraint[ends-with(@xsi:type,':SubsettedRole')]" as="element()*"/>
+                <!--                <xsl:message>supertypenames=<xsl:value-of select="string-join($typenames,',')"/> subsets=<xsl:value-of select="string-join($allsubsets,',')"/></xsl:message>-->
+
+                <!-- cannot see hy this will not work - actually because of the context in key() call
+               <xsl:copy-of select="$allsubsets[datatype/vodml-ref != $models/key('ellookup',role/vodml-ref)/datatype/vodml-ref]"/>
+                so doing for loop below-->
+                <xsl:for-each select="$allsubsets">
+                    <xsl:variable name="subsetted" select="$models/key('ellookup',current()/role/vodml-ref)/datatype/vodml-ref"/>
+                    <xsl:if test="current()/datatype/vodml-ref/text() != $subsetted">
+                        <xsl:copy-of select="."/>
+                    </xsl:if>
+                </xsl:for-each>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">type '<xsl:value-of select="$vodml-ref"/>' not in considered models</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+
     </xsl:function>
 
     <xsl:function name="vf:importedModelNames" as="xsd:string*">

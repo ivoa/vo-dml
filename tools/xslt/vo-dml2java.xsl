@@ -241,46 +241,58 @@
     <!-- returns the vodml-refs of the members including inherited ones -->
     <xsl:template name="allInheritedMembers" as="xsd:string*">
         <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
+        <xsl:variable name="subsets" select="vf:subSettingInSuperHierarchy($vodml-ref)/role/vodml-ref" as="xsd:string*"/>
         <xsl:variable name="supers" select="(.,vf:baseTypes($vodml-ref))"/>
+<!--        <xsl:message>inherited <xsl:value-of select="concat($vodml-ref, ' subsets=',string-join($subsets,','),' members=',-->
+<!--        string-join(for $v in ($supers/attribute,$supers/composition,$supers/reference) return vf:asvodmlref($v), ',') )" /></xsl:message>-->
         <xsl:sequence>
             <xsl:for-each select="$supers/attribute,$supers/composition,$supers/reference">
-               <xsl:value-of select="vf:asvodmlref(.)"/>
+                <xsl:variable name="m" select="vf:asvodmlref(.)"/>
+                <xsl:if test="not($m = $subsets)">
+                  <xsl:value-of select="$m"/>
+                </xsl:if>
             </xsl:for-each>
         </xsl:sequence>
     </xsl:template>
 
     <xsl:template match="objectType|dataType" mode="builder">
+        <xsl:variable name="subsetsInSubtypes" select="vf:subSettingInSubHierarchy(vf:asvodmlref(current()))/role/vodml-ref" as="xsd:string*"/>
+
         <xsl:variable name="members" as="xsd:string*">
-            <xsl:call-template name="allInheritedMembers"/>
+               <xsl:call-template name="allInheritedMembers"/>
         </xsl:variable>
-        <xsl:variable name="this" select="."/>
+        <xsl:variable name="subsetsInForce" select="vf:subSettingInSuperHierarchy(vf:asvodmlref(current()))" as="element()*"/>
+
         /**
-          A builder class for <xsl:value-of select="name"/> principally to be used in the functional builder pattern.
+          A builder class for <xsl:value-of select="name"/>, mainly for use in the functional builder pattern.
         */
         public static class <xsl:value-of select="name"/>Builder {
            <xsl:for-each select="$members">
                <xsl:variable name="m" select="$models/key('ellookup',current())"/>
+<!--               <xsl:message>builder member=<xsl:value-of select="concat(current(),' ',name($m),' subs=',string-join($subsetsInSubtypes,','))"/> </xsl:message>-->
+               <xsl:if test="not(name($m)='attribute' and current() = $subsetsInSubtypes)">
+
+
            /**
            * <xsl:apply-templates select="$m" mode="desc"/>
-           */<xsl:choose>
-                   <xsl:when test="$this/constraint[ends-with(@xsi:type,':SubsettedRole')]/role[vodml-ref = current()]">
-                       <xsl:variable name="type" select="vf:JavaType($this/constraint[role/vodml-ref = current()]/datatype/vodml-ref)"/>
+           */
+           public <xsl:apply-templates select="$m" mode="paramDecl"/>;
+               </xsl:if>
+           </xsl:for-each>
+           <xsl:for-each select="$subsetsInForce">
 
-                       <xsl:choose>
-                           <xsl:when test="$models/key('memblookup',current())/multiplicity[maxOccurs != 1]">
-           public <xsl:value-of select="concat(' java.util.List',$lt,$type,$gt, ' ', $models/key('ellookup',current())/name)"/>;
-                           </xsl:when>
-                           <xsl:otherwise>
-           public <xsl:value-of select="concat(' ',$type, ' ', $models/key('ellookup',current())/name)"/>;
-                           </xsl:otherwise>
-                       </xsl:choose>
-
+               <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
+               <xsl:variable name="memb" select="$models/key('ellookup',current()/role/vodml-ref)"/>
+               /**
+               * <xsl:apply-templates select="$memb" mode="desc"/> (subsetted)
+               */<xsl:choose>
+                   <xsl:when test="$memb/multiplicity[maxOccurs != 1]">
+                       public <xsl:value-of select="concat(' java.util.List',$lt,$type,$gt, ' ', $memb/name)"/>;
                    </xsl:when>
                    <xsl:otherwise>
-           public <xsl:apply-templates select="$m" mode="paramDecl"/>;
+                       public <xsl:value-of select="concat(' ',$type, ' ', $memb/name)"/>;
                    </xsl:otherwise>
                </xsl:choose>
-
            </xsl:for-each>
 
            private <xsl:value-of select="name"/>Builder with (java.util.function.Consumer &lt;<xsl:value-of select="name"/>Builder&gt; f)
@@ -294,8 +306,15 @@
            public <xsl:value-of select="name"/> create()
            {
              return new <xsl:value-of select="name"/> (
-             <xsl:value-of select="string-join(for $v in $members return tokenize($v,'[.]')[last()], ',')" />
-             );
+          <!-- this ought to be concise, but reverses the subsets order for some reason
+             <xsl:value-of select="string-join(for $v in ($members,$subsets/role/vodml-ref) return tokenize($v,'[.]')[last()], ',')" />
+             -->
+              <xsl:variable name="params"  as="xsd:string*">
+                  <xsl:for-each select="$members"><xsl:value-of select="$models/key('ellookup',current())/name" /></xsl:for-each>
+                  <xsl:for-each select="$subsetsInForce"><xsl:value-of select="$models/key('ellookup',current()/role/vodml-ref)/name"/> </xsl:for-each>
+              </xsl:variable>
+              <xsl:value-of select="string-join($params,',')"/>
+              );
            }
          }
          /**
@@ -312,36 +331,41 @@
        is easier to generate than calling super constructors with their appropriate parameters.
     -->
     <xsl:template match="objectType|dataType" mode="constructor">
+        <xsl:variable name="subsetsInSubtypes" select="vf:subSettingInSubHierarchy(vf:asvodmlref(current()))/role/vodml-ref" as="xsd:string*"/>
+
         <xsl:variable name="members" as="xsd:string*"  >
             <xsl:call-template name="allInheritedMembers" />
         </xsl:variable>
-        <xsl:variable name="this" select="."/>
+        <xsl:variable name="subsets" select="vf:subSettingInSuperHierarchy(vf:asvodmlref(current()))" as="element()*" />
+
         <xsl:variable name="decls" as="xsd:string*">
                 <xsl:for-each select="$members">
-                    <xsl:choose>
-                        <xsl:when test="$this/constraint[ends-with(@xsi:type,':SubsettedRole')]/role[vodml-ref = current()]">
-                           
-                            <xsl:variable name="type" select="vf:JavaType($this/constraint[role/vodml-ref=current()]/datatype/vodml-ref)"/>
-                            <xsl:choose>
-                                <xsl:when test="$models/key('memblookup',current())/multiplicity[maxOccurs != 1]">
-                                    <xsl:value-of select="concat('final java.util.List', $lt, $type, $gt, ' ', tokenize(current(), '[.]' )[last()])"/>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:value-of select="concat('final ',$type, ' ', tokenize(current(), '[.]' )[last()])"/>
-                                </xsl:otherwise>
-                            </xsl:choose>
+                    <xsl:variable name="m" select="$models/key('ellookup',current())"/>
+<!--                    <xsl:message>constructor member=<xsl:value-of select="concat(current(),' ',name($m),' insubs=',name($m)='attribute' and current() = $subsetsInSubtypes,' subs=',string-join($subsetsInSubtypes,','))"/> </xsl:message>-->
+                    <xsl:if test="not(name($m)='attribute' and current() = $subsetsInSubtypes)">
+                <xsl:value-of>
+                    <xsl:text>final </xsl:text>
+                            <xsl:apply-templates select="$m" mode="paramDecl"/>
+                </xsl:value-of>
+                    </xsl:if>
 
+
+                </xsl:for-each>
+                <xsl:for-each select="$subsets">
+                    <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
+                    <xsl:variable name="name" select="tokenize(role/vodml-ref, '[.]' )[last()]"/>
+                    <xsl:choose>
+                        <xsl:when test="$models/key('ellookup',current()/role/vodml-ref)/multiplicity[maxOccurs != 1]">
+                            <xsl:value-of select="concat('final java.util.List', $lt, $type, $gt, ' ', $name)"/>
                         </xsl:when>
-                        <xsl:otherwise><xsl:value-of>
-                            <xsl:text>final </xsl:text>
-                            <xsl:apply-templates select="$models/key('ellookup',current())" mode="paramDecl"/>
-                        </xsl:value-of>
+                        <xsl:otherwise>
+                            <xsl:value-of select="concat('final ',$type, ' ', $name)"/>
                         </xsl:otherwise>
                     </xsl:choose>
 
                 </xsl:for-each>
         </xsl:variable>
-        <xsl:if test="count($members) > 0">
+        <xsl:if test="count($decls) > 0">
         /**
         * full parameter constructor.
         */
@@ -349,11 +373,11 @@
           <xsl:value-of select="string-join($decls,', ')"/>
         )
         {
-           <xsl:for-each select="$members">
-               <xsl:variable name="name" select="$models/key('ellookup',current())/name"/>
-           this.<xsl:value-of select="$name"/> = <xsl:value-of select="$name"/>;
+           <xsl:for-each select="$decls">
+             <xsl:variable name="n" select="tokenize(current(),' ')[last()]"  />
+           this.<xsl:value-of select="$n"/> = <xsl:value-of select="$n"/>;
            </xsl:for-each>
-        }
+          }
         </xsl:if>
     </xsl:template>
 
@@ -462,6 +486,7 @@
       private static final long serialVersionUID = LAST_MODIFICATION_DATE;
  -->
       <xsl:apply-templates select="attribute" mode="declare" />
+      <xsl:apply-templates select="constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="declare" />
       <xsl:apply-templates select="composition" mode="declare" />
       <xsl:apply-templates select="reference" mode="declare" />
       /**
@@ -647,6 +672,8 @@ package <xsl:value-of select="$path"/>;
 
   <xsl:template match="attribute" mode="declare">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
+      <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
+      <xsl:if test="not(vf:isSubSetted($vodml-ref))">
     /** 
     * <xsl:apply-templates select="." mode="desc" /> : Attribute <xsl:value-of select="name"/> : multiplicity <xsl:apply-templates select="multiplicity" mode="tostring"/>
     *
@@ -665,17 +692,40 @@ package <xsl:value-of select="$path"/>;
     protected <xsl:value-of select="concat($type,' ',name)"/>;
         </xsl:otherwise>
     </xsl:choose>
+      </xsl:if>
   </xsl:template>
 
-  <xsl:template match="constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="getset">
+
+
+
+    <xsl:template match="constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="declare">
+        <!-- FIXME subsets can also be of compositions and references - worry about multiplicity-->
+      <xsl:variable name="subsetted" select="$models/key('ellookup',current()/role/vodml-ref)"/>
+      <xsl:if test="name($subsetted)='attribute' and datatype/vodml-ref != $subsetted/datatype/vodml-ref"> <!-- only do this if types are different (subsetting can change just the semantic stuff)-->
+        <xsl:variable name="javatype" select="vf:JavaType(datatype/vodml-ref)"/>
+        <xsl:variable name="name" select="tokenize(role/vodml-ref/text(),'[.]')[last()]"/>
+          /**
+          * <xsl:apply-templates select="$subsetted" mode="desc" />. Attribute <xsl:value-of select="name"/> : subsetted
+          *
+          */
+          <!--FIXME add the vodml annotation -->
+          <xsl:call-template name="doEmbeddedJPA">
+              <xsl:with-param name="name" select="$name"/>
+              <xsl:with-param name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
+              <xsl:with-param name="nillable" >false</xsl:with-param><!--FIXME with correct nillable value-->
+          </xsl:call-template>
+          <xsl:apply-templates select="$subsetted" mode="JAXBAnnotation"/>
+          protected <xsl:value-of select="concat($javatype,' ',$name)"/>;
+      </xsl:if>
+    </xsl:template>
+
+
+    <xsl:template match="constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="getset">
 
       <xsl:variable name="name" select="tokenize(role/vodml-ref/text(),'[.]')[last()]"/>
-      <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)[local-name() eq 'dataType']">
-        @Embedded
-      </xsl:if>
       <xsl:call-template name="doGetSet">
           <xsl:with-param name="name" select="$name"/>
-          <xsl:with-param name="mult" select="$models/key('memblookup',current()/role/vodml-ref)/multiplicity"/>
+          <xsl:with-param name="mult" select="$models/key('ellookup',current()/role/vodml-ref)/multiplicity"/>
       </xsl:call-template>
 
   </xsl:template>

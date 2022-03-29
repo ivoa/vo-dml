@@ -70,7 +70,7 @@ public class AbstractTest {
           //
             
           //derby
-          props.put("javax.persistence.jdbc.url", "jdbc:derby:memory:"+puname+";create=true");//IMPL differenrt DB for each PU to stop interactions
+          props.put("javax.persistence.jdbc.url", "jdbc:derby:memory:"+puname+";create=true;traceFile=derbytrace.out;traceLevel=-1;");//IMPL differenrt DB for each PU to stop interactions
     //        props.put(PersistenceUnitProperties.JDBC_URL, "jdbc:derby:emerlindb;create=true;traceFile=derbytrace.out;traceLevel=-1;traceDirectory=/tmp");
           props.put("javax.persistence.jdbc.driver", "org.apache.derby.jdbc.EmbeddedDriver");
           // props.put(PersistenceUnitProperties.TARGET_DATABASE, "org.eclipse.persistence.platform.database.DerbyPlatform");

@@ -146,7 +146,12 @@ class SourceCatalogueTest extends AbstractTest {
         em.persist(sc);
         em.getTransaction().commit();
         Long id = sc.getId();
-        
+
+        //flush any existing entities
+        em.clear();
+        em.getEntityManagerFactory().getCache().evictAll();
+
+        // now read back
         em.getTransaction().begin();
         List<SourceCatalogue> cats = em.createNamedQuery("SourceCatalogue.findById", SourceCatalogue.class)
                 .setParameter("id", id).getResultList();

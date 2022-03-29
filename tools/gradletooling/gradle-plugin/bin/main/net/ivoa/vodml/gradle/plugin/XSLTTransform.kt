@@ -17,7 +17,7 @@ import javax.xml.transform.stream.StreamSource
 /*
  * Created on 27/07/2021 by Paul Harrison (paul.harrison@manchester.ac.uk). 
  */
-abstract class XSLTTransformer( val script: String,  val method: String) {
+ open class XSLTTransformer( val script: String,  val method: String) {
 
     private val logger = LoggerFactory.getLogger(this.javaClass.name)
 
