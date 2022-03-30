@@ -52,7 +52,7 @@
     @DiscriminatorColumn( name = "<xsl:value-of select="$discriminatorColumnName"/>", discriminatorType = DiscriminatorType.STRING, length = <xsl:value-of select="$discriminatorColumnLength"/>)
     </xsl:if>
     <xsl:if test="$extMod">
-  @DiscriminatorValue( "<xsl:value-of select="$className"/>" ) <!-- TODO decide whether this should be a path - current is just default anyuway-->
+  @DiscriminatorValue( "<xsl:value-of select="$className"/>" ) <!-- TODO decide whether this should be a path - current is just default anyway-->
   </xsl:if>
   @NamedQueries( {
     @NamedQuery( name = "<xsl:value-of select="$className"/>.findById", query = "SELECT o FROM <xsl:value-of select="$className"/> o WHERE o.<xsl:value-of select="$idname"/> = :id")
@@ -60,8 +60,19 @@
 ,     @NamedQuery( name = "<xsl:value-of select="$className"/>.findByName", query = "SELECT o FROM <xsl:value-of select="$className"/> o WHERE o.name = :name")
   </xsl:if>
   } )
- </xsl:template>
+      <xsl:if test="reference[multiplicity/maxOccurs != 1]|composition[multiplicity/maxOccurs != 1]">
+          @NamedEntityGraph(
+             name="<xsl:value-of select="concat($className,'_loadAll')"/>",
+             attributeNodes = {
+               <xsl:for-each select="reference[multiplicity/maxOccurs != 1]|composition[multiplicity/maxOccurs != 1]">
+                   @NamedAttributeNode(value="<xsl:value-of select='name'/>")<xsl:if test="position() != last()">,</xsl:if>
+               </xsl:for-each>
+            }
+          <!-- TODO need to think about subgraphs -->
+          )
+      </xsl:if>
 
+ </xsl:template>
 
 
 
@@ -188,12 +199,12 @@
 
             </xsl:when>
             <xsl:when test="name($type) = 'enumeration'">
-        <xsl:call-template name="enumPattern">
-          <xsl:with-param name="columnName"><xsl:apply-templates select="." mode="columnName"/></xsl:with-param>
-        </xsl:call-template>
-      </xsl:when>
-          <xsl:when test="name($type) = 'dataType'">
-          <xsl:choose>
+                <xsl:call-template name="enumPattern">
+                   <xsl:with-param name="columnName"><xsl:apply-templates select="." mode="columnName"/></xsl:with-param>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:when test="name($type) = 'dataType'">
+            <xsl:choose>
               <xsl:when test="xsd:int(multiplicity/maxOccurs) = -1">
                   <xsl:variable name="tableName">
                       <xsl:apply-templates select=".." mode="tableName"/><xsl:text>_</xsl:text><xsl:value-of select="$name"/>
@@ -203,37 +214,11 @@
       @Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
               </xsl:when>
               <xsl:otherwise>
-
-          <xsl:choose>
-          <xsl:when test="not(vf:isSubSetted($vodml-ref))">
-      @Embedded
-              <xsl:variable name="attovers" as="xsd:string*">
-              <xsl:for-each select="($type/attribute, vf:baseTypes(vf:asvodmlref($type))/attribute)">
-                  <xsl:variable name="attr" select="."/>
-                  <xsl:variable name="atv" as="xsd:string*">
-                      <xsl:apply-templates select="$models/key('ellookup',current()/datatype/vodml-ref)" mode="attrovercols"><xsl:with-param name="prefix" select="concat($name,'_',name)"/></xsl:apply-templates>
-                  </xsl:variable>
-<!--                  <xsl:message><xsl:value-of select="concat($name,'-',$type/name, ' ', name,' overrides -> ',string-join($atv, ' %%%* '))" /></xsl:message>-->
-                  <xsl:for-each select="$atv">
-                      <xsl:variable name="tmp"> <!-- just to make formatting easier  (otherwise each bit is a string seqmnent, and a lot of quotes!) -->
-                      <xsl:variable name="attsubst">
-                          <xsl:value-of select="string-join(tokenize(.,'_')[position() != 1],'.')"/>
-                      </xsl:variable>
-                      <xsl:variable name="colsubs" select="."/>
-      @AttributeOverride(name="<xsl:value-of select='$attsubst'/>", column = @Column(name="<xsl:value-of select='$colsubs'/>",  nullable =<xsl:apply-templates select="$thisattr" mode="nullable"/> ))
-                      </xsl:variable>
-                      <xsl:value-of select="$tmp"/>
-                  </xsl:for-each>
-              </xsl:for-each>
-              </xsl:variable>
-      @AttributeOverrides( {
-                     <xsl:value-of select="string-join($attovers,concat(',',$cr))"/>
-             })
-                </xsl:when>
-                <xsl:otherwise>//subsetted
-      @Transient
-                </xsl:otherwise>
-               </xsl:choose>
+                  <xsl:call-template name="doEmbeddedJPA">
+                      <xsl:with-param name="name" select="$name"/>
+                      <xsl:with-param name="type" select="$type"/>
+                      <xsl:with-param name="nillable" ><xsl:apply-templates select="$thisattr" mode="nullable"/></xsl:with-param>
+                  </xsl:call-template>
               </xsl:otherwise>
           </xsl:choose>
           </xsl:when>
@@ -242,6 +227,36 @@
         // TODO    [NOT_SUPPORTED_ATTRIBUTE]
             </xsl:otherwise>
         </xsl:choose>
+    </xsl:template>
+
+    <xsl:template name="doEmbeddedJPA">
+        <xsl:param name="name"/>
+        <xsl:param name="type"/>
+        <xsl:param name="nillable"/>
+        @Embedded
+        <xsl:variable name="attovers" as="xsd:string*">
+            <xsl:for-each select="($type/attribute, vf:baseTypes(vf:asvodmlref($type))/attribute)">
+                <xsl:variable name="attr" select="."/>
+                <xsl:variable name="atv" as="xsd:string*">
+                    <xsl:apply-templates select="$models/key('ellookup',current()/datatype/vodml-ref)" mode="attrovercols"><xsl:with-param name="prefix" select="concat($name,'_',name)"/></xsl:apply-templates>
+                </xsl:variable>
+                <!--                  <xsl:message><xsl:value-of select="concat($name,'-',$type/name, ' ', name,' overrides -> ',string-join($atv, ' %%%* '))" /></xsl:message>-->
+                <xsl:for-each select="$atv">
+                    <xsl:variable name="tmp"> <!-- just to make formatting easier  (otherwise each bit is a string seqmnent, and a lot of quotes!) -->
+                        <xsl:variable name="attsubst">
+                            <xsl:value-of select="string-join(tokenize(.,'_')[position() != 1],'.')"/>
+                        </xsl:variable>
+                        <xsl:variable name="colsubs" select="."/>
+                        @AttributeOverride(name="<xsl:value-of select='$attsubst'/>", column = @Column(name="<xsl:value-of select='$colsubs'/>",  nullable = <xsl:value-of select='$nillable'/> ))
+                    </xsl:variable>
+                    <xsl:value-of select="$tmp"/>
+                </xsl:for-each>
+            </xsl:for-each>
+        </xsl:variable>
+        @AttributeOverrides( {
+        <xsl:value-of select="string-join($attovers,concat(',',$cr))"/>
+        })
+
     </xsl:template>
 
     <xsl:template match="dataType" mode="attrovercols" as="xsd:string*">
@@ -352,6 +367,7 @@
     @OrderBy( value = "rank" )
         </xsl:if>
     @OneToMany( cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity=<xsl:value-of select="concat(vf:JavaType(datatype/vodml-ref),'.class')" />)
+    @org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>

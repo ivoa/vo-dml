@@ -80,6 +80,9 @@ A static function to create a suitable JAXBContext
 ```java
 JAXBContext jc = MyModel.contextFactory();
 ```
+In general collections are marked for lazy loading, and as a convenience there is a `walkCollections()`
+method generated that will do a deep walk of all the collections in a particular type, whcih will force the loading.
+
 
 #### Functions for adding content
 For each of the concrete objectTypes in the model there is 

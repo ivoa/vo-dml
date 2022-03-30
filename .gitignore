@@ -5,3 +5,5 @@
 build
 
 .idea
+/models/ivoa/bin/
+/tools/gradletooling/gradle-plugin/bin/

@@ -31,6 +31,8 @@ class CoordsModelTest extends AbstractTest {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory
             .getLogger(CoordsModelTest.class);
     private CelestialPoint pos1;
+    private CoordSys spacesys;
+    private SpaceFrame icrs;
     
     /**
      * @throws java.lang.Exception
@@ -45,7 +47,7 @@ class CoordsModelTest extends AbstractTest {
         
         
         RefLocation ssbc = new StdRefLocation("BARYCENTRE");
-        SpaceFrame icrs = new SpaceFrame().withEquinox("J2000").withRefPosition(ssbc).withSpaceRefFrame("ICRS");
+        icrs = new SpaceFrame().withEquinox("J2000").withRefPosition(ssbc).withSpaceRefFrame("ICRS");
         
         
         RefLocation geocentric = new StdRefLocation("GEOCENTRIC");
@@ -53,7 +55,7 @@ class CoordsModelTest extends AbstractTest {
         
         Unit degree = new Unit("degree");
         PhysicalCoordSpace coordspace = new SphericalCoordSpace();
-        CoordSys spacesys = new SpaceSys(coordspace, icrs);// FIXME withCoordspace missing from the generated code
+        spacesys = new SpaceSys(coordspace, icrs);
         pos1 = new CelestialPoint(new RealQuantity(45.0, degree), new RealQuantity(22.0, degree), spacesys );
         
         
@@ -64,7 +66,9 @@ class CoordsModelTest extends AbstractTest {
         logger.debug("Starting XML test");
         JAXBContext jc = CoordsModel.contextFactory();
         CoordsModel model = new CoordsModel();
+        model.addContent(icrs);
        // model.addContent(pos1); FIXME - need to think about the dtypes should be added to the top level  model object.
+        //TODO actually test
         
     }
 
