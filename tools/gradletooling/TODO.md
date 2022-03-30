@@ -34,7 +34,7 @@ VODML Tooling TODO
   * add constructor that misses out the optional attributes.
 * JAXB
   * ~~idrefs referred to objects are not being output - http://stackoverflow.com/questions/12914382/marshalling-unmarshalling-fields-to-tag-with-attributes-using-jaxb~~
-  * make the subsets create substitution group xml (i.e. have elements rather than xsi:type)
+  * make the subsets create substitution group xml (i.e. have elements rather than xsi:type) http://blog.bdoughan.com/2010/11/jaxb-and-inheritance-using-substitution.html
   * don't allow to add to content something that is a reference? 
   * should dtypes be root elements? better to add to the modelElement....
   * not dealing with something that is a composition and also a reference 
