@@ -301,7 +301,8 @@
              return this;
            }
            /**
-             create a <xsl:value-of select="name"/> from this builder.
+           *  create a <xsl:value-of select="name"/> from this builder.
+           *  @return an object initialized from the builder.
            */
            public <xsl:value-of select="name"/> create()
            {
@@ -317,9 +318,11 @@
               );
            }
          }
-         /**
-           create a <xsl:value-of select="name"/> in functional builder style.
-         */
+        /**
+        *   create a <xsl:value-of select="name"/> in functional builder style.
+        *  @param f the functional builder.
+        *  @return an object initialized from the builder.
+        */
          public static <xsl:value-of select="name"/>&bl;create<xsl:value-of select="name"/> (java.util.function.Consumer &lt;<xsl:value-of select="name"/>Builder&gt; f)
          {
              return new <xsl:value-of select="name"/>Builder().with(f).create();
@@ -368,6 +371,10 @@
         <xsl:if test="count($decls) > 0">
         /**
         * full parameter constructor.
+            <!-- TODO get the parameter descriptions again - not DRY unfortunately-->
+            <xsl:for-each select="$decls">
+        *   @param <xsl:value-of select="tokenize(current(),' ')[last()]"    />
+            </xsl:for-each>
         */
         public  <xsl:value-of select="name"/> (
           <xsl:value-of select="string-join($decls,', ')"/>
@@ -437,7 +444,14 @@
     <xsl:call-template name="vodmlAnnotation"/>
        public&bl;<xsl:if test="@abstract='true'">abstract</xsl:if>&bl;class <xsl:value-of select="name"/>&bl;
       <xsl:if test="extends">extends <xsl:value-of select="vf:JavaType(extends/vodml-ref)"/></xsl:if>
-      <xsl:if test="vf:referredTo($vodml-ref)"> implements org.ivoa.vodml.jaxb.XmlIdManagement</xsl:if>
+      <xsl:variable name="ifs" as="xsd:string*">
+          <xsl:sequence>
+              <xsl:if test="vf:referredTo($vodml-ref)">org.ivoa.vodml.jaxb.XmlIdManagement</xsl:if>
+              <xsl:if test="name(current())='objectType'">org.ivoa.vodml.nav.JPACollectionTraverser</xsl:if><!--IMPL could restrict to composition[multiplicity/maxOccurs != 1]-->
+          </xsl:sequence>
+      </xsl:variable>
+      <xsl:if test="count($ifs)> 0"><xsl:value-of select="concat(' implements ', string-join($ifs,','))"/> </xsl:if>
+
     &bl;{
       <xsl:if test="local-name() eq 'objectType' and not (extends) and not(attribute/constraint[ends-with(@xsi:type,':NaturalKey')])" >
           /**
@@ -522,6 +536,9 @@
       <xsl:if test="not(@abstract)">
       <xsl:apply-templates select="." mode="builder"/>
       </xsl:if>
+      <xsl:apply-templates select="." mode="jpawalker"/>
+
+
 <!--      <xsl:if test="local-name() eq 'dataType'">-->
 <!--          <xsl:apply-templates select="." mode="JPAConverter"/>-->
 <!--      </xsl:if>-->
@@ -914,7 +931,31 @@ package <xsl:value-of select="$path"/>;
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="add2composition">
+    <xsl:template match="objectType" mode="jpawalker">
+
+            @Override
+            public void walkCollections() {
+        <xsl:apply-templates select="composition|reference" mode="jpawalker"/>
+               <xsl:if test="extends">
+                   super.walkCollections();
+               </xsl:if>
+            }
+    </xsl:template>
+
+    <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="jpawalker">
+        for( <xsl:value-of select="vf:FullJavaType(datatype/vodml-ref, true())"/> c : <xsl:value-of select="name"/> ) {
+           c.walkCollections();
+        }
+
+    </xsl:template>
+    <xsl:template match="composition|reference" mode="jpawalker">
+        if( <xsl:value-of select="name"/> != null ) <xsl:value-of select="name"/>.walkCollections();
+    </xsl:template>
+    <xsl:template match="dataType" mode="jpawalker">
+        <!-- do nothing for datatypes -->
+    </xsl:template>
+
+    <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="add2composition">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
     <xsl:variable name="name">
       <xsl:call-template name="upperFirst">
