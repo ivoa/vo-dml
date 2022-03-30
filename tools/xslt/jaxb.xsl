@@ -26,9 +26,13 @@
 
   @javax.xml.bind.annotation.XmlAccessorType( javax.xml.bind.annotation.XmlAccessType.NONE )  
   @javax.xml.bind.annotation.XmlType( name = "<xsl:value-of select="name"/>")
+  <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
+  <xsl:if test="vf:hasSubTypes($vodml-ref)">
+  @javax.xml.bind.annotation.XmlSeeAlso({ <xsl:value-of select="string-join(for $s in vf:subTypes($vodml-ref) return concat(vf:QualifiedJavaType(vf:asvodmlref($s)),'.class'),',')"/>  })
+  </xsl:if>
     <xsl:choose>
       <xsl:when test="not(vf:isContained(vf:asvodmlref(.))) and not(@abstract = 'true')">
-    @javax.xml.bind.annotation.XmlRootElement( name = "<xsl:value-of select="name"/>")
+ //   @javax.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>")
       </xsl:when>
       <xsl:otherwise>
       </xsl:otherwise>
