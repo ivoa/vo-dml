@@ -87,12 +87,19 @@ for possible ways to make images with links
     <xsl:value-of select="concat('\hyperref[',ancestor::vo-dml:model/name,':',.,']{\mbox{',replace(following-sibling::name,'_','\\_'),'}} ')"/>
   </xsl:template>
 
+
+
+
   <xsl:template match="package" mode="index">
 
     \begin{tabular}{ll}
     package &amp; \label{<xsl:value-of select="concat(ancestor::vo-dml:model/name,':',vodml-id)"/>} <xsl:value-of select="vodml-id"/> \tabularnewline
     <xsl:call-template name="indexcontent"/>
      \end{tabular}
+  </xsl:template>
+  <xsl:template match="package">
+    <!-- do not add any document structure for nested packages - not enough subsubsections in LaTeX! -->
+    <xsl:apply-templates select="*"/>
   </xsl:template>
   <xsl:template name="indexcontent">
     <xsl:if test="count(objectType) > 0">
