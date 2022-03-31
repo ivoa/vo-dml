@@ -1,7 +1,7 @@
 package net.ivoa.vodml.gradle.plugin
 
-import org.apache.tools.ant.types.PatternSet
 import org.gradle.api.DefaultTask
+import org.gradle.api.Project
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
@@ -18,9 +18,7 @@ import javax.inject.Inject
  * Created on 04/08/2021 by Paul Harrison (paul.harrison@manchester.ac.uk). 
  */
 
- open class VodmlJavaTask @Inject constructor(private val ao: ArchiveOperations) : DefaultTask()
- {
-
+ open class VodmlJavaTask @Inject constructor(private val ao: ArchiveOperations) : DefaultTask() {
 
 
      @get:[InputDirectory PathSensitive(PathSensitivity.RELATIVE)]
@@ -30,46 +28,66 @@ import javax.inject.Inject
      val vodmlFiles: ConfigurableFileCollection = project.objects.fileCollection()
 
      @get:OutputDirectory
-     val javaGenDir : DirectoryProperty = project.objects.directoryProperty()
+     val javaGenDir: DirectoryProperty = project.objects.directoryProperty()
 
      @get:InputFiles
      val bindingFiles: ConfigurableFileCollection = project.objects.fileCollection()
 
-     @get:InputFile @Optional
+     @get:InputFile
+     @Optional
      val catalogFile: RegularFileProperty = project.objects.fileProperty()
 
      @TaskAction
      fun doGeneration() {
          logger.info("Generating Java for VO-DML files ${vodmlFiles.files.joinToString { it.name }}")
          logger.info("Looked in ${vodmlDir.get()}")
-         val externalModelJars = project.configurations.getByName("runtimeClasspath").files.filter (hasVodml)
-         logger.info("external models=${externalModelJars.joinToString { f->f.name }}")
-         val extBinding = externalModelJars.flatMap{ f ->
-             ao.zipTree(f).matching(org.gradle.api.tasks.util.PatternSet().include(bindingFileName(f))).files
-         }
-         val allBinding  = bindingFiles.files.plus(extBinding)
+         val eh = ExternalModelHelper(project, ao, logger)
+         val actualCatalog = eh.makeCatalog(vodmlFiles,catalogFile)
 
-         val tmpdir = project.mkdir(Paths.get(project.buildDir.absolutePath,"tmp",))
-         val actualCatalog = if (catalogFile.isPresent) catalogFile.get().asFile
-                else createCatalog(project.file(Paths.get(tmpdir.absolutePath, "catalog.xml")),
-             vodmlFiles.files.plus (
-                 externalModelJars.flatMap{ f ->
-                     ao.zipTree(f).matching(org.gradle.api.tasks.util.PatternSet().include(vodmlFileName(f))).files
-                            }
-                     )
-         )
-
+         val allBinding = bindingFiles.files.plus(eh.externalBinding())
 
          var index = 0;
-         vodmlFiles.forEach{  v ->
+         vodmlFiles.forEach { v ->
              val shortname = v.nameWithoutExtension
              val outfile = javaGenDir.file("$shortname.javatrans.txt")
-             Vodml2Java.doTransform(v.absoluteFile, mapOf(
-                 "binding" to allBinding.joinToString(separator = ","){it.absolutePath},
-                 "output_root" to javaGenDir.get().asFile.absolutePath,
-                 "isMain" to (if (index++ == 0 ) "True" else "False") // first is the Main
-             ),
-                 actualCatalog, outfile.get().asFile)
+             Vodml2Java.doTransform(
+                 v.absoluteFile, mapOf(
+                     "binding" to allBinding.joinToString(separator = ",") { it.absolutePath },
+                     "output_root" to javaGenDir.get().asFile.absolutePath,
+                     "isMain" to (if (index++ == 0) "True" else "False") // first is the Main
+                 ),
+                 actualCatalog, outfile.get().asFile
+             )
+         }
+     }
+ }
+
+class ExternalModelHelper constructor (private val project: Project , private val ao: ArchiveOperations, private val logger:org.gradle.api.logging.Logger) {
+    private val externalModelJars = project.configurations.getByName("runtimeClasspath").files.filter { f: File ->
+        val js = JarInputStream(f.inputStream())
+        (js.manifest.mainAttributes.getValue("VODML-binding")) != null //IMPL because of weird map of maps no contains
+    }
+   init {
+       logger.info("external models=${externalModelJars.joinToString { f -> f.name }}")
+
+   }
+    fun makeCatalog(vodmlFiles:ConfigurableFileCollection, catalogFile:RegularFileProperty): File {
+
+         val tmpdir = project.mkdir(Paths.get(project.buildDir.absolutePath, "tmp"))
+         val actualCatalog = if (catalogFile.isPresent) catalogFile.get().asFile
+         else createCatalog(project.file(Paths.get(tmpdir.absolutePath, "catalog.xml")),
+             vodmlFiles.files.plus(
+                 externalModelJars.flatMap { f ->
+                     ao.zipTree(f).matching(org.gradle.api.tasks.util.PatternSet().include(vodmlFileName(f))).files
+                 }
+             )
+         )
+         return  actualCatalog
+     }
+
+     fun externalBinding(): List<File> {
+         return externalModelJars.flatMap { f ->
+             ao.zipTree(f).matching(org.gradle.api.tasks.util.PatternSet().include(bindingFileName(f))).files
          }
      }
      private val hasVodml = fun (f: File): Boolean {

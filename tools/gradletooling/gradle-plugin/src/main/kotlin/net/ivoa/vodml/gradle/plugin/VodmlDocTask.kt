@@ -1,19 +1,21 @@
 package net.ivoa.vodml.gradle.plugin
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 
 /*
  * Created on 04/08/2021 by Paul Harrison (paul.harrison@manchester.ac.uk). 
  */
 
- open class VodmlDocTask : DefaultTask()
+ open class VodmlDocTask  @Inject constructor(private val ao: ArchiveOperations) : DefaultTask()
  {
      @get:[InputDirectory PathSensitive(PathSensitivity.RELATIVE)]
      val vodmlDir: DirectoryProperty = project.objects.directoryProperty()
@@ -21,7 +23,7 @@ import java.util.concurrent.TimeUnit
      @get:InputFiles
      val vodmlFiles: ConfigurableFileCollection = project.objects.fileCollection()
 
-     @get:InputFile
+     @get:InputFile @Optional
      val catalogFile: RegularFileProperty = project.objects.fileProperty()
 
      @get:OutputDirectory
@@ -34,6 +36,8 @@ import java.util.concurrent.TimeUnit
      fun doDocumentation() {
          logger.info("Documenting VO-DML files ${vodmlFiles.files.joinToString { it.name }}")
          logger.info("Looked in ${vodmlDir.get()}")
+         val eh = ExternalModelHelper(project, ao, logger)
+         val actualCatalog = eh.makeCatalog(vodmlFiles,catalogFile)
 
          vodmlFiles.forEach{
              val shortname = it.nameWithoutExtension
@@ -60,15 +64,15 @@ import java.util.concurrent.TimeUnit
              if (proc.exitValue() != 0)
                  logger.error(proc.errorStream.bufferedReader().readText())
 
-             outfile = docDir.file(shortname +".html")
-             Vodml2Html.doTransform(it.absoluteFile, mapOf("graphviz_png" to  shortname +".png",
-                                                            "graphviz_map" to docDir.file(shortname +".map").get().asFile.absolutePath),
-                       catalogFile.get().asFile, outfile.get().asFile)
-             outfile = docDir.file(shortname +".graphml")
-             Vodml2Gml.doTransform(it.absoluteFile, emptyMap(), catalogFile.get().asFile, outfile.get().asFile)
+             outfile = docDir.file("$shortname.html")
+             Vodml2Html.doTransform(it.absoluteFile, mapOf("graphviz_png" to "$shortname.png",
+                                                            "graphviz_map" to docDir.file("$shortname.map").get().asFile.absolutePath),
+                       actualCatalog, outfile.get().asFile)
+             outfile = docDir.file("$shortname.graphml")
+             Vodml2Gml.doTransform(it.absoluteFile, emptyMap(), actualCatalog, outfile.get().asFile)
              outfile = docDir.file(shortname +"_desc.tex" )
              val params = if (modelsToDocument.isPresent) mapOf("modelsToDocument" to modelsToDocument.get()) else emptyMap()
-             Vodml2Latex.doTransform(it.absoluteFile, params, catalogFile.get().asFile, outfile.get().asFile)
+             Vodml2Latex.doTransform(it.absoluteFile, params, actualCatalog, outfile.get().asFile)
 
          }
 

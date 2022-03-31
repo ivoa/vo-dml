@@ -2,6 +2,7 @@ package net.ivoa.vodml.gradle.plugin
 
 import name.dmaus.schxslt.Schematron
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
@@ -9,6 +10,7 @@ import org.gradle.api.tasks.*
 import org.xmlresolver.CatalogResolver
 import org.xmlresolver.ResolverFeature
 import org.xmlresolver.XMLResolverConfiguration
+import javax.inject.Inject
 import javax.xml.transform.stream.StreamSource
 
 
@@ -16,7 +18,7 @@ import javax.xml.transform.stream.StreamSource
  * Created on 04/08/2021 by Paul Harrison (paul.harrison@manchester.ac.uk).
  */
 
- open class VodmlValidateTask : DefaultTask()
+ open class VodmlValidateTask @Inject constructor(private val ao: ArchiveOperations) : DefaultTask()
  {
      @get:[InputDirectory PathSensitive(PathSensitivity.RELATIVE)]
      val vodmlDir: DirectoryProperty = project.objects.directoryProperty()
@@ -24,7 +26,7 @@ import javax.xml.transform.stream.StreamSource
      @get:InputFiles
      val vodmlFiles: ConfigurableFileCollection = project.objects.fileCollection()
 
-     @get:InputFile
+     @get:InputFile @Optional
      val catalog: RegularFileProperty = project.objects.fileProperty()
 
      @get:[OutputDirectory]
@@ -37,10 +39,13 @@ import javax.xml.transform.stream.StreamSource
          logger.info("Looked in ${vodmlDir.get()}")
 
          val config = XMLResolverConfiguration()
+         val eh = ExternalModelHelper(project, ao, logger)
+         val actualCatalog = eh.makeCatalog(vodmlFiles,catalog)
+
+         config.setFeature(ResolverFeature.CATALOG_FILES, listOf(actualCatalog.absolutePath))
+
          config.setFeature(ResolverFeature.PREFER_PUBLIC, false)
-         if (catalog.isPresent and catalog.get().asFile.exists()) {
-             config.setFeature(ResolverFeature.CATALOG_FILES, listOf(catalog.get().asFile.absolutePath))
-         }
+
          config.setFeature(ResolverFeature.URI_FOR_SYSTEM, true) // fall through to URI
          val catalogResolver = CatalogResolver(config)
 
