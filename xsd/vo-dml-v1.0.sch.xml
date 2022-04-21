@@ -79,8 +79,7 @@ all model imports did not succeed (only <sch:value-of select="$count"/>)
         </sch:rule>
     </sch:pattern>
 
-
-    <sch:pattern name="Unique_vodml-id">
+<sch:pattern name="Unique_vodml-id">
   <sch:rule context="vodml-id[not(../name() = 'vo-dml:model')]">
     <sch:let name="count" value="count(./following::vodml-id[. = current()])"/>
     <sch:assert test="$count = 0" flag="error">
@@ -89,8 +88,17 @@ vodml-id '<sch:value-of select="."/>' is not unique, there are <sch:value-of sel
   </sch:rule>
 </sch:pattern>
 
+    <sch:pattern name="Unique_name">
+        <sch:rule context="(attribute|reference|composition|literal)/name">
+            <sch:let name="count" value="count(../preceding-sibling::*/name[. = current()])"/>
+            <sch:assert test="$count = 0" flag="error">
+                name '<sch:value-of select="."/>' is not unique, there are other members with same name in <sch:value-of select="concat(../../name(),' ',../../vodml-id)"/> .
+            </sch:assert>
+        </sch:rule>
+    </sch:pattern>
 
-<sch:pattern name="Single_Inheritance">
+
+    <sch:pattern name="Single_Inheritance">
   <sch:rule context="objectType|dataType|enumeration|primitiveType">
     <sch:let name="count" value="count(extends)"/>
     <sch:assert test="$count &lt; 2" flag="error">
