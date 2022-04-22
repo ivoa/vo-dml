@@ -1,3 +1,4 @@
+import net.ivoa.vodml.gradle.plugin.VodmlToVodslTask
 import org.gradle.kotlin.dsl.support.classFilePathCandidatesFor
 
 /*
@@ -47,6 +48,7 @@ tasks.register("UmlToVodml", net.ivoa.vodml.gradle.plugin.XmiTask::class.java) {
     vodmlFile.set(file("test.vo-dml.xml")) // the output VO-DML file.
     description = "convert UML to VO-DML"
 }
+
 
 //FIXME spotless not working in composite project build - possibly https://github.com/diffplug/spotless/issues/860
 // use to reformat the generated code nicely.

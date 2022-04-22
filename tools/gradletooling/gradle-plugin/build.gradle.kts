@@ -90,13 +90,13 @@ gradlePlugin {
 }
 
 java {
-    targetCompatibility =  JavaVersion.VERSION_1_8
+    targetCompatibility =  JavaVersion.VERSION_11
 }
 
 //seem to need this hack if compiling on > jdk8 platform
 val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
 compileKotlin.kotlinOptions {
-    jvmTarget = JavaVersion.VERSION_1_8.toString()
+    jvmTarget = JavaVersion.VERSION_11.toString()
 }
 // end of hack
 

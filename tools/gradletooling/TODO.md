@@ -51,6 +51,7 @@ VODML Tooling TODO
   * epoch - not really defined as something that is used properly
   * equinox in spaceframe (only used for a few..)
   * names a bit confusing...
-  * concrete types - for a library?
+  * concrete types - the choice for a library?
   * polarization enum - not comprehensive - no L circular
   * AstroCoordSystem - is a CoordSys and has a CoordSys
+  * no point on celestial sphere

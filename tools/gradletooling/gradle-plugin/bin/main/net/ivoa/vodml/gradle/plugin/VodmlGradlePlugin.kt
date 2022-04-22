@@ -1,5 +1,6 @@
 package net.ivoa.vodml.gradle.plugin
 
+import net.ivoa.vodml.gradle.plugin.VodmlToVodslTask
 import net.ivoa.vodml.gradle.plugin.internal.MIN_REQUIRED_GRADLE_VERSION
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -27,6 +28,7 @@ class VodmlGradlePlugin: Plugin<Project> {
         const val VODML_VAL_TASK_NANE = "vodmlValidate"
         const val VODML_JAVA_TASK_NANE = "vodmlGenerateJava"
         const val VODML_VODSL_TASK_NAME = "vodslToVodml"
+        const val VODML_TO_VODSL_TASK_NAME = "vodmlToVodsl"
     }
     override fun apply(project: Project) {
         project.logger.info("Applying $VODML_PLUGIN_ID to project ${project.name}")
@@ -73,6 +75,10 @@ class VodmlGradlePlugin: Plugin<Project> {
                 extension.vodslFiles
             )
             task.vodmlDir.set(extension.vodmlDir)
+        }
+
+        project.tasks.register(VODML_TO_VODSL_TASK_NAME, VodmlToVodslTask::class.java) { task ->
+            task.description = "convert VO-DML to VODSL on the commandline"
         }
 
         // register the Java generation task

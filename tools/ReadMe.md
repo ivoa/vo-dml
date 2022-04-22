@@ -91,6 +91,16 @@ the configurable properties within the vodml extension are;
 
 the task will write the VO-DML files into the `vodmlDir`
 
+### Creating VODSL from existing VO-DML
+
+If it is desired to create VODSL from some existing VO-DML then there is a special task that can be run from the
+commandline with arguments (i.e. does not have to be configured in the `build.gradle` file as it would not be a repeated part of the workflow)
+The task has the `--dml` parameter to indicate the input VO-DML file and the `--dsl` parameter to indicate the output VODSL file.
+
+```shell
+gradle vodmlToVodsl --dml=../../../models/sample/sample/vo-dml/Sample.vo-dml.xml --dsl=test.vodsl 
+```
+
 ## XMI support
 
 As there are several UML tools and the XMI produced by each is slightly different,
@@ -122,5 +132,6 @@ _TODO - there is still some information in the [README.txt](./README.txt) file t
 * 0.3.4 the plugin now saves VO-DML and binding files to the created jar and then uses them if they are in dependency tree.
 * 0.3.5 better working in the inherited data-model case.
 * 0.3.6 JPA EntityGraphs
+* 0.3.7
 
 ## Information for [developers of the plugin itself](./Developing.md)
