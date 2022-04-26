@@ -1,4 +1,4 @@
-Using the VO-DML Gradle Plugin 0.3.6
+Using the VO-DML Gradle Plugin 0.3.7
 ===================================
 
 The aim of this plugin is to process VO-DML models to produce documentation and source code that
@@ -19,7 +19,7 @@ as below.
 
 ```kotlin
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.3.6"
+    id("net.ivoa.vo-dml.vodmltools") version "0.3.7"
 }
 ```
 3. create the  binding files for the model (see below in the configuration section) 
@@ -132,6 +132,6 @@ _TODO - there is still some information in the [README.txt](./README.txt) file t
 * 0.3.4 the plugin now saves VO-DML and binding files to the created jar and then uses them if they are in dependency tree.
 * 0.3.5 better working in the inherited data-model case.
 * 0.3.6 JPA EntityGraphs
-* 0.3.7
+* 0.3.7 To VODSL task added
 
 ## Information for [developers of the plugin itself](./Developing.md)
