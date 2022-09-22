@@ -6,6 +6,6 @@ This is a sample file for mapping VO-DML models to XSD or Java using the gradle 
 <model>
 <name>filter</name>
 <file>Filter.vo-dml.xml</file><java-package>org.ivoa.dm.filter</java-package>
-<xml-targetnamespace prefix="ivoa">http://ivoa.net/dm/models/vo-dml/xsd/sample/filter</xml-targetnamespace>
+<xml-targetnamespace prefix="filt">http://ivoa.net/dm/models/vo-dml/xsd/sample/filter</xml-targetnamespace>
 </model>
 </m:mappedModels>
