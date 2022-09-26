@@ -1,4 +1,4 @@
-Using the VO-DML Gradle Plugin 0.3.7
+Using the VO-DML Gradle Plugin 0.3.8
 ===================================
 
 The aim of this plugin is to process VO-DML models to produce documentation and source code that
@@ -19,7 +19,7 @@ as below.
 
 ```kotlin
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.3.7"
+    id("net.ivoa.vo-dml.vodmltools") version "0.3.8"
 }
 ```
 3. create the  binding files for the model (see below in the configuration section) 
@@ -34,7 +34,7 @@ There are 3 associated tasks
 * vodmlValidate - runs validation on the models.
 * vodmlDoc - generate standard documentation. This will produce a model diagram, latex and html formatted documentation, as well as a graphml representation of the model 
   that can be hand edited with https://www.yworks.com/products/yed for nicer looking model diagrams.
-* vodmlGenerateJava - generate java classes. See [generated code guide](JavaCodeGeneration.md) for details of how to use the generated java code.
+* vodmlGenerateJava - generate java classes. See [generated code guide](JavaCodeGeneration.md) for details of how to use the generated java code to serialize instances to XML and RDB.
 
 The generated Java code depends on the VO-DML java runtime library, which the plugin will automatically add to the
 dependencies along with the necessary JAXB and JPA libraries.
@@ -54,7 +54,7 @@ This is a minimal sample file for mapping VO-DML models to XSD or Java using the
 <name>sample</name>
 <file>Sample.vo-dml.xml</file>
 <java-package>org.ivoa.dm.sample</java-package>
-<xml-targetnamespace prefix="simp">http://ivoa.net/dm/models/vo-dml/xsd/sample/sample</xml-targetnamespace>
+<xml-targetnamespace prefix="simp" schemaFilename="simpleModel.xsd">http://ivoa.net/dm/models/vo-dml/xsd/sample/sample</xml-targetnamespace>
 </model>
 </m:mappedModels>
 ```
@@ -117,8 +117,10 @@ tasks.register("UmlToVodml", net.ivoa.vodml.gradle.plugin.XmiTask::class.java) {
 ```
 The available conversion scripts are those in the [xslt](./xslt) directory with `xmi2vo-dml` as part of their name.
 
+## Schema
 
-_TODO - there is still some information in the [README.txt](./README.txt) file that should be incorporated in these instructions_
+The gradle plugin does not currently have a task directly to generate XML and RDB schema from the models, however, this can be done
+indirectly from the generated Java code as can be seen from the [Small java example](./gradletooling/sample/src/main/java/WriteSampleSchema.java).
 
 
 ## Changes
@@ -133,5 +135,12 @@ _TODO - there is still some information in the [README.txt](./README.txt) file t
 * 0.3.5 better working in the inherited data-model case.
 * 0.3.6 JPA EntityGraphs
 * 0.3.7 To VODSL task added
+* 0.3.8 Add schema generation via the generated Java code.
+
+
+_TODO - there is still some information in the [README.txt](./README.txt) file that should be incorporated in these instructions_
+
+
+
 
 ## Information for [developers of the plugin itself](./Developing.md)

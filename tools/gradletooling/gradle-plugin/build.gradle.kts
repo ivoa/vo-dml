@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "net.ivoa.vo-dml"
-version = "0.3.7"
+version = "0.3.8"
 
 repositories {
     mavenLocal() // FIXME remove this when releasing - just here to pick up local vodsl updates
@@ -23,17 +23,6 @@ repositories {
     mavenCentral()
 }
 
-//FIXME just commented this out for dev purposes as IDEA gets confused... replaced with symbolic link in resources dir
-//sourceSets {
-//    main {
-//
-//        resources {
-//           // it seems that these add to the existing...
-//            srcDir("$projectDir/../../")
-//            include("xslt/*.xsl")
-//        }
-//    }
-//}
 
 
 
@@ -133,20 +122,3 @@ tasks.test {
 }
 
 
-publishing {
-
-//    // Used to publish the plugin locally for testing.  To consume the plugin
-//    // from here, the applying project needs to add this as a plugin repo.
-//    // See https://docs.gradle.org/current/userguide/publishing_gradle_plugins.html#custom-plugin-repositories
-//    //
-//    // publishes to `~/.gradle/tmp/plugins`
-//    //
-//    // Use `gradlew publish` (instead of `gradlew publishPlugins`) to publish the
-//    // plugin to this local plugin repo
-//    repositories {
-//        maven {
-//            name = "local"
-//            url = uri( "${gradle.gradleUserHomeDir}/tmp/plugins" )
-//        }
-//    }
-}

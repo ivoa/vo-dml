@@ -22,10 +22,10 @@ gradle publishPlugins
 
 The runtime is published to the `org.javastro` owned part of the maven central repository
 
-In the runtime directory the following will create a staging repository
+In the top directory the following will create a staging repository
 
 ```shell
-gradle publishToSonatype closeSonatypeStagingRepository
+gradle gradle :java:publishToSonatype :java:closeSonatypeStagingRepository
 ```
 
 which can then be checked and released in the https://oss.sonatype.org/ GUI.

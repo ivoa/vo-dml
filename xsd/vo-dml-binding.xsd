@@ -34,6 +34,11 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9" attributeFormDefaul
             <xsd:documentation>The namespace prefix to use in generated code</xsd:documentation>
           </xsd:annotation>
         </xsd:attribute>
+        <xsd:attribute name="schemaFilename" type="xsd:string">
+          <xsd:annotation>
+            <xsd:documentation>The filename to use in generated schema</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>

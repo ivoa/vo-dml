@@ -129,11 +129,13 @@
     <xsl:message >Writing to Overall file <xsl:value-of select="$file"/></xsl:message>
     <xsl:result-document href="{$file}">
     package <xsl:value-of select="$root_package"/>;
+    import java.io.IOException;
     import java.util.List;
     import java.util.Set;
     import java.util.Map;
     import java.util.Collection;
     import java.util.ArrayList;
+    import java.util.HashMap;
     import java.util.HashSet;
     import java.util.stream.Collectors;
     import java.util.stream.Stream;
@@ -150,9 +152,9 @@
 
     import org.ivoa.vodml.jaxb.XmlIdManagement;
 
-      @XmlAccessorType(XmlAccessType.NONE)
+    @XmlAccessorType(XmlAccessType.NONE)
     @XmlRootElement
-    public class <xsl:value-of select="vf:upperFirst(name)"/>Model {
+    public class <xsl:value-of select="vf:upperFirst(name)"/>Model implements org.ivoa.vodml.jaxb.JaxbManagement {
 
     @XmlType
     public static class References {
@@ -196,6 +198,7 @@
       Collectors.toList()
       );
       }
+      @Override
       public void makeRefIDsUnique()
       {
       <xsl:if test="$hasReferences">
@@ -221,6 +224,16 @@
       }
        public static String pu_name(){
         return "<xsl:value-of select='concat("vodml_",name)'/>";
+        }
+
+
+        public static void writeXMLSchema() throws JAXBException, IOException {
+        final Map&lt;String,String&gt; schemaMap = new HashMap&lt;&gt;();
+        <xsl:for-each select="$mapping/map:mappedModels/model/xml-targetnamespace">
+            schemaMap.put("<xsl:value-of select="text()"/>","<xsl:value-of select="@schemaFilename"/>");
+        </xsl:for-each>
+
+        contextFactory().generateSchema(new org.ivoa.vodml.jaxb.SchemaNamer(schemaMap));
         }
     }
     </xsl:result-document>

@@ -50,19 +50,6 @@ import org.w3c.dom.Document;
  */
 public class AbstractTest {
 
-    public static class MySchemaOutputResolver extends SchemaOutputResolver {
-            public Result createOutput(String uri, String suggestedFileName)
-                    throws IOException {
-                String[] parts = uri.split("/");
-    
-    
-                File file = new File(suggestedFileName);//new File(parts[parts.length -2]+".xsd");
-                StreamResult result = new StreamResult(file);
-                System.out.println("uri=" + uri + " " + file.getName());
-                result.setSystemId(file.toURI().toURL().toString());
-                return result;
-            }
-        }
 
     protected javax.persistence.EntityManager setupDB(String puname) {
             Map<String, String> props = new HashMap<>();

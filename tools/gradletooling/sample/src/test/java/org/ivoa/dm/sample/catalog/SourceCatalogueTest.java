@@ -134,9 +134,9 @@ class SourceCatalogueTest extends AbstractTest {
         src.getLuminosity().get(1).getFilter().getBandName()),"failure to distinguish references");
         
 
-        SchemaOutputResolver sor = new MySchemaOutputResolver();
+
         System.out.println("generating schema");
-        jc.generateSchema(sor);
+        SampleModel.writeXMLSchema();
     }
 
     @org.junit.jupiter.api.Test
