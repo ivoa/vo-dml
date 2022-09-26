@@ -144,6 +144,25 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
         <xsl:value-of select="concat($el/ancestor::vo-dml:model/name,':',$el/vodml-id/text())"/>
     </xsl:function>
 
+    <xsl:function name="vf:element4vodmlref" as="element()"> <!-- once rest of code working - can remove this and just use key directly -->
+        <xsl:param name="vodml-ref" as="xsd:string" />
+        <xsl:variable name="prefix" select="substring-before($vodml-ref,':')" />
+        <xsl:if test="not($prefix) or $prefix=''">
+            <xsl:message>!!!!!!! ERROR No prefix found in Element4vodml-ref for <xsl:value-of select="$vodml-ref" /></xsl:message>
+        </xsl:if>
+        <xsl:variable name="vodml-id" select="substring-after($vodml-ref,':')" />
+        <xsl:choose>
+            <xsl:when test="$models/key('ellookup',$vodml-ref)">
+                <xsl:copy-of select="$models/key('ellookup',$vodml-ref)" />
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message>**ERROR** failed to find '<xsl:value-of select="$vodml-ref" />'</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
+
+
     <xsl:function name="vf:isOptional" as="xsd:boolean">
         <xsl:param name="el" as="element()"/>
         <xsl:sequence select="number($el/multiplicity/minOccurs) = 0 and number($el/multiplicity/maxOccurs) = 1" />
@@ -184,7 +203,14 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
         <xsl:value-of select="count($mapping/map:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/java-type) > 0"/>
     </xsl:function>
 
-<!-- return the base types for current type - note that this does not return the types in strict hierarchy order (not sure why!) -->
+    <xsl:function name="vf:modelNameFromFile" as="xsd:string"><!-- note allowed empty sequence -->
+        <xsl:param name="filename" as="xsd:string"/>
+        <xsl:value-of select="$mapping/map:mappedModels/model[file=$filename]/name"/>
+    </xsl:function>
+
+
+
+    <!-- return the base types for current type - note that this does not return the types in strict hierarchy order (not sure why!) -->
     <xsl:function name="vf:baseTypes" as="element()*">
         <xsl:param name="vodml-ref"/>
         <xsl:choose>
@@ -443,6 +469,19 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
     <xsl:function name="vf:lowerFirst" as="xsd:string">
         <xsl:param name="s" as="xsd:string"/>
         <xsl:value-of select="concat(lower-case(substring($s,1,1)),substring($s,2))"/>
+    </xsl:function>
+
+    <xsl:function name="vf:ns4model" as="xsd:string">
+        <xsl:param name="s" as="xsd:string"/>
+        <xsl:value-of select="$mapping/map:mappedModels/model[name=$s]/xml-targetnamespace"/>
+    </xsl:function>
+    <xsl:function name="vf:nsprefix4model" as="xsd:string">
+        <xsl:param name="s" as="xsd:string"/>
+        <xsl:value-of select="$mapping/map:mappedModels/model[name=$s]/xml-targetnamespace/@prefix"/>
+    </xsl:function>
+    <xsl:function name="vf:schema-location4model" as="xsd:string">
+        <xsl:param name="s" as="xsd:string"/>
+        <xsl:value-of select="concat($s, 'xsd')"/>
     </xsl:function>
 
 
