@@ -47,6 +47,7 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9" attributeFormDefaul
   <xsd:sequence>
     <xsd:element name="vodml-id" type="xsd:string" minOccurs="1"/>
     <xsd:element name="java-type" type="JavaMapping" minOccurs="0"/>
+    <xsd:element name="python-type" type="PythonMapping" minOccurs="0"/>
     <xsd:element name="xsd-type" type="xsd:string" minOccurs="0">
       <xsd:annotation>
         <xsd:documentation>
@@ -68,26 +69,48 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9" attributeFormDefaul
       </xsd:annotation>
     </xsd:pattern>
   </xsd:restriction>
-</xsd:simpleType>  
-<xsd:complexType name="JavaMapping">
-  <xsd:simpleContent>
-    <xsd:extension base="JavaName">
-      <xsd:attribute name="jpa-atomic" type="xsd:boolean" default="false">
+</xsd:simpleType>
+  <xsd:simpleType name="PythonName">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[\w\-\d]{1}\w*(.[\w\-\d]{1}\w*)*">
         <xsd:annotation>
-          <xsd:documentation>if this is true the type is atomic for JPA (does not appear in persistence.xml)</xsd:documentation>
+          <xsd:documentation>
+            TBD is this correct pattern for Python Package *and* class names?
+          </xsd:documentation>
         </xsd:annotation>
-      </xsd:attribute>
-      <xsd:attribute name="primitive-value-field" type="xsd:string" >
-        <xsd:annotation>
-          <xsd:documentation>if a mapped primitive does not map to a java primitive, then this specifies what the value fieldname is</xsd:documentation>
-        </xsd:annotation>
-      </xsd:attribute>
-    </xsd:extension>
-  </xsd:simpleContent>
+      </xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:complexType name="JavaMapping">
+    <xsd:simpleContent>
+      <xsd:extension base="JavaName">
+        <xsd:attribute name="jpa-atomic" type="xsd:boolean" default="false">
+          <xsd:annotation>
+            <xsd:documentation>if this is true the type is atomic for JPA (does not appear in persistence.xml)</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="primitive-value-field" type="xsd:string" >
+          <xsd:annotation>
+            <xsd:documentation>if a mapped primitive does not map to a java primitive, then this specifies what the value fieldname is</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:simpleContent>
 
-</xsd:complexType>
+  </xsd:complexType>
+  <xsd:complexType name="PythonMapping">
+    <xsd:simpleContent>
+      <xsd:extension base="PythonName">
+        <xsd:attribute name="built-in" type="xsd:boolean" default="false">
+          <xsd:annotation>
+            <xsd:documentation>if this is true the type is a python built-in type</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
 
-<xsd:element name="mappedModels" type="MappedModels"/>
+  <xsd:element name="mappedModels" type="MappedModels"/>
 
 
 

@@ -29,6 +29,7 @@ class VodmlGradlePlugin: Plugin<Project> {
         const val VODML_JAVA_TASK_NANE = "vodmlGenerateJava"
         const val VODML_VODSL_TASK_NAME = "vodslToVodml"
         const val VODML_TO_VODSL_TASK_NAME = "vodmlToVodsl"
+        const val VODML_TO_PYTHON_TASK_NAME = "vodmlPythonGenerate"
     }
     override fun apply(project: Project) {
         project.logger.info("Applying $VODML_PLUGIN_ID to project ${project.name}")
@@ -129,7 +130,23 @@ class VodmlGradlePlugin: Plugin<Project> {
         {
             it.dependsOn.add(vodmlJavaTask)
         }
-
+//python task
+        project.tasks.register(VODML_TO_PYTHON_TASK_NAME,VodmlPythonTask::class.java) { task ->
+            task.description = "generate python classes from VO-DML models"
+            task.vodmlFiles.setFrom(if (extension.vodmlFiles.isEmpty)
+                extension.vodmlDir.asFileTree.matching(PatternSet().include("**/*.vo-dml.xml"))
+            else
+                extension.vodmlFiles
+            )
+            task.bindingFiles.setFrom(if (extension.bindingFiles.isEmpty)
+                project.projectDir.listFiles{f -> f.name.endsWith("vodml-binding.xml")}
+            else
+                extension.bindingFiles
+            )
+            task.pythonGenDir.set(extension.outputPythonDir)
+            task.vodmlDir.set(extension.vodmlDir)
+            task.catalogFile.set(extension.catalogFile)
+        }
 
 
 

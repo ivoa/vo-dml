@@ -16,6 +16,7 @@ interface VodmlExtensionGroup {
     val vodmlDir: DirectoryProperty
     val vodmlFiles: ConfigurableFileCollection //IMPL might be nicer to use SourceSet.... e.g. https://github.com/gradle/gradle/blob/master/subprojects/plugins/src/main/java/org/gradle/api/plugins/JavaBasePlugin.java
     val outputJavaDir: DirectoryProperty
+    val outputPythonDir: DirectoryProperty
     val outputDocDir: DirectoryProperty
     val outputResourcesDir: DirectoryProperty
     val defaultPackage: Property<String>

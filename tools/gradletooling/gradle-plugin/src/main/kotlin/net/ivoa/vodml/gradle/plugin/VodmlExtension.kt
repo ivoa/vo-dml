@@ -19,6 +19,7 @@ open class VodmlExtension @Inject constructor(objects: ObjectFactory, layout: Pr
     override val vodmlDir = objects.directoryProperty().convention(layout.projectDirectory.dir("src/main/vo-dml"))
     override val vodmlFiles = objects.fileCollection()
     override val outputJavaDir = objects.directoryProperty().convention(layout.buildDirectory.dir("generated/sources/vodml/java/"))
+    override val outputPythonDir = objects.directoryProperty().convention(layout.buildDirectory.dir("generated/sources/vodml/python/"))
     override val outputDocDir = objects.directoryProperty().convention(layout.buildDirectory.dir("generated/docs/vodml/"))
     override val outputResourcesDir = objects.directoryProperty().convention(layout.buildDirectory.dir("generated/sources/vodml/resources/"))
     override val defaultPackage = objects.property(String::class.java).convention("vodml.generated")
@@ -40,6 +41,7 @@ open class VodmlExtension @Inject constructor(objects: ObjectFactory, layout: Pr
             groups.configureEach {
                 vodmlDir.convention(this@VodmlExtension.vodmlDir) // note that files not explicitly set
                 outputJavaDir.convention(layout.buildDirectory.dir("generated/sources/vodml-$name/java"))
+                outputPythonDir.convention(layout.buildDirectory.dir("generated/sources/vodml-$name/python"))
                 outputResourcesDir.convention(layout.buildDirectory.dir("generated/sources/vodml-$name/resources"))
                 outputDocDir.convention(layout.buildDirectory.dir("generated/docs/vodml-$name/"))
                 defaultPackage.convention(this@VodmlExtension.defaultPackage)

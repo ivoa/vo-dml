@@ -111,7 +111,7 @@
       <xsl:if test="local-name() = 'model'">
         <xsl:value-of select="vf:upperFirst(name)"/>Model&cr;
       </xsl:if>
-      <xsl:for-each select="objectType[not(vf:hasMapping(vf:asvodmlref(.)))]|dataType[not(vf:hasMapping(vf:asvodmlref(.)))]"> <!-- dont put mapped types in - TODO need to find a way to put the mapped types into context-->
+      <xsl:for-each select="objectType[not(vf:hasMapping(vf:asvodmlref(.),'java'))]|dataType[not(vf:hasMapping(vf:asvodmlref(.),'java'))]"> <!-- dont put mapped types in - TODO need to find a way to put the mapped types into context-->
         <xsl:value-of select="name"/>&cr;
       </xsl:for-each>
     </xsl:result-document> 

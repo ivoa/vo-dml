@@ -12,26 +12,31 @@ This is a sample file for mapping VO-DML models to XSD or Java using the gradle 
 <type-mapping>
   <vodml-id>real</vodml-id>
   <java-type jpa-atomic="true">Double</java-type>
+  <python-type>float</python-type>
   <xsd-type>xsd:float</xsd-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>string</vodml-id>
   <java-type jpa-atomic="true">String</java-type>
+  <python-type built-in="true">str</python-type>
   <xsd-type>xsd:string</xsd-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>boolean</vodml-id>
   <java-type jpa-atomic="true">Boolean</java-type>
+  <python-type built-in="true">boolean</python-type>
   <xsd-type>xsd:boolean</xsd-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>integer</vodml-id>
   <java-type jpa-atomic="true">Integer</java-type>
+  <python-type built-in="true">int</python-type>
   <xsd-type>xsd:int</xsd-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>nonnegativeInteger</vodml-id>
   <java-type jpa-atomic="true">Integer</java-type>
+  <python-type built-in="true">int</python-type>
   <xsd-type>xsd:nonNegativeInteger</xsd-type>
 </type-mapping>
 <type-mapping>
@@ -42,6 +47,7 @@ This is a sample file for mapping VO-DML models to XSD or Java using the gradle 
 <type-mapping>
   <vodml-id>datetime</vodml-id>
   <java-type jpa-atomic="true">java.util.Date</java-type>
+  <python-type>datetime.datetime</python-type>
   <xsd-type>xsd:dateTime</xsd-type>
 </type-mapping>
 <type-mapping>

@@ -283,11 +283,11 @@
         <xsl:param name="prefix" as="xsd:string"/>
 <!--        <xsl:message>** attrovercols <xsl:value-of select="concat(name(),' ',name,' *** ',$prefix)"/></xsl:message>-->
             <xsl:choose>
-                <xsl:when test="vf:hasMapping(vf:asvodmlref(current()))">
-                    <xsl:variable name="pmap" select="vf:findmapping(vf:asvodmlref(current()))"/>
+                <xsl:when test="vf:hasMapping(vf:asvodmlref(current()),'java')">
+                    <xsl:variable name="pmap" select="vf:findmapping(vf:asvodmlref(current()),'java')"/>
                     <xsl:choose>
                         <xsl:when test="$pmap/@primitive-value-field">
-                            <xsl:value-of select="concat($prefix,'_',vf:findmapping(vf:asvodmlref(current()))/@primitive-value-field)"/>
+                            <xsl:value-of select="concat($prefix,'_',vf:findmapping(vf:asvodmlref(current()),'java')/@primitive-value-field)"/>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:value-of select="$prefix"/> <!--assume for now that it is mapped to java primitive -->
