@@ -45,7 +45,7 @@ dependencies along with the necessary JAXB and JPA libraries.
 * vodmlFiles - this is set by default to be all the `*.vo-dml.xml` files in the vodmlDir, but can be individually set
 * bindingFiles - the files that specify the mapping details between the models and the generated code.
 ```xml
-<m:mappedModels xmlns:m="http://www.ivoa.net/xml/vodml-binding/v0.9">
+<m:mappedModels xmlns:m="http://www.ivoa.net/xml/vodml-binding/v0.9.1">
 <!-- ========================================
 This is a minimal sample file for mapping VO-DML models to XSD or Java using the gradle tooling
  -->

@@ -15,7 +15,7 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
                 xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
-                xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9"
+                xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9.1"
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 xmlns:exsl="http://exslt.org/common"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -230,7 +230,7 @@
         public static void writeXMLSchema() throws JAXBException, IOException {
         final Map&lt;String,String&gt; schemaMap = new HashMap&lt;&gt;();
         <xsl:for-each select="$mapping/map:mappedModels/model/xml-targetnamespace">
-            schemaMap.put("<xsl:value-of select="text()"/>","<xsl:value-of select="@schemaFilename"/>");
+            schemaMap.put("<xsl:value-of select="normalize-space(text())"/>","<xsl:value-of select="@schemaFilename"/>");
         </xsl:for-each>
 
         contextFactory().generateSchema(new org.ivoa.vodml.jaxb.SchemaNamer(schemaMap));

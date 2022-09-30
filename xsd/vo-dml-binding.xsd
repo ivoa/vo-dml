@@ -1,5 +1,5 @@
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.ivoa.net/xml/vodml-binding/v0.9" 
-targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9" attributeFormDefault="unqualified"
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.ivoa.net/xml/vodml-binding/v0.9.1"
+targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefault="unqualified"
   elementFormDefault="unqualified">
 
 <xsd:annotation>

@@ -10,7 +10,7 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
                 xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
-                xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9"
+                xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9.1"
                 xmlns:exsl="http://exslt.org/common"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

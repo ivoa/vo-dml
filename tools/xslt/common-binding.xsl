@@ -5,7 +5,7 @@
 <!ENTITY bl "<xsl:text> </xsl:text>">
 ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9"
+                xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9.1"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                 xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -114,44 +114,96 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
   <xsl:function name="vf:FullJavaType" as="xsd:string">
     <xsl:param name="vodml-ref" as="xsd:string"/> <!-- assumed to be fully qualified! i.e. also for elements in local model, the prefix is included! -->
     <xsl:param name="fullpath" as="xsd:boolean"/>
-      <xsl:value-of select="vf:FullType($vodml-ref,$fullpath,'java')"/>
- </xsl:function>
+      <xsl:variable name="type">
+          <xsl:variable name="mappedtype" select="vf:findmapping($vodml-ref,'java')"/>
+          <xsl:choose>
+              <xsl:when test="$mappedtype != ''">
+                  <xsl:value-of select="$mappedtype"/>
+              </xsl:when>
+              <xsl:otherwise>
+                  <xsl:variable name="modelname" select="substring-before($vodml-ref,':')"/>
+
+                  <xsl:variable name="root" select="$mapping/map:mappedModels/model[name=$modelname]/java-package"/>
+                  <xsl:variable name="path"
+                                select="string-join($models/key('ellookup',$vodml-ref)/ancestor-or-self::*[name() != 'vo-dml:model']/name,'.')"/>
+                  <xsl:value-of select="concat($root,'.',$path)"/>
+              </xsl:otherwise>
+          </xsl:choose>
+      </xsl:variable>
+      <xsl:choose>
+          <xsl:when test="$fullpath">
+              <xsl:value-of select="$type"/>
+          </xsl:when>
+          <xsl:otherwise>
+              <xsl:value-of select="tokenize($type,'\.')[last()]"/>
+          </xsl:otherwise>
+      </xsl:choose>
+  </xsl:function>
     <xsl:function name="vf:PythonType" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/>
-        <xsl:value-of select="vf:FullPythonType($vodml-ref,true())"/>
+        <xsl:value-of select="vf:FullPythonType($vodml-ref,false())"/>
     </xsl:function>
     <xsl:function name="vf:FullPythonType" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/> <!-- assumed to be fully qualified! i.e. also for elements in local model, the prefix is included! -->
         <xsl:param name="fullpath" as="xsd:boolean"/>
-        <xsl:value-of select="vf:FullType($vodml-ref,$fullpath,'python')"/>
-    </xsl:function>
-    <xsl:function name="vf:FullType" as="xsd:string">
-        <xsl:param name="vodml-ref" as="xsd:string"/> <!-- assumed to be fully qualified! i.e. also for elements in local model, the prefix is included! -->
-        <xsl:param name="fullpath" as="xsd:boolean"/>
-        <xsl:param name="lang" as="xsd:string"/>
+        <xsl:variable name="type">
+            <xsl:variable name="mappedtype" select="vf:findmapping($vodml-ref,'python')"/>
+            <xsl:choose>
+                <xsl:when test="$mappedtype != ''">
+                    <xsl:value-of select="$mappedtype"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:variable name="modelname" select="substring-before($vodml-ref,':')"/>
 
-        <!--     <xsl:message >Java Type for <xsl:value-of select="$vodml-ref"/></xsl:message>    -->
-
-        <xsl:variable name="mappedtype" select="vf:findmapping($vodml-ref,$lang)"/>
-
+                    <xsl:variable name="root" select="$mapping/map:mappedModels/model[name=$modelname]/python-package"/>
+                    <xsl:variable name="path"
+                                  select="string-join($models/key('ellookup',$vodml-ref)/ancestor-or-self::package/name,'_')"/>
+                    <xsl:value-of select="concat($root,'.',$path,'.',$models/key('ellookup',$vodml-ref)/name)"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
         <xsl:choose>
-            <xsl:when test="$mappedtype != ''">
-                <xsl:value-of select="$mappedtype"/>
+            <xsl:when test="$fullpath">
+                <xsl:value-of select="$type"/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:choose>
-                    <xsl:when test="$fullpath">
-                        <xsl:call-template  name="fullpath">
-                            <xsl:with-param name="vodml-ref" select="$vodml-ref"/>
-                        </xsl:call-template>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="$models/key('ellookup',$vodml-ref)/name"/>
-                    </xsl:otherwise>
-                </xsl:choose>
+                <xsl:value-of select="tokenize($type,'\.')[last()]"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
+    <xsl:function name="vf:PythonModule" as="xsd:string">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="modelname" select="substring-before($vodml-ref,':')" />
+        <xsl:choose>
+            <xsl:when test="vf:hasMapping($vodml-ref,'python')">
+                <xsl:value-of select="string-join(tokenize(vf:findmapping($vodml-ref,'python'),'\.')[position() != last()],'.')"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:variable name="root" select="$mapping/map:mappedModels/model[name=$modelname]/python-package"/>
+
+                <xsl:variable name="path"
+                              select="string-join($models/key('ellookup',$vodml-ref)/(ancestor::package|ancestor::vo-dml:model)/name,'_')"/>
+                <xsl:value-of select="concat($root,'.',$path)"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
+    <xsl:function name="vf:PythonImportedType" as="xsd:string">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:choose>
+            <xsl:when test="vf:hasMapping($vodml-ref,'pythom')">
+                <xsl:value-of select="string-join(tokenize(vf:findmapping($vodml-ref,'python'),'\.')[position() > last() -1],'.')"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:variable name="path"
+                              select="string-join($models/key('ellookup',$vodml-ref)/ancestor::package/name,'_')"/>
+                <xsl:value-of select="concat($path,'.',$models/key('ellookup',$vodml-ref)/name)"/>
+
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
+
 
     <!-- it would be better if this function was not needed and every vodml-id also contained the model prefix -->
     <xsl:function name="vf:asvodmlref" as="xsd:string">
@@ -180,12 +232,6 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
          </xsl:otherwise>
       </xsl:choose>
    </xsl:function>
-    <!-- Find a mapping for the given vodml-id, in the provided model -->
-    <xsl:template name="findmappingInThisModel">
-        <xsl:param name="modelname"/>
-        <xsl:param name="vodml-id"/>
-        <xsl:value-of select="$mapping/map:mappedModels/model[name=$modelname]/type-mapping[vodml-id=$vodml-id]/java-type"/>
-    </xsl:template>
 
     <xsl:function name="vf:findmapping" as="element()?"><!-- note allowed empty sequence -->
         <xsl:param name="vodml-ref" as="xsd:string"/>
@@ -214,6 +260,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
                 <xsl:value-of select="count($mapping/map:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/python-type) > 0"/>
             </xsl:when>
             <xsl:otherwise>
+                <xsl:message terminate="yes">unknown language <xsl:value-of select="$lang"/> </xsl:message>
                 <xsl:value-of select="false()"/>
             </xsl:otherwise>
         </xsl:choose>
@@ -486,5 +533,21 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
         <xsl:value-of select="concat(lower-case(substring($s,1,1)),substring($s,2))"/>
     </xsl:function>
 
+    <!-- returns the vodml-refs of the members including inherited ones -->
+    <xsl:template name="allInheritedMembers" as="xsd:string*">
+        <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
+        <xsl:variable name="subsets" select="vf:subSettingInSuperHierarchy($vodml-ref)/role/vodml-ref" as="xsd:string*"/>
+        <xsl:variable name="supers" select="(.,vf:baseTypes($vodml-ref))"/>
+        <!--        <xsl:message>inherited <xsl:value-of select="concat($vodml-ref, ' subsets=',string-join($subsets,','),' members=',-->
+        <!--        string-join(for $v in ($supers/attribute,$supers/composition,$supers/reference) return vf:asvodmlref($v), ',') )" /></xsl:message>-->
+        <xsl:sequence>
+            <xsl:for-each select="$supers/attribute,$supers/composition,$supers/reference">
+                <xsl:variable name="m" select="vf:asvodmlref(.)"/>
+                <xsl:if test="not($m = $subsets)">
+                    <xsl:value-of select="$m"/>
+                </xsl:if>
+            </xsl:for-each>
+        </xsl:sequence>
+    </xsl:template>
 
 </xsl:stylesheet>

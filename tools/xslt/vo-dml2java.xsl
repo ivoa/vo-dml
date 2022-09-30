@@ -10,7 +10,7 @@
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
                 xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
                 xmlns:exsl="http://exslt.org/common"
-                xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9"
+                xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9.1"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 extension-element-prefixes="exsl"
@@ -207,13 +207,8 @@
 
     <xsl:variable name="vodml-id" select="vodml-id" />
     <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
-    <xsl:variable name="mappedtype">
-      <xsl:call-template name="findmappingInThisModel">
-        <xsl:with-param name="modelname" select="./ancestor::vo-dml:model/name"/>
-        <xsl:with-param name="vodml-id" select="$vodml-id"/>
-      </xsl:call-template>
-    </xsl:variable>
-    <xsl:choose>
+    <xsl:variable name="mappedtype" select="vf:findmapping($vodml-ref,'java')"/>
+     <xsl:choose>
     <xsl:when test="not($mappedtype) or $mappedtype = ''" >
       <xsl:variable name="file" select="concat($output_root, '/', $dir, '/', name, '.java')"/>
 
@@ -238,22 +233,6 @@
     </xsl:template>
 
 
-    <!-- returns the vodml-refs of the members including inherited ones -->
-    <xsl:template name="allInheritedMembers" as="xsd:string*">
-        <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
-        <xsl:variable name="subsets" select="vf:subSettingInSuperHierarchy($vodml-ref)/role/vodml-ref" as="xsd:string*"/>
-        <xsl:variable name="supers" select="(.,vf:baseTypes($vodml-ref))"/>
-<!--        <xsl:message>inherited <xsl:value-of select="concat($vodml-ref, ' subsets=',string-join($subsets,','),' members=',-->
-<!--        string-join(for $v in ($supers/attribute,$supers/composition,$supers/reference) return vf:asvodmlref($v), ',') )" /></xsl:message>-->
-        <xsl:sequence>
-            <xsl:for-each select="$supers/attribute,$supers/composition,$supers/reference">
-                <xsl:variable name="m" select="vf:asvodmlref(.)"/>
-                <xsl:if test="not($m = $subsets)">
-                  <xsl:value-of select="$m"/>
-                </xsl:if>
-            </xsl:for-each>
-        </xsl:sequence>
-    </xsl:template>
 
     <xsl:template match="objectType|dataType" mode="builder">
         <xsl:variable name="subsetsInSubtypes" select="vf:subSettingInSubHierarchy(vf:asvodmlref(current()))/role/vodml-ref" as="xsd:string*"/>
@@ -1187,8 +1166,8 @@ package <xsl:value-of select="$path"/>;
       <xsl:message >Writing package info file <xsl:value-of select="$file"/></xsl:message>
       <xsl:variable name="ns" select="$mapping/map:mappedModels/model[name=current()/ancestor-or-self::vo-dml:model/name]/xml-targetnamespace"/>
       <xsl:result-document href="{$file}" >
-@javax.xml.bind.annotation.XmlSchema(namespace = "<xsl:value-of select="$ns"/>", xmlns = {
-@javax.xml.bind.annotation.XmlNs(namespaceURI = "<xsl:value-of select="$ns"/>", prefix = "<xsl:value-of select="$ns/@prefix"/>")
+@javax.xml.bind.annotation.XmlSchema(namespace = "<xsl:value-of select="normalize-space($ns)"/>", xmlns = {
+@javax.xml.bind.annotation.XmlNs(namespaceURI = "<xsl:value-of select="normalize-space($ns)"/>", prefix = "<xsl:value-of select="$ns/@prefix"/>")
   })
 package <xsl:value-of select="$path"/>;
 
@@ -1250,37 +1229,8 @@ package <xsl:value-of select="$path"/>;
     <xsl:variable name="root" select="$mapping/map:mappedModels/model[name=$modelname]/java-package"/>
     <xsl:value-of select="$root"/><xsl:if test="$path !=''">.</xsl:if><xsl:value-of select="$path"/>.<xsl:value-of select="name"/>
   </xsl:template>
-  
-  
 
-
-
- 
-
-  <!-- find a java package path towards the type identified with the name -->
-  <xsl:template name="fullpath">
-    <xsl:param name="vodml-ref"/>
-     <!-- <xsl:message >Finding full path for <xsl:value-of select="$vodml-ref"/></xsl:message> -->
-    
-    <xsl:variable name="themodel" as="element()">
-        <xsl:call-template name="getmodel"><xsl:with-param name="vodml-ref" select="$vodml-ref"/></xsl:call-template>
-    </xsl:variable>
-
-    <xsl:variable name="root" select="$mapping/map:mappedModels/model[name=$themodel/name]/java-package"/>
-
-    <xsl:variable name="vodmlid" select="substring-after($vodml-ref,':' )"/>    
-    <xsl:variable name="path">
-    <xsl:for-each select="$themodel//*[vodml-id=$vodmlid]/ancestor-or-self::*[name() != 'vo-dml:model']">
-       <xsl:value-of select="./name"/>
-       <xsl:if test="position() != last()">
-       <xsl:text>.</xsl:text>
-       </xsl:if>
-    </xsl:for-each>
-    </xsl:variable>
-    <xsl:value-of select="concat($root,'.',$path)"/>
-
-  </xsl:template>
- <xsl:template name="vodmlAnnotation">
+  <xsl:template name="vodmlAnnotation">
  @org.ivoa.vodml.annotation.VoDml(ref="<xsl:value-of select='concat(ancestor::vo-dml:model/name,":",vodml-id)'/>", type=org.ivoa.vodml.annotation.VodmlType.<xsl:value-of select='name(.)'/>)
  </xsl:template>
 

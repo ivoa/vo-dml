@@ -41,7 +41,7 @@ being able to choose a more specific sub-type.
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
-                xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9"
+                xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9.1"
                 xmlns:vodml-base="http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1"
                 exclude-result-prefixes="map" 
                 >
@@ -174,12 +174,8 @@ being able to choose a more specific sub-type.
   </xsl:template>  
   
   <xsl:template match="objectType|dataType|enumeration|primitiveType" mode="test">
-      <xsl:variable name="mappedtype">
-      <xsl:call-template name="findmappingInThisModel">
-        <xsl:with-param name="modelname" select="./ancestor::vo-dml:model/name"/>
-        <xsl:with-param name="vodml-id" select="vodml-id"/>
-      </xsl:call-template>
-    </xsl:variable>
+      <xsl:variable name="mappedtype" select="vf:finmapping(vodml-ref,'xsd')"/>
+
     <xsl:if test="not($mappedtype) or $mappedtype = ''" >
       <xsl:apply-templates select="." mode="declare"/>
     </xsl:if>
@@ -568,12 +564,6 @@ being able to choose a more specific sub-type.
     </xsl:choose>
   </xsl:template>
 
-  <!-- Find a mapping for the given vodml-id, in the provided model -->
-  <xsl:template name="findmappingInThisModel">
-    <xsl:param name="modelname"/>
-    <xsl:param name="vodml-id"/>
-        <xsl:value-of select="$mapping/map:mappedModels/model[name=$modelname]/type-mapping[vodml-id=$vodml-id]/xsd-type"/>
-  </xsl:template>
 
   <xsl:template name="findmapping">
     <xsl:param name="model" as="element()"/>

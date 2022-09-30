@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<m:mappedModels xmlns:m="http://www.ivoa.net/xml/vodml-binding/v0.9">
+<m:mappedModels xmlns:m="http://www.ivoa.net/xml/vodml-binding/v0.9.1">
 <!-- ========================================
 This is a sample file for mapping VO-DML models to XSD or Java using the gradle tooling
  -->
@@ -7,12 +7,13 @@ This is a sample file for mapping VO-DML models to XSD or Java using the gradle 
 <model>
 <name>ivoa</name>
 <file>IVOA-v1.0.vo-dml.xml</file>
-<java-package>org.ivoa.dm.ivoa</java-package>
+  <java-package>org.ivoa.dm.ivoa</java-package>
+  <python-package>org.ivoa.dm.ivoa</python-package>
 <xml-targetnamespace prefix="ivoa">http://ivoa.net/dm/models/vo-dml/xsd/ivoa</xml-targetnamespace>
 <type-mapping>
   <vodml-id>real</vodml-id>
   <java-type jpa-atomic="true">Double</java-type>
-  <python-type>float</python-type>
+  <python-type built-in="true">float</python-type>
   <xsd-type>xsd:float</xsd-type>
 </type-mapping>
 <type-mapping>

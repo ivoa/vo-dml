@@ -5,7 +5,7 @@
 <!ENTITY bl "<xsl:text> </xsl:text>">
 ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9"
+                xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9.1"
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1">
 
 
