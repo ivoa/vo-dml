@@ -179,10 +179,10 @@ from <xsl:value-of select="vf:PythonModule(.)"/> import <xsl:value-of select="to
           <xsl:when test="name()='composition' and multiplicity/maxOccurs != 1" >
               <xsl:choose>
                   <xsl:when test="vf:isSubSetted(vf:asvodmlref(.))">
-                      <xsl:value-of select="concat(name,' : list[',$type, '] =field(default_factory=list)')" />
+                      <xsl:value-of select="concat(name,' : list[',$type, '] =field(default_factory=list, kw_only=True)')" />
                   </xsl:when>
                   <xsl:otherwise>
-                      <xsl:value-of select="concat(name,' : list[',$type, '] =field(default_factory=list)')" />
+                      <xsl:value-of select="concat(name,' : list[',$type, '] =field(default_factory=list, kw_only=True)')" />
                   </xsl:otherwise>
               </xsl:choose>
 
@@ -190,10 +190,10 @@ from <xsl:value-of select="vf:PythonModule(.)"/> import <xsl:value-of select="to
           <xsl:otherwise>
               <xsl:choose>
                   <xsl:when test="xsd:int(multiplicity/maxOccurs) gt 1">
-                      <xsl:value-of select="concat(name,' : list[',$type, ']=field(default_factory=list)')" /> <!-- IMPL arrays are just lists for now -->
+                      <xsl:value-of select="concat(name,' : list[',$type, ']=field(default_factory=list, kw_only=True)')" /> <!-- IMPL arrays are just lists for now -->
                   </xsl:when>
                   <xsl:when test="multiplicity/maxOccurs = -1">
-                      <xsl:value-of select="concat(name,' : list[',$type, ']=field(default_factory=list) ')" />
+                      <xsl:value-of select="concat(name,' : list[',$type, ']=field(default_factory=list, kw_only=True) ')" />
                   </xsl:when>
                   <xsl:otherwise>
                       <xsl:value-of select="concat(name, ': ',$type)" />
@@ -213,8 +213,8 @@ from <xsl:value-of select="vf:PythonModule(.)"/> import <xsl:value-of select="to
 </xsl:text>
     <xsl:call-template name="vodmlAnnotation"/><xsl:text>
 
-@dataclasses.dataclass
-class </xsl:text><xsl:value-of select="name"/>
+@dataclasses.dataclass</xsl:text><xsl:if test="@abstract"><xsl:text>(init=False)</xsl:text></xsl:if>
+class <xsl:value-of select="name"/>
       <xsl:if test="extends"><xsl:value-of select="concat('(',vf:PythonType(extends/vodml-ref),')')"/></xsl:if>:
     """
     * <xsl:apply-templates select="." mode="desc" />
@@ -233,8 +233,9 @@ class </xsl:text><xsl:value-of select="name"/>
       /** serial uid = last modification date of the UML model */
       private static final long serialVersionUID = LAST_MODIFICATION_DATE;
  -->
-      <xsl:apply-templates select="(attribute|composition|reference)[multiplicity/minOccurs=1]" mode="declare" /> <!-- attempt to get required before optional -->
-      <xsl:apply-templates select="(attribute|composition|reference)[multiplicity/minOccurs!=1]" mode="declare" />
+      <xsl:apply-templates select="(attribute|composition|reference)[multiplicity/minOccurs=1 and multiplicity/maxOccurs=1]" mode="declare" /> <!-- attempt to get required before optional -
+                        does not work for class hierarchies, see https://stackoverflow.com/questions/51575931/class-inheritance-in-python-3-7-dataclasses-->
+      <xsl:apply-templates select="(attribute|composition|reference)[not(multiplicity/minOccurs=1 and multiplicity/maxOccurs=1)]" mode="declare" />
       <xsl:apply-templates select="constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="declare" />
 <!--      <xsl:apply-templates select="." mode="constructor"/>-->
 
@@ -310,14 +311,14 @@ class </xsl:text><xsl:value-of select="name"/>:
             <xsl:call-template name="vodmlAnnotation"/>
             <xsl:choose>
                 <xsl:when test="xsd:int(multiplicity/maxOccurs) gt 1">
-                    <xsl:value-of select="concat(name, ': list[',$type,'] =dataclasses.field(default_factory=list)')"/> <!-- IMPL arrays are just lists for now -->
+                    <xsl:value-of select="concat(name, ': list[',$type,'] =dataclasses.field(default_factory=list, kw_only=True)')"/> <!-- IMPL arrays are just lists for now -->
                 </xsl:when>
                 <xsl:when test="xsd:int(multiplicity/maxOccurs) lt 0">
-                    <xsl:value-of select="concat(name, ': list[',$type,'] =dataclasses.field(default_factory=list)')"/>
+                    <xsl:value-of select="concat(name, ': list[',$type,'] =dataclasses.field(default_factory=list, kw_only=True)')"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:value-of select="concat(name,': ',$type)"/>
-                    <xsl:if test="vf:isOptional(.)"><xsl:text> = None</xsl:text></xsl:if>
+                    <xsl:if test="vf:isOptional(.)"><xsl:text> =  dataclasses.field(kw_only=True, default=None)</xsl:text></xsl:if>
                 </xsl:otherwise>
             </xsl:choose>
     """
@@ -358,10 +359,10 @@ class </xsl:text><xsl:value-of select="name"/>:
     </xsl:text>
         <xsl:choose>
             <xsl:when test="vf:isSubSetted(vf:asvodmlref(.))">
-                <xsl:value-of select="concat(name, ': list[',$type,']=dataclasses.field(default_factory=list)')"/> # IMPL is subsetted
+                <xsl:value-of select="concat(name, ': list[',$type,']=dataclasses.field(default_factory=list, kw_only=True)')"/> # IMPL is subsetted
             </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="concat(name, ': list[',$type,']=dataclasses.field(default_factory=list)')"/>
+                <xsl:value-of select="concat(name, ': list[',$type,']=dataclasses.field(default_factory=list, kw_only=True)')"/>
             </xsl:otherwise>
         </xsl:choose>
         <xsl:text>
@@ -380,7 +381,7 @@ class </xsl:text><xsl:value-of select="name"/>:
         <xsl:text>
 
     </xsl:text>
-        <xsl:value-of select="concat(name,': ',$type)"/><xsl:text>
+        <xsl:value-of select="concat(name,': ',$type,' = dataclasses.field(kw_only=True, default=None)')"/><xsl:text>
     """
     * Composition </xsl:text><xsl:value-of select="name"/> : ( Multiplicity : <xsl:apply-templates select="multiplicity" mode="tostring"/>)
     *
@@ -406,13 +407,6 @@ class </xsl:text><xsl:value-of select="name"/>:
     * <xsl:apply-templates select="." mode="desc" />
     * ( Multiplicity : <xsl:apply-templates select="multiplicity" mode="tostring"/>) """
   </xsl:template>
-
-
-
-
-
-
-
 
 
 

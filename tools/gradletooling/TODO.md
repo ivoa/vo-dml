@@ -8,7 +8,16 @@ VODML Tooling TODO
 * should only be a note for references multiplicity...aggregation
 * unique constraint in composition...- would result in Set as the container.
 * the rdb and xml schemas produced by the xslt are unlikely to match the java generated ones exactly - they need to be updated.
+* vodml to specify attribute defaults?
 
+* STC
+  * epoch - not really defined as something that is used properly
+  * equinox in spaceframe (only used for a few..)
+  * names a bit confusing...
+  * concrete types - the choice for a library?
+  * polarization enum - not comprehensive - no L circular
+  * AstroCoordSystem - is a CoordSys and has a CoordSys
+  * no point on celestial sphere
 
 # gradle plugin
 
@@ -47,11 +56,8 @@ VODML Tooling TODO
   * https://docs.jboss.org/hibernate/orm/5.4/userguide/html_single/Hibernate_User_Guide.html#fetching-strategies-dynamic-fetching-entity-graph - 
     https://thorben-janssen.com/fix-multiplebagfetchexception-hibernate/
     https://blog.jooq.org/no-more-multiplebagfetchexception-thanks-to-multiset-nested-collections/ - perhaps
-* STC
-  * epoch - not really defined as something that is used properly
-  * equinox in spaceframe (only used for a few..)
-  * names a bit confusing...
-  * concrete types - the choice for a library?
-  * polarization enum - not comprehensive - no L circular
-  * AstroCoordSystem - is a CoordSys and has a CoordSys
-  * no point on celestial sphere
+
+
+#Python production
+
+* using dataclasses - need python 3.10 for the kw_only field specifier - might do better just generating multiple  `__init__()` rather than relying on the dataclass generation.

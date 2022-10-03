@@ -585,7 +585,7 @@
                                             <vodml-ref>sample:catalog.inner.Testing</vodml-ref>
                                          </datatype>
                                          <multiplicity>
-                                           <minOccurs>1</minOccurs>
+                                           <minOccurs>0</minOccurs>
                                            <maxOccurs>1</maxOccurs>
                                          </multiplicity>
                                        </composition>
@@ -598,7 +598,7 @@
                                          </datatype>
                                          <multiplicity>
                                            <minOccurs>0</minOccurs>
-                                           <maxOccurs>-1</maxOccurs>
+                                           <maxOccurs>1</maxOccurs><!-- make this unbounded in future -->
                                          </multiplicity>
                                        </composition>
                                     </objectType>
