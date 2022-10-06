@@ -166,7 +166,7 @@ public class ModelInstanceTraverser {
                 {
                     final Class<?> declaringClass = field.getDeclaringClass();
                     if(!declaringClass.equals(String.class) && field.getAnnotation(javax.persistence.Id.class) == null) { // only report for things that we don't "know" about
-                        logger.debug("{} is not a model element in {}", field.getName(), declaringClass.getCanonicalName());
+                        logger.trace("{} is not a model element in {}", field.getName(), declaringClass.getCanonicalName());
                     }
                     continue;
                 }

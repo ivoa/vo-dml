@@ -11,8 +11,6 @@ package org.ivoa.dm;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -23,15 +21,12 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
-import javax.xml.bind.SchemaOutputResolver;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.util.ValidationEventCollector;
-import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -41,6 +36,10 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+import org.ivoa.vodml.ModelManagement;
 import org.w3c.dom.Document;
 
 /**
@@ -49,6 +48,7 @@ import org.w3c.dom.Document;
  * @since 5 Nov 2021
  */
 public class AbstractTest {
+
 
 
     protected javax.persistence.EntityManager setupDB(String puname) {
@@ -131,6 +131,11 @@ public class AbstractTest {
                 T modelin = el.getValue();
                 assertNotNull(modelin);
                 return modelin;
+            }
+
+            protected  <T> String outputJSON( T model, ModelManagement<T> m) throws JsonProcessingException {
+                  
+                   return m.jsonMapper().writerWithDefaultPrettyPrinter().writeValueAsString(model);
             }
 
 }

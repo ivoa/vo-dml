@@ -34,9 +34,17 @@
       <xsl:when test="not(vf:isContained(vf:asvodmlref(.))) and not(@abstract = 'true')">
  //   @javax.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>")
       </xsl:when>
-      <xsl:otherwise>
-      </xsl:otherwise>
-    </xsl:choose>
+     </xsl:choose>
+      <xsl:if test="vf:referredTo(vf:asvodmlref(.))">
+          <xsl:choose>
+              <xsl:when test="attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
+  @com.fasterxml.jackson.annotation.JsonIdentityInfo(property = "<xsl:value-of select="attribute/constraint[ends-with(@xsi:type,':NaturalKey')]/preceding-sibling::name"/>", generator = com.fasterxml.jackson.annotation.ObjectIdGenerators.PropertyGenerator.class)
+              </xsl:when>
+              <xsl:otherwise>
+  @com.fasterxml.jackson.annotation.JsonIdentityInfo(property = "_id", generator = com.fasterxml.jackson.annotation.ObjectIdGenerators.PropertyGenerator.class)
+              </xsl:otherwise>
+          </xsl:choose>
+      </xsl:if>
   </xsl:template>
 
   <xsl:template match="primitiveType" mode="JAXBAnnotation">
@@ -127,6 +135,7 @@
     <xsl:variable name="hasReferences" select="count(distinct-values($models//reference/datatype/vodml-ref[substring-before(.,':') = $modelsInScope]))>0"/>
 
     <xsl:message >Writing to Overall file <xsl:value-of select="$file"/></xsl:message>
+    <xsl:variable name="ModelClass" select="concat(vf:upperFirst(name),'Model')"/>
     <xsl:result-document href="{$file}">
     package <xsl:value-of select="$root_package"/>;
     import java.io.IOException;
@@ -150,11 +159,19 @@
     import javax.xml.bind.annotation.XmlAccessorType;
     import javax.xml.bind.JAXBException;
 
+    import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+    import com.fasterxml.jackson.annotation.JsonTypeInfo;
+    import com.fasterxml.jackson.databind.ObjectMapper;
+
     import org.ivoa.vodml.jaxb.XmlIdManagement;
+    import org.ivoa.vodml.ModelManagement;
 
     @XmlAccessorType(XmlAccessType.NONE)
     @XmlRootElement
-    public class <xsl:value-of select="vf:upperFirst(name)"/>Model implements org.ivoa.vodml.jaxb.JaxbManagement {
+    @JsonTypeInfo(include=JsonTypeInfo.As.WRAPPER_OBJECT, use=JsonTypeInfo.Id.NAME)
+    @JsonIgnoreProperties({"refmap"})
+
+    public class <xsl:value-of select="$ModelClass"/> implements org.ivoa.vodml.jaxb.JaxbManagement {
 
     @XmlType
     public static class References {
@@ -235,7 +252,37 @@
 
         contextFactory().generateSchema(new org.ivoa.vodml.jaxb.SchemaNamer(schemaMap));
         }
-    }
+        /**
+        * Return a Jackson objectMapper suitable for JSON serialzation.
+        * @return the objectmapper.
+        */
+        public static ObjectMapper jsonMapper()
+        {
+        return org.ivoa.vodml.json.JsonManagement.jsonMapper();
+        }
+        /**
+        * generate management interface instance for model.
+        * @return
+        */
+        static public ModelManagement&lt;<xsl:value-of select="$ModelClass"/>&gt; management() {return new ModelManagement&lt;<xsl:value-of select="$ModelClass"/>&gt;()
+        {
+        @Override
+        public String pu_name() {return <xsl:value-of select="$ModelClass"/>.pu_name();}
+
+        @Override
+        public void writeXMLSchema() throws JAXBException, IOException { <xsl:value-of select="$ModelClass"/>.writeXMLSchema();}
+
+        @Override
+        public JAXBContext contextFactory() throws JAXBException {  return <xsl:value-of select="$ModelClass"/>.contextFactory();}
+
+        @Override
+        public boolean hasReferences() { return <xsl:value-of select="$ModelClass"/>.hasReferences();}
+
+        @Override
+        public ObjectMapper jsonMapper() { return <xsl:value-of select="$ModelClass"/>.jsonMapper();}
+        };};
+
+}
     </xsl:result-document>
 
   </xsl:template>

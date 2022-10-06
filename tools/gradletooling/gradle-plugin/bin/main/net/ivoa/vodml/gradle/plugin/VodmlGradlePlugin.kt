@@ -29,6 +29,7 @@ class VodmlGradlePlugin: Plugin<Project> {
         const val VODML_JAVA_TASK_NANE = "vodmlGenerateJava"
         const val VODML_VODSL_TASK_NAME = "vodslToVodml"
         const val VODML_TO_VODSL_TASK_NAME = "vodmlToVodsl"
+        const val VODML_TO_PYTHON_TASK_NAME = "vodmlPythonGenerate"
     }
     override fun apply(project: Project) {
         project.logger.info("Applying $VODML_PLUGIN_ID to project ${project.name}")
@@ -129,19 +130,37 @@ class VodmlGradlePlugin: Plugin<Project> {
         {
             it.dependsOn.add(vodmlJavaTask)
         }
-
+//python task
+        project.tasks.register(VODML_TO_PYTHON_TASK_NAME,VodmlPythonTask::class.java) { task ->
+            task.description = "generate python classes from VO-DML models"
+            task.vodmlFiles.setFrom(if (extension.vodmlFiles.isEmpty)
+                extension.vodmlDir.asFileTree.matching(PatternSet().include("**/*.vo-dml.xml"))
+            else
+                extension.vodmlFiles
+            )
+            task.bindingFiles.setFrom(if (extension.bindingFiles.isEmpty)
+                project.projectDir.listFiles{f -> f.name.endsWith("vodml-binding.xml")}
+            else
+                extension.bindingFiles
+            )
+            task.pythonGenDir.set(extension.outputPythonDir)
+            task.vodmlDir.set(extension.vodmlDir)
+            task.catalogFile.set(extension.catalogFile)
+        }
 
 
 
         //add the dependencies for JAXB and JPA - using the hibernate implementation
-       listOf("org.javastro.ivoa.vo-dml:vodml-runtime:0.1.2",
+       listOf("org.javastro.ivoa.vo-dml:vodml-runtime:0.1.4",
             "javax.xml.bind:jaxb-api:2.3.1",
             "org.glassfish.jaxb:jaxb-runtime:2.3.6",
 //             "org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.10",  // supports JPA 2.2
 //            "org.eclipse.persistence:org.eclipse.persistence.moxy:3.0.2", //alternative Jaxb runtime...
              "org.hibernate:hibernate-core:5.6.5.Final"
 //             ,"jakarta.persistence:jakarta.persistence-api:3.0.0" // dont use until go to hibernate 6
-        ).forEach {
+             ,"com.fasterxml.jackson.core:jackson-databind:2.13.4"
+
+       ).forEach {
             project.dependencies.addProvider(
                 JavaPlugin.API_CONFIGURATION_NAME,
                 project.objects.property(Dependency::class.java).convention(

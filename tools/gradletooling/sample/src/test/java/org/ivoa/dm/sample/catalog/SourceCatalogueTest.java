@@ -18,11 +18,14 @@ import javax.xml.bind.SchemaOutputResolver;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.ivoa.dm.AbstractTest;
 import org.ivoa.dm.ivoa.RealQuantity;
 import org.ivoa.dm.ivoa.Unit;
 import org.ivoa.dm.sample.SampleModel;
+import org.ivoa.dm.sample.SampleModel.References;
 import org.ivoa.dm.sample.catalog.inner.SourceCatalogue;
+import org.ivoa.vodml.ModelManagement;
 
 /*
  * Created on 20/08/2021 by Paul Harrison (paul.harrison@manchester.ac.uk).
@@ -102,7 +105,7 @@ class SourceCatalogueTest extends AbstractTest {
     @org.junit.jupiter.api.Test
     void sourceCatJaxBTest() throws JAXBException, ParserConfigurationException, TransformerException, IOException {
 
-        logger.debug("starting test");
+        logger.debug("starting JAXB test");
  
         JAXBContext jc = SampleModel.contextFactory();
 //        JaxbAnnotationMeta<SourceCatalogue> meta = JaxbAnnotationMeta.of(SourceCatalogue.class);
@@ -132,6 +135,9 @@ class SourceCatalogueTest extends AbstractTest {
         assertEquals(0.2, perr.longError);
         assertTrue(!src.getLuminosity().get(0).getFilter().getBandName().equals(
         src.getLuminosity().get(1).getFilter().getBandName()),"failure to distinguish references");
+        SkyCoordinateFrame fr = src.getPosition().getFrame();
+        assertNotNull(fr);
+        assertEquals("J2000", fr.getName());
         
 
 
@@ -165,4 +171,15 @@ class SourceCatalogueTest extends AbstractTest {
         assertEquals(.2, err.getLongError());
 
     }
+   @org.junit.jupiter.api.Test
+   void sourceCatJSONTest() throws JsonProcessingException {
+      SampleModel model = new SampleModel();
+      model.addContent(sc);
+      model.makeRefIDsUnique();
+      String s = outputJSON(model, SampleModel.management());
+      assertNotNull(s);
+      System.out.println("JSON output");
+      System.out.println(s);
+   }
+
 }

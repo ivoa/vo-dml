@@ -8,13 +8,13 @@ plugins {
     `java-gradle-plugin`
 
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    id("org.jetbrains.kotlin.jvm") version "1.4.31"
+    id("org.jetbrains.kotlin.jvm") version "1.6.21"
     `maven-publish`
     id("com.gradle.plugin-publish") version "0.16.0"
 }
 
 group = "net.ivoa.vo-dml"
-version = "0.3.8"
+version = "0.3.9"
 
 repositories {
     mavenLocal() // FIXME remove this when releasing - just here to pick up local vodsl updates
@@ -48,7 +48,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.7.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.2")
 
 
 
@@ -58,7 +58,6 @@ pluginBundle {
     website = "https://www.ivoa.net/documents/VODML/"
     vcsUrl = "https://github.com/ivoa/vo-dml"
     tags = listOf("vodml", "ivoa")
-
  }
 
 

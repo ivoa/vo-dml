@@ -6,7 +6,7 @@ plugins {
     signing
 }
 group = "org.javastro.ivoa.vo-dml"
-version = "0.1.3"
+version = "0.1.4"
 
 
 dependencies {
@@ -15,6 +15,8 @@ dependencies {
     implementation("javax.xml.bind:jaxb-api:2.3.1")
 //    implementation("org.glassfish.jaxb:jaxb-runtime:2.3.6")
     implementation("javax.persistence:javax.persistence-api:2.2")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.4")
+    
     implementation("org.slf4j:slf4j-api:1.7.36")
     testRuntimeOnly("ch.qos.logback:logback-classic:1.2.3")
 }

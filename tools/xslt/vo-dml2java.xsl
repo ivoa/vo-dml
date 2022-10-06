@@ -437,6 +437,9 @@
           * inserted database key
           */
           @javax.xml.bind.annotation.XmlTransient
+          <xsl:if test="not(vf:referredTo($vodml-ref))">
+          @com.fasterxml.jackson.annotation.JsonIgnore
+          </xsl:if>
           @Id
           @GeneratedValue
           @Column(name = "ID")

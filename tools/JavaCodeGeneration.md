@@ -62,17 +62,6 @@ an overall ${modelname}Model class generated, that is intended to act as
 a 'container' for the individual elements. This is especially useful in the case
 where the model has references, as then there are some convenience methods.
 
-The overall model object will produce xml like
-```xml
-<MyModel>
-    <refs>
-        <aref1 id="1000">...</aref1>
-        <aref1 id="1001">...</aref1>
-    </refs>
-    <contentObjectType1> ...</contentObjectType1>
-    ...
-</MyModel>
-```
 
 #### JAXBContext
 
@@ -81,7 +70,7 @@ A static function to create a suitable JAXBContext
 JAXBContext jc = MyModel.contextFactory();
 ```
 In general collections are marked for lazy loading, and as a convenience there is a `walkCollections()`
-method generated that will do a deep walk of all the collections in a particular type, whcih will force the loading.
+method generated that will do a deep walk of all the collections in a particular type, which will force the loading of the whole instance tree.
 
 
 #### Functions for adding content

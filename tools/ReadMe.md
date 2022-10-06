@@ -1,4 +1,4 @@
-Using the VO-DML Gradle Plugin 0.3.8
+Using the VO-DML Gradle Plugin 0.3.9
 ===================================
 
 The aim of this plugin is to process VO-DML models to produce documentation and source code that
@@ -19,7 +19,7 @@ as below.
 
 ```kotlin
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.3.8"
+    id("net.ivoa.vo-dml.vodmltools") version "0.3.9"
 }
 ```
 3. create the  binding files for the model (see below in the configuration section) 
@@ -123,6 +123,7 @@ The gradle plugin does not currently have a task directly to generate XML and RD
 indirectly from the generated Java code as can be seen from the [Small java example](./gradletooling/sample/src/main/java/WriteSampleSchema.java).
 
 
+
 ## Changes
 
 * 0.2 java generation changed to cope with STC coords.
@@ -136,6 +137,7 @@ indirectly from the generated Java code as can be seen from the [Small java exam
 * 0.3.6 JPA EntityGraphs
 * 0.3.7 To VODSL task added
 * 0.3.8 Add schema generation via the generated Java code.
+* 0.3.9 Added JSON serialization.
 
 
 _TODO - there is still some information in the [README.txt](./README.txt) file that should be incorporated in these instructions_
