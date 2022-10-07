@@ -74,6 +74,7 @@ dependencies {
     testRuntimeOnly("ch.qos.logback:logback-classic:1.2.3")
 
     testImplementation("org.apache.derby:derby:10.14.2.0")
+    testImplementation("org.javastro:jaxbjpa-utils:0.1.2:test")
     compileOnly("com.google.googlejavaformat:google-java-format:1.12.0")
 
 }

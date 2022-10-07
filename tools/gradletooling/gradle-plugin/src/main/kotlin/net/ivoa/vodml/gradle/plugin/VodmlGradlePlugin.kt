@@ -151,7 +151,7 @@ class VodmlGradlePlugin: Plugin<Project> {
 
 
         //add the dependencies for JAXB and JPA - using the hibernate implementation
-       listOf("org.javastro.ivoa.vo-dml:vodml-runtime:0.1.4",
+       listOf("org.javastro.ivoa.vo-dml:vodml-runtime:0.1.5",
             "javax.xml.bind:jaxb-api:2.3.1",
             "org.glassfish.jaxb:jaxb-runtime:2.3.6",
 //             "org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.10",  // supports JPA 2.2
@@ -162,7 +162,7 @@ class VodmlGradlePlugin: Plugin<Project> {
 
        ).forEach {
             project.dependencies.addProvider(
-                JavaPlugin.API_CONFIGURATION_NAME,
+                JavaPlugin.API_CONFIGURATION_NAME, // want them exported
                 project.objects.property(Dependency::class.java).convention(
                     project.dependencies.create(it)
                 )

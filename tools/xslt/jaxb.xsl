@@ -250,7 +250,7 @@
             schemaMap.put("<xsl:value-of select="normalize-space(text())"/>","<xsl:value-of select="@schemaFilename"/>");
         </xsl:for-each>
 
-        contextFactory().generateSchema(new org.ivoa.vodml.jaxb.SchemaNamer(schemaMap));
+        contextFactory().generateSchema(new org.javastro.ivoa.jaxb.SchemaNamer(schemaMap));
         }
         /**
         * Return a Jackson objectMapper suitable for JSON serialzation.
