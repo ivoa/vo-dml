@@ -8,6 +8,6 @@
         <file>Filter.vo-dml.xml</file>
         <java-package>org.ivoa.dm.filter</java-package>
         <python-package>org.ivoa.dm.filter</python-package>
-        <xml-targetnamespace prefix="filt">http://ivoa.net/dm/models/vo-dml/xsd/sample/filter</xml-targetnamespace>
+        <xml-targetnamespace prefix="filt">http://ivoa.net/dm/sample/filter</xml-targetnamespace>
     </model>
 </m:mappedModels>

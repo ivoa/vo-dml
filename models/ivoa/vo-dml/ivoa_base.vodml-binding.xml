@@ -9,7 +9,7 @@ This is a sample file for mapping VO-DML models to XSD or Java using the gradle 
 <file>IVOA-v1.0.vo-dml.xml</file>
   <java-package>org.ivoa.dm.ivoa</java-package>
   <python-package>org.ivoa.dm.ivoa</python-package>
-<xml-targetnamespace prefix="ivoa">http://ivoa.net/dm/models/vo-dml/xsd/ivoa</xml-targetnamespace>
+<xml-targetnamespace prefix="ivoa" schemaFilename="ivoa.xsd">http://ivoa.net/dm/ivoa</xml-targetnamespace>
 <type-mapping>
   <vodml-id>real</vodml-id>
   <java-type jpa-atomic="true">Double</java-type>

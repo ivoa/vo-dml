@@ -8,7 +8,7 @@ note that this is just a copy of what
 <file>like_coords-v1.0.vo-dml.xml</file>
     <java-package>org.ivoa.dm.notstccoords</java-package>
     <python-package>org.ivoa.dm.notstccoords</python-package>
-    <xml-targetnamespace prefix="coord">http://ivoa.net/dm/models/vo-dml/xsd/notstc/coords/</xml-targetnamespace>
+    <xml-targetnamespace prefix="coord">http://ivoa.net/dm/sample/notstc/coords/</xml-targetnamespace>
     <type-mapping> <!-- just for ease map to string - real implementation would probably have specialized class -->
         <vodml-id>Epoch</vodml-id>
         <java-type jpa-atomic="true">String</java-type>
