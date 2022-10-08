@@ -11,7 +11,6 @@
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1">
 
-
 <xsl:include href="common.xsl"/>
 
 <xsl:key name="ellookup" match="//*[vodml-id]" use="concat(ancestor::vo-dml:model/name,':',vodml-id)"/>
@@ -531,6 +530,20 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
     <xsl:function name="vf:lowerFirst" as="xsd:string">
         <xsl:param name="s" as="xsd:string"/>
         <xsl:value-of select="concat(lower-case(substring($s,1,1)),substring($s,2))"/>
+    </xsl:function>
+
+    <xsl:function name="vf:utype" as="xsd:string">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <!--        <xsl:message select="concat('subsetting in hierarchy for=',$vodml-ref)"/>-->
+        <xsl:choose>
+            <xsl:when test="$models/key('ellookup',$vodml-ref)">
+                <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
+                <xsl:value-of select="$vodml-ref"/><!-- TODO is this true? -->
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">type '<xsl:value-of select="$vodml-ref"/>' not in considered models</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:function>
 
     <!-- returns the vodml-refs of the members including inherited ones -->

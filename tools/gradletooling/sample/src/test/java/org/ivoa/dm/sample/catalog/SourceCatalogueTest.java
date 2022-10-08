@@ -125,8 +125,16 @@ class SourceCatalogueTest extends AbstractTest {
 //        assertTrue(mvalidation.valid, "errors on whole model");
 
 
-        SampleModel modelin = roundtripXML(jc, model, SampleModel.class); //TODO the namespace should be automatic....
-        List<SourceCatalogue> lin = modelin.getContent(SourceCatalogue.class);
+        SampleModel modelin = roundtripXML(jc, model, SampleModel.class); 
+        checkModel(modelin.getContent(SourceCatalogue.class));
+        
+
+
+        System.out.println("generating schema");
+        SampleModel.writeXMLSchema();
+    }
+
+    private void checkModel(List<SourceCatalogue> lin) {
         assertEquals(1, lin.size());
         SourceCatalogue scin = lin.get(0);
         System.out.println(lin.get(0).getName());
@@ -138,11 +146,6 @@ class SourceCatalogueTest extends AbstractTest {
         SkyCoordinateFrame fr = src.getPosition().getFrame();
         assertNotNull(fr);
         assertEquals("J2000", fr.getName());
-        
-
-
-        System.out.println("generating schema");
-        SampleModel.writeXMLSchema();
     }
 
     @org.junit.jupiter.api.Test
@@ -176,10 +179,11 @@ class SourceCatalogueTest extends AbstractTest {
       SampleModel model = new SampleModel();
       model.addContent(sc);
       model.makeRefIDsUnique();
-      String s = outputJSON(model, SampleModel.management());
-      assertNotNull(s);
-      System.out.println("JSON output");
-      System.out.println(s);
+      SampleModel modelin = roundTripJSON(model, SampleModel.management(), SampleModel.class);
+      checkModel(modelin.getContent(SourceCatalogue.class));
+      
+     
+     
    }
 
 }

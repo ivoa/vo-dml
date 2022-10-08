@@ -29,6 +29,10 @@
   <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
   <xsl:if test="vf:hasSubTypes($vodml-ref)">
   @javax.xml.bind.annotation.XmlSeeAlso({ <xsl:value-of select="string-join(for $s in vf:subTypes($vodml-ref) return concat(vf:QualifiedJavaType(vf:asvodmlref($s)),'.class'),',')"/>  })
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+      <xsl:value-of select="string-join(for $s in vf:subTypes($vodml-ref) return
+              concat('@com.fasterxml.jackson.annotation.JsonSubTypes.Type(value=',vf:QualifiedJavaType(vf:asvodmlref($s)),'.class,name=&quot;',vf:utype(vf:asvodmlref($s)),'&quot;)'),',')"/>
+      })
   </xsl:if>
     <xsl:choose>
       <xsl:when test="not(vf:isContained(vf:asvodmlref(.))) and not(@abstract = 'true')">
@@ -95,7 +99,8 @@
 
   <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="JAXBAnnotation">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
-    @javax.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+  @javax.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+  @com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.CLASS, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.WRAPPER_OBJECT )
   </xsl:template>
 
   <xsl:template match="literal" mode="JAXBAnnotation">
@@ -170,7 +175,6 @@
     @XmlRootElement
     @JsonTypeInfo(include=JsonTypeInfo.As.WRAPPER_OBJECT, use=JsonTypeInfo.Id.NAME)
     @JsonIgnoreProperties({"refmap"})
-
     public class <xsl:value-of select="$ModelClass"/> implements org.ivoa.vodml.jaxb.JaxbManagement {
 
     @XmlType
@@ -198,16 +202,17 @@
                     <xsl:if test="position() != last()">,</xsl:if>
       </xsl:for-each>
     })
+    @JsonTypeInfo (use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.WRAPPER_OBJECT)
     private List&lt;Object&gt; content  = new ArrayList&lt;&gt;();
       <xsl:for-each select="//objectType[not(@abstract='true') and (not(vf:referredTo(vf:asvodmlref(.))) or (vf:asvodmlref(.) = vf:referencesInHierarchy(vf:asvodmlref(.)) )) ]">
 <!--         <xsl:message>ref in hierarchy <xsl:value-of select="vf:asvodmlref(.)"/> refs= <xsl:value-of select="vf:referencesInHierarchy(vf:asvodmlref(.))"/>  </xsl:message>-->
-        public void addContent( final <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/> c)
-        {
-            content.add(c);
+    public void addContent( final <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/> c)
+    {
+        content.add(c);
 
-        org.ivoa.vodml.nav.Util.findReferences(c, refmap);
+    org.ivoa.vodml.nav.Util.findReferences(c, refmap);
 
-        }
+    }
       </xsl:for-each>
       @SuppressWarnings("unchecked")
       public &lt;T&gt; List&lt;T&gt; getContent(Class&lt;T&gt; c) {

@@ -12,6 +12,7 @@ package org.ivoa.dm;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.ivoa.vodml.ModelManagement;
 
@@ -23,10 +24,16 @@ import org.ivoa.vodml.ModelManagement;
 public abstract class AbstractTest extends org.javastro.ivoa.tests.AbstractJAXBJPATest {
 
 
-            protected  <T> String outputJSON( T model, ModelManagement<T> m) throws JsonProcessingException {
-                  
-                   return m.jsonMapper().writerWithDefaultPrettyPrinter().writeValueAsString(model);
-            }
+    protected  <T> T roundTripJSON( T model, ModelManagement<T> m, Class<T> clazz) throws JsonProcessingException {
+        ObjectMapper mapper = m.jsonMapper();
+        String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(model);
+        System.out.println("JSON output"); 
+        System.out.println(json);
+        T retval = mapper.readValue(json, clazz);
+        assertNotNull(retval);
+        return retval;
+
+    }
 
 }
 

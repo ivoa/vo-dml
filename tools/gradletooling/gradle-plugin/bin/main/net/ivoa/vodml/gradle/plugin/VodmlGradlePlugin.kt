@@ -162,7 +162,7 @@ class VodmlGradlePlugin: Plugin<Project> {
 
        ).forEach {
             project.dependencies.addProvider(
-                JavaPlugin.API_CONFIGURATION_NAME,
+                JavaPlugin.API_CONFIGURATION_NAME, // want them exported
                 project.objects.property(Dependency::class.java).convention(
                     project.dependencies.create(it)
                 )
