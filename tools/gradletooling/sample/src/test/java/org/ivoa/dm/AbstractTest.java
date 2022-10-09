@@ -24,7 +24,10 @@ import org.ivoa.vodml.ModelManagement;
 public abstract class AbstractTest extends org.javastro.ivoa.tests.AbstractJAXBJPATest {
 
 
-    protected  <T> T roundTripJSON( T model, ModelManagement<T> m, Class<T> clazz) throws JsonProcessingException {
+    protected  <T> T roundTripJSON(ModelManagement<T> m) throws JsonProcessingException {
+        T model = m.theModel();
+        @SuppressWarnings("unchecked")
+        Class<T> clazz =  (Class<T>) model.getClass();
         ObjectMapper mapper = m.jsonMapper();
         String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(model);
         System.out.println("JSON output"); 

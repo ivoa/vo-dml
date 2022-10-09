@@ -101,6 +101,7 @@
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
   @javax.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
   @com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.CLASS, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.WRAPPER_OBJECT )
+  @com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver(value = org.ivoa.vodml.json.VodmlTypeResolver.class)
   </xsl:template>
 
   <xsl:template match="literal" mode="JAXBAnnotation">
@@ -167,9 +168,12 @@
     import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
     import com.fasterxml.jackson.annotation.JsonTypeInfo;
     import com.fasterxml.jackson.databind.ObjectMapper;
+    import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
+    import com.fasterxml.jackson.annotation.JsonProperty;
 
     import org.ivoa.vodml.jaxb.XmlIdManagement;
     import org.ivoa.vodml.ModelManagement;
+    import org.ivoa.vodml.ModelDescription;
 
     @XmlAccessorType(XmlAccessType.NONE)
     @XmlRootElement
@@ -181,6 +185,7 @@
     public static class References {
     <xsl:for-each select="distinct-values($models//reference/datatype/vodml-ref[substring-before(.,':') = $modelsInScope])"> <!-- looking at all possible refs -->
       @XmlElement
+      @JsonProperty("<xsl:value-of select="vf:utype(.)"/>")
       private Set&lt;<xsl:value-of select="vf:QualifiedJavaType(.)"/>&gt;&bl; <xsl:value-of select="vf:lowerFirst($models/key('ellookup',current())/name)"/> = new HashSet&lt;&gt;();
     </xsl:for-each>
     }
@@ -203,6 +208,7 @@
       </xsl:for-each>
     })
     @JsonTypeInfo (use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.WRAPPER_OBJECT)
+    @JsonTypeIdResolver(value = org.ivoa.vodml.json.VodmlTypeResolver.class)
     private List&lt;Object&gt; content  = new ArrayList&lt;&gt;();
       <xsl:for-each select="//objectType[not(@abstract='true') and (not(vf:referredTo(vf:asvodmlref(.))) or (vf:asvodmlref(.) = vf:referencesInHierarchy(vf:asvodmlref(.)) )) ]">
 <!--         <xsl:message>ref in hierarchy <xsl:value-of select="vf:asvodmlref(.)"/> refs= <xsl:value-of select="vf:referencesInHierarchy(vf:asvodmlref(.))"/>  </xsl:message>-->
@@ -263,13 +269,13 @@
         */
         public static ObjectMapper jsonMapper()
         {
-        return org.ivoa.vodml.json.JsonManagement.jsonMapper();
+        return org.ivoa.vodml.json.JsonManagement.jsonMapper(<xsl:value-of select="$ModelClass"/>.description());
         }
         /**
         * generate management interface instance for model.
         * @return
         */
-        static public ModelManagement&lt;<xsl:value-of select="$ModelClass"/>&gt; management() {return new ModelManagement&lt;<xsl:value-of select="$ModelClass"/>&gt;()
+        public ModelManagement&lt;<xsl:value-of select="$ModelClass"/>&gt; management() {return new ModelManagement&lt;<xsl:value-of select="$ModelClass"/>&gt;()
         {
         @Override
         public String pu_name() {return <xsl:value-of select="$ModelClass"/>.pu_name();}
@@ -285,7 +291,28 @@
 
         @Override
         public ObjectMapper jsonMapper() { return <xsl:value-of select="$ModelClass"/>.jsonMapper();}
+
+        @Override
+        public <xsl:value-of select="$ModelClass"/> theModel() { return <xsl:value-of select="$ModelClass"/>.this;}
+
+
         };};
+
+        public static ModelDescription description(){
+        return new ModelDescription() {
+        @SuppressWarnings("rawtypes")
+        @Override
+        public Map&lt;String, Class&gt; utypeToClassMap() {
+        final HashMap&lt;String, Class&gt; retval = new HashMap&lt;&gt;();
+        <xsl:for-each select="$models//(objectType|dataType)">
+            <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"></xsl:variable>
+        retval.put("<xsl:value-of select="vf:utype($vodml-ref)"/>", <xsl:value-of select="vf:QualifiedJavaType($vodml-ref)"/>.class);
+        </xsl:for-each>
+        return retval;
+        }
+
+        };
+        }
 
 }
     </xsl:result-document>

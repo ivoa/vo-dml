@@ -14,13 +14,14 @@ import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectMapper.DefaultTyping;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
+
+import org.ivoa.vodml.ModelDescription;
 
 /**
  * Utility class for JSON serialization.
@@ -33,7 +34,7 @@ public class JsonManagement {
      * return an ObjectMapper suitably configured for use with the VODML generated models. 
      * @return
      */
-    static public ObjectMapper jsonMapper() {
+    static public ObjectMapper jsonMapper(ModelDescription md) {
                     final TimeZone utc = TimeZone.getTimeZone("UTC");
             final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"); //FIXME Jackson seems to ignore the date format to get desired Z
             df.setTimeZone(utc);
@@ -48,7 +49,8 @@ public class JsonManagement {
                       .configure(SerializationFeature.WRITE_DATES_WITH_ZONE_ID, true)
                       .defaultDateFormat(df)
                       .configure(SerializationFeature.WRAP_ROOT_VALUE, false)
-                      .configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, false)                      
+                      .configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, false)  
+                      .handlerInstantiator(new VodmlHandlerInstantiator(md))
                       .build();
 
     }

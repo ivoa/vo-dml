@@ -179,7 +179,7 @@ class SourceCatalogueTest extends AbstractTest {
       SampleModel model = new SampleModel();
       model.addContent(sc);
       model.makeRefIDsUnique();
-      SampleModel modelin = roundTripJSON(model, SampleModel.management(), SampleModel.class);
+      SampleModel modelin = roundTripJSON(model.management());
       checkModel(modelin.getContent(SourceCatalogue.class));
       
      

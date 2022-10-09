@@ -29,7 +29,10 @@ import org.ivoa.vodml.json.JsonManagement;
  * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
  * @since 6 Oct 2022
  */
-public interface ModelManagement <T> {
+public interface ModelManagement <T>{
+    
+    T theModel();
+    
      /**
       * the persistence unit name used by the model.
      * @return the name
