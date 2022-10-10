@@ -1,5 +1,7 @@
-Using the VO-DML Gradle Plugin 0.3.9
+Using the VO-DML Gradle Plugin
 ===================================
+
+Latest published version ![gradle plugin](https://img.shields.io/gradle-plugin-portal/v/net.ivoa.vo-dml.vodmltools?label=gradle%20plugin)
 
 The aim of this plugin is to process VO-DML models to produce documentation and source code that
 can contain instances the model and has the capability of serialising instances of the model to/from XML,JSON and 
