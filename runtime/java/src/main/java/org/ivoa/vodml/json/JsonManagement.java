@@ -31,8 +31,10 @@ import org.ivoa.vodml.ModelDescription;
 public class JsonManagement {
     
     /**
-     * return an ObjectMapper suitably configured for use with the VODML generated models. 
-     * @return
+     * create an ObjectMapper suitably configured for use with the VODML generated models.
+     * @param md the description of the model.
+     *
+     * @return the objectmapper.
      */
     static public ObjectMapper jsonMapper(ModelDescription md) {
                     final TimeZone utc = TimeZone.getTimeZone("UTC");

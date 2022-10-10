@@ -2,7 +2,7 @@ Using the VO-DML Gradle Plugin 0.3.9
 ===================================
 
 The aim of this plugin is to process VO-DML models to produce documentation and source code that
-implements the model and has the capability of serialising instances of the model to XML and 
+can contain instances the model and has the capability of serialising instances of the model to/from XML,JSON and 
 relational databases.
 
 The gradle plugin is intended to replace all the functionality of the 
@@ -36,7 +36,7 @@ There are 3 associated tasks
   that can be hand edited with https://www.yworks.com/products/yed for nicer looking model diagrams.
 * vodmlGenerateJava - generate java classes. See [generated code guide](JavaCodeGeneration.md) for details of how to use the generated java code to serialize instances to XML and RDB.
 
-The generated Java code depends on the VO-DML java runtime library, which the plugin will automatically add to the
+The generated Java code depends on the [VO-DML java runtime library](../runtime/java), which the plugin will automatically add to the
 dependencies along with the necessary JAXB and JPA libraries.
 
 ## configurable plugin properties
@@ -118,11 +118,10 @@ tasks.register("UmlToVodml", net.ivoa.vodml.gradle.plugin.XmiTask::class.java) {
 The available conversion scripts are those in the [xslt](./xslt) directory with `xmi2vo-dml` as part of their name.
 
 ## Schema
+The serializations that are implemented in the generated code are discussed in more detail [here](./Serialization.md)
 
 The gradle plugin does not currently have a task directly to generate XML and RDB schema from the models, however, this can be done
 indirectly from the generated Java code as can be seen from the [Small java example](./gradletooling/sample/src/main/java/WriteSampleSchema.java).
-
-
 
 ## Changes
 
@@ -137,7 +136,7 @@ indirectly from the generated Java code as can be seen from the [Small java exam
 * 0.3.6 JPA EntityGraphs
 * 0.3.7 To VODSL task added
 * 0.3.8 Add schema generation via the generated Java code.
-* 0.3.9 Added JSON serialization.
+* 0.3.9 Add JSON serialization.
 
 
 _TODO - there is still some information in the [README.txt](./README.txt) file that should be incorporated in these instructions_

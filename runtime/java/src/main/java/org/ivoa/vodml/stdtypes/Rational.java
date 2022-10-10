@@ -25,7 +25,7 @@ public class Rational {
      * Creates a new rational DataType instance, wrapping a base type.
      *
      * @param _n numerator
-     * @param _d demominator
+     * @param _d denominator
      */
     public Rational(final int _n, final int _d) {
         this.numerator = _n;
@@ -34,8 +34,8 @@ public class Rational {
 
     /**
      * TODO Implement better parser.
-     * 
-     * @param sv
+     * Create a rational number from a   numerator/denominator  string.
+     * @param sv string representation of the rational number
      */
     public Rational(String sv) {
         String[] words = sv.trim().split("[(/)]");

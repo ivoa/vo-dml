@@ -37,7 +37,7 @@ public class Complex {
     /**
      * TODO Implement better parser
      * 
-     * @param sv
+     * @param sv a string representation of the complex number.
      */
     public Complex(String sv) {
         String[] words = sv.trim().split("[(,)]");

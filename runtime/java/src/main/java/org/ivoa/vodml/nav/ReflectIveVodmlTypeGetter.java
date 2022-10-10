@@ -12,10 +12,9 @@ package org.ivoa.vodml.nav;
 import java.lang.reflect.Field;
 
 import org.ivoa.vodml.annotation.VoDml;
-import org.ivoa.vodml.annotation.VodmlType;
 
 /**
- *  .
+ * Obtains VODML type information from vodml annotations.
  * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
  * @since 31 Aug 2021
  */
@@ -27,7 +26,7 @@ public class ReflectIveVodmlTypeGetter implements VodmlTypeGetter {
     private final String id;
 
     /**
-     * 
+     * @param c the class to query
      */
     public ReflectIveVodmlTypeGetter(Class<?> c) {
        a = c.getAnnotation(VoDml.class);
@@ -57,6 +56,11 @@ public class ReflectIveVodmlTypeGetter implements VodmlTypeGetter {
 
     }
 
+   /**
+    * factory method for creating typegetter.
+    * @param o the object to create the typegetter for.
+    * @return
+    */
   public static ReflectIveVodmlTypeGetter factory(Object o) {
        if(o instanceof Class) {
            return new ReflectIveVodmlTypeGetter((Class)o);
@@ -68,12 +72,8 @@ public class ReflectIveVodmlTypeGetter implements VodmlTypeGetter {
        {
            throw new IllegalArgumentException("unknown metatype " + o.getClass().getCanonicalName());
        }
-      
-       
-   }
 
-    
-    
+   }
 
 }
 

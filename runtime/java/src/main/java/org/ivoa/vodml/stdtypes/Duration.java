@@ -29,8 +29,8 @@ public class Duration  {
     /**
      * Creates a new duration Primitive Type instance, wrapping a base type.
      *
-     * @param from
-     * @param to
+     * @param from the start of the duration
+     * @param to the end of the duration
      */
     public Duration(Date from, Date to) {
         this.from = from;

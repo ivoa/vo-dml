@@ -8,10 +8,13 @@ import static org.ivoa.dm.sample.catalog.inner.SourceCatalogue.createSourceCatal
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Query;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.SchemaOutputResolver;
@@ -19,6 +22,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+
+import org.hibernate.Session;
 import org.ivoa.dm.AbstractTest;
 import org.ivoa.dm.ivoa.RealQuantity;
 import org.ivoa.dm.ivoa.Unit;
@@ -150,7 +155,7 @@ class SourceCatalogueTest extends AbstractTest {
 
     @org.junit.jupiter.api.Test
     void sourceCatJPATest() {
-       javax.persistence.EntityManager em = setupDB(SampleModel.pu_name());
+       javax.persistence.EntityManager em = setupH2Db(SampleModel.pu_name());
         em.getTransaction().begin();
         em.persist(sc);
         em.getTransaction().commit();
@@ -164,14 +169,16 @@ class SourceCatalogueTest extends AbstractTest {
         em.getTransaction().begin();
         List<SourceCatalogue> cats = em.createNamedQuery("SourceCatalogue.findById", SourceCatalogue.class)
                 .setParameter("id", id).getResultList();
-        assertEquals(1, cats.size());
-        SourceCatalogue nc = cats.get(0);
-        em.getTransaction().commit();
-        assertEquals(1, nc.getEntry().size());
+        checkModel(cats);
         
-        SDSSSource src = (SDSSSource) nc.getEntry().get(0);
-        AlignedEllipse err = src.getPositionError();
-        assertEquals(.2, err.getLongError());
+        //IMPL hibernate specific way of getting connection... generally dirty, see  https://stackoverflow.com/questions/3493495/getting-database-connection-in-pure-jpa-setup
+        Session sess = em.unwrap(Session.class);
+        sess.doWork(conn -> {
+            PreparedStatement ps = conn.prepareStatement("SCRIPT TO ?"); // this is H2db specifid
+            ps.setString(1, "test_dump.sql");
+            ps.execute();
+        });
+        
 
     }
    @org.junit.jupiter.api.Test
@@ -181,8 +188,6 @@ class SourceCatalogueTest extends AbstractTest {
       model.makeRefIDsUnique();
       SampleModel modelin = roundTripJSON(model.management());
       checkModel(modelin.getContent(SourceCatalogue.class));
-      
-     
      
    }
 

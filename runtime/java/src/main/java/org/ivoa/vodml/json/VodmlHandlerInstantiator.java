@@ -9,8 +9,6 @@
 
 package org.ivoa.vodml.json;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -24,7 +22,7 @@ import com.fasterxml.jackson.databind.jsontype.TypeResolverBuilder;
 import org.ivoa.vodml.ModelDescription;
 
 /**
- *  .
+ * A handler instantiator for configuring a Jackson objectmapper instance.
  * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
  * @since 8 Oct 2022
  */
@@ -34,7 +32,7 @@ public class VodmlHandlerInstantiator extends com.fasterxml.jackson.databind.cfg
     private ModelDescription md;
 
     /**
-     * @param md
+     * @param md the model description.
      */
     public VodmlHandlerInstantiator(ModelDescription md) {
         this.md = md;

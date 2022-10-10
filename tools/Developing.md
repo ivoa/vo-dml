@@ -30,4 +30,4 @@ gradle gradle :java:publishToSonatype :java:closeSonatypeStagingRepository
 
 which can then be checked and released in the https://oss.sonatype.org/ GUI.
 
-[![Maven Central](https://img.shields.io/maven-central/v/org.javastro.ivoa.vo-dml/vodml-runtime.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22org.javastro.ivoa.vo-dml%22%20AND%20a:%22vodml-runtime%22)
+[![Maven Central](https://img.shields.io/maven-central/v/org.javastro.ivoa.vo-dml/vodml-runtime.svg?label=VODML%20Runtime)](https://search.maven.org/search?q=g:%22org.javastro.ivoa.vo-dml%22%20AND%20a:%22vodml-runtime%22)

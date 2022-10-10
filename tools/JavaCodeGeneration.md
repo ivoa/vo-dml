@@ -55,59 +55,77 @@ It should be noted that this style becomes most desirable when there are attribu
 which themselves are of a non-primitive type.
 
 
-### Reading and Writing XML
+### Serializing Models
 
-As well as all the individual enum, ObjectType, and DataType classes, there is
+As well as all the individual Enum, ObjectType, and DataType classes, there is
 an overall ${modelname}Model class generated, that is intended to act as 
 a 'container' for the individual elements. This is especially useful in the case
 where the model has references, as then there are some convenience methods.
-
-
-#### JAXBContext
-
-A static function to create a suitable JAXBContext 
-```java
-JAXBContext jc = MyModel.contextFactory();
-```
-In general collections are marked for lazy loading, and as a convenience there is a `walkCollections()`
-method generated that will do a deep walk of all the collections in a particular type, which will force the loading of the whole instance tree.
-
-
 #### Functions for adding content
-For each of the concrete objectTypes in the model there is 
-an overloaded `addContent()` method, which will add the content to the 
+For each of the concrete objectTypes in the model there is
+an overloaded `addContent()` method, which will add the content to the
 overall instance and find any references.
 
 Once all the content has been added, then there is a `makeRefIDsUnique()` method
-which will go through the whole model and automatically assign IDs for any 
-references that do not already have them. 
+which will go through the whole model and automatically assign IDs for any
+references that do not already have them.
 
-At this point the overall model object is suitable to be written out as XML.
+At this point the overall model object is suitable to be serialized.
 
 On reading in a model instance, it is possible to extract any top level ObjectTypes
 with the `public <T> List<T> getContent(Class<T> c)` method.
 
 Finally, there is a static `public static boolean hasReferences()` method which
-can be used to check if the model has any references - if it does not then much of the 
-machinery above (apart from the JAXBContext) is necessary, and individual ObjectTypes may be 
+can be used to check if the model has any references - if it does not then much of the
+machinery above (apart from the JAXBContext) is necessary, and individual ObjectTypes may be
 written.
+
+The [unit tests](./gradletooling/sample/src/test/java/org/ivoa/dm/sample/catalog/SourceCatalogueTest.java) for this project show most of the various code features being used
+
+#### XML Serialization
+
+A static function to create a suitable JAXBContext is present
+```java
+JAXBContext jc = MyModel.contextFactory();
+```
+
+#### JSON Serialisation
+The JSON serialization is implemented with the [Jackson](https://github.com/FasterXML/jackson) library
+
+A suitable ObjectMapper is obtained with
+```java
+ObjectMapper mapper = MyModel.jsonMapper();
+```
+
 
 ### Reading and Writing from RDBs
 
 The generated code has JPA annotations to allow storing in RDBs with compliant systems.
 
+In general collections are marked for lazy loading, and as a convenience there is a `walkCollections()`
+method generated that will do a deep walk of all the collections in a particular type, which will force the loading of the whole instance tree if that is desired.
+
+
 #### Embeddable dataTypes
 
 The most natural way to represent dataTypes in JPA is as embeddable, this means that they do
 not have a separate "identity" and are simply represented as columns within the parent entity table.
-The problem with this is that JPA does not specifically allow inheritance of embeddables (though nor does it disallow). 
+The problem with this is that JPA does not specifically allow inheritance of embeddables (though nor does it disallow the use). 
 As a consequence the support for inherited embeddables is not uniform in JPA providers.
 
 Hibernate seems to support the concept of embeddable hierarchies reasonably well by
-naturally using the @MappedSuperclass annotation - although there is an irritation in that 
-the full flexibility of having optional attributes that are dataTypes is not supported as all columns re
-made non-nullable - I have submitted a bug https://hibernate.atlassian.net/browse/HHH-14818
+naturally using the `@MappedSuperclass` annotation - although there is an irritation in that 
+the full flexibility of having optional attributes that are dataTypes is not supported as all columns are 
+made non-nullable - a bug has been submitted https://hibernate.atlassian.net/browse/HHH-14818
 
 There are also eclipselink bugs that mean that the suggested way of doing inherited embeddables does not seem to work.
 
+#### General interfaces
+
+Much of the functionality described above is defined in two interfaces
+[ModelManagement](../runtime/java/src/main/java/org/ivoa/vodml/ModelManagement.java) an 
+instance of which can be obtained with the `managmenent()` method on the model class and
+[ModelDescription](../runtime/java/src/main/java/org/ivoa/vodml/ModelDescription.java) an
+instance of which can be obtained with the `description()` method on the model class.
+These interfaces allow generic model handling code to be written.
 
