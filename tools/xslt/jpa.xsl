@@ -52,7 +52,7 @@
     @DiscriminatorColumn( name = "<xsl:value-of select="$discriminatorColumnName"/>", discriminatorType = DiscriminatorType.STRING, length = <xsl:value-of select="$discriminatorColumnLength"/>)
     </xsl:if>
     <xsl:if test="$extMod">
-  @DiscriminatorValue( "<xsl:value-of select="$className"/>" ) <!-- TODO decide whether this should be a path - current is just default anyway-->
+  @DiscriminatorValue( "<xsl:value-of select="vf:utype(vf:asvodmlref(.))"/>" )
   </xsl:if>
   @NamedQueries( {
     @NamedQuery( name = "<xsl:value-of select="$className"/>.findById", query = "SELECT o FROM <xsl:value-of select="$className"/> o WHERE o.<xsl:value-of select="$idname"/> = :id")
