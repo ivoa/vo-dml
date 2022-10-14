@@ -1169,11 +1169,11 @@ package <xsl:value-of select="$path"/>;
       <xsl:message >Writing package info file <xsl:value-of select="$file"/></xsl:message>
       <xsl:variable name="ns" select="$mapping/map:mappedModels/model[name=current()/ancestor-or-self::vo-dml:model/name]/xml-targetnamespace"/>
       <xsl:result-document href="{$file}" >
-@javax.xml.bind.annotation.XmlSchema(namespace = "<xsl:value-of select="normalize-space($ns)"/>", xmlns = {
+@javax.xml.bind.annotation.XmlSchema(namespace = "<xsl:value-of select="normalize-space($ns)"/>",elementFormDefault=XmlNsForm.UNQUALIFIED, xmlns = {
 @javax.xml.bind.annotation.XmlNs(namespaceURI = "<xsl:value-of select="normalize-space($ns)"/>", prefix = "<xsl:value-of select="$ns/@prefix"/>")
   })
 package <xsl:value-of select="$path"/>;
-
+import javax.xml.bind.annotation.XmlNsForm;
       </xsl:result-document>
 
   </xsl:template>

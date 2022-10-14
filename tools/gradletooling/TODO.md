@@ -49,6 +49,8 @@ VODML Tooling TODO
   * not dealing with something that is a composition and also a reference 
     * should this be explicitly dis-allowed?
     * should back-references be put in automatically?
+  * might want to be more explicit about namespaces in the <refs> and <content> areas....
+  
 * JPA 
   * embedded are not nullable - means that datatype with optional multiplicity is not handled well (i.e cannot be null!) https://hibernate.atlassian.net/browse/HHH-14818
     * see https://stackoverflow.com/questions/40979957/how-can-i-prevent-jpa-from-setting-an-embeddable-object-to-null-just-because-all?noredirect=1&lq=1 for the description of opposite
