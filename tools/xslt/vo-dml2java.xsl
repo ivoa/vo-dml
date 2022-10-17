@@ -83,6 +83,9 @@
          </xsl:choose>
       </xsl:for-each>
    </xsl:variable>
+    <xsl:variable name="isRdbSingleInheritance" as="xsd:boolean" select="vf:isRdbSingleTable(/vo-dml:model/name)"/>
+
+
  
 
   <!-- next could be parameters -->
@@ -145,8 +148,7 @@
   <xsl:template match="vo-dml:model|package" mode="content">
     <xsl:param name="dir"/>
     <xsl:param name="path"/>
-
-    <xsl:variable name="newdir">
+      <xsl:variable name="newdir">
       <xsl:choose>
         <xsl:when test="$dir and ./name() = 'package'">
           <xsl:value-of select="concat($dir,'/',name)"/>
@@ -704,14 +706,15 @@ package <xsl:value-of select="$path"/>;
         <xsl:variable name="javatype" select="vf:JavaType(datatype/vodml-ref)"/>
         <xsl:variable name="name" select="tokenize(role/vodml-ref/text(),'[.]')[last()]"/>
           /**
-          * <xsl:apply-templates select="$subsetted" mode="desc" />. Attribute <xsl:value-of select="name"/> : subsetted
+          * <xsl:apply-templates select="$subsetted" mode="desc" />. Attribute <xsl:value-of select="$subsetted/name"/> : subsetted
           *
           */
-          <!--FIXME add the vodml annotation -->
+          <!--TODO is this an appropriate vodml annotation? -->
+          @org.ivoa.vodml.annotation.VoDml(ref="<xsl:value-of select='concat(ancestor::vo-dml:model/name,":",preceding-sibling::vodml-id,".",$name)'/>", type=org.ivoa.vodml.annotation.VodmlType.attribute)
           <xsl:call-template name="doEmbeddedJPA">
               <xsl:with-param name="name" select="$name"/>
               <xsl:with-param name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
-              <xsl:with-param name="nillable" >false</xsl:with-param><!--FIXME with correct nillable value-->
+              <xsl:with-param name="nillable" >true</xsl:with-param><!--TODO think if it is possible to do better with nillable value-->
           </xsl:call-template>
           <xsl:apply-templates select="$subsetted" mode="JAXBAnnotation"/>
           protected <xsl:value-of select="concat($javatype,' ',$name)"/>;

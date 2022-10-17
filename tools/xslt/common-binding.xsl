@@ -215,6 +215,12 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
         <xsl:sequence select="number($el/multiplicity/minOccurs) = 0 and number($el/multiplicity/maxOccurs) = 1" />
     </xsl:function>
 
+    <xsl:function name="vf:isRdbSingleTable" as="xsd:boolean">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:sequence select="count($mapping/map:mappedModels/model[name=$modelName]/rdb[@inheritance-strategy='single-table'] )= 1"/>
+    </xsl:function>
+
+
     <!-- this function should be avoided as it only returns a copy of the asked for element - i.e. the element is not in context of model -->
    <xsl:function name="vf:Element4vodml-ref" as="element()">
       <xsl:param name="vodml-ref" as="xsd:string" />

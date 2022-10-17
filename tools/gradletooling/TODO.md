@@ -9,6 +9,7 @@ VODML Tooling TODO
 * unique constraint in composition...- would result in Set as the container.
 * the rdb and xml schemas produced by the xslt are unlikely to match the java generated ones exactly - they need to be updated.
 * vodml to specify attribute defaults?
+* to generate tapschema - would be nice for vodml to have UCDs as part of the model - could be added in semantic part.
 
 * STC
   * epoch - not really defined as something that is used properly
@@ -55,10 +56,11 @@ VODML Tooling TODO
   * embedded are not nullable - means that datatype with optional multiplicity is not handled well (i.e cannot be null!) https://hibernate.atlassian.net/browse/HHH-14818
     * see https://stackoverflow.com/questions/40979957/how-can-i-prevent-jpa-from-setting-an-embeddable-object-to-null-just-because-all?noredirect=1&lq=1 for the description of opposite
     * the way that this was worked around in proposalDM is to make the RealQuanity have nullable content - not ideal, but not too bad as unlikely to want to create a RealQuantity without both val and unit.
+    * the whole question is all rather subtle - the above workaround is not really very good - if single table inheritance strategy is used then
   * https://docs.jboss.org/hibernate/orm/5.4/userguide/html_single/Hibernate_User_Guide.html#fetching-strategies-dynamic-fetching-entity-graph - 
     https://thorben-janssen.com/fix-multiplebagfetchexception-hibernate/
     https://blog.jooq.org/no-more-multiplebagfetchexception-thanks-to-multiset-nested-collections/ - perhaps
-
+  * arrays https://thorben-janssen.com/mapping-arrays-with-hibernate/
 
 #Python production
 

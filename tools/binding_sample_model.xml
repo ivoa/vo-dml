@@ -10,5 +10,6 @@
         <java-package>org.ivoa.dm.sample</java-package>
         <python-package>org.ivoa.dm.samplemodel</python-package>
         <xml-targetnamespace prefix="simp" schemaFilename="simpleModel.xsd">http://ivoa.net/dm/sample/sample</xml-targetnamespace>
+        <rdb inheritance-strategy="single-table"/>
     </model>
 </m:mappedModels>

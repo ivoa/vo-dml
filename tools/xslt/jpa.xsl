@@ -29,13 +29,12 @@
 
   <xsl:template match="objectType" mode="JPAAnnotation">
     <xsl:variable name="className" select="name" /> <!-- might need to be javaified -->
-    <xsl:variable name="xmiid" select="concat(ancestor::vo-dml:model/name,':',vodml-id)" />
+    <xsl:variable name="vodml-ref" select="concat(ancestor::vo-dml:model/name,':',vodml-id)" />
     <xsl:variable name="hasChild" as="xsd:boolean"
-                  select="vf:hasSubTypes($xmiid)"/>
+                  select="vf:hasSubTypes($vodml-ref)"/>
     <xsl:variable name="extMod" as="xsd:boolean"
                    select="count(extends) = 1"/>
     <xsl:variable name="hasName" as="xsd:boolean" select ="count(attribute[name = 'name']) > 0"/>
-
     <xsl:variable name="idname">
       <xsl:choose>
         <xsl:when test=" attribute/constraint[ends-with(@xsi:type,':NaturalKey')]"><xsl:value-of select=" attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"/></xsl:when>
@@ -46,12 +45,19 @@
   @Entity
   @Table( name = "<xsl:apply-templates select="." mode="tableName"/>" )
   <xsl:if test="@abstract or $hasChild" >
+      <xsl:choose>
+          <xsl:when test="$isRdbSingleInheritance">
+  @Inheritance( strategy = InheritanceType.SINGLE_TABLE )
+          </xsl:when>
+          <xsl:otherwise>
   @Inheritance( strategy = InheritanceType.JOINED )
+          </xsl:otherwise>
+      </xsl:choose>
   </xsl:if>
-    <xsl:if test="count(vf:baseTypes($xmiid)) = 0 and(@abstract or $hasChild)">
+    <xsl:if test="count(vf:baseTypes($vodml-ref) )= 0 and(@abstract or $hasChild)">
     @DiscriminatorColumn( name = "<xsl:value-of select="$discriminatorColumnName"/>", discriminatorType = DiscriminatorType.STRING, length = <xsl:value-of select="$discriminatorColumnLength"/>)
     </xsl:if>
-    <xsl:if test="$extMod">
+    <xsl:if test="$extMod or $hasChild">
   @DiscriminatorValue( "<xsl:value-of select="vf:utype(vf:asvodmlref(.))"/>" )
   </xsl:if>
   @NamedQueries( {
@@ -214,10 +220,17 @@
       @Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
               </xsl:when>
               <xsl:otherwise>
-                  <xsl:call-template name="doEmbeddedJPA">
+                      <xsl:call-template name="doEmbeddedJPA">
                       <xsl:with-param name="name" select="$name"/>
                       <xsl:with-param name="type" select="$type"/>
-                      <xsl:with-param name="nillable" ><xsl:apply-templates select="$thisattr" mode="nullable"/></xsl:with-param>
+                      <xsl:with-param name="nillable" >
+                          <xsl:choose>
+                              <xsl:when test="$isRdbSingleInheritance">true</xsl:when><!--IMPL perhaps this is too simplistic -->
+                              <xsl:otherwise>
+                                  <xsl:apply-templates select="$thisattr" mode="nullable"/> <!-- but anyway this does not cope with the case where parts of the dataType are not nullable -->
+                              </xsl:otherwise>
+                          </xsl:choose>
+                      </xsl:with-param>
                   </xsl:call-template>
               </xsl:otherwise>
           </xsl:choose>
@@ -307,11 +320,39 @@
 
 
   <xsl:template match="attribute|reference|composition" mode="nullable">
-    <xsl:choose>
-      <xsl:when test="starts-with(multiplicity, '0')">true</xsl:when>
-      <xsl:otherwise>false</xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
+<!--      <xsl:message>nullability - <xsl:value-of select="concat(name,' parent=',./parent::*/name, ' type=',./parent::*/name())"/> </xsl:message>-->
+      <xsl:variable name="vodml-ref" select="vf:asvodmlref(./parent::*)"/>
+      <xsl:choose>
+          <xsl:when test="./parent::*/name()='dataType'">
+              <xsl:text>true</xsl:text> <!-- TODO could be less restrictive - non-inherited datatypes not in type hierarchies could still have restrictions-->
+          </xsl:when>
+          <xsl:otherwise>
+              <xsl:choose>
+                  <xsl:when test="$isRdbSingleInheritance">
+                      <xsl:choose>
+                          <xsl:when test="count(current()/parent::*/extends) > 0 ">
+                              <!--and count($models/key('ellookup',current()/parent::*/extends/vodml-ref)[@abstract='true']) = 0 -->
+                              <xsl:text>true</xsl:text>
+                          </xsl:when>
+                          <xsl:otherwise>
+                              <xsl:choose>
+                                  <xsl:when test="starts-with(multiplicity, '0')">true</xsl:when>
+                                  <xsl:otherwise>false</xsl:otherwise>
+                              </xsl:choose>
+                          </xsl:otherwise>
+                      </xsl:choose>
+                  </xsl:when>
+                  <xsl:otherwise>
+                      <xsl:choose>
+                          <xsl:when test="starts-with(multiplicity, '0')">true</xsl:when>
+                          <xsl:otherwise>false</xsl:otherwise>
+                      </xsl:choose>
+                  </xsl:otherwise>
+              </xsl:choose>
+
+          </xsl:otherwise>
+      </xsl:choose>
+ </xsl:template>
 
 
 

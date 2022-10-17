@@ -80,7 +80,12 @@ clashes with members generated from the data model.
 The object relational mapping has been done with the capabilities offered by JPA. The general design 
 decisions that have been made for the mapping are.
 
-* Inheritance strategy of "Joined Tables" - table per subType.
+* The default [inheritance strategy](https://en.wikibooks.org/wiki/Java_Persistence/Inheritance) is "JOINED" - which means that there will be a table per sub-type that has to be joined. This strategy the default as it allows for the widest application of "NOT NULL" constraints within the database, at the expense of more complex joins being required. As an alternative a "SINGLE_TABLE" strategy can be adopted, by specifying 
+```xml
+        <rdb inheritance-strategy="single-table"/>
+```
+in the binding file for the model.
+
 * DataTypes become embedded as extra columns within the table.
 
 Generating the actual DDL for the database does necessarily depend on some differences between vendors.

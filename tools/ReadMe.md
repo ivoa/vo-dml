@@ -17,7 +17,7 @@ as below.
 
 
 1. [Install gradle](https://gradle.org/install/) and run `gradle init` and make choices for a library written in java.
-2. Edit a `build.gradle.kts` file with reference to the plugin
+2. Edit a `build.gradle.kts` file with reference to the plugin (note use ![latest published version](https://img.shields.io/gradle-plugin-portal/v/net.ivoa.vo-dml.vodmltools?label=latest%20published%20version) below)
 
 ```kotlin
 plugins {
@@ -139,6 +139,7 @@ indirectly from the generated Java code as can be seen from the [Small java exam
 * 0.3.7 To VODSL task added
 * 0.3.8 Add schema generation via the generated Java code.
 * 0.3.9 Add JSON serialization.
+* 0.3.10 Add possibility to do use "SingleTable" inheritance strategy for RDB schema
 
 
 _TODO - there is still some information in the [README.txt](./README.txt) file that should be incorporated in these instructions_
