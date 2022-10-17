@@ -21,7 +21,7 @@ as below.
 
 ```kotlin
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.3.9"
+    id("net.ivoa.vo-dml.vodmltools") version "0.x.x"
 }
 ```
 3. create the  binding files for the model (see below in the configuration section) 
@@ -140,10 +140,6 @@ indirectly from the generated Java code as can be seen from the [Small java exam
 * 0.3.8 Add schema generation via the generated Java code.
 * 0.3.9 Add JSON serialization.
 * 0.3.10 Add possibility to do use "SingleTable" inheritance strategy for RDB schema
-
-
-_TODO - there is still some information in the [README.txt](./README.txt) file that should be incorporated in these instructions_
-
 
 
 

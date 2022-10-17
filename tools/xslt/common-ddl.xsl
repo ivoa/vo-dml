@@ -25,13 +25,11 @@
   <xsl:variable name="unboundedstringtype" select="'TEXT'"/> <!-- SQLServer specific but supported by postgres -->
 
   <xsl:variable name="discriminatorColumnName" select="'DTYPE'"/>
-  <xsl:variable name="discriminatorColumnLength" select="'32'"/>
 
   <xsl:variable name="publisherDIDColumnName" select="'publisherDID'"/>
   <xsl:variable name="publisherDIDColumnLength" select="'256'"/>
 
-  <xsl:variable name="discriminatorColumnType"> VARCHAR(<xsl:value-of select="$discriminatorColumnLength"/>) </xsl:variable>  
-  
+
   <xsl:variable name="primaryKeyColumnName" select="'ID'"/>
   <!-- Auto Generated Primary Key -->
   <!-- Base Type for Primary Key references -->

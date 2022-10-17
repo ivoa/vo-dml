@@ -61,6 +61,7 @@ VODML Tooling TODO
     https://thorben-janssen.com/fix-multiplebagfetchexception-hibernate/
     https://blog.jooq.org/no-more-multiplebagfetchexception-thanks-to-multiset-nested-collections/ - perhaps
   * arrays https://thorben-janssen.com/mapping-arrays-with-hibernate/
+  * add more of the general JPA choices to mapping... discriminator column name for instance...
 
 #Python production
 

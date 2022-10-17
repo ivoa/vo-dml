@@ -17,26 +17,45 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
 
 <xsd:complexType name="ModelMapping">
   <xsd:sequence>
-  <xsd:element name="name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-  <xsd:element name="file" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+  <xsd:element name="name" type="xsd:string" minOccurs="1" maxOccurs="1">
+     <xsd:annotation>
+        <xsd:documentation>the name of the model - i.e. what appears in vo-dml:model/name for the particular model</xsd:documentation>
+     </xsd:annotation></xsd:element>
+  <xsd:element name="file" type="xsd:string" minOccurs="1" maxOccurs="1">
+     <xsd:annotation>
+        <xsd:documentation>the  file name for the model</xsd:documentation>
+     </xsd:annotation></xsd:element>
 
   <xsd:element name="java-package" type="JavaName" minOccurs="0" maxOccurs="1"/>
     <xsd:element name="python-package" type="PythonName" minOccurs="0" maxOccurs="1"/>
-    <xsd:element name="xml-targetnamespace" type="xmlnsMapping" minOccurs="0" maxOccurs="1"/>
+    <xsd:element name="xml-targetnamespace" type="xmlnsMapping" minOccurs="0" maxOccurs="1">
+       <xsd:annotation>
+          <xsd:documentation>the xml namepace that is to be the target namespace for the generated model code</xsd:documentation>
+       </xsd:annotation></xsd:element>
   <xsd:element name="rdb"  minOccurs="0" maxOccurs="1">
     <xsd:complexType>
        <xsd:attribute name="inheritance-strategy">
-          <xsd:simpleType>
+                        <xsd:annotation>
+                           <xsd:documentation>the inheritance strategy in generating tables - follows JPA strategies</xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:simpleType>
              <xsd:restriction base="xsd:string">
                 <xsd:enumeration value="joined"></xsd:enumeration>
                 <xsd:enumeration value="single-table"></xsd:enumeration>
              </xsd:restriction>
           </xsd:simpleType>
        </xsd:attribute>
+       <xsd:attribute name="discriminatorColumnLength" type="xsd:int" use="optional" default="32">
+          <xsd:annotation>
+             <xsd:documentation>The size of the discrimator column</xsd:documentation>
+          </xsd:annotation></xsd:attribute>
     </xsd:complexType>
   </xsd:element>
 
-  <xsd:element name="type-mapping" type="TypeMapping" minOccurs="0" maxOccurs="unbounded"/>
+  <xsd:element name="type-mapping" type="TypeMapping" minOccurs="0" maxOccurs="unbounded">
+     <xsd:annotation>
+        <xsd:documentation>the list of type mappings for the model.</xsd:documentation>
+     </xsd:annotation></xsd:element>
   </xsd:sequence>
 </xsd:complexType>
   <xsd:complexType name="xmlnsMapping">
@@ -57,7 +76,11 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
   </xsd:complexType>
 
 <xsd:complexType name="TypeMapping">
-  <xsd:sequence>
+        <xsd:annotation>
+           <xsd:documentation>This allows a type from a model to be mapped onto an exiting rather than a generated type.
+In general it must be used to map primitive types to various languages, but it can also be used for dataTypes.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
     <xsd:element name="vodml-id" type="xsd:string" minOccurs="1"/>
     <xsd:element name="java-type" type="JavaMapping" minOccurs="0"/>
     <xsd:element name="python-type" type="PythonMapping" minOccurs="0"/>
@@ -95,7 +118,10 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
     </xsd:restriction>
   </xsd:simpleType>
   <xsd:complexType name="JavaMapping">
-    <xsd:simpleContent>
+        <xsd:annotation>
+           <xsd:documentation>the java mapping for a type - the type should be resolveable without needing an import statement.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
       <xsd:extension base="JavaName">
         <xsd:attribute name="jpa-atomic" type="xsd:boolean" default="false">
           <xsd:annotation>
@@ -112,11 +138,14 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
 
   </xsd:complexType>
   <xsd:complexType name="PythonMapping">
-    <xsd:simpleContent>
+        <xsd:annotation>
+           <xsd:documentation>the python mapping for a type</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
       <xsd:extension base="PythonName">
         <xsd:attribute name="built-in" type="xsd:boolean" default="false">
           <xsd:annotation>
-            <xsd:documentation>if this is true the type is a python built-in type</xsd:documentation>
+             <xsd:documentation>if this is true the type is a python built-in type and so does not need a import</xsd:documentation>
           </xsd:annotation>
         </xsd:attribute>
       </xsd:extension>
@@ -125,7 +154,11 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
 
  
 
-  <xsd:element name="mappedModels" type="MappedModels"/>
+  <xsd:element name="mappedModels" type="MappedModels">
+     <xsd:annotation>
+        <xsd:documentation>The list of mapped models - The tooling allows for each model to have its own binding file or for multiple models to have binding customization in a single file
+</xsd:documentation>
+     </xsd:annotation></xsd:element>
 
 
 
