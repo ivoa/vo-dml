@@ -46,8 +46,7 @@ being able to choose a more specific sub-type.
                 exclude-result-prefixes="map" 
                 >
 
-  <xsl:import href="common-mapping.xsl"/>
-  
+
   <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
   
   <xsl:strip-space elements="*" />
@@ -59,7 +58,10 @@ being able to choose a more specific sub-type.
 
   <xsl:param name="schemalocation_root" select="'http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/xsd/'"/>
   
-  <xsl:variable name="mapping" select="."/>
+  <xsl:param name="binding"/>
+
+  <xsl:include href="binding_setup.xsl"/>
+
   <xsl:variable name="xsd-ns">http://www.w3.org/2001/XMLSchema</xsl:variable>
   <xsl:variable name="base-prefix">vodml-base</xsl:variable>
   <xsl:variable name="base-schemanamespace" select="'http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1'"/>

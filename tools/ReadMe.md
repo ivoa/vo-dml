@@ -17,7 +17,7 @@ as below.
 
 
 1. [Install gradle](https://gradle.org/install/) and run `gradle init` and make choices for a library written in java.
-2. Edit a `build.gradle.kts` file with reference to the plugin (note use ![latest published version](https://img.shields.io/gradle-plugin-portal/v/net.ivoa.vo-dml.vodmltools?label=latest%20published%20version) below)
+2. Edit a `build.gradle.kts` file with reference to the plugin (note substitute ![latest published version](https://img.shields.io/gradle-plugin-portal/v/net.ivoa.vo-dml.vodmltools?label=latest%20published%20version) below)
 
 ```kotlin
 plugins {

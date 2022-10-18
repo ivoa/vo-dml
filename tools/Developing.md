@@ -5,6 +5,17 @@ The work of the plugin is mainly done in the [xslt 2.0 scripts](./xslt), and the
 [source](./gradletooling/gradle-plugin/src/main/kotlin/net/ivoa/vodml/gradle/plugin) is 
 mainly concerned with running these.
 
+The XSLT reads all the models and mapping files in [binding_setup.xsl](./xslt/binding_setup.xsl) and there are a series 
+of useful functions that can answer model questions such as "has subtypes" defined in [common-binding.xsl](./xslt/common-binding.xsl) - Other XSLT scripts then build on these foundations.
+
+* [vo-dml2java.xsl](./xslt/vo-dml2java.xsl) generates Java code 
+* [vo-dml2python.xsl](./xslt/vo-dml2python.xsl) generates Python code
+* [vo-dml2gml.xsl](./xslt/vo-dml2gml.xsl) generates the GML diagram description (part of the documentation task)
+* [vo-dml2gvd.xsl](./xslt/vo-dml2gvd.xsl) generates GraphViz diagram description (part of the documentation task)
+* [vo-dml2html.xsl](./xslt/vo-dml2html.xsl) generates HTML description of the model (part of the documentation task)
+* [vo-dml2Latex.xsl](./xslt/vo-dml2Latex.xsl) generates LaTeX description of the model (part of the documentation task)
+* [vo-dml2dsl.xsl](./xslt/vo-dml2dsl.xsl) converts VO-DML to VODSL
+* 
 There is a [sample](./gradletooling/sample) project that acts as a test bench for the plugin.
 
 
