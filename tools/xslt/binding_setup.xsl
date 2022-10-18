@@ -28,16 +28,24 @@
         <xsl:for-each select="$mapping/map:mappedModels/model">
             <xsl:choose>
                 <xsl:when test="file"> <!-- prefer local file for reading defn -->
-                    <xsl:message>opening file <xsl:value-of select="file"/></xsl:message>
-                    <xsl:copy-of
-                            select="document(file)/vo-dml:model" />
+                    <xsl:choose>
+                        <xsl:when test="doc-available(file)">
+                            <xsl:message>opening file <xsl:value-of select="file"/></xsl:message>
+                            <xsl:copy-of
+                                    select="document(file)/vo-dml:model" />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:message terminate="yes">cannot find file <xsl:value-of select="file"/></xsl:message>
+                        </xsl:otherwise>
+                    </xsl:choose>
                 </xsl:when>
                 <xsl:when test="url">
+                    <xsl:message>opening uri  <xsl:value-of select="url"/></xsl:message>
                     <xsl:copy-of
                             select="document(url)/vo-dml:model" />
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:message>Model <xsl:value-of select="vodml-id" />has neither url nor file, hence no artifacts will be generated.</xsl:message>
+                    <xsl:message terminate="yes">Model <xsl:value-of select="vodml-id" />has neither url nor file, hence no artifacts will be generated.</xsl:message>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:for-each>
