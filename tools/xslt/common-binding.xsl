@@ -568,5 +568,37 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
             </xsl:for-each>
         </xsl:sequence>
     </xsl:template>
+    <xsl:function name="vf:ns4model" as="xsd:string">
+        <xsl:param name="s" as="xsd:string"/>
+        <xsl:value-of select="$mapping/map:mappedModels/model[name=$s]/xml-targetnamespace"/>
+    </xsl:function>
+    <xsl:function name="vf:nsprefix4model" as="xsd:string">
+        <xsl:param name="s" as="xsd:string"/>
+        <xsl:value-of select="$mapping/map:mappedModels/model[name=$s]/xml-targetnamespace/@prefix"/>
+    </xsl:function>
+    <xsl:function name="vf:schema-location4model" as="xsd:string">
+        <xsl:param name="s" as="xsd:string"/>
+        <xsl:value-of select="concat($s, 'xsd')"/>
+    </xsl:function>
+    <xsl:function name="vf:modelNameFromFile" as="xsd:string"><!-- note allowed empty sequence -->
+        <xsl:param name="filename" as="xsd:string"/>
+        <xsl:value-of select="$mapping/map:mappedModels/model[file=$filename]/name"/>
+    </xsl:function>
+    <xsl:function name="vf:element4vodmlref" as="element()"> <!-- once rest of code working - can remove this and just use key directly -->
+        <xsl:param name="vodml-ref" as="xsd:string" />
+        <xsl:variable name="prefix" select="substring-before($vodml-ref,':')" />
+        <xsl:if test="not($prefix) or $prefix=''">
+            <xsl:message>!!!!!!! ERROR No prefix found in Element4vodml-ref for <xsl:value-of select="$vodml-ref" /></xsl:message>
+        </xsl:if>
+        <xsl:variable name="vodml-id" select="substring-after($vodml-ref,':')" />
+        <xsl:choose>
+            <xsl:when test="$models/key('ellookup',$vodml-ref)">
+                <xsl:copy-of select="$models/key('ellookup',$vodml-ref)" />
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message>**ERROR** failed to find '<xsl:value-of select="$vodml-ref" />'</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
 
 </xsl:stylesheet>

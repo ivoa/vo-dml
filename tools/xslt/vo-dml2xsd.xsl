@@ -34,7 +34,6 @@ note that this schema is substantially different from the era when this code was
   <xsl:param name="binding"/>
   <xsl:param name="schemalocation_root" select="'http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/xsd/'"/>
 
-  <xsl:param name="binding"/>
 
   <xsl:include href="binding_setup.xsl"/>
 
@@ -45,38 +44,7 @@ note that this schema is substantially different from the era when this code was
   <xsl:variable name="baseType" select="'vodml-base:VODMLObject'"/>
   <xsl:variable name="referenceType" select="'vodml-base:VODMLReference'"/>
 
-  <xsl:variable name="mapping">
-    <xsl:message>setting mapping</xsl:message>
-    <map:mappedModels>
-      <xsl:for-each select="tokenize($binding,',')">
-        <xsl:message><xsl:value-of select="."/></xsl:message>
-        <xsl:copy-of
-                select="document(normalize-space(.))/map:mappedModels/model" />
-      </xsl:for-each>
-    </map:mappedModels>
-  </xsl:variable>
-
-  <!-- load all models at start -->
-  <xsl:variable name="models">
-    <xsl:message>setting models</xsl:message>
-    <xsl:for-each select="$mapping/map:mappedModels/model">
-      <xsl:choose>
-        <xsl:when test="file"> <!-- prefer local file for reading defn -->
-          <xsl:message>opening file <xsl:value-of select="file"/></xsl:message>
-          <xsl:copy-of
-                  select="document(file)/vo-dml:model" />
-        </xsl:when>
-        <xsl:when test="url">
-          <xsl:copy-of
-                  select="document(url)/vo-dml:model" />
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:message>Model <xsl:value-of select="vodml-id" />has neither url nor file, hence no artifacts will be generated.</xsl:message>
-        </xsl:otherwise>
-      </xsl:choose>
-    </xsl:for-each>
-  </xsl:variable>
-  <!-- main pattern : processes for root node model -->
+ <!-- main pattern : processes for root node model -->
   <xsl:template match="/">
     <xsl:message >Generating XSD - considering models <xsl:value-of select="string-join($models/vo-dml:model/name,' and ')" /></xsl:message>
     <xsl:apply-templates/>
@@ -164,7 +132,7 @@ note that this schema is substantially different from the era when this code was
   </xsl:template>
 
   <xsl:template match="objectType|dataType|enumeration|primitiveType" mode="test">
-      <xsl:variable name="mappedtype" select="vf:finmapping(vodml-ref,'xsd')"/>
+    <xsl:variable name="mappedtype" select="vf:findmapping(vf:asvodmlref(.),'xsd')"/>
 
     <xsl:if test="not($mappedtype) or $mappedtype = ''" >
       <xsl:apply-templates select="." mode="declare"/>
