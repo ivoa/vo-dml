@@ -5,7 +5,7 @@ import org.gradle.kotlin.dsl.support.classFilePathCandidatesFor
  * 
  */
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.3.10"
+    id("net.ivoa.vo-dml.vodmltools") version "0.3.11"
 //    id ("com.diffplug.spotless") version "5.17.1"
 
 }
@@ -63,6 +63,7 @@ tasks.register("UmlToVodml", net.ivoa.vodml.gradle.plugin.XmiTask::class.java) {
 
 tasks.test {
     useJUnitPlatform()
+//    jvmArgs("--illegal-access=warn")
 }
 
 dependencies {

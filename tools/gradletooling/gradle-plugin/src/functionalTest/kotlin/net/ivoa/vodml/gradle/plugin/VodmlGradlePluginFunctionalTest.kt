@@ -16,7 +16,7 @@ class VodmlGradlePluginFunctionalTest {
         projectDir.resolve("settings.gradle").writeText("")
         projectDir.resolve("build.gradle").writeText("""
             plugins {
-                id('net.ivoa.vodml-tools')
+                id('net.ivoa.vo-dml.vodmltools"')
             }
         """)
 

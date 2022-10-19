@@ -10,6 +10,7 @@ import java.io.File
 
 internal class XSLTTransformerTest {
     private val model= File(System.getProperty("GRADLE_ROOT_FOLDER"), "../../../models/ivoa/vo-dml/IVOA-v1.0.vo-dml.xml")
+    private val binding = File(System.getProperty("GRADLE_ROOT_FOLDER"), "../../../models/ivoa/vo-dml/ivoa_base.vodml-binding.xml")
     private val tmpDir = File(System.getProperty("GRADLE_BUILD_FOLDER"),"tmp/junit/")
     @BeforeEach
     internal fun setUp() {
@@ -33,7 +34,13 @@ internal class XSLTTransformerTest {
         Vodml2rdf.doTransform(model, File(tmpDir,"testtdf.rdf"))
     }
     @org.junit.jupiter.api.Test
-    fun doXsd() { //FIXME the xsd generation is not a straight model transform.
-        Vodml2xsd.doTransform(model, File(tmpDir,"testxsd.xsd"))
+    fun doVodsl() {
+        Vodml2Vodsl.doTransform(model, File(tmpDir,"testvodsl.vodsl"))
     }
+//    @org.junit.jupiter.api.Test
+//    fun doXsd() { //the xsd generation is not a straight model transform TODO would need a catalogue
+//        Vodml2xsd.doTransform(model, mapOf(
+//            "binding" to binding.absolutePath
+//        ), File(tmpDir,"testxsd.xsd"))
+//    }
 }

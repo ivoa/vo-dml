@@ -35,7 +35,7 @@ dependencies {
 //}
 
 java {
-    modularity.inferModulePath.set(false) // still can only build on java 1.8
+//    modularity.inferModulePath.set(false) // still can only build on java 1.8
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
     withJavadocJar()

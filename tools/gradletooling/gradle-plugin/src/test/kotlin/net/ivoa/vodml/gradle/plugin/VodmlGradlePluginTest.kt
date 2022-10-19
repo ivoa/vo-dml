@@ -17,6 +17,6 @@ internal class VodmlGradlePluginTest {
         project.plugins.apply(VodmlGradlePlugin.VODML_PLUGIN_ID)
 
         // Verify the result
-        assertNotNull(project.tasks.findByName("greeting"))
+        assertNotNull(project.tasks.findByName("vodmlValidate"))
     }
 }

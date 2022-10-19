@@ -22,7 +22,7 @@ import org.gradle.util.GradleVersion
 class VodmlGradlePlugin: Plugin<Project> {
     companion object {
         const val VODML_EXTENSION_NAME = "vodml"
-        const val VODML_PLUGIN_ID = "net.ivoa.vodml-tools"
+        const val VODML_PLUGIN_ID = "net.ivoa.vo-dml.vodmltools"
         const val VODML_CONFIG_NAME = "vodml"
         const val VODML_DOC_TASK_NAME = "vodmlDoc"
         const val VODML_VAL_TASK_NAME = "vodmlValidate"
@@ -135,7 +135,7 @@ class VodmlGradlePlugin: Plugin<Project> {
         }
         //force java 8 - TODO support java version > 8
         val toolchain = project.extensions.getByType(JavaPluginExtension::class.java).toolchain
-        toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+        toolchain.languageVersion.set(JavaLanguageVersion.of(11))
 
         // force java compile to depend on this task
         project.tasks.named(JavaPlugin.COMPILE_JAVA_TASK_NAME) {
