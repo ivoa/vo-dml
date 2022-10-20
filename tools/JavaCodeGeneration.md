@@ -6,6 +6,9 @@ models. The code is annotated to allow JAXB and JPA to operate, which mean that 
 read and write model instances to XML and standard relational databases. It should be noted that
 the generated code uses java 1.8 constructs.
 
+The generated Java code depends on the [VO-DML java runtime library](../runtime/java), which the plugin will automatically add to the
+dependencies along with the necessary JAXB and JPA libraries.
+
 ## Characteristics of the Generated code
 
 In general the code creates POJOs or data classes - i.e. the classes have very little functionality

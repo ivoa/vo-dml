@@ -16,7 +16,7 @@ So, in general, a new data model should be started in its own git repository and
 as below.
 
 
-1. [Install gradle](https://gradle.org/install/) and run `gradle init` and make choices for a library written in java.
+1. [Install gradle](https://gradle.org/install/) and run `gradle init` and make choices for a library written in java (with a Kotlin build script DSL).
 2. Edit a `build.gradle.kts` file with reference to the plugin (note substitute ![latest published version](https://img.shields.io/gradle-plugin-portal/v/net.ivoa.vo-dml.vodmltools?label=latest%20published%20version) below)
 
 ```kotlin
@@ -38,8 +38,6 @@ There are 3 associated tasks
   that can be hand edited with https://www.yworks.com/products/yed for nicer looking model diagrams.
 * vodmlGenerateJava - generate java classes. See [generated code guide](JavaCodeGeneration.md) for details of how to use the generated java code to serialize instances to XML and RDB.
 
-The generated Java code depends on the [VO-DML java runtime library](../runtime/java), which the plugin will automatically add to the
-dependencies along with the necessary JAXB and JPA libraries.
 
 ## configurable plugin properties
 

@@ -26,8 +26,6 @@ import org.ivoa.vodml.annotation.VoDml;
  * Traverses a VODML model instance tree and executes a visitor.
  * Uses introspection of the {@link VoDml} annotation on the class members.
  * 
- * FIXME still need to decide what is best to do with some of the Java primitive types that are encountered - e.g. as the value of VODML primitiveTypes
- * 
  * @author Paul Harrison (paul.harrison@manchester.ac.uk)
  * @since 31 Aug 2021
  */
@@ -92,7 +90,7 @@ public class ModelInstanceTraverser {
 
         while (!stack.isEmpty())
         {
-            ObjInfo oi = stack.removeLast();
+            ObjInfo oi = stack.removeFirst();
             Object current = oi.o;
 
             if (current == null || objVisited.containsKey(current))
@@ -100,25 +98,26 @@ public class ModelInstanceTraverser {
                 continue;
             }
 
-            final Class clazz = current.getClass();
-            ClassInfo classInfo = getClassInfo(clazz, skip);
-            if (classInfo.skip)
-            {  // Do not process any classes that are assignableFrom the skip classes list.
-                continue;
+            final Class<?> clazz = current.getClass();
+            
+            if(!(current instanceof Collection<?> || current instanceof Map<?, ?>)) {
+                ClassInfo classInfo = getClassInfo(clazz, skip);
+                if (classInfo.skip)
+                {  // Do not process any classes that are assignableFrom the skip classes list.
+                    continue;
+                }
             }
-
             objVisited.put(current, oi.t);
-            visitor.process(current, oi.t);
-
+            visitor.process(current, oi.t);            
+           
             if (clazz.isArray()) //IMPL still need to decide on array handling....
             {
                 final int len = Array.getLength(current);
-                Class compType = clazz.getComponentType();
-
-                if (!compType.isPrimitive())
-                {   // do not walk primitives
-                    ClassInfo info = getClassInfo(compType, skip);
-                    if (!info.skip) // Do not walk array elements of a class type that is to be skipped.
+                Class<?> compType = clazz.getComponentType();
+                ClassInfo info = getClassInfo(compType, skip);
+            
+                    
+                    if (!info.skip ) // Do not walk array elements of a class type that is to be skipped.
                     {   
                         for (int i=0; i < len; i++)
                         {
@@ -128,23 +127,23 @@ public class ModelInstanceTraverser {
                                 stack.add(new ObjInfo(Array.get(current, i),compType));
                             }
                         }
-                    }
+                   
                 }
                 else {
-                    logger.debug("{} is primitive",compType.toString());
+                    logger.trace("{} is ignored",compType.toString());
                 }
             }
             else
             {   // Process fields of an object instance
                 if (current instanceof Collection)
                 {
-                    walkCollection(stack, (Collection) current);
+                    walkCollection(stack, (Collection<?>) current);
                 }
                 else if (current instanceof Map)
                 {
-                    walkMap(stack, (Map) current);
+                    walkMap(stack, (Map<?,?>) current);
                 }
-                else
+                else 
                 {
                     walkFields(stack, current, skip);
                 }
@@ -173,7 +172,7 @@ public class ModelInstanceTraverser {
                 stack.add(new ObjInfo(value, field));
             }
             catch (IllegalAccessException ignored) {
-                logger.warn("ignored exceotion", ignored);
+                logger.warn("ignored exception", ignored);
             }
         }
     }
@@ -192,7 +191,7 @@ public class ModelInstanceTraverser {
     ///impl there are actually no maps created by model generation....
     private static void walkMap(Deque<ObjInfo> stack, Map<?, ?> map)
     {
-        for (Map.Entry entry : map.entrySet())
+        for (Map.Entry<?, ?> entry : map.entrySet())
         {
             Object o = entry.getKey();
 
@@ -219,7 +218,7 @@ public class ModelInstanceTraverser {
     }
     
     private static class ObjInfo {
-        public ObjInfo(Object o, Class c) {
+        public ObjInfo(Object o, Class<?> c) {
             this.o = o;
             t = new ReflectIveVodmlTypeGetter(c).vodmlInfo();
         }
@@ -260,7 +259,12 @@ public class ModelInstanceTraverser {
                     }
                 }
             }
-
+            if (c.isPrimitive()||c.isEnum() || c.getCanonicalName().startsWith("java"))
+            {
+                this.skip = false;
+                return; // don't examine fields
+            }
+       
             Collection<Field> fields = getDeepDeclaredFields(c);
             for (Field field : fields)
             {
@@ -317,6 +321,7 @@ public class ModelInstanceTraverser {
             throw new RuntimeException("exception in model reflection code ", ignored);
         }
     }
+
  
 }
 
