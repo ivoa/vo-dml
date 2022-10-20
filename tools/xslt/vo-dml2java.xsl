@@ -504,6 +504,7 @@ package <xsl:value-of select="$path"/>;
       *
       * <xsl:value-of select="$vodmlauthor"/>
       */
+      <xsl:call-template name="vodmlAnnotation"/>
       public enum <xsl:value-of select="name"/>&bl;{
 
         <xsl:apply-templates select="literal"  />

@@ -10,6 +10,7 @@ public enum VodmlType {
     composition,
     reference,
     dataType,
-    primitiveType
+    primitiveType,
+    enumeration
 
 }
