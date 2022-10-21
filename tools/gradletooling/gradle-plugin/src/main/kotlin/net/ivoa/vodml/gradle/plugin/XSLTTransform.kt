@@ -5,6 +5,7 @@ import net.sf.saxon.s9api.Processor
 import net.sf.saxon.s9api.QName
 import net.sf.saxon.s9api.Serializer
 import net.sf.saxon.s9api.XdmAtomicValue
+import org.gradle.api.GradleException
 import org.slf4j.LoggerFactory
 import org.xmlresolver.CatalogResolver
 import org.xmlresolver.ResolverFeature
@@ -36,6 +37,10 @@ import javax.xml.transform.stream.StreamSource
         logger.info("doing $script transform with params")
         params.forEach{
             logger.info("parameter ${it.key}, val=${it.value}")
+        }
+        if(!vodmlFile.exists())
+        {
+            throw GradleException("input file "+vodmlFile+ " does not exist")
         }
 
 
@@ -86,3 +91,4 @@ object Vodml2Java : XSLTTransformer("vo-dml2java.xsl", "text")
 object Vodml2Latex : XSLTTransformer("vo-dml2Latex.xsl", "text")
 object Vodml2Vodsl : XSLTTransformer("vo-dml2dsl.xsl", "text")
 object Vodml2Python : XSLTTransformer("vo-dml2python.xsl", "text")
+object Xsd2Vodsl : XSLTTransformer("xsd2dsl.xsl", "text")

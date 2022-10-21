@@ -33,6 +33,7 @@ class VodmlGradlePlugin: Plugin<Project> {
         const val VODML_TO_VODSL_TASK_NAME = "vodmlToVodsl"
         const val VODML_TO_PYTHON_TASK_NAME = "vodmlPythonGenerate"
         const val VODML_SCHEMA_TASK_NAME = "vodmlSchema"
+        const val XSD_TO_VODSL_TASK_NAME = "vodmlXsdToVodsl"
     }
     override fun apply(project: Project) {
         project.logger.info("Applying $VODML_PLUGIN_ID to project ${project.name}")
@@ -78,6 +79,9 @@ class VodmlGradlePlugin: Plugin<Project> {
 
         project.tasks.register(VODML_TO_VODSL_TASK_NAME, VodmlToVodslTask::class.java) { task ->
             task.description = "convert VO-DML to VODSL on the commandline"
+        }
+        project.tasks.register(XSD_TO_VODSL_TASK_NAME, XsdToVodslTask::class.java) { task ->
+            task.description = "convert XML schema to VODSL on the commandline"
         }
 
         // register the Java generation task
