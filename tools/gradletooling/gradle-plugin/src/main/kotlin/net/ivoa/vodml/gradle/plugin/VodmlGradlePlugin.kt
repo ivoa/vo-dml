@@ -145,7 +145,7 @@ class VodmlGradlePlugin: Plugin<Project> {
 //            "org.eclipse.persistence:org.eclipse.persistence.moxy:3.0.2", //alternative Jaxb runtime...
              "org.hibernate:hibernate-core:5.6.5.Final"
 //             ,"jakarta.persistence:jakarta.persistence-api:3.0.0" // dont use until go to hibernate 6
-             ,"com.fasterxml.jackson.core:jackson-databind:2.13.4"
+             ,"com.fasterxml.jackson.core:jackson-databind:2.13.4.2"
 
        ).forEach {
             project.dependencies.addProvider(
