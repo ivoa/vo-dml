@@ -15,7 +15,9 @@ import java.time.format.DateTimeFormatter
 /*
  * Created on 18/02/2022 by Paul Harrison (paul.harrison@manchester.ac.uk). 
  */
-
+/**
+ * task to transform UML represented as XMI into VO-DML.
+ */
 open class XmiTask : DefaultTask() {
 
     @get:Input

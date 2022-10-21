@@ -14,7 +14,8 @@ import javax.xml.transform.URIResolver
 import javax.xml.transform.stream.StreamSource
 
 
-/*
+/**
+ * Runs XSLT transformations.
  * Created on 27/07/2021 by Paul Harrison (paul.harrison@manchester.ac.uk). 
  */
  open class XSLTTransformer( val script: String,  val method: String) {

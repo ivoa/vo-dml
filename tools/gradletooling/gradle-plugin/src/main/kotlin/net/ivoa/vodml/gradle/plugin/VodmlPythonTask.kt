@@ -13,29 +13,16 @@ import java.util.jar.JarInputStream
 import javax.inject.Inject
 
 
-/*
+/**
  * Generates Python code from the VO-DML models.
  * Created on 26/09/2022 by Paul Harrison (paul.harrison@manchester.ac.uk).
  */
 
- open class VodmlPythonTask @Inject constructor(private val ao: ArchiveOperations) : DefaultTask() {
-
-
-     @get:[InputDirectory PathSensitive(PathSensitivity.RELATIVE)]
-     val vodmlDir: DirectoryProperty = project.objects.directoryProperty()
-
-     @get:InputFiles
-     val vodmlFiles: ConfigurableFileCollection = project.objects.fileCollection()
+ open class VodmlPythonTask @Inject constructor( ao1: ArchiveOperations) : VodmlBaseTask(ao1) {
 
      @get:OutputDirectory
      val pythonGenDir: DirectoryProperty = project.objects.directoryProperty()
 
-     @get:InputFiles
-     val bindingFiles: ConfigurableFileCollection = project.objects.fileCollection()
-
-     @get:InputFile
-     @Optional
-     val catalogFile: RegularFileProperty = project.objects.fileProperty()
 
      @TaskAction
      fun doGeneration() {

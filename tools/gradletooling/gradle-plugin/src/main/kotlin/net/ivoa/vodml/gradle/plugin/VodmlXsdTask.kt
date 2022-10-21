@@ -15,26 +15,13 @@ import javax.inject.Inject
  */
 
 /**
- * Task to generate XML schema files from vodsl
+ * Task to generate XML schema files from vodsl.
  */
-open class VodmlXsdTask  @Inject constructor(private val ao: ArchiveOperations) : DefaultTask()
+open class VodmlXsdTask  @Inject constructor(ao1: ArchiveOperations) : VodmlBaseTask(ao1)
 {
-    @get:[InputDirectory PathSensitive(PathSensitivity.RELATIVE)]
-    val vodmlDir: DirectoryProperty = project.objects.directoryProperty()
-
-    @get:InputFiles
-    val vodmlFiles: ConfigurableFileCollection = project.objects.fileCollection()
-
-    @get:InputFile
-    @Optional
-    val catalogFile: RegularFileProperty = project.objects.fileProperty()
 
     @get:OutputDirectory
     val schemaDir : DirectoryProperty = project.objects.directoryProperty()
-
-    @get:InputFiles
-    val bindingFiles: ConfigurableFileCollection = project.objects.fileCollection()
-
 
     @Input
     @Optional

@@ -10,7 +10,7 @@ import org.gradle.api.tasks.*
  * Created on 14/02/2022 by Paul Harrison (paul.harrison@manchester.ac.uk). 
  */
 /**
- * Task to generate VO-DML from vodsl
+ * Task to generate VO-DML from vodsl.
  */
 open class VodslTask : DefaultTask() {
     @get:[InputDirectory PathSensitive(PathSensitivity.RELATIVE)] @Optional

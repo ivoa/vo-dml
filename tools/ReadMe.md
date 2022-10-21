@@ -36,7 +36,7 @@ There are 3 associated tasks
 * vodmlValidate - runs validation on the models.
 * vodmlDoc - generate standard documentation. This will produce a model diagram, latex and html formatted documentation, as well as a graphml representation of the model 
   that can be hand edited with https://www.yworks.com/products/yed for nicer looking model diagrams.
-* vodmlGenerateJava - generate java classes. See [generated code guide](JavaCodeGeneration.md) for details of how to use the generated java code to serialize instances to XML and RDB.
+* vodmlJavaGenerate - generate java classes. See [generated code guide](JavaCodeGeneration.md) for details of how to use the generated java code to serialize instances to XML and RDB.
 
 
 ## configurable plugin properties

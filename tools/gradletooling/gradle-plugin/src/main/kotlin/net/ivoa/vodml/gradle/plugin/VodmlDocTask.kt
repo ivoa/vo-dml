@@ -14,18 +14,11 @@ import javax.inject.Inject
 /*
  * Created on 04/08/2021 by Paul Harrison (paul.harrison@manchester.ac.uk). 
  */
-
- open class VodmlDocTask  @Inject constructor(private val ao: ArchiveOperations) : DefaultTask()
+/**
+ * task to create documentation for VO-DML.
+ */
+ open class VodmlDocTask  @Inject constructor( ao1: ArchiveOperations) : VodmlBaseTask(ao1)
  {
-     @get:[InputDirectory PathSensitive(PathSensitivity.RELATIVE)]
-     val vodmlDir: DirectoryProperty = project.objects.directoryProperty()
-
-     @get:InputFiles
-     val vodmlFiles: ConfigurableFileCollection = project.objects.fileCollection()
-
-     @get:InputFile @Optional
-     val catalogFile: RegularFileProperty = project.objects.fileProperty()
-
      @get:OutputDirectory
      val docDir : DirectoryProperty = project.objects.directoryProperty()
 

@@ -2,6 +2,7 @@ package net.ivoa.vodml.gradle.plugin
 
 import net.ivoa.vodml.gradle.plugin.VodmlToVodslTask
 import net.ivoa.vodml.gradle.plugin.internal.MIN_REQUIRED_GRADLE_VERSION
+import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
@@ -26,7 +27,8 @@ class VodmlGradlePlugin: Plugin<Project> {
         const val VODML_CONFIG_NAME = "vodml"
         const val VODML_DOC_TASK_NAME = "vodmlDoc"
         const val VODML_VAL_TASK_NAME = "vodmlValidate"
-        const val VODML_JAVA_TASK_NAME = "vodmlGenerateJava"
+        const val VODML_JAVA_TASK_NAME_OLD = "vodmlGenerateJava"
+        const val VODML_JAVA_TASK_NAME = "vodmlJavaGenerate"
         const val VODML_VODSL_TASK_NAME = "vodslToVodml"
         const val VODML_TO_VODSL_TASK_NAME = "vodmlToVodsl"
         const val VODML_TO_PYTHON_TASK_NAME = "vodmlPythonGenerate"
@@ -44,41 +46,22 @@ class VodmlGradlePlugin: Plugin<Project> {
         // register the doc task
         project.tasks.register(VODML_DOC_TASK_NAME,VodmlDocTask::class.java) {
             it.description = "create documentation for VO-DML models"
-            it.vodmlFiles.setFrom(if (extension.vodmlFiles.isEmpty)
-                extension.vodmlDir.asFileTree.matching(PatternSet().include("**/*.vo-dml.xml"))
-            else
-                extension.vodmlFiles
-            )
+            setVodmlFiles(it,extension,project)
             it.docDir.set(extension.outputDocDir)
-            it.vodmlDir.set(extension.vodmlDir)
-            it.catalogFile.set(extension.catalogFile)
             it.modelsToDocument.set(extension.modelsToDocument)
         }
         // register the schame task
         project.tasks.register(VODML_SCHEMA_TASK_NAME,VodmlXsdTask::class.java) {
             it.description = "create schema for VO-DML models"
-            setVodmlFiles(it, extension)
+            setVodmlFiles(it,extension,project)
             it.schemaDir.set(extension.outputDocDir)
-            it.vodmlDir.set(extension.vodmlDir)
-            it.catalogFile.set(extension.catalogFile)
             it.modelsToGenerate.set(extension.modelsToDocument)
-            it.bindingFiles.setFrom(if (extension.bindingFiles.isEmpty)
-                project.projectDir.listFiles{f -> f.name.endsWith("vodml-binding.xml")}
-            else
-                extension.bindingFiles
-            )
         }
         // register the validate task
         project.tasks.register(VODML_VAL_TASK_NAME,VodmlValidateTask::class.java) { task ->
             task.description = "validate VO-DML models"
-            task.vodmlFiles.setFrom(if (extension.vodmlFiles.isEmpty)
-                extension.vodmlDir.asFileTree.matching(PatternSet().include("**/*.vo-dml.xml"))
-            else
-                extension.vodmlFiles
-            )
+            setVodmlFiles(task,extension,project)
             task.docDir.set(extension.outputDocDir)
-            task.vodmlDir.set(extension.vodmlDir)
-            task.catalog.set(extension.catalogFile)
             task.outputs.upToDateWhen { false } //IMPL because this is mainly an info task at the moment -i.e. results shown on stdout
         }
 
@@ -100,19 +83,8 @@ class VodmlGradlePlugin: Plugin<Project> {
         // register the Java generation task
         val vodmlJavaTask: TaskProvider<VodmlJavaTask> = project.tasks.register(VODML_JAVA_TASK_NAME,VodmlJavaTask::class.java) { task ->
             task.description = "Generate Java classes from VO-DML models"
-            task.vodmlFiles.setFrom(if (extension.vodmlFiles.isEmpty)
-                extension.vodmlDir.asFileTree.matching(PatternSet().include("**/*.vo-dml.xml"))
-            else
-                extension.vodmlFiles
-            )
+            setVodmlFiles(task,extension,project)
             task.javaGenDir.set(extension.outputJavaDir)
-            task.vodmlDir.set(extension.vodmlDir)
-            task.bindingFiles.setFrom(if (extension.bindingFiles.isEmpty)
-                project.projectDir.listFiles{f -> f.name.endsWith("vodml-binding.xml")}
-            else
-                extension.bindingFiles
-            )
-            task.catalogFile.set(extension.catalogFile)
 
             //add the generated source directory to the list of sources to compile IMPL - this feels a bit hacky
             val sourceSets = project.properties["sourceSets"] as SourceSetContainer
@@ -133,7 +105,7 @@ class VodmlGradlePlugin: Plugin<Project> {
             }
 
         }
-        //force java 8 - TODO support java version > 8
+        //using java 11 minimum
         val toolchain = project.extensions.getByType(JavaPluginExtension::class.java).toolchain
         toolchain.languageVersion.set(JavaLanguageVersion.of(11))
 
@@ -145,22 +117,18 @@ class VodmlGradlePlugin: Plugin<Project> {
         {
             it.dependsOn.add(vodmlJavaTask)
         }
+
+        //register a task with the old task name as an alias
+        project.tasks.register(VODML_JAVA_TASK_NAME_OLD,DefaultTask::class.java) {
+            it.description = "deprecated task name for generating Java from VO-DML models"
+            it.dependsOn.add(vodmlJavaTask)
+        }
+
 //python task
         project.tasks.register(VODML_TO_PYTHON_TASK_NAME,VodmlPythonTask::class.java) { task ->
             task.description = "generate python classes from VO-DML models"
-            task.vodmlFiles.setFrom(if (extension.vodmlFiles.isEmpty)
-                extension.vodmlDir.asFileTree.matching(PatternSet().include("**/*.vo-dml.xml"))
-            else
-                extension.vodmlFiles
-            )
-            task.bindingFiles.setFrom(if (extension.bindingFiles.isEmpty)
-                project.projectDir.listFiles{f -> f.name.endsWith("vodml-binding.xml")}
-            else
-                extension.bindingFiles
-            )
+            setVodmlFiles(task,extension,project)
             task.pythonGenDir.set(extension.outputPythonDir)
-            task.vodmlDir.set(extension.vodmlDir)
-            task.catalogFile.set(extension.catalogFile)
         }
 
 
@@ -186,14 +154,23 @@ class VodmlGradlePlugin: Plugin<Project> {
     }
 
     private fun setVodmlFiles(
-        it: VodmlXsdTask,
-        extension: VodmlExtension
+        task: VodmlBaseTask,
+        extension: VodmlExtension,
+        project: Project
     ) {
-        it.vodmlFiles.setFrom(
+        task.vodmlFiles.setFrom(
             if (extension.vodmlFiles.isEmpty)
                 extension.vodmlDir.asFileTree.matching(PatternSet().include("**/*.vo-dml.xml"))
             else
                 extension.vodmlFiles
         )
+        task.vodmlDir.set(extension.vodmlDir)
+        task.catalogFile.set(extension.catalogFile)
+        task.bindingFiles.setFrom(if (extension.bindingFiles.isEmpty)
+            project.projectDir.listFiles{f -> f.name.endsWith("vodml-binding.xml")}
+        else
+            extension.bindingFiles
+        )
+
     }
 }

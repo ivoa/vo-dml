@@ -17,17 +17,11 @@ import javax.xml.transform.stream.StreamSource
 /*
  * Created on 04/08/2021 by Paul Harrison (paul.harrison@manchester.ac.uk).
  */
-
- open class VodmlValidateTask @Inject constructor(private val ao: ArchiveOperations) : DefaultTask()
+/**
+ * Validates VO-DML moddels.
+ */
+ open class VodmlValidateTask @Inject constructor( ao1: ArchiveOperations) : VodmlBaseTask(ao1)
  {
-     @get:[InputDirectory PathSensitive(PathSensitivity.RELATIVE)]
-     val vodmlDir: DirectoryProperty = project.objects.directoryProperty()
-
-     @get:InputFiles
-     val vodmlFiles: ConfigurableFileCollection = project.objects.fileCollection()
-
-     @get:InputFile @Optional
-     val catalog: RegularFileProperty = project.objects.fileProperty()
 
      @get:[OutputDirectory]
      val docDir : DirectoryProperty = project.objects.directoryProperty()
@@ -40,7 +34,7 @@ import javax.xml.transform.stream.StreamSource
 
          val config = XMLResolverConfiguration()
          val eh = ExternalModelHelper(project, ao, logger)
-         val actualCatalog = eh.makeCatalog(vodmlFiles,catalog)
+         val actualCatalog = eh.makeCatalog(vodmlFiles,catalogFile)
 
          config.setFeature(ResolverFeature.CATALOG_FILES, listOf(actualCatalog.absolutePath))
 
