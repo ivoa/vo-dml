@@ -139,6 +139,7 @@ indirectly from the generated Java code as can be seen from the [Small java exam
 * 0.3.9 Add JSON serialization.
 * 0.3.10 Add possibility to do use "SingleTable" inheritance strategy for RDB schema
 * 0.3.11 Add XSD to VODSL task.
+* 0.3.12 allow references to be contained...
 
 
 ## Information for [developers of the plugin itself](./Developing.md)

@@ -13,4 +13,14 @@
         <rdb inheritance-strategy="single-table"
         discriminatorColumnLength="64"/>
     </model>
+    <model>
+        <name>lifecycleTest</name>
+        <file>lifecycleTest.vo-dml.xml</file>
+        <java-package>org.ivoa.dm.lifecycle</java-package>
+        <python-package>org.ivoa.dm.lifecycle</python-package>
+        <xml-targetnamespace prefix="life" schemaFilename="lifecycletest.xsd">http://ivoa.net/dm/sample/lifecycle</xml-targetnamespace>
+        <rdb inheritance-strategy="single-table"
+             discriminatorColumnLength="64"/>
+    </model>
+
 </m:mappedModels>

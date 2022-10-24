@@ -55,7 +55,7 @@ public class Util {
 
             @SuppressWarnings("unchecked")
             @Override
-            public void process(final Object o, final VodmlTypeInfo v) {
+            public void startInstance(final Object o, final VodmlTypeInfo v,  boolean firstVisit) {
                 if(v.kind == VodmlType.reference) {
 
                     if(classes.contains(o.getClass()))

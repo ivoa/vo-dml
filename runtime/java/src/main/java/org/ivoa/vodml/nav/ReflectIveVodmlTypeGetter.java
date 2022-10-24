@@ -59,7 +59,7 @@ public class ReflectIveVodmlTypeGetter implements VodmlTypeGetter {
    /**
     * factory method for creating typegetter.
     * @param o the object to create the typegetter for.
-    * @return
+    * @return a TypeGetter that uses reflection on the VO-DML annotations. 
     */
   public static ReflectIveVodmlTypeGetter factory(Object o) {
        if(o instanceof Class) {

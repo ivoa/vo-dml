@@ -5,7 +5,7 @@ import org.gradle.kotlin.dsl.support.classFilePathCandidatesFor
  * 
  */
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.3.11"
+    id("net.ivoa.vo-dml.vodmltools") version "0.3.12"
 //    id ("com.diffplug.spotless") version "5.17.1"
 
 }
@@ -25,8 +25,10 @@ vodml {
     vodmlFiles.setFrom(project.files (
         vodmlDir.file("sample/sample/vo-dml/Sample.vo-dml.xml"),
         vodmlDir.file("sample/filter/vo-dml/Filter.vo-dml.xml"),
-        vodmlDir.file("sample/test/like_coords-v1.0.vo-dml.xml")
-            ))
+        vodmlDir.file("sample/test/like_coords-v1.0.vo-dml.xml"),
+        vodmlDir.file("sample/lifecycle/lifecycleTest.vo-dml.xml")
+
+    ))
 
     bindingFiles.setFrom(
         project.files(

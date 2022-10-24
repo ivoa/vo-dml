@@ -9,15 +9,17 @@
 
 package org.ivoa.vodml.nav;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.ivoa.vodml.annotation.VoDml;
@@ -34,46 +36,79 @@ public class ModelInstanceTraverser {
     /** logger for this class */
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory
             .getLogger(ModelInstanceTraverser.class);
-    
+
     /**
-     * The visitor that is used in the traversal.
+     * Simple visitor that is only fired at start.
+     * Useful for e.g. just enumerating the types used.
      *
      */ 
     @FunctionalInterface
     public interface Visitor {
-        
+
         /**
-         * perform an action on an object.
+         * perform an action at the start of an object instance.
          * @param o the object.
          * @param v the vodml model information for the object.
+         * @param firstVisit if true this is the first visit to this particular instance.
          */
-        void process(final Object o, final VodmlTypeInfo v );
+        void startInstance(final Object o, final VodmlTypeInfo v, boolean firstVisit );
     }
-    
+
+    public interface FullVisitor extends Visitor {
+        /**
+         * perform an action on a "leaf" object i.e. has no model children.
+         * @param o the object.
+         * @param v  the vodml model information for the object.
+         * @param firstVisit if true this is the first visit to this particular instance.
+         */
+        void leaf(final Object o, final VodmlTypeInfo v, boolean firstVisit );
+        /**
+         * perform an action at the end of the instance.
+         * @param o the object.
+         * @param v  the vodml model information for the object.
+         * @param firstVisit if true this is the first visit to this particular instance.
+         */
+        void endInstance(final Object o, final VodmlTypeInfo v, boolean firstVisit);
+    }
+
     private final Map<Object, VodmlTypeInfo> objVisited = new IdentityHashMap<>();
     private final Map<Class<?>, ClassInfo> classCache = new HashMap<>();
 
-    
-    /**
-     * @param o Any Java Object
-     * @param visitor Visitor is called for every object encountered during
-     * the Java object graph traversal.
-     */
-    public static void traverse(Object o, Visitor visitor)
-    {
-        traverse(o, null, visitor);
-    }
+    public static FullVisitor makeFullVisitor (Visitor vis) {
+        return new FullVisitor() {
 
+            @Override
+            public void startInstance(Object o, VodmlTypeInfo v, boolean firstVisit) {
+                vis.startInstance(o, v, firstVisit);
+            }
+
+            @Override
+            public void leaf(Object o, VodmlTypeInfo v, boolean firstVisit) {
+                // do nothing
+            }
+
+            @Override
+            public void endInstance(Object o, VodmlTypeInfo v, boolean firstVisit) {
+                // do nothing
+            }
+        };
+    }
     /**
      * @param o Any Java Object
-     * @param skip Class[] of classes to not include in the traversal.
      * @param visitor Visitor is called for every object encountered during
      * the Java object graph traversal.
      */
-    public static void traverse(Object o, Class<?>[] skip, Visitor visitor)
+    public static void traverse(Object o,  Visitor visitor)
     {
         ModelInstanceTraverser traverse = new ModelInstanceTraverser();
-        traverse.walk(o, skip, visitor);
+        traverse.walk(o, makeFullVisitor(visitor));
+        traverse.objVisited.clear();
+        traverse.classCache.clear();
+    }
+    public static void traverse(Object o,  FullVisitor visitor)
+    {
+        ModelInstanceTraverser traverse = new ModelInstanceTraverser();
+        traverse.walk(o, visitor);
         traverse.objVisited.clear();
         traverse.classCache.clear();
     }
@@ -81,160 +116,163 @@ public class ModelInstanceTraverser {
     /**
      * Traverse the object graph referenced by the passed in root.
      * @param root An instance of an object from a VODML generated model.
-     * @param skip Set of classes to skip (ignore).  Allowed to be null.
+     * @param leaf Set of classes to skip (ignore).  Allowed to be null.
      */
-    private void walk(Object root, Class<?>[] skip, Visitor visitor)
+    private void walk(Object root, FullVisitor visitor)
     {
         Deque<ObjInfo> stack = new LinkedList<>();
-        stack.add(new ObjInfo(root, root.getClass()));
+        final ObjInfo oiroot = new ObjInfo(root);
+        stack.add(oiroot);
+        visitor.startInstance(root, oiroot.ob.vodmlt, !oiroot.isReference);    
 
         while (!stack.isEmpty())
         {
-            ObjInfo oi = stack.removeFirst();
-            Object current = oi.o;
+            ObjInfo oi = stack.peekLast();
+            Object current = oi.ob.o;
 
-            if (current == null || objVisited.containsKey(current))
+            if (current == null )
             {
+                stack.removeLast();
                 continue;
             }
 
-            final Class<?> clazz = current.getClass();
-            
-            if(!(current instanceof Collection<?> || current instanceof Map<?, ?>)) {
-                ClassInfo classInfo = getClassInfo(clazz, skip);
-                if (classInfo.skip)
-                {  // Do not process any classes that are assignableFrom the skip classes list.
-                    continue;
-                }
-            }
-            objVisited.put(current, oi.t);
-            visitor.process(current, oi.t);            
-           
-            if (clazz.isArray()) //IMPL still need to decide on array handling....
+            if(objVisited.containsKey(current))
             {
-                final int len = Array.getLength(current);
-                Class<?> compType = clazz.getComponentType();
-                ClassInfo info = getClassInfo(compType, skip);
-            
-                    
-                    if (!info.skip ) // Do not walk array elements of a class type that is to be skipped.
-                    {   
-                        for (int i=0; i < len; i++)
-                        {
-                            Object element = Array.get(current, i);
-                            if (element != null)// Skip processing null array elements
-                            {   
-                                stack.add(new ObjInfo(Array.get(current, i),compType));
-                            }
-                        }
-                   
-                }
-                else {
-                    logger.trace("{} is ignored",compType.toString());
+                logger.info("already visited {}",current.toString());
+                stack.removeLast();
+                continue; //if the object has been visited before do not process the children again.
+            }
+            if(oi.children.hasNext())
+            {
+                ObjBase next = oi.children.next();
+                if(next != null) { // IMPL for now ignore nulls, but might want to include in some serializations.
+                    if(next.c.leaf)
+                    {
+                        visitor.leaf(next.o,next.vodmlt,!objVisited.containsKey(next.o));
+                    }
+                    else {
+                        final ObjInfo loi = new ObjInfo(next.o);
+                        visitor.startInstance(next.o, next.vodmlt, !loi.isReference);    
+                        stack.add(loi);
+                    }
                 }
             }
             else
-            {   // Process fields of an object instance
-                if (current instanceof Collection)
-                {
-                    walkCollection(stack, (Collection<?>) current);
-                }
-                else if (current instanceof Map)
-                {
-                    walkMap(stack, (Map<?,?>) current);
-                }
-                else 
-                {
-                    walkFields(stack, current, skip);
-                }
-            }
-        }
-    }
-
-    private void walkFields(Deque<ObjInfo> stack, Object current, Class<?>[] skip)
-    {
-        ClassInfo classInfo = getClassInfo(current.getClass(), skip);
-
-        for (Field field : classInfo.refFields)
-        {
-            try
             {
-                Object value = field.get(current);
-               
-                if ( field.getAnnotation(VoDml.class) == null ) 
-                {
-                    final Class<?> declaringClass = field.getDeclaringClass();
-                    if(!declaringClass.equals(String.class) && field.getAnnotation(javax.persistence.Id.class) == null) { // only report for things that we don't "know" about
-                        logger.trace("{} is not a model element in {}", field.getName(), declaringClass.getCanonicalName());
-                    }
-                    continue;
-                }
-                stack.add(new ObjInfo(value, field));
+                visitor.endInstance(current, oi.ob.vodmlt, !oi.isReference);  
+                objVisited.put(current, oi.ob.vodmlt);
+                stack.removeLast(); //discard as this object has been finished.
             }
-            catch (IllegalAccessException ignored) {
-                logger.warn("ignored exception", ignored);
-            }
+
         }
     }
 
-    private static void walkCollection(Deque<ObjInfo> stack, Collection<?> col)
-    {
-        for (Object o : col)
-        {
-            if (o != null && !o.getClass().isPrimitive())
-            {
-                stack.add(new ObjInfo(o, o.getClass()));
-            }
-        }
-    }
 
-    ///impl there are actually no maps created by model generation....
-    private static void walkMap(Deque<ObjInfo> stack, Map<?, ?> map)
-    {
-        for (Map.Entry<?, ?> entry : map.entrySet())
-        {
-            Object o = entry.getKey();
 
-            if (o != null && !o.getClass().isPrimitive())
-            {
-                Object v = entry.getValue();
-                stack.add(new ObjInfo(o, o.getClass()));
-                stack.add(new ObjInfo(v, v.getClass()));
-            }
-        }
-    }
 
-    private ClassInfo getClassInfo(Class<?> current, Class<?>[] skip)
+    private ClassInfo getClassInfo(Object o)
     {
+        Class<? extends Object> current = o.getClass();
         ClassInfo cc = classCache.get(current);
         if (cc != null)
         {
             return cc;
         }
 
-        cc = new ClassInfo(current, skip);
+        cc = new ClassInfo(o);
         classCache.put(current, cc);
         return cc;
     }
-    
-    private static class ObjInfo {
-        public ObjInfo(Object o, Class<?> c) {
-            this.o = o;
-            t = new ReflectIveVodmlTypeGetter(c).vodmlInfo();
-        }
-        /**
-         * @param value
-         * @param field
-         */
-        public ObjInfo(Object o, Field field) {
-            this.o = o;
-            t = new ReflectIveVodmlTypeGetter(field).vodmlInfo();
-           
-        }
+    private static boolean donotexaminefields(Class<?> c) {
+        return c.isPrimitive()||c.isEnum() || c.getCanonicalName().startsWith("java");
+    }
+
+    private class ObjBase {
         final Object o;
-        final VodmlTypeInfo t;
-        
-        
+        final VodmlTypeInfo vodmlt;
+        final ClassInfo c;
+        public ObjBase(Object o) {
+            this.o = o;
+            this.c = getClassInfo(o);
+            if(!donotexaminefields(c.clazz))
+                this.vodmlt = new ReflectIveVodmlTypeGetter(o.getClass()).vodmlInfo();
+            else
+                this.vodmlt = null;
+        }
+        public ObjBase(Object o,VodmlTypeInfo t ) {
+            this.o = o;
+            this.c = getClassInfo(o);
+
+            this.vodmlt = t;
+        }
+
+
+    }
+
+    private class ObjInfo {
+        final Iterator<ObjBase> children;
+        final boolean isReference;
+        final ObjBase ob;
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        public ObjInfo(Object inobj) {
+            this.ob = new ObjBase(inobj);
+            if(objVisited.containsKey(inobj))
+            {
+                logger.trace("object {} has already been visited");
+                children = new ArrayList().iterator(); //nothing
+                isReference = true;
+            }
+            else {
+                isReference = false;
+
+
+                if(ob.o.getClass().isArray()) { //FIXME think about arrays of primitives.... not yet in out models...
+                    children = Arrays.stream((Object[]) ob.o).map(ao->{return ao != null ? new ObjBase(ao): null;}).iterator();
+                }
+                else if(ob.o instanceof Collection) {
+                    Collection<Object> col = (Collection<Object>) ob.o;
+                    List<ObjBase> vals = new ArrayList<>(col.size());  
+                    col.forEach(co -> {if (co != null)vals.add(new ObjBase(co));});
+                    children = vals.iterator();
+
+                } else if (ob.o instanceof Map) { ///IMPL there are actually no maps created by current model generation....
+                    Map m = ((Map) ob.o);
+                    List<ObjBase> vals = new ArrayList<>(m.size()*2);   
+                    m.forEach((t, u) -> {vals.add(new ObjBase(t));vals.add(new ObjBase(u));});
+                    children = vals.iterator();
+
+                } else if (!ob.c.leaf)
+                {
+                    List<ObjBase> vals = new ArrayList<>(ob.c.refFields.size());   
+                    for (Field field : ob.c.refFields)
+                    {
+                        try
+                        {
+                            Object value = field.get(ob.o);
+                            if(value!= null && field.isAnnotationPresent(VoDml.class))
+                            {
+                                vals.add(new ObjBase(value, new ReflectIveVodmlTypeGetter(field).vodmlInfo()));
+                            }
+                            else {
+                                logger.debug("field {} ignored as it is NULL or has no VO-DML type information", field); //IMPL might want to have a special annotation to indicated where a key has been added...
+                            }
+                        }
+                        catch (IllegalAccessException ignored) {
+                            logger.warn("ignored exception", ignored);
+                        }
+                    }
+                    children = vals.iterator();
+
+                } else
+                {
+                    children = new ArrayList().iterator(); //nothing
+                }
+            }
+
+        }
+
+
+
     }
 
     /**
@@ -243,86 +281,83 @@ public class ModelInstanceTraverser {
      */
     private static class ClassInfo
     {
-        private boolean skip = false;
-        private final Collection<Field> refFields = new ArrayList<>();
 
-        public ClassInfo(Class<?> c, Class<?>[] skip)
+        boolean leaf = false;
+        boolean container = false;
+        final Collection<Field> refFields = new ArrayList<>();
+        final Class<?> clazz;
+
+        public ClassInfo(Object o)
         {
-            if (skip != null)
+            clazz = o.getClass();
+            if (donotexaminefields(clazz))
             {
-                for (Class<?> klass : skip)
+                if(clazz.isArray() || o instanceof Collection<?> || o instanceof Map<?, ?>)
                 {
-                    if (klass.isAssignableFrom(c))
+                    this.container = true;
+                }
+                else {
+                    this.leaf = true;
+                }
+                return; // don't examine fields
+            }
+
+            Collection<Field> fields = getDeepDeclaredFields(clazz);
+            for (Field field : fields)
+            {
+                this.refFields.add(field);
+            }
+        }
+
+
+
+        private static Collection<Field> getDeepDeclaredFields(Class<?> c)
+        {
+            Collection<Field> fields = new ArrayList<>();
+            Class<?> curr = c;
+
+            while (curr != null)
+            {
+                if(!donotexaminefields(curr)) {
+                    getDeclaredFields(curr, fields);
+                }
+                curr = curr.getSuperclass();
+            }
+            return fields;
+        }
+
+
+
+        private static void getDeclaredFields(Class<?> c, Collection<Field> fields) {
+            try
+            {
+                Field[] local = c.getDeclaredFields();
+
+                for (Field field : local)
+                {
+                    try
                     {
-                        this.skip = true;
-                        return;
+                        field.setAccessible(true); // if we want to try to set via reflection?
+                    }
+                    catch (Exception ignored) {
+                        logger.warn("ignored exception", ignored); // not sure
+                    }
+
+                    int modifiers = field.getModifiers();
+                    if (!Modifier.isStatic(modifiers) &&
+                            !field.getName().startsWith("this$"))
+                    {   // not count static fields, do not go back up to enclosing object in nested case, do not consider transients
+                        fields.add(field);
                     }
                 }
             }
-            if (c.isPrimitive()||c.isEnum() || c.getCanonicalName().startsWith("java"))
+            catch (Throwable ignored)
             {
-                this.skip = false;
-                return; // don't examine fields
-            }
-       
-            Collection<Field> fields = getDeepDeclaredFields(c);
-            for (Field field : fields)
-            {
-                Class<?> fc = field.getType();
-
-                if (!fc.isPrimitive())
-                {
-                    this.refFields.add(field);
-                }
+                throw new RuntimeException("exception in model reflection code ", ignored);
             }
         }
     }
-    
-   private static Collection<Field> getDeepDeclaredFields(Class<?> c)
-    {
-        Collection<Field> fields = new ArrayList<>();
-        Class<?> curr = c;
 
-        while (curr != null)
-        {
-            getDeclaredFields(curr, fields);
-            curr = curr.getSuperclass();
-        }
-        return fields;
-    }
-
-
-   
-    private static void getDeclaredFields(Class<?> c, Collection<Field> fields) {
-        try
-        {
-            Field[] local = c.getDeclaredFields();
-
-            for (Field field : local)
-            {
-                try
-                {
-                    field.setAccessible(true); // if we want to try to set via reflection?
-                }
-                catch (Exception ignored) {
-                    logger.warn("ignored exception", ignored); // not sure
-                }
-
-                int modifiers = field.getModifiers();
-                if (!Modifier.isStatic(modifiers) &&
-                        !field.getName().startsWith("this$"))
-                {   // not count static fields, do not go back up to enclosing object in nested case, do not consider transients
-                    fields.add(field);
-                }
-            }
-        }
-        catch (Throwable ignored)
-        {
-            throw new RuntimeException("exception in model reflection code ", ignored);
-        }
-    }
-
- 
 }
 
 
