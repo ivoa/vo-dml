@@ -135,12 +135,24 @@
     <xsl:param name="root_package_dir"/>
     <xsl:param name="root_package"/>
     <xsl:variable name="file" select="concat($output_root, '/', $root_package_dir, '/',vf:upperFirst(name),'Model.java')"/>
-    <!-- open file for this package -->
+    <xsl:message >Writing to Overall Model file <xsl:value-of select="$file"/></xsl:message>
+      <!-- open file for this package -->
     <!-- imported model names -->
     <xsl:variable name="modelsInScope" select="(name,vf:importedModelNames(.))"/>
-    <xsl:variable name="hasReferences" select="count(distinct-values($models//reference/datatype/vodml-ref[substring-before(.,':') = $modelsInScope]))>0"/>
-
-    <xsl:message >Writing to Overall file <xsl:value-of select="$file"/></xsl:message>
+    <xsl:message>models in scope <xsl:value-of select="$modelsInScope"/> </xsl:message>
+    <xsl:variable name="hasReferences" select="count(distinct-values($models/vo-dml:model[name = $modelsInScope ]//reference/datatype/vodml-ref))>0"/>
+    <xsl:variable name="references-vodmlref" as="xsd:string*">
+        <xsl:for-each select="distinct-values($models/vo-dml:model[name = $modelsInScope ]//reference/datatype/vodml-ref)">
+            <!-- only care if contained in current model -->
+            <xsl:variable name="contained" select="count($models/vo-dml:model[name = $modelsInScope[1] ]//composition/datatype/vodml-ref[text()=current()])> 0" as="xsd:boolean"/>
+            <xsl:message>model references type=<xsl:value-of select="."/> contained=<xsl:value-of select="$contained" /></xsl:message>
+            <xsl:if test="not($contained)">
+                <xsl:message >OK ref = <xsl:value-of select="."/> </xsl:message>
+               <xsl:sequence select="."/>
+            </xsl:if>
+        </xsl:for-each>
+    </xsl:variable>
+    <xsl:message>filtered refs=<xsl:value-of select="string-join($references-vodmlref,',')"/> </xsl:message>
     <xsl:variable name="ModelClass" select="concat(vf:upperFirst(name),'Model')"/>
     <xsl:result-document href="{$file}">
     package <xsl:value-of select="$root_package"/>;
@@ -183,7 +195,7 @@
 
     @XmlType
     public static class References {
-    <xsl:for-each select="distinct-values($models//reference/datatype/vodml-ref[substring-before(.,':') = $modelsInScope])"> <!-- looking at all possible refs -->
+    <xsl:for-each select="$references-vodmlref"> <!-- looking at all possible refs -->
       @XmlElement
       @JsonProperty("<xsl:value-of select="vf:utype(.)"/>")
       private Set&lt;<xsl:value-of select="vf:QualifiedJavaType(.)"/>&gt;&bl; <xsl:value-of select="vf:lowerFirst($models/key('ellookup',current())/name)"/> = new HashSet&lt;&gt;();
@@ -194,7 +206,7 @@
     <xsl:if test="$hasReferences" >
     @SuppressWarnings("rawtypes")
     private final  Map&lt;Class, Set&gt; refmap = Stream.of(
-      <xsl:for-each select="distinct-values($models//reference/datatype/vodml-ref[substring-before(.,':') = $modelsInScope])"> <!-- looking at all possible refs -->
+      <xsl:for-each select="$references-vodmlref"> <!-- looking at all possible refs -->
         new AbstractMap.SimpleImmutableEntry&lt;&gt;(<xsl:value-of select="vf:QualifiedJavaType(.)"/>.class, refs.<xsl:value-of select="vf:lowerFirst($models/key('ellookup',current())/name)"/>)<xsl:if test="position() != last()">,</xsl:if>
       </xsl:for-each>
       ).collect(
@@ -215,9 +227,9 @@
     public void addContent( final <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/> c)
     {
         content.add(c);
-
+     <xsl:if test="$hasReferences">
     org.ivoa.vodml.nav.Util.findReferences(c, refmap);
-
+     </xsl:if>
     }
       </xsl:for-each>
       @SuppressWarnings("unchecked")
@@ -231,7 +243,7 @@
       {
       <xsl:if test="$hasReferences">
       List&lt;? extends XmlIdManagement&gt; idrefs =  Stream.of(
-      <xsl:for-each select="distinct-values($models//reference/datatype/vodml-ref[substring-before(.,':') = $modelsInScope])"> <!-- looking at all possible refs -->
+      <xsl:for-each select="$references-vodmlref"> <!-- looking at all possible refs -->
         refs.<xsl:value-of select="vf:lowerFirst($models/key('ellookup',current())/name)"/><xsl:if test="position() != last()">,</xsl:if>
       </xsl:for-each>
       ).flatMap(Collection::stream)
@@ -304,7 +316,7 @@
         @Override
         public Map&lt;String, Class&gt; utypeToClassMap() {
         final HashMap&lt;String, Class&gt; retval = new HashMap&lt;&gt;();
-        <xsl:for-each select="$models//(objectType|dataType)">
+        <xsl:for-each select="$models/vo-dml:model[name = $modelsInScope ]//(objectType|dataType)">
             <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"></xsl:variable>
         retval.put("<xsl:value-of select="vf:utype($vodml-ref)"/>", <xsl:value-of select="vf:QualifiedJavaType($vodml-ref)"/>.class);
         </xsl:for-each>

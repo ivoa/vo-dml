@@ -6,7 +6,7 @@ VODML Tooling TODO
 * used twice in composition schematron rule should not necessarily matter
 * clear up array intentions in multiplicity
 * should only be a note for references multiplicity...aggregation
-* unique constraint in composition...- would result in Set as the container.
+* unique constraint in composition...- would result in Set as the container - are compositions assumed to contain unique members anyway.
 * the rdb and xml schemas produced by the xslt are unlikely to match the java generated ones exactly - they need to be updated.
 * vodml to specify attribute defaults?
 * to generate tapschema - would be nice for vodml to have UCDs as part of the model - could be added in semantic part.
