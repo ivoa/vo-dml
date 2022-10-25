@@ -9,6 +9,9 @@
 
 package org.ivoa.vodml.nav;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -79,6 +82,26 @@ public class Util {
             }
         });
 
+    }
+    public static List<XmlIdManagement> findXmlIDs(final Object modelInstance)
+    {
+        List<XmlIdManagement> retval = new ArrayList<>();
+        ModelInstanceTraverser.traverse(modelInstance, new Visitor() {
+            
+            @Override
+            public void startInstance(Object o, VodmlTypeInfo v, boolean firstVisit) {
+                if (firstVisit)
+                {                  
+                    if(o instanceof XmlIdManagement) 
+                    {
+                        XmlIdManagement i = (XmlIdManagement) o;
+                        retval.add(i);
+                    }
+                }
+                
+            }
+        });
+        return retval;
     }
     
     public static void makeUniqueIDs(List<? extends XmlIdManagement> els ) {

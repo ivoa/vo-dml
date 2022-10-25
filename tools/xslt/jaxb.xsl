@@ -186,11 +186,14 @@
     import org.ivoa.vodml.jaxb.XmlIdManagement;
     import org.ivoa.vodml.ModelManagement;
     import org.ivoa.vodml.ModelDescription;
+    import org.ivoa.vodml.annotation.VoDml;
+    import org.ivoa.vodml.annotation.VodmlType;
 
     @XmlAccessorType(XmlAccessType.NONE)
     @XmlRootElement
     @JsonTypeInfo(include=JsonTypeInfo.As.WRAPPER_OBJECT, use=JsonTypeInfo.Id.NAME)
     @JsonIgnoreProperties({"refmap"})
+    @VoDml(ref="<xsl:value-of select="name"/>" ,type = VodmlType.model)
     public class <xsl:value-of select="$ModelClass"/> implements org.ivoa.vodml.jaxb.JaxbManagement {
 
     @XmlType
@@ -241,15 +244,8 @@
       @Override
       public void makeRefIDsUnique()
       {
-      <xsl:if test="$hasReferences">
-      List&lt;? extends XmlIdManagement&gt; idrefs =  Stream.of(
-      <xsl:for-each select="$references-vodmlref"> <!-- looking at all possible refs -->
-        refs.<xsl:value-of select="vf:lowerFirst($models/key('ellookup',current())/name)"/><xsl:if test="position() != last()">,</xsl:if>
-      </xsl:for-each>
-      ).flatMap(Collection::stream)
-      .collect(Collectors.toList());
-      org.ivoa.vodml.nav.Util.makeUniqueIDs(idrefs);
-      </xsl:if>
+        List&lt;XmlIdManagement&gt; il = org.ivoa.vodml.nav.Util.findXmlIDs(content);
+        org.ivoa.vodml.nav.Util.makeUniqueIDs(il);
       }
       public static boolean hasReferences(){
          return <xsl:value-of select="$hasReferences"/>;

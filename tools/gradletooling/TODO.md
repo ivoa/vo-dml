@@ -6,7 +6,8 @@ VODML Tooling TODO
 * used twice in composition schematron rule should not necessarily matter
 * clear up array intentions in multiplicity
 * should only be a note for references multiplicity...aggregation
-* unique constraint in composition...- would result in Set as the container - are compositions assumed to contain unique members anyway.
+* unique constraint in composition...- would result in Set as the container - are compositions assumed to contain unique members anyway - that is effectively what is happening in the JPA interpretation where a surrogate 
+ key is used. In this case it might be a lifecycle issue. This is also the distinction between a datatype and an objectType.
 * the rdb and xml schemas produced by the xslt are unlikely to match the java generated ones exactly - they need to be updated.
 * vodml to specify attribute defaults?
 * to generate tapschema - would be nice for vodml to have UCDs as part of the model - could be added in semantic part.
@@ -63,6 +64,6 @@ VODML Tooling TODO
   * arrays https://thorben-janssen.com/mapping-arrays-with-hibernate/
   * add more of the general JPA choices to mapping... discriminator column name for instance...
 
-#Python production
+# Python production
 
 * using dataclasses - need python 3.10 for the kw_only field specifier - might do better just generating multiple  `__init__()` rather than relying on the dataclass generation.

@@ -77,6 +77,7 @@ class LifecycleTestModelTest extends AbstractTest {
         model.addContent(atest);
         model.addContent(atest2);
         model.makeRefIDsUnique();
+        assertTrue(atest.refandcontained.get(1).getId() != 0, "id setting did not work");
         LifecycleTestModel modelin = roundtripXML(jc, model, LifecycleTestModel.class);
         System.out.println("generating schema");
         LifecycleTestModel.writeXMLSchema();
