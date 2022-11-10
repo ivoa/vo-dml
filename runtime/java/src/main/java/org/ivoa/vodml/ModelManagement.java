@@ -10,13 +10,12 @@
 package org.ivoa.vodml;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.ivoa.vodml.json.JsonManagement;
 
 /**
  * Functions related to model processing functionality.
@@ -31,7 +30,18 @@ import org.ivoa.vodml.json.JsonManagement;
  */
 public interface ModelManagement <T>{
     
+    /**
+     * Get the model itself
+     * @return
+     */
     T theModel();
+    
+    
+    /**
+     * return the content to the model.
+     * @return the model content
+     */
+    List<Object> getContent();
     
      /**
       * the persistence unit name used by the model.

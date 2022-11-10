@@ -303,6 +303,11 @@
         @Override
         public <xsl:value-of select="$ModelClass"/> theModel() { return <xsl:value-of select="$ModelClass"/>.this;}
 
+        @Override
+        public List&lt;Object&gt; getContent() {
+        return content;
+        }
+
 
         };};
 
