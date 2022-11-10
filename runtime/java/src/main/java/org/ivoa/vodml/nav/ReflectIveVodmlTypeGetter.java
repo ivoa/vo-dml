@@ -20,6 +20,9 @@ import org.ivoa.vodml.annotation.VoDml;
  */
 public class ReflectIveVodmlTypeGetter implements VodmlTypeGetter {
 
+    /** logger for this class */
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory
+            .getLogger(ReflectIveVodmlTypeGetter.class);
     
     
     private final VoDml a;
@@ -51,7 +54,8 @@ public class ReflectIveVodmlTypeGetter implements VodmlTypeGetter {
             return new VodmlTypeInfo(a.ref(), a.type());
         }
         else {
-            throw new IllegalArgumentException("no VODML meta information for "+id);
+            logger.debug("no VODML meta information for {} ",id); 
+            return null;
         }
 
     }

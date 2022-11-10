@@ -170,8 +170,18 @@ class SourceCatalogueTest extends AbstractTest {
         List<SourceCatalogue> cats = em.createNamedQuery("SourceCatalogue.findById", SourceCatalogue.class)
                 .setParameter("id", id).getResultList();
         checkModel(cats);
-        
-        //IMPL hibernate specific way of getting connection... generally dirty, see  https://stackoverflow.com/questions/3493495/getting-database-connection-in-pure-jpa-setup
+
+
+        // now try to add into a new model
+       SampleModel model = new SampleModel();
+       for(SourceCatalogue c :cats) {
+          c.walkCollections();//force any lazy loading to happen
+          model.addContent(c);
+       }
+
+
+        em.getTransaction().commit();
+       //IMPL hibernate specific way of getting connection... generally dirty, see  https://stackoverflow.com/questions/3493495/getting-database-connection-in-pure-jpa-setup
         Session sess = em.unwrap(Session.class);
         sess.doWork(conn -> {
             PreparedStatement ps = conn.prepareStatement("SCRIPT TO ?"); // this is H2db specifid

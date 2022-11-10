@@ -2,6 +2,7 @@ package org.ivoa.vodml.nav;
 
 import org.ivoa.vodml.annotation.VoDml;
 import org.ivoa.vodml.annotation.VodmlType;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -92,15 +93,26 @@ class ModelInstanceTraverserTest {
 
     static final org.slf4j.Logger logger = org.slf4j.LoggerFactory
             .getLogger(ModelInstanceTraverserTest.class);
+    private TestModel tmod;
 
-    @org.junit.jupiter.api.Test
-    void testVisit() {
-
-        AnExample ex = new AnExample("teststring",LuminosityType.FLUX);
+    
+        /**
+     * @throws java.lang.Exception
+     */
+    @BeforeEach
+    void setUp() throws Exception {
+         AnExample ex = new AnExample("teststring",LuminosityType.FLUX);
         ANestedExample ne0 = new ANestedExample("firstnested",LuminosityType.MAGNITUDE);
         ANestedExample ne1 = new ANestedExample("secondnested",LuminosityType.FLUX);
         TestEntity ent = new TestEntity(3.2, ex,Arrays.asList(ne0,ne1 ));
-        TestModel tmod = new TestModel(new Date(), Arrays.asList(ent));
+        tmod = new TestModel(new Date(), Arrays.asList(ent));
+   }
+
+  
+    
+    @org.junit.jupiter.api.Test
+    void testVisit() {
+
         StringWriter sw = new StringWriter();
         PrintWriter out = new PrintWriter(sw);
        
@@ -135,4 +147,6 @@ class ModelInstanceTraverserTest {
         });
         //TODO put some actual tests in./
     }
+   
+    
 }
