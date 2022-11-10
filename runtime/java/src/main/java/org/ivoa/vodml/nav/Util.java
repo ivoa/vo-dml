@@ -83,7 +83,7 @@ public class Util {
         });
 
     }
-    public static List<XmlIdManagement> findXmlIDs(final Object modelInstance)
+    public static List<XmlIdManagement> findXmlIDs(final List<Object> modelInstance)
     {
         List<XmlIdManagement> retval = new ArrayList<>();
         ModelInstanceTraverser.traverse(modelInstance, new Visitor() {

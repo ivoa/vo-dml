@@ -113,19 +113,20 @@ public class ModelInstanceTraverser {
     public static void traverse(Object o,  FullVisitor visitor)
     {
         ModelInstanceTraverser traverser = new ModelInstanceTraverser();
-        ObjInfo oi;
-        if(o instanceof Collection<?>)
-        {
-            oi = traverser.new ObjInfo(o, new VodmlTypeInfo("", VodmlType.model)); //IMPL this is a bit ugly - perhaps change the API to have the modelManagement as single entry point
-        }
-        else {
-            oi = traverser.new ObjInfo(o);
-        }
+        ObjInfo oi = traverser.new ObjInfo(o);
         traverser.walk(oi, visitor);
-        traverser.objVisited.clear();
-        traverser.classCache.clear();
     }
-
+    public static void traverse(List<Object> o,  Visitor visitor)
+    {
+       traverse(o,makeFullVisitor(visitor));
+    }
+    public static void traverse(List<Object> o ,  FullVisitor visitor)
+    {
+        ModelInstanceTraverser traverser = new ModelInstanceTraverser();
+        ObjInfo oi = traverser.new ObjInfo(o, new VodmlTypeInfo("", VodmlType.model)); //IMPL this is a bit ugly - perhaps change the API to have the modelManagement as single entry point
+        traverser.walk(oi, visitor);
+    }
+  
     /**
      * Traverse the object graph referenced by the passed in root.
      * @param root An instance of an object from a VODML generated model.
@@ -135,7 +136,7 @@ public class ModelInstanceTraverser {
     {
        
         stack.add(oiroot);
-        visitor.startInstance(oiroot.ob.o, oiroot.ob.vodmlt, !oiroot.isReference);    
+        visitor.startInstance(oiroot.ob.o, oiroot.ob.vodmlt, !oiroot.alreadyVisited);    
 
         while (!stack.isEmpty())
         {
@@ -148,6 +149,7 @@ public class ModelInstanceTraverser {
                 continue;
             }
 
+            
             if(objVisited.containsKey(current))
             {
                 logger.debug("already visited {}",current.toString());
@@ -157,32 +159,31 @@ public class ModelInstanceTraverser {
             if(oi.children.hasNext())
             {
                 ObjBase next = oi.children.next();
-                if(next != null) { // IMPL for now ignore nulls, but might want to include in some serializations.
-                    if(next.c.leaf)
-                    {
-                        visitor.leaf(next.o,next.vodmlt,!objVisited.containsKey(next.o));
+                if(next.leaf)
+                {
+                    visitor.leaf(next.o,next.vodmlt,!objVisited.containsKey(next.o));
+                }
+                else {
+                    if(next.c.container) {
+                        final ObjInfo loi = new ObjInfo(next.o,next.vodmlt);
+                        visitor.startInstance(next.o, next.vodmlt, !loi.alreadyVisited);    
+                        stack.add(loi);
                     }
-                    else {
-                        if(next.c.container) {
-                            final ObjInfo loi = new ObjInfo(next.o,next.vodmlt);
-                            visitor.startInstance(next.o, next.vodmlt, !loi.isReference);    
-                            stack.add(loi);
-                        }
-                        else
-                        {
-                            final ObjInfo loi = new ObjInfo(next.o);
-                            visitor.startInstance(next.o, next.vodmlt, !loi.isReference);    
-                            stack.add(loi);
-                        }
+                    else
+                    {
+                        final ObjInfo loi = new ObjInfo(next.o);
+                        visitor.startInstance(next.o, next.vodmlt, !loi.alreadyVisited);    
+                        stack.add(loi);
                     }
                 }
             }
             else
             {
-                visitor.endInstance(current, oi.ob.vodmlt, !oi.isReference);  
+                visitor.endInstance(current, oi.ob.vodmlt, !oi.alreadyVisited);  
                 objVisited.put(current, oi.ob.vodmlt);
                 stack.removeLast(); //discard as this object has been finished.
             }
+
 
         }
     }
@@ -209,32 +210,42 @@ public class ModelInstanceTraverser {
     }
 
     private class ObjBase {
+        final boolean leaf;
         final Object o;
         final VodmlTypeInfo vodmlt;
         final ClassInfo c;
         public ObjBase(Object o) {
-            this.o = o;
-            this.c = getClassInfo(o);
-            this.vodmlt = new ReflectIveVodmlTypeGetter(o.getClass()).vodmlInfo();
+            this (o,
+            getClassInfo(o),
+            new ReflectIveVodmlTypeGetter(o.getClass()).vodmlInfo());
             
         }
         public ObjBase(Object o,VodmlTypeInfo t ) {
-            this.o = o;
-            this.c = getClassInfo(o);
-
-            this.vodmlt = t;
+            this( o, getClassInfo(o), t);
+          
         }
 
         public ObjBase(Object o, ClassInfo c, VodmlTypeInfo vodmlt) {
             this.o = o;
             this.vodmlt = vodmlt;
             this.c = c;
-        }
+            switch (this.vodmlt.kind) {
+            case attribute:
+                this.leaf = true;
+                
+                break;
+
+            default:
+                this.leaf = false;
+                break;
+            }
+         }
+       
     }
 
     private class ObjInfo {
         final Iterator<ObjBase> children;
-        final boolean isReference;
+        final boolean alreadyVisited;
         final ObjBase ob;
         public ObjInfo(Object o, VodmlTypeInfo t) {
             this(new ObjBase(o, t));
@@ -252,10 +263,10 @@ public class ModelInstanceTraverser {
             {
                 logger.trace("object {} has already been visited");
                 children = new ArrayList().iterator(); //nothing
-                isReference = true;
+                alreadyVisited = true;
             }
             else {
-                isReference = false;
+                alreadyVisited = false;
 
 
                 if(ob.o.getClass().isArray()) { //FIXME think about arrays of primitives.... not yet in our models...
@@ -273,7 +284,7 @@ public class ModelInstanceTraverser {
                     m.forEach((t, u) -> {vals.add(new ObjBase(t));vals.add(new ObjBase(u));});
                     children = vals.iterator();
 
-                } else if (!ob.c.leaf)
+                } else if (!ob.leaf)
                 {
                     List<ObjBase> vals = new ArrayList<>(ob.c.refFields.size());   
                     for (Field field : ob.c.refFields)
@@ -310,7 +321,7 @@ public class ModelInstanceTraverser {
         {
             ob = new ObjBase(null,c, vodmlt);
             children = new ArrayList().iterator(); //nothing
-            isReference = false;
+            alreadyVisited = false;
         }
  
 
@@ -324,7 +335,6 @@ public class ModelInstanceTraverser {
     private static class ClassInfo
     {
 
-        boolean leaf = false;
         boolean container = false; 
         final Collection<Field> refFields = new ArrayList<>();
         final Class<?> clazz;
@@ -337,9 +347,6 @@ public class ModelInstanceTraverser {
                 if(clazz.isArray() || o instanceof Collection<?> || o instanceof Map<?, ?>)
                 {
                     this.container = true;
-                }
-                else {
-                    this.leaf = true;
                 }
                 return; // don't examine fields
             }
