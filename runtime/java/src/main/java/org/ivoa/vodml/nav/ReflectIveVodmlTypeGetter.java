@@ -12,6 +12,7 @@ package org.ivoa.vodml.nav;
 import java.lang.reflect.Field;
 
 import org.ivoa.vodml.annotation.VoDml;
+import org.ivoa.vodml.annotation.VodmlRole;
 
 /**
  * Obtains VODML type information from vodml annotations.
@@ -25,22 +26,53 @@ public class ReflectIveVodmlTypeGetter implements VodmlTypeGetter {
             .getLogger(ReflectIveVodmlTypeGetter.class);
     
     
-    private final VoDml a;
+    private final VoDml vodmlann;
     private final String id;
+    private final VodmlTypeInfo info;
 
     /**
      * @param c the class to query
      */
     public ReflectIveVodmlTypeGetter(Class<?> c) {
-       a = c.getAnnotation(VoDml.class);
+       vodmlann = c.getAnnotation(VoDml.class);
        id = c.getCanonicalName();
+       if (vodmlann != null)
+       {
+           info = new VodmlTypeInfo(vodmlann.id(), vodmlann.role());
+       }
+       else {
+           logger.trace("no VODML meta information for {}  - this should be expected  ",id); 
+           info = VodmlTypeInfo.UNKNOWN;
+       }
        
     }
         
      public ReflectIveVodmlTypeGetter(Field f) {
-       a = f.getAnnotation(VoDml.class);
+       vodmlann = f.getAnnotation(VoDml.class);
        id = f.getName();
        
+       if (vodmlann != null )
+       {
+           switch (vodmlann.role()) {
+        case attribute:
+        {          
+            info = new VodmlTypeInfo(vodmlann.id(), vodmlann.role(), vodmlann.type(), vodmlann.typeRole());
+            break;
+        }
+        default:
+        {
+            info = new VodmlTypeInfo(vodmlann.id(), vodmlann.role(), vodmlann.type());
+            break;
+        }
+        }
+           
+       }
+       else {
+           logger.trace("no VODML meta information for {} - this should be expected ",id); 
+           info = VodmlTypeInfo.UNKNOWN;
+       }
+       
+      
     }
     
  /**
@@ -49,35 +81,9 @@ public class ReflectIveVodmlTypeGetter implements VodmlTypeGetter {
  */
 @Override
       public VodmlTypeInfo vodmlInfo() {
-       if (a != null )
-        {
-            return new VodmlTypeInfo(a.ref(), a.type());
-        }
-        else {
-            logger.debug("no VODML meta information for {} ",id); 
-            return null;
-        }
+         return info;
+      }
 
-    }
-
-   /**
-    * factory method for creating typegetter.
-    * @param o the object to create the typegetter for.
-    * @return a TypeGetter that uses reflection on the VO-DML annotations. 
-    */
-  public static ReflectIveVodmlTypeGetter factory(Object o) {
-       if(o instanceof Class) {
-           return new ReflectIveVodmlTypeGetter((Class)o);
-       }
-       else if (o instanceof Field){
-           return new ReflectIveVodmlTypeGetter((Field)o);
-       }
-       else
-       {
-           throw new IllegalArgumentException("unknown metatype " + o.getClass().getCanonicalName());
-       }
-
-   }
 
 }
 

@@ -1,11 +1,9 @@
 package org.ivoa.vodml.nav;
 
 import org.ivoa.vodml.annotation.VoDml;
-import org.ivoa.vodml.annotation.VodmlType;
+import org.ivoa.vodml.annotation.VodmlRole;
 import org.junit.jupiter.api.BeforeEach;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
@@ -17,13 +15,14 @@ import static org.junit.jupiter.api.Assertions.*;
 /*
  * Created on 19/10/2022 by Paul Harrison (paul.harrison@manchester.ac.uk).
  * 
- * 
+ * this is not a great test, needs lots of manual setup - however, it "works" within the java runtime lib constraints - i.e. no autogeneration of models
+ * and does constrain some of the usage of various annotation constructs.
  */
 
 class ModelInstanceTraverserTest {
 
 
-    @org.ivoa.vodml.annotation.VoDml(ref="sample:catalog.LuminosityType", type=org.ivoa.vodml.annotation.VodmlType.enumeration) 
+    @org.ivoa.vodml.annotation.VoDml(id = "sample:catalog.LuminosityType", role=org.ivoa.vodml.annotation.VodmlRole.enumeration) 
     enum LuminosityType {MAGNITUDE("m"),FLUX("f");
         private LuminosityType(String val) {
             this.val = val;
@@ -33,40 +32,40 @@ class ModelInstanceTraverserTest {
 
     }
 
-    @VoDml(ref="test:exNested",type = VodmlType.dataType)
+    @VoDml(id = "test:exNested",role = VodmlRole.dataType)
     static class ANestedExample {
         public ANestedExample(String sval, LuminosityType ltype) {
             this.sval = sval;
             this.ltype = ltype;
         }
 
-        @VoDml(ref="test:exNested.sval",type = VodmlType.attribute)
+        @VoDml(id = "test:exNested.sval",role = VodmlRole.attribute, type="ivoa:string")
         final String sval;
-        @VoDml(ref="test.exNested.lval",type = VodmlType.attribute)
+        @VoDml(id = "test.exNested.lval",role = VodmlRole.attribute,type = "sample:catalog.LuminosityType")
         final LuminosityType ltype;
     }
 
 
-    @VoDml(ref="test:ex",type = VodmlType.dataType)
+    @VoDml(id = "test:ex",role = VodmlRole.dataType)
     static class AnExample {
         public AnExample(String sval, LuminosityType ltype) {
             this.sval = sval;
             this.ltype = ltype;
         }
 
-        @VoDml(ref="test:ex.sval",type = VodmlType.attribute)
+        @VoDml(id = "test:ex.sval",role = VodmlRole.attribute, type="ivoa:string")
         final String sval;
-        @VoDml(ref="test.ex.lval",type = VodmlType.attribute)
+        @VoDml(id = "test.ex.lval",role = VodmlRole.attribute, type="sample:catalog.LuminosityType")
         final LuminosityType ltype;
     }
 
-    @VoDml(ref="test:aent", type= VodmlType.reference )
+    @VoDml(id = "test:aent", role= VodmlRole.objectType )
     static class TestEntity {
-        @VoDml(ref="test:aent.val",type = VodmlType.attribute)
+        @VoDml(id = "test:aent.val",role = VodmlRole.attribute,type="ivoa:real")
         final double val;
-        @VoDml(ref="test:aent.ex2",type =VodmlType.attribute)
+        @VoDml(id = "test:aent.ex2",role = VodmlRole.attribute, type="test:ex")
         final AnExample ex2;
-        @VoDml(ref="test:aent.nested",type =VodmlType.composition)
+        @VoDml(id = "test:aent.nested",role = VodmlRole.composition, type="test:exNested")
         final List<ANestedExample> nested;
         public TestEntity(double val, AnExample ex2, List<ANestedExample> nested) {
             this.val = val;
@@ -74,13 +73,13 @@ class ModelInstanceTraverserTest {
             this.nested = nested;
         }
     }
-    @VoDml(ref="test:mod",type = VodmlType.objectType)
+    @VoDml(id = "test:mod",role = VodmlRole.objectType)
     static class TestModel {
-        @VoDml(ref = "test:mod.date", type = VodmlType.attribute)
+        @VoDml(id = "test:mod.date", role = VodmlRole.attribute, type="ivoa:date")
         final Date date;
-        @VoDml(ref="test:mod.ents", type = VodmlType.composition)
+        @VoDml(id = "test:mod.ents", role = VodmlRole.composition, type="test:aent")
         final List<TestEntity> ents;
-        @VoDml(ref = "test:mod.nulled", type = VodmlType.attribute)
+        @VoDml(id = "test:mod.nulled", role = VodmlRole.attribute, type="ivoa:integer")
         final Long nulled = null;
         //a field that is not in the model - should be silently (apart from logging) ignored.
         final String notinmodel="extra";

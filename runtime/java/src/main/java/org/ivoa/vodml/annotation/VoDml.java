@@ -13,6 +13,29 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Retention(RUNTIME) @Target({TYPE,FIELD})
 public @interface VoDml {
-   String ref();
-   VodmlType type();
+    /**
+     * The VODML reference
+     * @return a string with the VODML reference
+     */
+    String id();
+    
+    /**
+     * the VODML role
+     * @return the role
+     */
+    VodmlRole role();
+    
+    /**
+     * The type. not needed if the role is such that the id is the same as the type.
+     * @return the type as a vodml reference
+     */
+    String type() default "";
+    
+
+    /**
+     * the VODML role or the declared type. Only useful for attributes.
+     * @return the role
+     */
+    VodmlRole typeRole() default VodmlRole.unknown ;
+  
 }

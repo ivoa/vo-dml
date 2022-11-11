@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-import org.ivoa.vodml.annotation.VodmlType;
+import org.ivoa.vodml.annotation.VodmlRole;
 import org.ivoa.vodml.jaxb.XmlIdManagement;
 import org.ivoa.vodml.nav.ModelInstanceTraverser.Visitor;
 
@@ -59,7 +59,7 @@ public class Util {
             @SuppressWarnings("unchecked")
             @Override
             public void startInstance(final Object o, final VodmlTypeInfo v,  boolean firstVisit) {
-                if(v.kind == VodmlType.reference) {
+                if(v.role == VodmlRole.reference) {
 
                     if(classes.contains(o.getClass()))
 

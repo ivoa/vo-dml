@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ivoa.vodml.annotation.VoDml;
-import org.ivoa.vodml.annotation.VodmlType;
+import org.ivoa.vodml.annotation.VodmlRole;
 
 /**
  * Traverses a VODML model instance tree and executes a visitor.
@@ -108,7 +108,7 @@ public class ModelInstanceTraverser {
      */
     public static void traverse(Object o,  Visitor visitor)
     {
-       traverse(o,makeFullVisitor(visitor));
+        traverse(o,makeFullVisitor(visitor));
     }
     public static void traverse(Object o,  FullVisitor visitor)
     {
@@ -118,15 +118,15 @@ public class ModelInstanceTraverser {
     }
     public static void traverse(List<Object> o,  Visitor visitor)
     {
-       traverse(o,makeFullVisitor(visitor));
+        traverse(o,makeFullVisitor(visitor));
     }
     public static void traverse(List<Object> o ,  FullVisitor visitor)
     {
         ModelInstanceTraverser traverser = new ModelInstanceTraverser();
-        ObjInfo oi = traverser.new ObjInfo(o, new VodmlTypeInfo("", VodmlType.model)); //IMPL this is a bit ugly - perhaps change the API to have the modelManagement as single entry point
+        ObjInfo oi = traverser.new ObjInfo(o, new VodmlTypeInfo("", VodmlRole.model)); //IMPL this is a bit ugly - perhaps change the API to have the modelManagement as single entry point
         traverser.walk(oi, visitor);
     }
-  
+
     /**
      * Traverse the object graph referenced by the passed in root.
      * @param root An instance of an object from a VODML generated model.
@@ -134,7 +134,7 @@ public class ModelInstanceTraverser {
      */
     private void walk( ObjInfo oiroot, FullVisitor visitor)
     {
-       
+
         stack.add(oiroot);
         visitor.startInstance(oiroot.ob.o, oiroot.ob.vodmlt, !oiroot.alreadyVisited);    
 
@@ -149,7 +149,7 @@ public class ModelInstanceTraverser {
                 continue;
             }
 
-            
+
             if(objVisited.containsKey(current))
             {
                 logger.debug("already visited {}",current.toString());
@@ -159,22 +159,14 @@ public class ModelInstanceTraverser {
             if(oi.children.hasNext())
             {
                 ObjBase next = oi.children.next();
-                if(next.leaf)
+                if(next.vodmlt.role == VodmlRole.attribute && next.vodmlt.vodmlTypeRole == VodmlRole.primitiveType) 
                 {
                     visitor.leaf(next.o,next.vodmlt,!objVisited.containsKey(next.o));
                 }
                 else {
-                    if(next.c.container) {
-                        final ObjInfo loi = new ObjInfo(next.o,next.vodmlt);
-                        visitor.startInstance(next.o, next.vodmlt, !loi.alreadyVisited);    
-                        stack.add(loi);
-                    }
-                    else
-                    {
-                        final ObjInfo loi = new ObjInfo(next.o);
-                        visitor.startInstance(next.o, next.vodmlt, !loi.alreadyVisited);    
-                        stack.add(loi);
-                    }
+                    final ObjInfo loi = new ObjInfo(next.o,next.vodmlt);
+                    visitor.startInstance(next.o, next.vodmlt, !loi.alreadyVisited);    
+                    stack.add(loi);
                 }
             }
             else
@@ -183,7 +175,6 @@ public class ModelInstanceTraverser {
                 objVisited.put(current, oi.ob.vodmlt);
                 stack.removeLast(); //discard as this object has been finished.
             }
-
 
         }
     }
@@ -204,43 +195,27 @@ public class ModelInstanceTraverser {
         classCache.put(current, cc);
         return cc;
     }
-    private static boolean donotexaminefields(Class<?> c) {
-        //note that this could probably just be whether the class has a VODML annotation or not - although there are annotated enums generated
-        return c.isPrimitive()||c.isEnum() || c.getCanonicalName().startsWith("java")||c.getAnnotation(VoDml.class)==null;
-    }
-
     private class ObjBase {
-        final boolean leaf;
         final Object o;
         final VodmlTypeInfo vodmlt;
         final ClassInfo c;
         public ObjBase(Object o) {
             this (o,
-            getClassInfo(o),
-            new ReflectIveVodmlTypeGetter(o.getClass()).vodmlInfo());
-            
+                    getClassInfo(o),
+                    new ReflectIveVodmlTypeGetter(o.getClass()).vodmlInfo());
+
         }
         public ObjBase(Object o,VodmlTypeInfo t ) {
             this( o, getClassInfo(o), t);
-          
+
         }
 
-        public ObjBase(Object o, ClassInfo c, VodmlTypeInfo vodmlt) {
+        private ObjBase(Object o, ClassInfo c, VodmlTypeInfo vodmlt) {
             this.o = o;
             this.vodmlt = vodmlt;
             this.c = c;
-            switch (this.vodmlt.kind) {
-            case attribute:
-                this.leaf = true;
-                
-                break;
 
-            default:
-                this.leaf = false;
-                break;
-            }
-         }
-       
+        }
     }
 
     private class ObjInfo {
@@ -254,23 +229,24 @@ public class ModelInstanceTraverser {
          * @param o
          */
         public ObjInfo(Object o) {
-           this(new ObjBase(o));
+            this(new ObjBase(o));
         }
-       @SuppressWarnings({ "unchecked", "rawtypes" })
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         private ObjInfo(ObjBase inob) {
             this.ob = inob;
             if(objVisited.containsKey(ob.o))
             {
                 logger.trace("object {} has already been visited");
-                children = new ArrayList().iterator(); //nothing
+                children = new ArrayList<ObjBase>().iterator(); //nothing
                 alreadyVisited = true;
+
             }
             else {
                 alreadyVisited = false;
 
-
                 if(ob.o.getClass().isArray()) { //FIXME think about arrays of primitives.... not yet in our models...
                     children = Arrays.stream((Object[]) ob.o).map(ao->{return ao != null ? new ObjBase(ao): null;}).iterator();
+
                 }
                 else if(ob.o instanceof Collection) {
                     Collection<Object> col = (Collection<Object>) ob.o;
@@ -284,7 +260,7 @@ public class ModelInstanceTraverser {
                     m.forEach((t, u) -> {vals.add(new ObjBase(t));vals.add(new ObjBase(u));});
                     children = vals.iterator();
 
-                } else if (!ob.leaf)
+                } else if (ob.vodmlt.role != VodmlRole.primitiveType)
                 {
                     List<ObjBase> vals = new ArrayList<>(ob.c.refFields.size());   
                     for (Field field : ob.c.refFields)
@@ -308,7 +284,7 @@ public class ModelInstanceTraverser {
 
                 } else
                 {
-                    children = new ArrayList().iterator(); //nothing
+                    children = new ArrayList<ObjBase>().iterator(); //nothing
                 }
             }
 
@@ -320,13 +296,18 @@ public class ModelInstanceTraverser {
         public ObjInfo(ClassInfo c, VodmlTypeInfo vodmlt)
         {
             ob = new ObjBase(null,c, vodmlt);
-            children = new ArrayList().iterator(); //nothing
+            children = new ArrayList<ObjBase>().iterator(); //nothing
             alreadyVisited = false;
         }
- 
+
 
 
     }
+    private static boolean donotexaminefields(Class<?> c) {
+        //note that this could probably just be whether the class has a VODML annotation or not - although there are annotated enums generated
+        return c.isPrimitive()||c.isEnum() || c.getCanonicalName().startsWith("java")||c.getAnnotation(VoDml.class)==null;
+    }
+
 
     /**
      * This class wraps a class in order to cache the fields so they
@@ -335,14 +316,14 @@ public class ModelInstanceTraverser {
     private static class ClassInfo
     {
 
-        boolean container = false; 
+        boolean container = false; //IMPL  not actually used
         final Collection<Field> refFields = new ArrayList<>();
         final Class<?> clazz;
 
         public ClassInfo(Object o)
         {
             clazz = o.getClass();
-            if (donotexaminefields(clazz)) //IMPL perhaps do not need this logic - just do things based 
+            if (donotexaminefields(clazz)) 
             {
                 if(clazz.isArray() || o instanceof Collection<?> || o instanceof Map<?, ?>)
                 {

@@ -88,7 +88,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
        //IMPL hibernate specific way of getting connection... generally dirty, see  https://stackoverflow.com/questions/3493495/getting-database-connection-in-pure-jpa-setup
         Session sess = em.unwrap(Session.class);
         sess.doWork(conn -> {
-            PreparedStatement ps = conn.prepareStatement("SCRIPT TO ?"); // this is H2db specifid
+            PreparedStatement ps = conn.prepareStatement("SCRIPT TO ?"); // this is H2db specific
             ps.setString(1, "test_dump.sql");
             ps.execute();
         });

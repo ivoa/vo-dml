@@ -4,7 +4,7 @@ package org.ivoa.vodml.stdtypes;
 import java.util.Date;
 
 import org.ivoa.vodml.annotation.VoDml;
-import org.ivoa.vodml.annotation.VodmlType;
+import org.ivoa.vodml.annotation.VodmlRole;
 
 import javax.persistence.*;
 
@@ -19,7 +19,7 @@ import javax.persistence.*;
  *
  */
 @Embeddable
-@VoDml(ref = "ivoa:duration", type=VodmlType.primitiveType)
+@VoDml(id = "ivoa:duration", role=VodmlRole.primitiveType, type = "ivoa:duration" )
 public class Duration  {
 //TODO not sure that this is the best representation - PAH - better to use java internal type esp. JDK8+
     /** string representation */

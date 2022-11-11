@@ -187,13 +187,13 @@
     import org.ivoa.vodml.ModelManagement;
     import org.ivoa.vodml.ModelDescription;
     import org.ivoa.vodml.annotation.VoDml;
-    import org.ivoa.vodml.annotation.VodmlType;
+    import org.ivoa.vodml.annotation.VodmlRole;
 
     @XmlAccessorType(XmlAccessType.NONE)
     @XmlRootElement
     @JsonTypeInfo(include=JsonTypeInfo.As.WRAPPER_OBJECT, use=JsonTypeInfo.Id.NAME)
     @JsonIgnoreProperties({"refmap"})
-    @VoDml(ref="<xsl:value-of select="name"/>" ,type = VodmlType.model)
+    @VoDml(id="<xsl:value-of select="name"/>" ,role = VodmlRole.model, type="<xsl:value-of select="name"/>")
     public class <xsl:value-of select="$ModelClass"/> implements org.ivoa.vodml.jaxb.JaxbManagement {
 
     @XmlType

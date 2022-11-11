@@ -32,7 +32,7 @@ public interface ModelManagement <T>{
     
     /**
      * Get the model itself
-     * @return
+     * @return the top level model object.
      */
     T theModel();
     

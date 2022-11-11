@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import org.ivoa.vodml.ModelDescription;
 import org.ivoa.vodml.annotation.VoDml;
+import org.ivoa.vodml.nav.ReflectIveVodmlTypeGetter;
 
 /**
  *  .
@@ -27,10 +28,6 @@ import org.ivoa.vodml.annotation.VoDml;
  */
 public class VodmlTypeResolver extends TypeIdResolverBase {
 
-    
-    
-
-    
 
     @SuppressWarnings("rawtypes")
     private Map<String, Class> typeMap;
@@ -46,8 +43,7 @@ public class VodmlTypeResolver extends TypeIdResolverBase {
      */
     @Override
     public String idFromValue(Object value) {
-       VoDml ann = value.getClass().getAnnotation(org.ivoa.vodml.annotation.VoDml.class);
-       return ann.ref();
+       return new ReflectIveVodmlTypeGetter(value.getClass()).vodmlInfo().vodmlType;      
     }
 
     /**

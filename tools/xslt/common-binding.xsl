@@ -551,6 +551,18 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
+    <xsl:function name="vf:typeRole" as="xsd:string">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <!--        <xsl:message select="concat('subsetting in hierarchy for=',$vodml-ref)"/>-->
+        <xsl:choose>
+            <xsl:when test="$models/key('ellookup',$vodml-ref)">
+                <xsl:value-of select="$models/key('ellookup',$vodml-ref)/name()"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">type '<xsl:value-of select="$vodml-ref"/>' not in considered models</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
 
     <!-- returns the vodml-refs of the members including inherited ones -->
     <xsl:template name="allInheritedMembers" as="xsd:string*">

@@ -671,7 +671,7 @@ package <xsl:value-of select="$path"/>;
           *
           */
           <!--TODO is this an appropriate vodml annotation? -->
-          @org.ivoa.vodml.annotation.VoDml(ref="<xsl:value-of select='concat(ancestor::vo-dml:model/name,":",preceding-sibling::vodml-id,".",$name)'/>", type=org.ivoa.vodml.annotation.VodmlType.attribute)
+          @org.ivoa.vodml.annotation.VoDml(id="<xsl:value-of select='concat(ancestor::vo-dml:model/name,":",preceding-sibling::vodml-id,".",$name)'/>", role=org.ivoa.vodml.annotation.VodmlRole.attribute)
           <xsl:call-template name="doEmbeddedJPA">
               <xsl:with-param name="name" select="$name"/>
               <xsl:with-param name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
@@ -1198,7 +1198,14 @@ import javax.xml.bind.annotation.XmlNsForm;
   </xsl:template>
 
   <xsl:template name="vodmlAnnotation">
- @org.ivoa.vodml.annotation.VoDml(ref="<xsl:value-of select='concat(ancestor::vo-dml:model/name,":",vodml-id)'/>", type=org.ivoa.vodml.annotation.VodmlType.<xsl:value-of select='name(.)'/>)
+      <xsl:choose>
+          <xsl:when test="name(current()) = ('attribute', 'composition', 'reference')">
+@org.ivoa.vodml.annotation.VoDml(id="<xsl:value-of select='concat(ancestor::vo-dml:model/name,":",vodml-id)'/>", role=org.ivoa.vodml.annotation.VodmlRole.<xsl:value-of select='name(.)'/>, type="<xsl:value-of select="datatype/vodml-ref"/>",typeRole=org.ivoa.vodml.annotation.VodmlRole.<xsl:value-of select="vf:typeRole(datatype/vodml-ref)"/>)
+          </xsl:when>
+          <xsl:otherwise>
+@org.ivoa.vodml.annotation.VoDml(id="<xsl:value-of select='concat(ancestor::vo-dml:model/name,":",vodml-id)'/>", role=org.ivoa.vodml.annotation.VodmlRole.<xsl:value-of select='name(.)'/>)
+          </xsl:otherwise>
+      </xsl:choose>
  </xsl:template>
 
 
