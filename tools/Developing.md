@@ -36,7 +36,7 @@ The runtime is published to the `org.javastro` owned part of the maven central r
 In the top directory the following will create a staging repository
 
 ```shell
-gradle gradle :java:publishToSonatype :java:closeSonatypeStagingRepository
+gradle :java:publishToSonatype :java:closeSonatypeStagingRepository
 ```
 
 which can then be checked and released in the https://oss.sonatype.org/ GUI.
