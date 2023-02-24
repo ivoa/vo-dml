@@ -88,11 +88,23 @@ vodml-id '<sch:value-of select="."/>' is not unique, there are <sch:value-of sel
   </sch:rule>
 </sch:pattern>
 
+    <!-- test that the vodml-id follows standard format - looks like a UTYPE ;-) -->
+    <sch:pattern name="vodml-id_form">
+        <sch:rule context="vodml-id[not(../name() = 'vo-dml:model')]">
+            <!-- original intention was / between packages? -->
+            <sch:let name="form" value="string-join(ancestor::*/name[not(../name() = 'vo-dml:model')], '.')"/>
+            <sch:assert test="$form = ." flag="error">
+                vodml-id '<sch:value-of select="."/>' does not follow standard form '<sch:value-of select="$form"/>'
+            </sch:assert>
+        </sch:rule>
+    </sch:pattern>
+
+
     <sch:pattern name="Unique_name">
         <sch:rule context="(attribute|reference|composition|literal)/name">
             <sch:let name="count" value="count(../preceding-sibling::*/name[. = current()])"/>
             <sch:assert test="$count = 0" flag="error">
-                name '<sch:value-of select="."/>' is not unique, there are other members with same name in <sch:value-of select="concat(../../name(),' ',../../vodml-id)"/> .
+                name '<sch:value-of select="."/>' is not unique! There are other members with same name in <sch:value-of select="concat(../../name(),' ',../../vodml-id)"/> .
             </sch:assert>
         </sch:rule>
     </sch:pattern>
@@ -213,13 +225,6 @@ Role '<sch:value-of select="../vodml-id"/>' with subsets relation of type '<sch:
  -->
 
 </sch:pattern>
-
-
-
-
-
-
-
 
 
 </sch:schema>
