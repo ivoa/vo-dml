@@ -195,9 +195,13 @@
         @Temporal( TemporalType.TIMESTAMP )
         @Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
                             </xsl:when>
-                            <xsl:otherwise>
+                            <xsl:when test="vf:findmapping(datatype/vodml-ref,'java')/@jpa-atomic">
         @Basic( optional = <xsl:apply-templates select="." mode="nullable"/> )
         @Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
+                            </xsl:when>
+                            <xsl:otherwise>
+        @Embedded
+        @AttributeOverrides ({@AttributeOverride(name = "value", column =@Column(name="<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/>))})
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:otherwise>
