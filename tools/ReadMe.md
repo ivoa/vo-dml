@@ -13,7 +13,7 @@ easier, as well as take advantage of the dependency management features and mave
 
 Note that it is not necessary to check-out this vodml repository as the plugin will be downloaded automatically from the gradle repository. 
 So, in general, a new data model should be started in its own git repository and configured
-as below.
+as below (see [ProposalDM](https://github.com/ivoa/ProposalDM) for a complete example separate from this repository).
 
 
 1. [Install gradle](https://gradle.org/install/) and run `gradle init` and make choices for a library written in java (with a Kotlin build script DSL).
@@ -141,6 +141,7 @@ indirectly from the generated Java code as can be seen from the [Small java exam
 * 0.3.11 Add XSD to VODSL task.
 * 0.3.12 allow references to be contained...
 * 0.3.13 some bug fixes and different vodml metadata handling
+* 0.3.14 proper JPA handling for generated primitives - added validation test for properly formed VODML-IDs
 
 
 ## Information for [developers of the plugin itself](./Developing.md)
