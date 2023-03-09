@@ -227,18 +227,29 @@
     private List&lt;Object&gt; content  = new ArrayList&lt;&gt;();
       <xsl:for-each select="//objectType[not(@abstract='true') and (not(vf:referredTo(vf:asvodmlref(.))) or (vf:asvodmlref(.) = vf:referencesInHierarchy(vf:asvodmlref(.)) )) ]">
 <!--         <xsl:message>ref in hierarchy <xsl:value-of select="vf:asvodmlref(.)"/> refs= <xsl:value-of select="vf:referencesInHierarchy(vf:asvodmlref(.))"/>  </xsl:message>-->
-    public void addContent( final <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/> c)
-    {
-        content.add(c);
-     <xsl:if test="$hasReferences">
-    org.ivoa.vodml.nav.Util.findReferences(c, refmap);
-     </xsl:if>
-    }
+      public void addContent( final <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/> c)
+      {
+      content.add(c);
+      <xsl:if test="$hasReferences">
+          org.ivoa.vodml.nav.Util.findReferences(c, refmap);
+      </xsl:if>
+      }
+      public void deleteContent( final <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/> c)
+      {
+      content.remove(c);
+      <xsl:if test="$hasReferences">
+          //FIXME this is not  removing the right references - need to remove need to search for references and in content and then remove if last one...
+          if(refmap.containsKey(c.getClass()))
+          {
+          refmap.get(c.getClass()).remove(c);
+          }
+      </xsl:if>
+      }
       </xsl:for-each>
       @SuppressWarnings("unchecked")
       public &lt;T&gt; List&lt;T&gt; getContent(Class&lt;T&gt; c) {
       return (List&lt;T&gt;) content.stream().filter(p -> p.getClass().isAssignableFrom(c)).collect(
-      Collectors.toList()
+      Collectors.toUnmodifiableList()
       );
       }
       @Override

@@ -105,4 +105,14 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
      
    }
 
+   @org.junit.jupiter.api.Test
+   void sourceCatDeleteTest() throws JsonProcessingException {
+      SampleModel model = new SampleModel();
+      model.addContent(sc);
+      model.makeRefIDsUnique();
+      model.deleteContent(sc); //
+      SampleModel modelin = roundTripJSON(model.management()); // FIXME need to test that the refenences are gone
+
+   }
+
 }
