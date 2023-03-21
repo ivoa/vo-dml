@@ -55,7 +55,7 @@ model <xsl:value-of select="$modname"/> (<xsl:value-of select="version"/>) "<xsl
   </xsl:template>
  
  <xsl:template match="import">
-   <xsl:analyze-string regex="/([^/]+)\.vo-dml" select="url">
+   <xsl:analyze-string regex="([^/]+)\.vo-dml" select="url">
      <xsl:matching-substring>
        include "<xsl:value-of select="regex-group(1)"/>.vodsl"
      </xsl:matching-substring>
