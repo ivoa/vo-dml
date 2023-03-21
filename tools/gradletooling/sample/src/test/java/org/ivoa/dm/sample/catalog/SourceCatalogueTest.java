@@ -79,7 +79,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
         // now try to add into a new model
        SampleModel model = new SampleModel();
        for(SourceCatalogue c :cats) {
-          c.walkCollections();//force any lazy loading to happen
+          c.forceLoad();//force any lazy loading to happen
           model.addContent(c);
        }
 
@@ -95,6 +95,8 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
         
 
     }
+    
+   
    @org.junit.jupiter.api.Test
    void sourceCatJSONTest() throws JsonProcessingException {
       SampleModel model = new SampleModel();
@@ -113,6 +115,40 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
       model.deleteContent(sc); //
       SampleModel modelin = roundTripJSON(model.management()); // FIXME need to test that the refenences are gone
 
+   }
+
+   @org.junit.jupiter.api.Test
+   void sourceCatJPACloneTest() throws JsonProcessingException {
+       SampleModel model = new SampleModel();
+       javax.persistence.EntityManager em = setupH2Db(SampleModel.pu_name());
+       em.getTransaction().begin();
+       em.persist(sc);
+       em.getTransaction().commit();
+       model.addContent(sc);
+       
+       em.getTransaction().begin();
+       sc.jpaClone(em);   
+       sc.setName("cloned catalogue");
+       sc.getEntry().get(0).setName("cloned source");
+       em.merge(sc);
+       em.getTransaction().commit(); 
+       model.addContent(sc);
+       // note that sc gets updated by the clone - so would appear twice in the following
+//       SampleModel modelin = roundTripJSON(model.management());
+
+       List<SourceCatalogue> cats = em.createQuery("select s from SourceCatalogue s", SourceCatalogue.class).getResultList();
+       model = new SampleModel();
+       for (SourceCatalogue s : cats) {
+           model.addContent(s); 
+       }
+
+       SampleModel modelin = roundTripJSON(model.management());
+       assertNotNull(modelin);
+       long ncat = (long) em.createQuery("select count(o) from SourceCatalogue o").getSingleResult();
+       assertEquals(2, ncat,"number of catalogues");
+       long nsrc = (long) em.createQuery("select count(o) from SDSSSource o").getSingleResult();
+       assertEquals(2, nsrc,"number of sources");
+       
    }
 
 }

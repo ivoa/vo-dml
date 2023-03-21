@@ -105,9 +105,16 @@ ObjectMapper mapper = MyModel.jsonMapper();
 
 The generated code has JPA annotations to allow storing in RDBs with compliant systems.
 
-In general collections are marked for lazy loading, and as a convenience there is a `walkCollections()`
+In general collections are marked for lazy loading, and as a convenience there is a `forceLoad()`
 method generated that will do a deep walk of all the collections in a particular type, which will force the loading of the whole instance tree if that is desired.
 
+A second convenience method that is created to make it easy to clone an entity is show below
+```java
+ MyEntity to_clone = entityManager.find(MyEntity.class, ID);
+ to_clone.jpaClone(entityManager);
+ entityManager.merge(to_clone);
+```
+which will create a new entity along with any contained compositions, but will maintain the original references.
 
 #### Embeddable dataTypes
 

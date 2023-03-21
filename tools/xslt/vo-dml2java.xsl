@@ -388,7 +388,7 @@
       <xsl:variable name="ifs" as="xsd:string*">
           <xsl:sequence>
               <xsl:if test="vf:referredTo($vodml-ref)">org.ivoa.vodml.jaxb.XmlIdManagement</xsl:if>
-              <xsl:if test="name(current())='objectType'">org.ivoa.vodml.nav.JPACollectionTraverser</xsl:if><!--IMPL could restrict to composition[multiplicity/maxOccurs != 1]-->
+              <xsl:if test="name(current())='objectType'">org.ivoa.vodml.jpa.JPAManipulations</xsl:if>
           </xsl:sequence>
       </xsl:variable>
       <xsl:if test="count($ifs)> 0"><xsl:value-of select="concat(' implements ', string-join($ifs,','))"/> </xsl:if>
@@ -481,7 +481,7 @@
       <xsl:apply-templates select="." mode="builder"/>
       </xsl:if>
       <xsl:apply-templates select="." mode="jpawalker"/>
-
+      <xsl:apply-templates select="." mode="cloner"/>
 
 <!--      <xsl:if test="local-name() eq 'dataType'">-->
 <!--          <xsl:apply-templates select="." mode="JPAConverter"/>-->
@@ -879,25 +879,66 @@ package <xsl:value-of select="$path"/>;
 
     <xsl:template match="objectType" mode="jpawalker">
 
-            @Override
-            public void walkCollections() {
-        <xsl:apply-templates select="composition|reference" mode="jpawalker"/>
-               <xsl:if test="extends">
-                   super.walkCollections();
-               </xsl:if>
-            }
+    @Override
+    public void forceLoad() {
+    <xsl:apply-templates select="composition|reference" mode="jpawalker"/>
+       <xsl:if test="extends">
+       super.forceLoad();
+       </xsl:if>
+    }
     </xsl:template>
 
     <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="jpawalker">
         for( <xsl:value-of select="vf:FullJavaType(datatype/vodml-ref, true())"/> c : <xsl:value-of select="name"/> ) {
-           c.walkCollections();
+           c.forceLoad();
         }
 
     </xsl:template>
     <xsl:template match="composition|reference" mode="jpawalker">
-        if( <xsl:value-of select="name"/> != null ) <xsl:value-of select="name"/>.walkCollections();
+        if( <xsl:value-of select="name"/> != null ) <xsl:value-of select="name"/>.forceLoad();
     </xsl:template>
     <xsl:template match="dataType" mode="jpawalker">
+        <!-- do nothing for datatypes -->
+    </xsl:template>
+
+    <xsl:template match="objectType" mode="cloner">
+
+        @Override
+        public void jpaClone(javax.persistence.EntityManager em) {
+
+        <xsl:choose>
+            <xsl:when test="extends">
+            super.jpaClone(em);
+            </xsl:when>
+            <xsl:otherwise>
+            em.detach(this);
+             <xsl:choose>
+              <!-- IMPL  Assume that the natural key can only occur at top of class hierarchy -->
+              <xsl:when test="not(attribute/constraint[ends-with(@xsi:type,':NaturalKey')])">
+            _id = (long)0;
+              </xsl:when>
+              <xsl:otherwise>
+<!--               TODO natural key might not be nullable?-->
+                  <xsl:value-of select="attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"></xsl:value-of> = null;
+              </xsl:otherwise>
+          </xsl:choose>
+
+            </xsl:otherwise>
+        </xsl:choose>
+
+        <xsl:apply-templates select="composition" mode="cloner"/>
+
+        }
+    </xsl:template>
+    <xsl:template match="composition" mode="cloner">
+        if( <xsl:value-of select="name"/> != null ) <xsl:value-of select="name"/>.jpaClone(em);
+    </xsl:template>
+    <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="cloner">
+        for( <xsl:value-of select="vf:FullJavaType(datatype/vodml-ref, true())"/> c : <xsl:value-of select="name"/> ) {
+         c.jpaClone(em);
+        }
+    </xsl:template>
+    <xsl:template match="dataType" mode="cloner">
         <!-- do nothing for datatypes -->
     </xsl:template>
 
