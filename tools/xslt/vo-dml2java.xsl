@@ -825,7 +825,7 @@ package <xsl:value-of select="$path"/>;
 
 
 
-    <!-- define methods for getting/setting and adding to composition -->
+    <!-- define methods for getting/setting and adding to/removing from composition -->
   <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="getset">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
     <xsl:variable name="name">
@@ -836,7 +836,7 @@ package <xsl:value-of select="$path"/>;
     <xsl:variable name="datatype" select="substring-after(datatype/vodml-ref,':')"/>
     
     /**
-    * Returns <xsl:value-of select="name"/> composition
+    * Returns <xsl:value-of select="name"/> composition as an immutable list.
     * @return <xsl:value-of select="name"/> composition
     */
       <xsl:choose>
@@ -847,10 +847,10 @@ package <xsl:value-of select="$path"/>;
       public List&lt;<xsl:value-of select="$type"/>&gt;&bl;get<xsl:value-of select="$name"/>() {
       </xsl:otherwise>
       </xsl:choose>
-    return this.<xsl:value-of select="name"/>;
+    return java.util.Collections.unmodifiableList(this.<xsl:value-of select="name"/>);
     }
     /**
-    * Defines <xsl:value-of select="name"/> composition
+    * Defines whole <xsl:value-of select="name"/> composition.
     * @param p<xsl:value-of select="$name"/> composition to set
     */
     <xsl:choose>
@@ -865,7 +865,7 @@ package <xsl:value-of select="$path"/>;
     }
     <xsl:if test="not(vf:isSubSetted(vf:asvodmlref(.)))">
     /**
-    * Add a <xsl:value-of select="$type"/> to the composition
+    * Add a <xsl:value-of select="$type"/> to the composition.
     * @param p&bl;<xsl:value-of select="$type"/> to add
     */
     public void add<xsl:value-of select="$name"/>(final <xsl:value-of select="$type"/> p) {
@@ -873,6 +873,16 @@ package <xsl:value-of select="$path"/>;
         this.<xsl:value-of select="name"/> = new ArrayList&lt;&gt;();
       }
       this.<xsl:value-of select="name"/>.add(p);
+    }
+    /**
+    * Remove a <xsl:value-of select="$type"/> from the composition.
+    * @param p&bl;<xsl:value-of select="$type"/> to add
+    */
+    public void remove<xsl:value-of select="$name"/>(final <xsl:value-of select="$type"/> p) {
+        if(this.<xsl:value-of select="name"/> != null) {
+            this.<xsl:value-of select="name"/>.remove(p);
+        }
+
     }
     </xsl:if>
   </xsl:template>
