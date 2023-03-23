@@ -11,11 +11,11 @@ FIXME - this is still not a complete representation of the JSON produced
         <!ENTITY bl "<xsl:text> </xsl:text>">
         ]>
 
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+<xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
                 xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
-                xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9.1"
+                xmlns:bnd="http://www.ivoa.net/xml/vodml-binding/v0.9.1"
                 xmlns:vodml-base="http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1"
                 exclude-result-prefixes="map"
 >
@@ -311,8 +311,8 @@ FIXME - this is still not a complete representation of the JSON produced
       </xsl:when>
       <xsl:otherwise>
         <xsl:choose>
-          <xsl:when test="$mapping/map:mappedModels/model[name=$prefix]/file">
-            <xsl:variable name="file" select="$mapping/map:mappedModels/model[name=$prefix]/file"/>
+          <xsl:when test="$mapping/bnd:mappedModels/model[name=$prefix]/file">
+            <xsl:variable name="file" select="$mapping/bnd:mappedModels/model[name=$prefix]/file"/>
             <xsl:copy-of select="document($file)/vo-dml:model"/>
           </xsl:when>
           <xsl:otherwise>
@@ -375,7 +375,7 @@ FIXME - this is still not a complete representation of the JSON produced
     <xsl:if test="not($modelname) or $modelname=''">
       <xsl:message>!!!!!!! ERROR No prefix found in findmaping for <xsl:value-of select="$vodml-ref"/></xsl:message>
     </xsl:if>
-    <xsl:value-of select="$mapping/map:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/xsd-type"/>
+    <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/xsd-type"/>
   </xsl:template>
 
   <!-- find a java package path towards the type identified with the name -->

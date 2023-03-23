@@ -11,7 +11,7 @@ intermediate representation to a GraphViz dot file.
 <!ENTITY rem "<xsl:text>-- </xsl:text>">
 ]>
 
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+<xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 				xmlns:exsl="http://exslt.org/common"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1" 

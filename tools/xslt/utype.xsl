@@ -15,7 +15,7 @@
 <!ENTITY aasep "<xsl:text>.</xsl:text>"> <!-- separator between attributes -->
 ]>
 
-<xsl:stylesheet version="2.0" 
+<xsl:stylesheet version="3.0"
                 xmlns:xmi="http://schema.omg.org/spec/XMI/2.1"
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 xmlns:uml="http://schema.omg.org/spec/UML/2.0"

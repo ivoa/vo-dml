@@ -4,7 +4,7 @@
 </xsl:text>">
 ]>
 
-<xsl:stylesheet version="2.0" 
+<xsl:stylesheet version="3.0"
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"

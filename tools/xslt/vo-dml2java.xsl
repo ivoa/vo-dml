@@ -6,24 +6,24 @@
 <!ENTITY bl "<xsl:text> </xsl:text>">
 ]>
 
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+<xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
                 xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
                 xmlns:exsl="http://exslt.org/common"
-                xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9.1"
+                xmlns:bnd="http://www.ivoa.net/xml/vodml-binding/v0.9.1"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xmlns:map="http://www.w3.org/2005/xpath-functions/map"
                 extension-element-prefixes="exsl"
-                exclude-result-prefixes="map" 
+                exclude-result-prefixes="bnd"
                 >
 <!-- 
   This XSLT script transforms a data model in VO-DML/XML representation to 
   Purely Ordinary Java Classes.
   
   Only defines fields for components.
-  Only argumentless constructor.
-  
-  Java 1.8 is required by these two libraries.
+
+  Java 11 is required by these two libraries.
   
   Gerard Lemson (mpa)/Laurent Bourges (grenoble), Paul Harrison (JBO)
 -->
@@ -67,13 +67,13 @@
     </xsl:message>
 
     <xsl:variable name="prefix" select="name"/>
-      <xsl:if test="not($mapping/map:mappedModels/model[name=$prefix])">
+      <xsl:if test="not($mapping/bnd:mappedModels/model[name=$prefix])">
           <xsl:message terminate="yes">
               There is no binding for model <xsl:value-of select="$prefix"/>
           &cr;
           </xsl:message>
       </xsl:if>
-      <xsl:variable name="root_package" select="$mapping/map:mappedModels/model[name=$prefix]/java-package"/>
+      <xsl:variable name="root_package" select="$mapping/bnd:mappedModels/model[name=$prefix]/java-package"/>
       <xsl:variable name="root_package_dir" select="replace($root_package,'[.]','/')"/>
 
       <!--
@@ -197,12 +197,13 @@
 
 
     <xsl:template match="objectType|dataType" mode="builder">
+        <xsl:variable name="this" select="."/>
         <xsl:variable name="subsetsInSubtypes" select="vf:subSettingInSubHierarchy(vf:asvodmlref(current()))/role/vodml-ref" as="xsd:string*"/>
 
         <xsl:variable name="members" as="xsd:string*">
                <xsl:call-template name="allInheritedMembers"/>
         </xsl:variable>
-        <xsl:variable name="subsetsInForce" select="vf:subSettingInSuperHierarchy(vf:asvodmlref(current()))" as="element()*"/>
+        <xsl:variable name="subsets" select="vf:subSettingInSuperHierarchy(vf:asvodmlref(current()))" as="element()*"/>
 
         /**
           A builder class for <xsl:value-of select="name"/>, mainly for use in the functional builder pattern.
@@ -211,29 +212,32 @@
            <xsl:for-each select="$members">
                <xsl:variable name="m" select="$models/key('ellookup',current())"/>
 <!--               <xsl:message>builder member=<xsl:value-of select="concat(current(),' ',name($m),' subs=',string-join($subsetsInSubtypes,','))"/> </xsl:message>-->
-               <xsl:if test="not(name($m)='attribute' and current() = $subsetsInSubtypes)">
+
+                   /**
+                   * <xsl:apply-templates select="$m" mode="desc"/>
+                   */
+                   <xsl:choose>
+                       <xsl:when test="current() = $subsets/role/vodml-ref">
+                           <xsl:variable name="type" select="vf:JavaType($subsets[role/vodml-ref/text() = current()]/datatype/vodml-ref)"/>
+                           <xsl:choose>
+                               <xsl:when test="$m/multiplicity[maxOccurs != 1]">
+                                   <xsl:value-of select="concat('public java.util.List', $lt, $type, $gt, ' ', $m/name)"/>;
+                               </xsl:when>
+                               <xsl:otherwise>
+                                   <xsl:value-of select="concat('public ',$type, ' ', $m/name)"/>;
+                               </xsl:otherwise>
+                           </xsl:choose>
+
+                       </xsl:when>
+                       <xsl:otherwise>
+                           <xsl:value-of>
+                               <xsl:text>public </xsl:text>
+                               <xsl:apply-templates select="$m" mode="paramDecl"/>;
+                           </xsl:value-of>
+                       </xsl:otherwise>
+                   </xsl:choose>
 
 
-           /**
-           * <xsl:apply-templates select="$m" mode="desc"/>
-           */
-           public <xsl:apply-templates select="$m" mode="paramDecl"/>;
-               </xsl:if>
-           </xsl:for-each>
-           <xsl:for-each select="$subsetsInForce">
-
-               <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
-               <xsl:variable name="memb" select="$models/key('ellookup',current()/role/vodml-ref)"/>
-               /**
-               * <xsl:apply-templates select="$memb" mode="desc"/> (subsetted)
-               */<xsl:choose>
-                   <xsl:when test="$memb/multiplicity[maxOccurs != 1]">
-                       public <xsl:value-of select="concat(' java.util.List',$lt,$type,$gt, ' ', $memb/name)"/>;
-                   </xsl:when>
-                   <xsl:otherwise>
-                       public <xsl:value-of select="concat(' ',$type, ' ', $memb/name)"/>;
-                   </xsl:otherwise>
-               </xsl:choose>
            </xsl:for-each>
 
            private <xsl:value-of select="name"/>Builder with (java.util.function.Consumer &lt;<xsl:value-of select="name"/>Builder&gt; f)
@@ -253,7 +257,6 @@
              -->
               <xsl:variable name="params"  as="xsd:string*">
                   <xsl:for-each select="$members"><xsl:value-of select="$models/key('ellookup',current())/name" /></xsl:for-each>
-                  <xsl:for-each select="$subsetsInForce"><xsl:value-of select="$models/key('ellookup',current()/role/vodml-ref)/name"/> </xsl:for-each>
               </xsl:variable>
               <xsl:value-of select="string-join($params,',')"/>
               );
@@ -271,59 +274,83 @@
     </xsl:template>
 
     <!-- generate a all member constructor
-      The general tactic is to look for all supertype members and initialize them in the one constructor, because it
-       is easier to generate than calling super constructors with their appropriate parameters.
+
     -->
     <xsl:template match="objectType|dataType" mode="constructor">
-        <xsl:variable name="subsetsInSubtypes" select="vf:subSettingInSubHierarchy(vf:asvodmlref(current()))/role/vodml-ref" as="xsd:string*"/>
+        <xsl:variable name="this" select="."/>
+        <xsl:variable name="subsetsInSubtypes" select="distinct-values(vf:subSettingInSubHierarchy(vf:asvodmlref(current()))/role/vodml-ref)" as="xsd:string*"/>
 
         <xsl:variable name="members" as="xsd:string*"  >
             <xsl:call-template name="allInheritedMembers" />
         </xsl:variable>
+
         <xsl:variable name="subsets" select="vf:subSettingInSuperHierarchy(vf:asvodmlref(current()))" as="element()*" />
 
-        <xsl:variable name="decls" as="xsd:string*">
-                <xsl:for-each select="$members">
-                    <xsl:variable name="m" select="$models/key('ellookup',current())"/>
-<!--                    <xsl:message>constructor member=<xsl:value-of select="concat(current(),' ',name($m),' insubs=',name($m)='attribute' and current() = $subsetsInSubtypes,' subs=',string-join($subsetsInSubtypes,','))"/> </xsl:message>-->
-                    <xsl:if test="not(name($m)='attribute' and current() = $subsetsInSubtypes)">
-                <xsl:value-of>
-                    <xsl:text>final </xsl:text>
-                            <xsl:apply-templates select="$m" mode="paramDecl"/>
-                </xsl:value-of>
-                    </xsl:if>
+        <xsl:variable name="consmembers" select="($members)"/>
+        <xsl:variable name="localmembers" select="((for $v in (attribute,composition,reference) return vf:asvodmlref($v)))"/>
 
 
-                </xsl:for-each>
-                <xsl:for-each select="$subsets">
-                    <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
-                    <xsl:variable name="name" select="tokenize(role/vodml-ref, '[.]' )[last()]"/>
+        <xsl:message>members=<xsl:value-of select="string-join($members,',')"/></xsl:message>
+        <xsl:message>subsets=<xsl:value-of select="string-join(for $w in $subsets return concat($w/role/vodml-ref,'==', $w/datatype/vodml-ref,'|', $models/key('ellookup',$w/role/vodml-ref)/name(), '|', $models/key('ellookup',$w/role/vodml-ref)/multiplicity/maxOccurs),', ')"/></xsl:message>
+        <xsl:message><xsl:value-of select="concat('subsetssub=',string-join($subsetsInSubtypes,','),  ' cons=',string-join($consmembers,','),  ' loc=',string-join($localmembers,','))"/></xsl:message>
+        <xsl:variable name="decls" as="map(xsd:string,text())">
+            <xsl:map>
+            <xsl:for-each select="$consmembers">
+                <xsl:variable name="m" select="$models/key('ellookup',current())"/>
+                <xsl:message>constructor member=<xsl:value-of select="concat(current(),' ',name($m),' insubs=',name($m)='attribute' and current() = $subsetsInSubtypes)"/> </xsl:message>
+                <xsl:map-entry key = ".">
                     <xsl:choose>
-                        <xsl:when test="$models/key('ellookup',current()/role/vodml-ref)/multiplicity[maxOccurs != 1]">
-                            <xsl:value-of select="concat('final java.util.List', $lt, $type, $gt, ' ', $name)"/>
+                        <xsl:when test="$this/constraint[ends-with(@xsi:type,':SubsettedRole')]/role[vodml-ref/text() = current()]"><!--TODO test if this condition is actually covered by below -->
+                            <xsl:variable name="type" select="vf:JavaType($this/constraint[ends-with(@xsi:type,':SubsettedRole') and role/vodml-ref/text() = current()]/datatype/vodml-ref)"/>
+                            <xsl:choose>
+                                <xsl:when test="$m/multiplicity[maxOccurs != 1]">
+                                    <xsl:value-of select="concat('final java.util.List', $lt, $type, $gt, ' ', $m/name)"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="concat('final ',$type, ' ', $m/name)"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:when>
+                        <xsl:when test="current() = $subsets/role/vodml-ref">
+                            <xsl:variable name="type" select="vf:JavaType($subsets[role/vodml-ref/text() = current()]/datatype/vodml-ref)"/>
+                            <xsl:choose>
+                                <xsl:when test="$m/multiplicity[maxOccurs != 1]">
+                                    <xsl:value-of select="concat('final java.util.List', $lt, $type, $gt, ' ', $m/name)"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="concat('final ',$type, ' ', $m/name)"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:value-of select="concat('final ',$type, ' ', $name)"/>
+                            <xsl:value-of>
+                                <xsl:text>final </xsl:text>
+                                <xsl:apply-templates select="$m" mode="paramDecl"/>
+                            </xsl:value-of>
                         </xsl:otherwise>
                     </xsl:choose>
-
-                </xsl:for-each>
+                 </xsl:map-entry>
+            </xsl:for-each>
+           </xsl:map>
         </xsl:variable>
-        <xsl:if test="count($decls) > 0">
+        <xsl:if test="count($consmembers) > 0">
         /**
         * full parameter constructor.
-            <!-- TODO get the parameter descriptions again - not DRY unfortunately-->
-            <xsl:for-each select="$decls">
-        *   @param <xsl:value-of select="tokenize(current(),' ')[last()]"    />
+            <xsl:for-each select="($consmembers)">
+                <xsl:variable name="m" select="$models/key('ellookup',current())"/>
+        *   @param <xsl:value-of select="concat($m/name,' ')"   /> <xsl:apply-templates select="$m" mode="desc" />
             </xsl:for-each>
         */
         public  <xsl:value-of select="name"/> (
-          <xsl:value-of select="string-join($decls,', ')"/>
+          <xsl:value-of select="string-join(for $v in ($consmembers) return map:get($decls, $v),', ')"/>
         )
         {
-           <xsl:for-each select="$decls">
-             <xsl:variable name="n" select="tokenize(current(),' ')[last()]"  />
-           this.<xsl:value-of select="$n"/> = <xsl:value-of select="$n"/>;
+            <xsl:variable name="supermemb" select="$consmembers[not(. = $localmembers)]"/>
+            super(<xsl:value-of select="string-join(for $v in $supermemb return $models/key('ellookup',$v)/name,',')"/>);
+           <xsl:for-each select="$localmembers">
+               <xsl:variable name="m" select="$models/key('ellookup',current())"/>
+           this.<xsl:value-of select="$m/name"/> = <xsl:value-of select="$m/name"/>;
            </xsl:for-each>
           }
         </xsl:if>
@@ -1182,7 +1209,7 @@ package <xsl:value-of select="$path"/>;
       <xsl:variable name="file" select="concat($output_root,'/',$dir,'/package-info.java')"/>
       <!-- open file for this class -->
       <xsl:message >Writing package info file <xsl:value-of select="$file"/></xsl:message>
-      <xsl:variable name="ns" select="$mapping/map:mappedModels/model[name=current()/ancestor-or-self::vo-dml:model/name]/xml-targetnamespace"/>
+      <xsl:variable name="ns" select="$mapping/bnd:mappedModels/model[name=current()/ancestor-or-self::vo-dml:model/name]/xml-targetnamespace"/>
       <xsl:result-document href="{$file}" >
 @javax.xml.bind.annotation.XmlSchema(namespace = "<xsl:value-of select="normalize-space($ns)"/>",elementFormDefault=XmlNsForm.UNQUALIFIED, xmlns = {
 @javax.xml.bind.annotation.XmlNs(namespaceURI = "<xsl:value-of select="normalize-space($ns)"/>", prefix = "<xsl:value-of select="$ns/@prefix"/>")
@@ -1225,7 +1252,7 @@ import javax.xml.bind.annotation.XmlNsForm;
                <xsl:with-param name="delimiter">.</xsl:with-param>
             </xsl:call-template>
          </xsl:variable>
-         <xsl:variable name="root" select="$mapping/map:mappedModels/model[name=$themodel/name]/java-package" />
+         <xsl:variable name="root" select="$mapping/bnd:mappedModels/model[name=$themodel/name]/java-package" />
          import <xsl:value-of select="$root" /><xsl:if test="$path !=''">.</xsl:if><xsl:value-of select="$path" />.<xsl:value-of select="$type/name" />;
       </xsl:otherwise>
    </xsl:choose>
@@ -1244,7 +1271,7 @@ import javax.xml.bind.annotation.XmlNsForm;
         <xsl:with-param name="delimiter">.</xsl:with-param>
       </xsl:call-template>
     </xsl:variable>
-    <xsl:variable name="root" select="$mapping/map:mappedModels/model[name=$modelname]/java-package"/>
+    <xsl:variable name="root" select="$mapping/bnd:mappedModels/model[name=$modelname]/java-package"/>
     <xsl:value-of select="$root"/><xsl:if test="$path !=''">.</xsl:if><xsl:value-of select="$path"/>.<xsl:value-of select="name"/>
   </xsl:template>
 

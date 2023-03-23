@@ -4,8 +4,8 @@
 </xsl:text>">
 <!ENTITY bl "<xsl:text> </xsl:text>">
 ]>
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9.1"
+<xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:bnd="http://www.ivoa.net/xml/vodml-binding/v0.9.1"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                 xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -122,7 +122,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
               <xsl:otherwise>
                   <xsl:variable name="modelname" select="substring-before($vodml-ref,':')"/>
 
-                  <xsl:variable name="root" select="$mapping/map:mappedModels/model[name=$modelname]/java-package"/>
+                  <xsl:variable name="root" select="$mapping/bnd:mappedModels/model[name=$modelname]/java-package"/>
                   <xsl:variable name="path"
                                 select="string-join($models/key('ellookup',$vodml-ref)/ancestor-or-self::*[name() != 'vo-dml:model']/name,'.')"/>
                   <xsl:value-of select="concat($root,'.',$path)"/>
@@ -154,7 +154,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
                 <xsl:otherwise>
                     <xsl:variable name="modelname" select="substring-before($vodml-ref,':')"/>
 
-                    <xsl:variable name="root" select="$mapping/map:mappedModels/model[name=$modelname]/python-package"/>
+                    <xsl:variable name="root" select="$mapping/bnd:mappedModels/model[name=$modelname]/python-package"/>
                     <xsl:variable name="path"
                                   select="string-join($models/key('ellookup',$vodml-ref)/ancestor-or-self::package/name,'_')"/>
                     <xsl:value-of select="concat($root,'.',$path,'.',$models/key('ellookup',$vodml-ref)/name)"/>
@@ -178,7 +178,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
                 <xsl:value-of select="string-join(tokenize(vf:findmapping($vodml-ref,'python'),'\.')[position() != last()],'.')"/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:variable name="root" select="$mapping/map:mappedModels/model[name=$modelname]/python-package"/>
+                <xsl:variable name="root" select="$mapping/bnd:mappedModels/model[name=$modelname]/python-package"/>
 
                 <xsl:variable name="path"
                               select="string-join($models/key('ellookup',$vodml-ref)/(ancestor::package|ancestor::vo-dml:model)/name,'_')"/>
@@ -217,7 +217,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
 
     <xsl:function name="vf:isRdbSingleTable" as="xsd:boolean">
         <xsl:param name="modelName" as="xsd:string"/>
-        <xsl:sequence select="count($mapping/map:mappedModels/model[name=$modelName]/rdb[@inheritance-strategy='single-table'] )= 1"/>
+        <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelName]/rdb[@inheritance-strategy='single-table'] )= 1"/>
     </xsl:function>
 
 
@@ -244,10 +244,10 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
         <xsl:variable name="modelname" select="substring-before($vodml-ref,':')" />
         <xsl:choose>
             <xsl:when test="$lang eq 'java'">
-                <xsl:copy-of select="$mapping/map:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/java-type"/>
+                <xsl:copy-of select="$mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/java-type"/>
             </xsl:when>
             <xsl:when test="$lang eq 'python'">
-                <xsl:copy-of select="$mapping/map:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/python-type"/>
+                <xsl:copy-of select="$mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/python-type"/>
             </xsl:when>
         </xsl:choose>
 
@@ -259,10 +259,10 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
         <xsl:variable name="modelname" select="substring-before($vodml-ref,':')" />
         <xsl:choose>
             <xsl:when test="$lang eq 'java'">
-                <xsl:value-of select="count($mapping/map:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/java-type) > 0"/>
+                <xsl:value-of select="count($mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/java-type) > 0"/>
             </xsl:when>
             <xsl:when test="$lang eq 'python'">
-                <xsl:value-of select="count($mapping/map:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/python-type) > 0"/>
+                <xsl:value-of select="count($mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/python-type) > 0"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:message terminate="yes">unknown language <xsl:value-of select="$lang"/> </xsl:message>
@@ -274,7 +274,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
     <xsl:function name="vf:isPythonBuiltin" as="xsd:boolean">
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:variable name="modelname" select="substring-before($vodml-ref,':')" />
-        <xsl:value-of select="$mapping/map:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/python-type/@built-in = 'true'"/>
+        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/python-type/@built-in = 'true'"/>
     </xsl:function>
 
 <!-- return the base types for current type - note that this does not return the types in strict hierarchy order (not sure why!) -->
@@ -474,9 +474,12 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
                 <!-- have to do this to get types in hierarchical order -->
                 <xsl:variable name="typenames" as="xsd:string*" select="($vodml-ref,vf:baseTypeIds($vodml-ref))"/>
                 <!-- TODO need to worry about the cases where a subset is subset again -->
-                <xsl:variable name="allsubsets" select="$models/key('ellookup',$typenames)/constraint[ends-with(@xsi:type,':SubsettedRole')]" as="element()*"/>
-<!--                <xsl:message>supertypenames=<xsl:value-of select="string-join($typenames,',')"/> subsets=<xsl:value-of select="string-join($allsubsets,',')"/></xsl:message>-->
-
+                <xsl:variable name="allsubsets"  as="element()*">
+                    <xsl:for-each select="$typenames">
+                        <xsl:copy-of select="$models/key('ellookup',current())/constraint[ends-with(@xsi:type,':SubsettedRole')]"/>
+                    </xsl:for-each>
+                </xsl:variable>
+<!--                <xsl:message>supertypenames=<xsl:value-of select="string-join($typenames,',')"/> subsets=<xsl:value-of select="string-join(for $x in $allsubsets return string-join(($x/role/vodml-ref,$x/datatype/vodml-ref),'|'),',')"/></xsl:message>-->
                     <!-- cannot see hy this will not work - actually because of the context in key() call
                    <xsl:copy-of select="$allsubsets[datatype/vodml-ref != $models/key('ellookup',role/vodml-ref)/datatype/vodml-ref]"/>
                     so doing for loop below-->
@@ -491,11 +494,13 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
                 <xsl:message terminate="yes">type '<xsl:value-of select="$vodml-ref"/>' not in considered models</xsl:message>
             </xsl:otherwise>
         </xsl:choose>
-
     </xsl:function>
 
 
-    <!-- This will return all the subsets found in the hierarchy - will not return subset when it is the same type as the thing it subsets
+    <!-- This will return all the subsets found in the sub hierarchy - will not return subset when it is the same type as the thing it subsets (happens when the only reason for the subset is semantic constaint?)
+    In addition does not return subsets for composition
+
+    FIXME - this needs to only return the subsets for members of the starting point.
   -->
     <xsl:function name="vf:subSettingInSubHierarchy" as="element()*">
         <xsl:param name="vodml-ref" as="xsd:string"/>
@@ -503,14 +508,14 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
         <xsl:choose>
             <xsl:when test="$models/key('ellookup',$vodml-ref)">
                 <xsl:variable name="allsubsets" select="vf:subTypes($vodml-ref)/constraint[ends-with(@xsi:type,':SubsettedRole')]" as="element()*"/>
-                <!--                <xsl:message>supertypenames=<xsl:value-of select="string-join($typenames,',')"/> subsets=<xsl:value-of select="string-join($allsubsets,',')"/></xsl:message>-->
+<!--                                <xsl:message>subtypes=<xsl:value-of select="string-join(vf:subTypes($vodml-ref)/name,',')"/> subsets=<xsl:value-of select="string-join($allsubsets/role/vodml-ref,',')"/></xsl:message>-->
 
                 <!-- cannot see hy this will not work - actually because of the context in key() call
                <xsl:copy-of select="$allsubsets[datatype/vodml-ref != $models/key('ellookup',role/vodml-ref)/datatype/vodml-ref]"/>
                 so doing for loop below-->
                 <xsl:for-each select="$allsubsets">
-                    <xsl:variable name="subsetted" select="$models/key('ellookup',current()/role/vodml-ref)/datatype/vodml-ref"/>
-                    <xsl:if test="current()/datatype/vodml-ref/text() != $subsetted">
+                    <xsl:variable name="subsetted" select="$models/key('ellookup',current()/role/vodml-ref)"/>
+                    <xsl:if test="$subsetted/datatype/vodml-ref != current()/datatype/vodml-ref">
                         <xsl:copy-of select="."/>
                     </xsl:if>
                 </xsl:for-each>
@@ -567,26 +572,22 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
     <!-- returns the vodml-refs of the members including inherited ones -->
     <xsl:template name="allInheritedMembers" as="xsd:string*">
         <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
-        <xsl:variable name="subsets" select="vf:subSettingInSuperHierarchy($vodml-ref)/role/vodml-ref" as="xsd:string*"/>
         <xsl:variable name="supers" select="(.,vf:baseTypes($vodml-ref))"/>
         <!--        <xsl:message>inherited <xsl:value-of select="concat($vodml-ref, ' subsets=',string-join($subsets,','),' members=',-->
         <!--        string-join(for $v in ($supers/attribute,$supers/composition,$supers/reference) return vf:asvodmlref($v), ',') )" /></xsl:message>-->
         <xsl:sequence>
             <xsl:for-each select="$supers/attribute,$supers/composition,$supers/reference">
-                <xsl:variable name="m" select="vf:asvodmlref(.)"/>
-                <xsl:if test="not($m = $subsets)">
-                    <xsl:value-of select="$m"/>
-                </xsl:if>
+                <xsl:value-of select="vf:asvodmlref(.)"/>
             </xsl:for-each>
         </xsl:sequence>
     </xsl:template>
     <xsl:function name="vf:ns4model" as="xsd:string">
         <xsl:param name="s" as="xsd:string"/>
-        <xsl:value-of select="$mapping/map:mappedModels/model[name=$s]/xml-targetnamespace"/>
+        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$s]/xml-targetnamespace"/>
     </xsl:function>
     <xsl:function name="vf:nsprefix4model" as="xsd:string">
         <xsl:param name="s" as="xsd:string"/>
-        <xsl:value-of select="$mapping/map:mappedModels/model[name=$s]/xml-targetnamespace/@prefix"/>
+        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$s]/xml-targetnamespace/@prefix"/>
     </xsl:function>
     <xsl:function name="vf:schema-location4model" as="xsd:string">
         <xsl:param name="s" as="xsd:string"/>
@@ -594,7 +595,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
     </xsl:function>
     <xsl:function name="vf:modelNameFromFile" as="xsd:string"><!-- note allowed empty sequence -->
         <xsl:param name="filename" as="xsd:string"/>
-        <xsl:value-of select="$mapping/map:mappedModels/model[file=$filename]/name"/>
+        <xsl:value-of select="$mapping/bnd:mappedModels/model[file=$filename]/name"/>
     </xsl:function>
     <xsl:function name="vf:element4vodmlref" as="element()"> <!-- once rest of code working - can remove this and just use key directly -->
         <xsl:param name="vodml-ref" as="xsd:string" />

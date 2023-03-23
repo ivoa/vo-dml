@@ -11,7 +11,7 @@ for possible ways to make images with links
 </xsl:text>">
 <!ENTITY bl "<xsl:text> </xsl:text>">
 ]>
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+<xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	            xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1">

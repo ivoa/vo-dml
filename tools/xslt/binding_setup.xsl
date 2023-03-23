@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9.1"
+<xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:bnd="http://www.ivoa.net/xml/vodml-binding/v0.9.1"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                 xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -13,19 +13,19 @@
     <!--read the mapping from the bindings -->
     <xsl:variable name="mapping">
         <xsl:message>setting mapping</xsl:message>
-        <map:mappedModels>
+        <bnd:mappedModels>
             <xsl:for-each select="tokenize($binding,',')">
                 <xsl:message><xsl:value-of select="."/></xsl:message>
                 <xsl:copy-of
-                        select="document(normalize-space(.))/map:mappedModels/model" />
+                        select="document(normalize-space(.))/bnd:mappedModels/model" />
             </xsl:for-each>
-        </map:mappedModels>
+        </bnd:mappedModels>
     </xsl:variable>
 
     <!-- load all models at start -->
     <xsl:variable name="models">
         <xsl:message>setting models</xsl:message>
-        <xsl:for-each select="$mapping/map:mappedModels/model">
+        <xsl:for-each select="$mapping/bnd:mappedModels/model">
             <xsl:choose>
                 <xsl:when test="file"> <!-- prefer local file for reading defn -->
                     <xsl:choose>
@@ -58,8 +58,8 @@
     <xsl:variable name="isRdbSingleInheritance" as="xsd:boolean" select="vf:isRdbSingleTable(/vo-dml:model/name)"/>
     <xsl:variable name="discriminatorColumnLength" as="xsd:int">
         <xsl:choose>
-            <xsl:when test="$mapping/map:mappedModels/model[name=$themodelname]/rdb/@discriminatorColumnLength">
-                <xsl:value-of select="$mapping/map:mappedModels/model[name=$themodelname]/rdb/@discriminatorColumnLength"/>
+            <xsl:when test="$mapping/bnd:mappedModels/model[name=$themodelname]/rdb/@discriminatorColumnLength">
+                <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$themodelname]/rdb/@discriminatorColumnLength"/>
             </xsl:when>
             <xsl:otherwise>32</xsl:otherwise>
         </xsl:choose>

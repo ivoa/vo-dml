@@ -6,11 +6,11 @@
 <!ENTITY bl "<xsl:text> </xsl:text>">
 ]>
 
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+<xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
                 xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
                 xmlns:exsl="http://exslt.org/common"
-                xmlns:map="http://www.ivoa.net/xml/vodml-binding/v0.9.1"
+                xmlns:bnd="http://www.ivoa.net/xml/vodml-binding/v0.9.1"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 extension-element-prefixes="exsl"
@@ -43,7 +43,7 @@
    <xsl:include href="binding_setup.xsl" />
 
 
-    <xsl:variable name="root_package" select="$mapping/map:mappedModels/model[name=$themodelname]/python-package"/>
+    <xsl:variable name="root_package" select="$mapping/bnd:mappedModels/model[name=$themodelname]/python-package"/>
     <xsl:variable name="root_package_dir" select="replace($root_package,'[.]','/')"/>
 
 
@@ -63,7 +63,7 @@
     </xsl:message>
 
 
-      <xsl:if test="not($mapping/map:mappedModels/model[name=$themodelname])">
+      <xsl:if test="not($mapping/bnd:mappedModels/model[name=$themodelname])">
           <xsl:message terminate="yes">
               There is no binding for model <xsl:value-of select="$themodelname"/>
           </xsl:message>

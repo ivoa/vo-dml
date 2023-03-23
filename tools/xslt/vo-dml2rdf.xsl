@@ -25,7 +25,7 @@ collection			|
 extends
  -->
 
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+<xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1.0"
                 xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"

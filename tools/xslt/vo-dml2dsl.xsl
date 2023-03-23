@@ -6,7 +6,7 @@ official VODML XML representation to the VODSL representation.
 Paul Harrison
  -->
 
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+<xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 								xmlns:exsl="http://exslt.org/common"
                 extension-element-prefixes="exsl"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"

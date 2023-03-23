@@ -8,9 +8,10 @@ VODML Tooling TODO
 * should only be a note for references multiplicity...aggregation
 * unique constraint in composition...- would result in Set as the container - are compositions assumed to contain unique members anyway - that is effectively what is happening in the JPA interpretation where a surrogate 
  key is used. In this case it might be a lifecycle issue. This is also the distinction between a datatype and an objectType.
-* the rdb and xml schemas produced by the xslt are unlikely to match the java generated ones exactly - they need to be updated.
+* the rdb and xml schemas produced by the xslt are do not match the java generated ones exactly - they need to be updated.
 * vodml to specify attribute defaults?
 * to generate tapschema - would be nice for vodml to have UCDs as part of the model - could be added in semantic part.
+* is subsetting references allowed?
 
 * STC
   * epoch - not really defined as something that is used properly
@@ -29,6 +30,7 @@ VODML Tooling TODO
 * ~~can remove all the ant stuff - including the libs and schematron dirs~~
 * generate python
 * integrate with the model mapping in VOT.
+* autogenerate the dependent vosdl files.
 
 
 # Java Production
@@ -52,7 +54,9 @@ VODML Tooling TODO
     * should this be explicitly dis-allowed?
     * should back-references be put in automatically?
   * might want to be more explicit about namespaces in the <refs> and <content> areas....
-  
+  * can do better with subsets in subtypes - if supertype is abstract then it is possible to define in a subtype and get better type safety.
+
+
 * JPA 
   * embedded are not nullable - means that datatype with optional multiplicity is not handled well (i.e cannot be null!) https://hibernate.atlassian.net/browse/HHH-14818
     * see https://stackoverflow.com/questions/40979957/how-can-i-prevent-jpa-from-setting-an-embeddable-object-to-null-just-because-all?noredirect=1&lq=1 for the description of opposite

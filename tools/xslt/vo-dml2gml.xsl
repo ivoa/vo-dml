@@ -6,7 +6,7 @@ be read by https://www.yworks.com/products/yed to allow interactive editing.
 
 derived from the vo-dml2gvd.xsl file
  -->
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+<xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 				    xmlns:exsl="http://exslt.org/common"
                 xmlns:vodml="http://www.ivoa.net/xml/VODML/v1" 
                 xmlns="http://graphml.graphdrawing.org/xmlns/graphml"
