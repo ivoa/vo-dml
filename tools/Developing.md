@@ -19,6 +19,22 @@ of useful functions that can answer model questions such as "has subtypes" defin
 There is a [sample](./gradletooling/sample) project that acts as a test bench for the plugin.
 
 
+## Local testing
+
+Testing to the plugin against the sample models can be done in the [gradletooling](./gradletooling) directory where
+
+```shell
+gradle test
+```
+will run all the code generation and serialization tests against the sample models.
+
+When a new version of the plugin is being tested before release, the version numbers should be incremented and the [plugin source](./gradletooling/gradle-plugin/build.gradle.kts) and the [sample project](./gradletooling/sample/build.gradle.kts)
+installed locally using
+
+```shell
+gradle publishToMavenLocal
+```
+
 ## Publishing
 
 [@pahjbo](https://github.com/pahjbo) has the credentials for publishing the products of this repository.
