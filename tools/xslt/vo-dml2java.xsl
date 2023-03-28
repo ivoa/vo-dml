@@ -352,6 +352,27 @@
            </xsl:for-each>
           }
         </xsl:if>
+        <xsl:if test="vf:hasSubTypes(vf:asvodmlref($this)) or extends or @abstract">
+            <xsl:variable name="thistype" select="vf:JavaType(vf:asvodmlref($this))"/>
+            <xsl:variable name="toptype" >
+                <xsl:choose>
+                    <xsl:when test="extends">
+                        <xsl:value-of select="vf:JavaType(vf:baseTypeIds(vf:asvodmlref($this))[last()])"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$thistype"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
+
+            <xsl:if test="@abstract">abstract </xsl:if><xsl:value-of select="concat( 'public ', $toptype, ' copyMe()')"/><xsl:if test="@abstract">;</xsl:if>
+            <xsl:if test="not(@abstract)">
+                {
+                   return new <xsl:value-of select="concat($thistype,'(this)')"/>;
+                }
+            </xsl:if>
+
+        </xsl:if>
         <xsl:if test="not(@abstract)">
 
         /**
@@ -377,12 +398,20 @@
 
             <xsl:choose>
                 <xsl:when test="vf:isArrayLike($m)">
-                    <xsl:value-of select="concat('this.',$m/name,'=(',$jt,'[])other.',$m/name)"/>;
+                    this.<xsl:value-of select="concat($m/name,'=(',$jt,'[])other.',$m/name)"/>;
                 </xsl:when>
                 <xsl:when test="$m/multiplicity/maxOccurs != 1"> <!-- TODO consider multiple references -->
-                    <xsl:value-of select="concat('this.',$m/name,'= new java.util.ArrayList', $lt, $jt, $gt,'()')"/>;
-                    <xsl:value-of select="concat('for(',$jt,' i : other.',$m/name, ')')"/>
-                    <xsl:value-of select="concat('   this.',$m/name,'.add(new ',$jt,'(i))')"/>;
+                            this.<xsl:value-of select="concat($m/name,'= new java.util.ArrayList', $lt, $jt, $gt,'()')"/>;
+                    for(<xsl:value-of select="concat($jt,' i : other.',$m/name, ')')"/>
+                    <xsl:choose>
+                        <xsl:when test="$t/extends">
+                            <xsl:value-of select="concat('   this.',$m/name,'.add((',$jt,')i.copyMe())')"/>;
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="concat('   this.',$m/name,'.add(new ',$jt,'(i))')"/>;
+                        </xsl:otherwise>
+                    </xsl:choose>
+
                 </xsl:when>
                 <xsl:when test="$t/name() = 'primitiveType' or $m/name() = 'reference' or $t/name() = 'enumeration'">
                     <xsl:value-of select="concat('this.',$m/name,'= other.',$m/name)"/>;
