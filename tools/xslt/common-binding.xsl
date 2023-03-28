@@ -214,6 +214,11 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
         <xsl:param name="el" as="element()"/>
         <xsl:sequence select="number($el/multiplicity/minOccurs) = 0 and number($el/multiplicity/maxOccurs) = 1" />
     </xsl:function>
+    <xsl:function name="vf:isArrayLike" as="xsd:boolean">
+        <xsl:param name="el" as="element()"/>
+        <xsl:sequence select="number($el/multiplicity/minOccurs) >  1 and number($el/multiplicity/maxOccurs) > 1" />
+    </xsl:function>
+
 
     <xsl:function name="vf:isRdbSingleTable" as="xsd:boolean">
         <xsl:param name="modelName" as="xsd:string"/>

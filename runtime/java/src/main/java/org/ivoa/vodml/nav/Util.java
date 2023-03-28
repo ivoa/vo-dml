@@ -122,6 +122,15 @@ public class Util {
     }
     }
 
+    public static <T extends ObjectCopier<T>> List<? extends T> cloneList(List<? extends T> l)
+    {
+         List<T> retval = new ArrayList<T>();
+         for(T i: l)
+         {
+             retval.add(i.objectCopy(i));
+         }
+        return retval;
+    }
 
 }
 
