@@ -353,52 +353,15 @@
           }
         </xsl:if>
         <xsl:if test="not(@abstract)">
-        @Override
-        public <xsl:value-of select="name"/> objectCopy(<xsl:value-of select="name"/> o)
-        {
-           return new <xsl:value-of select="name"/>(o);
-        }
-        </xsl:if>
+
         /**
         * Copy Constructor. Note that references will remain as is rather than be copied.
         */
         public  <xsl:value-of select="name"/> ( final <xsl:value-of select="name"/> other)
         {
-              <xsl:variable name="copyparams" as="xsd:string*">
-                  <xsl:for-each select="$superparams">
-                      <xsl:variable name="m" select="$models/key('ellookup',current())"/>
-                      <xsl:variable name="jt">
-                      <xsl:choose>
-                          <xsl:when test="count($subsets/role[vodml-ref = current()])>0">
-                              <xsl:value-of select="vf:JavaType($subsets[role/vodml-ref = current()]/datatype/vodml-ref)"/>
-                          </xsl:when>
-                          <xsl:otherwise>
-                              <xsl:value-of select="vf:JavaType($m/datatype/vodml-ref)"/>
-                          </xsl:otherwise>
-                      </xsl:choose>
-                      </xsl:variable>
-                      <xsl:variable name="t" select="$models/key('ellookup',$m/datatype/vodml-ref)"/>
+           super ();
 
-                      <xsl:choose>
-                          <xsl:when test="$m/multiplicity/maxOccurs != 1">
-                              <xsl:value-of select="concat('(java.util.List', $lt, $jt, $gt,')org.ivoa.vodml.nav.Util.cloneList(other.',$m/name,')')"/>
-                          </xsl:when>
-                          <xsl:when test="$t/name() = 'primitive' or $m/name() = 'reference' or $t/name() = 'enumeration'">
-                              <xsl:value-of select="concat('(',$jt,')other.',$m/name)"/>
-                          </xsl:when>
-                          <xsl:when test="count($subsets/role[vodml-ref = current()])>0">
-                              <xsl:value-of select="concat('(',$jt,')other.',$m/name)"/>
-                          </xsl:when>
-                          <xsl:otherwise>
-                              <xsl:value-of select="concat('new ',$jt,'(other.',$m/name,')')"/>
-                          </xsl:otherwise>
-                      </xsl:choose>
-                  </xsl:for-each>
-              </xsl:variable>
-              super (
-                 <xsl:value-of select="string-join($copyparams,',')"/>
-              );
-        <xsl:for-each select="$localmembers">
+        <xsl:for-each select="$members">
         <xsl:variable name="m" select="$models/key('ellookup',current())"/>
             <xsl:variable name="jt">
                 <xsl:choose>
@@ -411,26 +374,33 @@
                 </xsl:choose>
             </xsl:variable>
             <xsl:variable name="t" select="$models/key('ellookup',$m/datatype/vodml-ref)"/>
+
             <xsl:choose>
                 <xsl:when test="vf:isArrayLike($m)">
                     <xsl:value-of select="concat('this.',$m/name,'=(',$jt,'[])other.',$m/name)"/>;
                 </xsl:when>
-                <xsl:when test="$m/multiplicity/maxOccurs != 1">
-                    <xsl:value-of select="concat('this.',$m/name,'=(java.util.List', $lt, $jt, $gt,')org.ivoa.vodml.nav.Util.cloneList(other.',$m/name,')')"/>;
+                <xsl:when test="$m/multiplicity/maxOccurs != 1"> <!-- TODO consider multiple references -->
+                    <xsl:value-of select="concat('this.',$m/name,'= new java.util.ArrayList', $lt, $jt, $gt,'()')"/>;
+                    <xsl:value-of select="concat('for(',$jt,' i : other.',$m/name, ')')"/>
+                    <xsl:value-of select="concat('   this.',$m/name,'.add(new ',$jt,'(i))')"/>;
                 </xsl:when>
-                <xsl:when test="$m/name() = 'primitive' or $m/name() = 'reference' or $t/name() = 'enumeration'">
+                <xsl:when test="$t/name() = 'primitiveType' or $m/name() = 'reference' or $t/name() = 'enumeration'">
                     <xsl:value-of select="concat('this.',$m/name,'= other.',$m/name)"/>;
                 </xsl:when>
                 <xsl:when test="count($subsets/role[vodml-ref = current()])>0">
                     <xsl:value-of select="concat('this.',$m/name,'=(',$jt,')other.',$m/name)"/>;
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="concat('this.',$m/name,'= new ',$jt,'(other.',$m/name,')')"/>;
+                    <xsl:if test="not($t/@abstract)">
+                    <xsl:value-of select="concat('if (this.',$m/name,' != null )this.',$m/name,'= new ',$jt,'(other.',$m/name,')')"/>;
+                    </xsl:if>
                 </xsl:otherwise>
             </xsl:choose>
+
         </xsl:for-each>
 
         }
+        </xsl:if>
     </xsl:template>
 
   <xsl:template match="attribute|composition|reference" mode="paramDecl">
@@ -493,7 +463,6 @@
           <xsl:sequence>
               <xsl:if test="vf:referredTo($vodml-ref)">org.ivoa.vodml.jaxb.XmlIdManagement</xsl:if>
               <xsl:if test="name(current())='objectType'">org.ivoa.vodml.jpa.JPAManipulations</xsl:if>
-              <xsl:if test="not(@abstract)"><xsl:value-of select="concat('org.ivoa.vodml.nav.ObjectCopier',$lt,name,$gt)"/></xsl:if>
           </xsl:sequence>
       </xsl:variable>
       <xsl:if test="count($ifs)> 0"><xsl:value-of select="concat(' implements ', string-join($ifs,','))"/> </xsl:if>

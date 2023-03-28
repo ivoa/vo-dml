@@ -13,6 +13,7 @@ import javax.xml.transform.TransformerException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import org.checkerframework.checker.nullness.qual.AssertNonNullIfNonNull;
 import org.hibernate.Session;
 import org.ivoa.dm.sample.SampleModel;
 import org.ivoa.dm.sample.catalog.inner.SourceCatalogue;
@@ -149,6 +150,20 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
        long nsrc = (long) em.createQuery("select count(o) from SDSSSource o").getSingleResult();
        assertEquals(2, nsrc,"number of sources");
        
+   }
+   
+   @org.junit.jupiter.api.Test
+   void sourceCatCopyTest() throws JsonProcessingException
+   {
+       SourceCatalogue newsc = new SourceCatalogue(sc);
+       assertNotNull(newsc);
+       sc.setName("sillytest");
+       assertEquals("testCat", newsc.getName());
+       SampleModel model = new SampleModel();
+       model.addContent(sc);
+       model.addContent(newsc);
+       SampleModel modelin = roundTripJSON(model.management());
+       assertNotNull(modelin);
    }
 
 }
