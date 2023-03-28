@@ -4,7 +4,7 @@
 </xsl:text>">
 <!ENTITY bl "<xsl:text> </xsl:text>">
 ]>
-<xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:bnd="http://www.ivoa.net/xml/vodml-binding/v0.9.1"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                 xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
@@ -204,7 +204,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
 
 
 
-    <!-- it would be better if this function was not needed and every vodml-id also contained the model prefix -->
+    <!-- it would be better if this function was not needed and every vodml-id also contained the model prefix - or vodml-id removed entirely... -->
     <xsl:function name="vf:asvodmlref" as="xsd:string">
         <xsl:param name="el" as="element()"/>
         <xsl:value-of select="concat($el/ancestor::vo-dml:model/name,':',$el/vodml-id/text())"/>
@@ -464,8 +464,8 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
         <xsl:value-of select="count($subsets[role/vodml-ref = $vodml-ref]) > 0" />
     </xsl:function>
 
-    <!-- Thiis will return all the subsets found in the hierarchy - will not return subset when it is the same type as the thing it subsets
-     qlso shouuld take care of multiple levels of subsetting...-->
+    <!-- This will return all the subsets found in the hierarchy - will not return subset when it is the same type as the thing it subsets -
+     qlso should take care of multiple levels of subsetting...-->
     <xsl:function name="vf:subSettingInSuperHierarchy" as="element()*">
         <xsl:param name="vodml-ref" as="xsd:string"/>
 <!--        <xsl:message select="concat('subsetting in hierarchy for=',$vodml-ref)"/>-->
@@ -504,11 +504,15 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
   -->
     <xsl:function name="vf:subSettingInSubHierarchy" as="element()*">
         <xsl:param name="vodml-ref" as="xsd:string"/>
-        <!--        <xsl:message select="concat('subsetting in hierarchy for=',$vodml-ref)"/>-->
+<!--                <xsl:message select="concat('subsetting in hierarchy for=',$vodml-ref)"/>-->
         <xsl:choose>
             <xsl:when test="$models/key('ellookup',$vodml-ref)">
-                <xsl:variable name="allsubsets" select="vf:subTypes($vodml-ref)/constraint[ends-with(@xsi:type,':SubsettedRole')]" as="element()*"/>
-<!--                                <xsl:message>subtypes=<xsl:value-of select="string-join(vf:subTypes($vodml-ref)/name,',')"/> subsets=<xsl:value-of select="string-join($allsubsets/role/vodml-ref,',')"/></xsl:message>-->
+                <xsl:variable name="locals" as="xsd:string*">
+                    <xsl:for-each select="$models/key('ellookup',$vodml-ref)/(attribute|composition|reference)"><xsl:value-of select="vf:asvodmlref(current())"/></xsl:for-each>
+                </xsl:variable>
+<!--                <xsl:message select="concat('sslocals=', string-join($locals,','))"/>-->
+                <xsl:variable name="allsubsets" select="vf:subTypes($vodml-ref)/constraint[ends-with(@xsi:type,':SubsettedRole') and role/vodml-ref = $locals]" as="element()*"/>
+<!--                <xsl:message>sssubtypes=<xsl:value-of select="string-join(vf:subTypes($vodml-ref)/name,',')"/> subsets=<xsl:value-of select="string-join($allsubsets/role/vodml-ref,',')"/></xsl:message>-->
 
                 <!-- cannot see hy this will not work - actually because of the context in key() call
                <xsl:copy-of select="$allsubsets[datatype/vodml-ref != $models/key('ellookup',role/vodml-ref)/datatype/vodml-ref]"/>
@@ -526,6 +530,57 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
         </xsl:choose>
 
     </xsl:function>
+
+    <!--
+     Returns a list of vomdml refs for the Object/DataType members that should be declared locally to a particular Class in Java. It applies
+     some heuristics to try to push declarations as far down the Java class inheritance hierarchy as possible to
+     have as much type safety as possible - this is particularly applied in the case of subsetting.
+    -->
+    <xsl:function name="vf:javaLocalDefines" as="xsd:string*">
+
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+<!--        <xsl:message select="concat('javalocals for ',$vodml-ref)"/>-->
+        <xsl:variable name="m" select="$models/key('ellookup',$vodml-ref)"/>
+        <xsl:variable name="localdefs" select="for $v in $m/(attribute,composition,reference) return vf:asvodmlref($v)"/>
+        <xsl:variable name="subsubs" select="vf:subSettingInSubHierarchy($vodml-ref)"/>
+        <xsl:choose>
+            <xsl:when test="$m and $m/name() = ('objectType','dataType')">
+                <xsl:sequence>
+                    <xsl:choose>
+                        <xsl:when test="$m/@abstract">
+                            <xsl:for-each select="$m/(attribute[not(vf:asvodmlref(.) = $subsubs/role/vodml-ref)],composition,reference)">
+                                <xsl:value-of select="vf:asvodmlref(current())"/>
+                           </xsl:for-each>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:for-each select="$m/(attribute,composition,reference)">
+                                <xsl:value-of select="vf:asvodmlref(current())"/>
+                            </xsl:for-each>
+<!--                            <xsl:message>localsub==<xsl:value-of select="$models/key('ellookup',$m/constraint[ends-with(@xsi:type,':SubsettedRole')]/role/vodml-ref)/parent::*/@abstract"/> </xsl:message>-->
+                            <xsl:for-each select="$m/constraint[ends-with(@xsi:type,':SubsettedRole')]">
+                                <xsl:if test="$models/key('ellookup',current()/role/vodml-ref)/parent::*/@abstract and $models/key('ellookup',current()/role/vodml-ref)/name() = 'attribute'"> <!-- TODO this was a fairly arbitrary rule - not sure that it is necessary. -->
+                                <xsl:value-of select="current()/role/vodml-ref"/>
+                                </xsl:if>
+                            </xsl:for-each>
+                        </xsl:otherwise>
+                    </xsl:choose>
+
+                </xsl:sequence>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">type '<xsl:value-of select="$vodml-ref"/>' not in considered models or wrong type (<xsl:value-of select="$m/name()"/>) </xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
+    <!-- returns the vodml-refs of the members including inherited ones for java purposes -->
+    <xsl:function name="vf:javaAllMembers" as="xsd:string*">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="supers" select="($models/key('ellookup',$vodml-ref),vf:baseTypes($vodml-ref))"/>
+<!--        <xsl:message select="concat('allmember=',$vodml-ref, ' supers=', string-join($supers/name,','))"/>-->
+            <xsl:sequence select="for $s in $supers return vf:javaLocalDefines(vf:asvodmlref($s))"/>
+    </xsl:function>
+
 
     <xsl:function name="vf:importedModelNames" as="xsd:string*">
         <xsl:param name="model" as="element()"/>

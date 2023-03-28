@@ -198,11 +198,9 @@
 
     <xsl:template match="objectType|dataType" mode="builder">
         <xsl:variable name="this" select="."/>
-        <xsl:variable name="subsetsInSubtypes" select="vf:subSettingInSubHierarchy(vf:asvodmlref(current()))/role/vodml-ref" as="xsd:string*"/>
+<!--        <xsl:variable name="subsetsInSubtypes" select="vf:subSettingInSubHierarchy(vf:asvodmlref(current()))/role/vodml-ref" as="xsd:string*"/>-->
 
-        <xsl:variable name="members" as="xsd:string*">
-               <xsl:call-template name="allInheritedMembers"/>
-        </xsl:variable>
+        <xsl:variable name="members" as="xsd:string*" select="vf:javaAllMembers(vf:asvodmlref($this))" />
         <xsl:variable name="subsets" select="vf:subSettingInSuperHierarchy(vf:asvodmlref(current()))" as="element()*"/>
 
         /**
@@ -273,26 +271,27 @@
          }
     </xsl:template>
 
-    <!-- generate a all member constructor
+    <!-- generate an all member constructor
 
     -->
     <xsl:template match="objectType|dataType" mode="constructor">
         <xsl:variable name="this" select="."/>
         <xsl:variable name="subsetsInSubtypes" select="distinct-values(vf:subSettingInSubHierarchy(vf:asvodmlref(current()))/role/vodml-ref)" as="xsd:string*"/>
 
-        <xsl:variable name="members" as="xsd:string*"  >
-            <xsl:call-template name="allInheritedMembers" />
-        </xsl:variable>
-
+        <xsl:variable name="members" as="xsd:string*" select="vf:javaAllMembers(vf:asvodmlref($this))" />
         <xsl:variable name="subsets" select="vf:subSettingInSuperHierarchy(vf:asvodmlref(current()))" as="element()*" />
 
         <xsl:variable name="consmembers" select="($members)"/>
-        <xsl:variable name="localmembers" select="((for $v in (attribute,composition,reference) return vf:asvodmlref($v)))"/>
+        <xsl:variable name="localmembers" select="vf:javaLocalDefines(vf:asvodmlref($this))" as="xsd:string*"/>
 
-
+        <xsl:variable name="superparams" as="xsd:string*">
+            <xsl:if test="extends">
+                <xsl:sequence select="vf:javaAllMembers(extends/vodml-ref)"/>
+            </xsl:if>
+        </xsl:variable>
         <xsl:message>members=<xsl:value-of select="string-join($members,',')"/></xsl:message>
-        <xsl:message>subsets=<xsl:value-of select="string-join(for $w in $subsets return concat($w/role/vodml-ref,'==', $w/datatype/vodml-ref,'|', $models/key('ellookup',$w/role/vodml-ref)/name(), '|', $models/key('ellookup',$w/role/vodml-ref)/multiplicity/maxOccurs),', ')"/></xsl:message>
-        <xsl:message><xsl:value-of select="concat('subsetssub=',string-join($subsetsInSubtypes,','),  ' cons=',string-join($consmembers,','),  ' loc=',string-join($localmembers,','))"/></xsl:message>
+        <xsl:message>subsets=<xsl:value-of select="concat(string-join(for $w in $subsets return concat($w/role/vodml-ref,'==', $w/datatype/vodml-ref,'|', $models/key('ellookup',$w/role/vodml-ref)/name(), '|', $models/key('ellookup',$w/role/vodml-ref)/multiplicity/maxOccurs),', '),' subsetssub=',string-join($subsetsInSubtypes,','))"/></xsl:message>
+        <xsl:message><xsl:value-of select="concat('cons=',string-join($consmembers,','),  ' loc=',string-join($localmembers,','),  ' sup=',string-join($superparams,','))"/></xsl:message>
         <xsl:variable name="decls" as="map(xsd:string,text())">
             <xsl:map>
             <xsl:for-each select="$consmembers">
@@ -346,8 +345,7 @@
           <xsl:value-of select="string-join(for $v in ($consmembers) return map:get($decls, $v),', ')"/>
         )
         {
-            <xsl:variable name="supermemb" select="$consmembers[not(. = $localmembers)]"/>
-            super(<xsl:value-of select="string-join(for $v in $supermemb return $models/key('ellookup',$v)/name,',')"/>);
+            super(<xsl:value-of select="string-join(for $v in $superparams return $models/key('ellookup',$v)/name,',')"/>);
            <xsl:for-each select="$localmembers">
                <xsl:variable name="m" select="$models/key('ellookup',current())"/>
            this.<xsl:value-of select="$m/name"/> = <xsl:value-of select="$m/name"/>;
@@ -470,6 +468,7 @@
       /** serial uid = last modification date of the UML model */
       private static final long serialVersionUID = LAST_MODIFICATION_DATE;
  -->
+      <xsl:variable name="localdefs" select="vf:javaLocalDefines($vodml-ref)"/>
       <xsl:apply-templates select="attribute" mode="declare" />
       <xsl:apply-templates select="constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="declare" />
       <xsl:apply-templates select="composition" mode="declare" />
@@ -507,6 +506,7 @@
       <xsl:if test="not(@abstract)">
       <xsl:apply-templates select="." mode="builder"/>
       </xsl:if>
+
       <xsl:apply-templates select="." mode="jpawalker"/>
       <xsl:apply-templates select="." mode="cloner"/>
 
