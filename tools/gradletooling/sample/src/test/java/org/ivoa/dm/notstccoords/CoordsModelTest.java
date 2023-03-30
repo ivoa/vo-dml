@@ -30,8 +30,8 @@ class CoordsModelTest extends AbstractTest {
     /** logger for this class */
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory
             .getLogger(CoordsModelTest.class);
-    private CelestialPoint pos1;
-    private CoordSys spacesys;
+    private SphericalPoint pos1;
+    private SpaceSys spacesys;
     private SpaceFrame icrs;
     
     /**
@@ -54,9 +54,11 @@ class CoordsModelTest extends AbstractTest {
         SpaceFrame fk4 = new SpaceFrame().withEquinox("B1950").withRefPosition(geocentric).withSpaceRefFrame("FK4");
         
         Unit degree = new Unit("degree");
+        Unit metre = new Unit("metre");
         PhysicalCoordSpace coordspace = new SphericalCoordSpace();
         spacesys = new SpaceSys(coordspace, icrs);
-        pos1 = new CelestialPoint(new RealQuantity(45.0, degree), new RealQuantity(22.0, degree), spacesys );
+        
+        pos1 = new SphericalPoint(new RealQuantity(45.0, degree), new RealQuantity(22.0, degree),new RealQuantity(22.0, metre), spacesys );
         
         
         

@@ -374,6 +374,8 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
         </xsl:choose>
     </xsl:function>
 
+
+
     <!-- is the type (or supertypes) contained anywhere -->
     <xsl:function name="vf:isContained" as="xsd:boolean">
         <xsl:param name="vodml-ref" as="xsd:string"/>
@@ -444,7 +446,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
 
     </xsl:function>
 
-    <!-- is the attribute subsetted - for it to be truly subsetted it needs to be subtyped too-->
+    <!-- is the member subsetted - for it to be truly subsetted from a type point of view (not just semantic)it needs to be subtyped too-->
     <xsl:function name="vf:isSubSetted" as="xsd:boolean">
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:choose>
@@ -459,7 +461,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
                 <xsl:message terminate="yes">type '<xsl:value-of select="$vodml-ref"/>' not in considered models</xsl:message>
             </xsl:otherwise>
         </xsl:choose>
-    </xsl:function>
+     </xsl:function>
 
     <xsl:function name="vf:isSubSettedInHierarchy" as="xsd:boolean">
         <xsl:param name="type"  as="xsd:string" />
@@ -502,10 +504,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
     </xsl:function>
 
 
-    <!-- This will return all the subsets found in the sub hierarchy - will not return subset when it is the same type as the thing it subsets (happens when the only reason for the subset is semantic constaint?)
-    In addition does not return subsets for composition
-
-    FIXME - this needs to only return the subsets for members of the starting point.
+    <!-- This will return all the subsets found in the sub hierarchy - will not return subset when it is the same type as the thing it subsets (happens when the only reason for the subset is semantic constraint?)
   -->
     <xsl:function name="vf:subSettingInSubHierarchy" as="element()*">
         <xsl:param name="vodml-ref" as="xsd:string"/>

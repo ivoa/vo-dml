@@ -401,17 +401,19 @@
                     this.<xsl:value-of select="concat($m/name,'=(',$jt,'[])other.',$m/name)"/>;
                 </xsl:when>
                 <xsl:when test="$m/multiplicity/maxOccurs != 1"> <!-- TODO consider multiple references -->
-                            this.<xsl:value-of select="concat($m/name,'= new java.util.ArrayList', $lt, $jt, $gt,'()')"/>;
-                    for(<xsl:value-of select="concat($jt,' i : other.',$m/name, ')')"/>
+                    this.<xsl:value-of select="concat($m/name, ' = other.',$m/name,'.stream().map(s -',$gt)"/>
                     <xsl:choose>
-                        <xsl:when test="$t/extends">
-                            <xsl:value-of select="concat('   this.',$m/name,'.add((',$jt,')i.copyMe())')"/>;
+                        <xsl:when test="count($subsets/role[vodml-ref = current()])>0 ">
+                            <xsl:value-of select="concat('((',$jt,')s).copyMe()' )"/>
+                        </xsl:when>
+                        <xsl:when test="$t/@abstract">
+                            <xsl:value-of select="concat('(',$jt,')s.copyMe()' )"/>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:value-of select="concat('   this.',$m/name,'.add(new ',$jt,'(i))')"/>;
+                            <xsl:value-of select="concat(' new ',$jt,'((',$jt,')s )')"/>
                         </xsl:otherwise>
                     </xsl:choose>
-
+                    <xsl:value-of select="').collect(java.util.stream.Collectors.toList())'"/>;
                 </xsl:when>
                 <xsl:when test="$t/name() = 'primitiveType' or $m/name() = 'reference' or $t/name() = 'enumeration'">
                     <xsl:value-of select="concat('this.',$m/name,'= other.',$m/name)"/>;
@@ -434,6 +436,7 @@
 
   <xsl:template match="attribute|composition|reference" mode="paramDecl">
       <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
+      <xsl:variable name="rt" select="$models/key('ellookup',datatype/vodml-ref)"/>
       <xsl:choose>
           <xsl:when test="name()='composition' and multiplicity/maxOccurs != 1" >
               <xsl:choose>
@@ -450,6 +453,9 @@
               <xsl:choose>
                   <xsl:when test="xsd:int(multiplicity/maxOccurs) gt 1">
                       <xsl:value-of select="concat($type, '[] ',name)" />
+                  </xsl:when>
+                  <xsl:when test="multiplicity/maxOccurs = -1 and $rt/@abstract" >
+                      <xsl:value-of select="concat('java.util.List',$lt,'? extends ',$type,$gt, ' ',name)" />
                   </xsl:when>
                   <xsl:when test="multiplicity/maxOccurs = -1">
                       <xsl:value-of select="concat('java.util.List',$lt,$type,$gt, ' ',name)" />
@@ -891,7 +897,9 @@ package <xsl:value-of select="$path"/>;
 
   <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="declare">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
-    /**
+      <xsl:variable name="rt" select="$models/key('ellookup',datatype/vodml-ref)"/>
+
+      /**
     * <xsl:apply-templates select="." mode="desc" />
     * composition <xsl:value-of select="name"/> :
     * (
@@ -902,8 +910,8 @@ package <xsl:value-of select="$path"/>;
     <xsl:apply-templates select="." mode="JPAAnnotation"/>
     <xsl:call-template name="vodmlAnnotation"/>
       <xsl:choose>
-          <xsl:when test="vf:isSubSetted(vf:asvodmlref(.))">
-     protected List&lt;? extends <xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="name"/> = null; // IMPL is subsetted
+           <xsl:when test="vf:isSubSetted(vf:asvodmlref(.)) "><!--  or $rt/@abstract or vf:hasSubTypes(datatype/vodml-ref)-->
+     protected List&lt;? extends <xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="name"/> = null;
           </xsl:when>
           <xsl:otherwise>
      protected List&lt;<xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="name"/> = null;

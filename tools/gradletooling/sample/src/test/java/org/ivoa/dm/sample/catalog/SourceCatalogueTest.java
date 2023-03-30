@@ -13,7 +13,6 @@ import javax.xml.transform.TransformerException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import org.checkerframework.checker.nullness.qual.AssertNonNullIfNonNull;
 import org.hibernate.Session;
 import org.ivoa.dm.sample.SampleModel;
 import org.ivoa.dm.sample.catalog.inner.SourceCatalogue;
