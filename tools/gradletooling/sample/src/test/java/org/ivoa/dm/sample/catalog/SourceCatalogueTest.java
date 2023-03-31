@@ -156,11 +156,13 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
    {
        SourceCatalogue newsc = new SourceCatalogue(sc);
        assertNotNull(newsc);
+       assertNotNull(newsc.getEntry().get(0).position);
        sc.setName("sillytest");
        assertEquals("testCat", newsc.getName());
        SampleModel model = new SampleModel();
        model.addContent(sc);
        model.addContent(newsc);
+       model.makeRefIDsUnique();
        SampleModel modelin = roundTripJSON(model.management());
        assertNotNull(modelin);
    }

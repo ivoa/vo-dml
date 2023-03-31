@@ -423,7 +423,7 @@
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:if test="not($t/@abstract)">
-                    <xsl:value-of select="concat('if (this.',$m/name,' != null )this.',$m/name,'= new ',$jt,'(other.',$m/name,')')"/>;
+                    <xsl:value-of select="concat('if (other.',$m/name,' != null )this.',$m/name,'= new ',$jt,'(other.',$m/name,')')"/>;
                     </xsl:if>
                 </xsl:otherwise>
             </xsl:choose>
