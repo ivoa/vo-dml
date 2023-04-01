@@ -395,7 +395,7 @@
         </xsl:if>
 
         <xsl:if test="not(@abstract) and extends ">
-            <xsl:variable name="sparms" select="(concat('final ',$supertype/name, ' superinstance'), for $v in $localmembers return map:get($decls, $v))"/>
+            <xsl:variable name="sparms" select="(concat('final ',vf:JavaType(extends/vodml-ref), ' superinstance'), for $v in $localmembers return map:get($decls, $v))"/>
             /**
             * Constructor from supertype instance.
             */
