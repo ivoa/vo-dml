@@ -1,6 +1,5 @@
 plugins {
     id("net.ivoa.vo-dml.vodmltools") version "0.3.15"
-//    id ("com.diffplug.spotless") version "5.17.1"
     `maven-publish`
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
     signing
@@ -14,10 +13,11 @@ repositories {
 }
 
 group = "org.javastro.ivoa.vo-dml"
-version = "1.0-SNAPSHOT"
+version = "1.1-SNAPSHOT"
 
 vodml {
     vodmlDir.set(file("vo-dml"))
+    vodslDir.set(file("model"))
     bindingFiles.setFrom(file("vo-dml/ivoa_base.vodml-binding.xml")
     )
 

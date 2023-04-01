@@ -66,6 +66,11 @@ This is a sample file for mapping VO-DML models to XSD or Java using the gradle 
   <java-type>org.ivoa.vodml.stdtypes.Complex</java-type>
   <xsd-type>xsd:float</xsd-type>
 </type-mapping>
+  <type-mapping>
+    <vodml-id>Unit</vodml-id>
+    <java-type primitive-value-field="value">org.ivoa.vodml.stdtypes.Unit</java-type>
+    <xsd-type>xsd:string</xsd-type>
+  </type-mapping>
 </model>
 
 </m:mappedModels>
