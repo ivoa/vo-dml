@@ -276,6 +276,7 @@
     -->
     <xsl:template match="objectType|dataType" mode="constructor">
         <xsl:variable name="this" select="."/>
+        <xsl:variable name="supertype" select="$models/key('ellookup',current()/extends/vodml-ref)"/>
         <xsl:variable name="subsetsInSubtypes" select="distinct-values(vf:subSettingInSubHierarchy(vf:asvodmlref(current()))/role/vodml-ref)" as="xsd:string*"/>
 
         <xsl:variable name="members" as="xsd:string*" select="vf:javaAllMembers(vf:asvodmlref($this))" />
@@ -383,57 +384,81 @@
            super ();
 
         <xsl:for-each select="$members">
-        <xsl:variable name="m" select="$models/key('ellookup',current())"/>
-            <xsl:variable name="jt">
-                <xsl:choose>
-                    <xsl:when test="count($subsets/role[vodml-ref = current()])>0">
-                        <xsl:value-of select="vf:JavaType($subsets[role/vodml-ref = current()]/datatype/vodml-ref)"/>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="vf:JavaType($m/datatype/vodml-ref)"/>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:variable>
-            <xsl:variable name="t" select="$models/key('ellookup',$m/datatype/vodml-ref)"/>
-
-            <xsl:choose>
-                <xsl:when test="vf:isArrayLike($m)">
-                    this.<xsl:value-of select="concat($m/name,'=(',$jt,'[])other.',$m/name)"/>;
-                </xsl:when>
-                <xsl:when test="$m/multiplicity/maxOccurs != 1"> <!-- TODO consider multiple references -->
-                    this.<xsl:value-of select="concat($m/name, ' = other.',$m/name,'.stream().map(s -',$gt)"/>
-                    <xsl:choose>
-                        <xsl:when test="count($subsets/role[vodml-ref = current()])>0 ">
-                            <xsl:value-of select="concat('((',$jt,')s).copyMe()' )"/>
-                        </xsl:when>
-                        <xsl:when test="$t/@abstract">
-                            <xsl:value-of select="concat('(',$jt,')s.copyMe()' )"/>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:value-of select="concat(' new ',$jt,'((',$jt,')s )')"/>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                    <xsl:value-of select="').collect(java.util.stream.Collectors.toList())'"/>;
-                </xsl:when>
-                <xsl:when test="$t/name() = 'primitiveType' or $m/name() = 'reference' or $t/name() = 'enumeration'">
-                    <xsl:value-of select="concat('this.',$m/name,'= other.',$m/name)"/>;
-                </xsl:when>
-                <xsl:when test="count($subsets/role[vodml-ref = current()])>0">
-                    <xsl:value-of select="concat('this.',$m/name,'=(',$jt,')other.',$m/name)"/>;
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:if test="not($t/@abstract)">
-                    <xsl:value-of select="concat('if (other.',$m/name,' != null )this.',$m/name,'= new ',$jt,'(other.',$m/name,')')"/>;
-                    </xsl:if>
-                </xsl:otherwise>
-            </xsl:choose>
-
+            <xsl:variable name="m" select="$models/key('ellookup',current())"/>
+            <xsl:call-template name="copymember">
+                <xsl:with-param name="m" select="$m"/>
+                <xsl:with-param name="subsets" select="$subsets"/>
+            </xsl:call-template>
         </xsl:for-each>
 
         }
         </xsl:if>
-    </xsl:template>
 
+        <xsl:if test="not(@abstract) and extends ">
+            <xsl:variable name="sparms" select="(concat('final ',$supertype/name, ' superinstance'), for $v in $localmembers return map:get($decls, $v))"/>
+            /**
+            * Constructor from supertype instance.
+            */
+            public  <xsl:value-of select="name"/> ( <xsl:value-of select="string-join($sparms,',')"/> )
+            {
+            super (<xsl:if test="not($supertype/@abstract)">superinstance</xsl:if>);
+            <xsl:for-each select="$localmembers">
+                <xsl:variable name="m" select="$models/key('ellookup',current())"/>
+                this.<xsl:value-of select="$m/name"/> = <xsl:value-of select="$m/name"/>;
+            </xsl:for-each>
+
+            }
+        </xsl:if>
+    </xsl:template>
+    <xsl:template name="copymember">
+        <xsl:param name="m" as="element()"/>
+        <xsl:param name="subsets" as="element()*"/>
+
+        <xsl:variable name="jt">
+            <xsl:choose>
+                <xsl:when test="count($subsets/role[vodml-ref = current()])>0">
+                    <xsl:value-of select="vf:JavaType($subsets[role/vodml-ref = current()]/datatype/vodml-ref)"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="vf:JavaType($m/datatype/vodml-ref)"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="t" select="$models/key('ellookup',$m/datatype/vodml-ref)"/>
+
+        <xsl:choose>
+            <xsl:when test="vf:isArrayLike($m)">
+                this.<xsl:value-of select="concat($m/name,'=(',$jt,'[])other.',$m/name)"/>;
+            </xsl:when>
+            <xsl:when test="$m/multiplicity/maxOccurs != 1"> <!-- TODO consider multiple references -->
+                this.<xsl:value-of select="concat($m/name, ' = other.',$m/name,'.stream().map(s -',$gt)"/>
+                <xsl:choose>
+                    <xsl:when test="count($subsets/role[vodml-ref = current()])>0 ">
+                        <xsl:value-of select="concat('((',$jt,')s).copyMe()' )"/>
+                    </xsl:when>
+                    <xsl:when test="$t/@abstract">
+                        <xsl:value-of select="concat('(',$jt,')s.copyMe()' )"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="concat(' new ',$jt,'((',$jt,')s )')"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <xsl:value-of select="').collect(java.util.stream.Collectors.toList())'"/>;
+            </xsl:when>
+            <xsl:when test="$t/name() = 'primitiveType' or $m/name() = 'reference' or $t/name() = 'enumeration'">
+                <xsl:value-of select="concat('this.',$m/name,'= other.',$m/name)"/>;
+            </xsl:when>
+            <xsl:when test="count($subsets/role[vodml-ref = current()])>0">
+                <xsl:value-of select="concat('this.',$m/name,'=(',$jt,')other.',$m/name)"/>;
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:if test="not($t/@abstract)">
+                    <xsl:value-of select="concat('if (other.',$m/name,' != null )this.',$m/name,'= new ',$jt,'(other.',$m/name,')')"/>;
+                </xsl:if>
+            </xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:template>
   <xsl:template match="attribute|composition|reference" mode="paramDecl">
       <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
       <xsl:variable name="rt" select="$models/key('ellookup',datatype/vodml-ref)"/>
