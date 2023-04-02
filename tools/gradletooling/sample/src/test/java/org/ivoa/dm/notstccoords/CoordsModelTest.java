@@ -70,7 +70,7 @@ class CoordsModelTest extends AbstractTest {
         
     }
     @Test
-    void TestCoordsXML() throws JAXBException {
+    void TestCoordsXML() throws JAXBException, TransformerConfigurationException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
         logger.debug("Starting XML test");
         JAXBContext jc = CoordsModel.contextFactory();
         CoordsModel model = new CoordsModel();
@@ -88,3 +88,4 @@ class CoordsModelTest extends AbstractTest {
 
 
     }
+}
