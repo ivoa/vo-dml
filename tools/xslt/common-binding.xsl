@@ -124,7 +124,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
 
                   <xsl:variable name="root" select="$mapping/bnd:mappedModels/model[name=$modelname]/java-package"/>
                   <xsl:variable name="path"
-                                select="string-join($models/key('ellookup',$vodml-ref)/ancestor-or-self::*[name() != 'vo-dml:model']/name,'.')"/>
+                                select="string-join($models/key('ellookup',$vodml-ref)/(ancestor::*[name() != 'vo-dml:model']/string(name),concat(upper-case(substring(name,1,1)),substring(name,2))),'.')"/>
                   <xsl:value-of select="concat($root,'.',$path)"/>
               </xsl:otherwise>
           </xsl:choose>
@@ -672,5 +672,8 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
-
+    <xsl:function name="vf:capitalize">
+        <xsl:param name="name"/>
+        <xsl:value-of select="concat(upper-case(substring($name,1,1)),substring($name,2))"/>
+    </xsl:function>
 </xsl:stylesheet>

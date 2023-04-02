@@ -172,10 +172,10 @@
     <xsl:variable name="mappedtype" select="vf:findmapping($vodml-ref,'java')"/>
      <xsl:choose>
     <xsl:when test="not($mappedtype) or $mappedtype = ''" >
-      <xsl:variable name="file" select="concat($output_root, '/', $dir, '/', name, '.java')"/>
+      <xsl:variable name="file" select="concat($output_root, '/', $dir, '/', vf:capitalize(name), '.java')"/>
 
     <!-- open file for this class -->
-      <xsl:message >Writing to Class file <xsl:value-of select="$file"/> base=<xsl:value-of select="vf:baseTypes($vodml-ref)/name"/> haschildren=<xsl:value-of select="vf:hasSubTypes($vodml-ref)"/> contained=<xsl:value-of select="vf:isContained($vodml-ref)"/> referredto=<xsl:value-of select="vf:referredTo($vodml-ref)"/> </xsl:message>
+      <xsl:message >Writing to Class file <xsl:value-of select="$file"/> base=<xsl:value-of select="vf:baseTypes($vodml-ref)/vf:capitalize(name)"/> haschildren=<xsl:value-of select="vf:hasSubTypes($vodml-ref)"/> contained=<xsl:value-of select="vf:isContained($vodml-ref)"/> referredto=<xsl:value-of select="vf:referredTo($vodml-ref)"/> </xsl:message>
       
       <xsl:result-document href="{$file}">
         <xsl:apply-templates select="." mode="class">
@@ -206,7 +206,7 @@
         /**
           A builder class for <xsl:value-of select="name"/>, mainly for use in the functional builder pattern.
         */
-        public static class <xsl:value-of select="name"/>Builder {
+        public static class <xsl:value-of select="vf:capitalize(name)"/>Builder {
            <xsl:for-each select="$members">
                <xsl:variable name="m" select="$models/key('ellookup',current())"/>
 <!--               <xsl:message>builder member=<xsl:value-of select="concat(current(),' ',name($m),' subs=',string-join($subsetsInSubtypes,','))"/> </xsl:message>-->
@@ -238,7 +238,7 @@
 
            </xsl:for-each>
 
-           private <xsl:value-of select="name"/>Builder with (java.util.function.Consumer &lt;<xsl:value-of select="name"/>Builder&gt; f)
+           private <xsl:value-of select="vf:capitalize(name)"/>Builder with (java.util.function.Consumer &lt;<xsl:value-of select="vf:capitalize(name)"/>Builder&gt; f)
            {
              f.accept(this);
              return this;
@@ -247,9 +247,9 @@
            *  create a <xsl:value-of select="name"/> from this builder.
            *  @return an object initialized from the builder.
            */
-           public <xsl:value-of select="name"/> create()
+           public <xsl:value-of select="vf:capitalize(name)"/> create()
            {
-             return new <xsl:value-of select="name"/> (
+             return new <xsl:value-of select="vf:capitalize(name)"/> (
           <!-- this ought to be concise, but reverses the subsets order for some reason
              <xsl:value-of select="string-join(for $v in ($members,$subsets/role/vodml-ref) return tokenize($v,'[.]')[last()], ',')" />
              -->
@@ -265,9 +265,9 @@
         *  @param f the functional builder.
         *  @return an object initialized from the builder.
         */
-         public static <xsl:value-of select="name"/>&bl;create<xsl:value-of select="name"/> (java.util.function.Consumer &lt;<xsl:value-of select="name"/>Builder&gt; f)
+         public static <xsl:value-of select="vf:capitalize(name)"/>&bl;create<xsl:value-of select="vf:capitalize(name)"/> (java.util.function.Consumer &lt;<xsl:value-of select="vf:capitalize(name)"/>Builder&gt; f)
          {
-             return new <xsl:value-of select="name"/>Builder().with(f).create();
+             return new <xsl:value-of select="vf:capitalize(name)"/>Builder().with(f).create();
          }
     </xsl:template>
 
@@ -342,7 +342,7 @@
         *   @param <xsl:value-of select="concat($m/name,' ')"   /> <xsl:apply-templates select="$m" mode="desc" />
             </xsl:for-each>
         */
-        public  <xsl:value-of select="name"/> (
+        public  <xsl:value-of select="vf:capitalize(name)"/> (
           <xsl:value-of select="string-join(for $v in ($consmembers) return map:get($decls, $v),', ')"/>
         )
         {
@@ -379,7 +379,7 @@
         /**
         * Copy Constructor. Note that references will remain as is rather than be copied.
         */
-        public  <xsl:value-of select="name"/> ( final <xsl:value-of select="name"/> other)
+        public  <xsl:value-of select="vf:capitalize(name)"/> ( final <xsl:value-of select="name"/> other)
         {
            super ();
 
@@ -399,7 +399,7 @@
             /**
             * Constructor from supertype instance.
             */
-            public  <xsl:value-of select="name"/> ( <xsl:value-of select="string-join($sparms,',')"/> )
+            public  <xsl:value-of select="vf:capitalize(name)"/> ( <xsl:value-of select="string-join($sparms,',')"/> )
             {
             super (<xsl:if test="not($supertype/@abstract)">superinstance</xsl:if>);
             <xsl:for-each select="$localmembers">
@@ -510,14 +510,14 @@
 /**
 * <xsl:apply-templates select="." mode="desc" />
 *
-* <xsl:value-of select="name()"/>: &bl;<xsl:value-of select="name" />
+* <xsl:value-of select="name()"/>: &bl;<xsl:value-of select="vf:capitalize(name)" />
 *
 * <xsl:value-of select="$vodmlauthor"/>
 */
     <xsl:apply-templates select="." mode="JPAAnnotation"/>
     <xsl:apply-templates select="." mode="JAXBAnnotation"/>
     <xsl:call-template name="vodmlAnnotation"/>
-       public&bl;<xsl:if test="@abstract='true'">abstract</xsl:if>&bl;class <xsl:value-of select="name"/>&bl;
+       public&bl;<xsl:if test="@abstract='true'">abstract</xsl:if>&bl;class <xsl:value-of select="vf:capitalize(name)"/>&bl;
       <xsl:if test="extends">extends <xsl:value-of select="vf:JavaType(extends/vodml-ref)"/></xsl:if>
       <xsl:variable name="ifs" as="xsd:string*">
           <xsl:sequence>
@@ -723,7 +723,7 @@ package <xsl:value-of select="$path"/>;
       <xsl:call-template name="vodmlAnnotation"/>
       <xsl:apply-templates select="." mode="JPAAnnotation"/>
       <xsl:apply-templates select="." mode="JAXBAnnotation"/>
-      public class <xsl:value-of select="name"/>&bl; implements java.io.Serializable {
+      public class <xsl:value-of select="vf:capitalize(name)"/>&bl; implements java.io.Serializable {
 
         private static final long serialVersionUID = 1L;
 
@@ -736,13 +736,13 @@ package <xsl:value-of select="$path"/>;
          *
          * @param v 
          */
-        public <xsl:value-of select="name"/>(final <xsl:value-of select="$valuetype"/> v) {
+        public <xsl:value-of select="vf:capitalize(name)"/>(final <xsl:value-of select="$valuetype"/> v) {
             this.value = v;
         }
         /**
          * no arg constructor.
          */
-        protected <xsl:value-of select="name"/>() {}
+        protected <xsl:value-of select="vf:capitalize(name)"/>() {}
 
         /**
          * Return the representation of this primitive (value)
