@@ -431,7 +431,7 @@
                 this.<xsl:value-of select="concat($m/name,'=(',$jt,'[])other.',$m/name)"/>;
             </xsl:when>
             <xsl:when test="$m/multiplicity/maxOccurs != 1"> <!-- TODO consider multiple references -->
-                this.<xsl:value-of select="concat($m/name, ' = other.',$m/name,'.stream().map(s -',$gt)"/>
+                if<xsl:value-of select="concat(' (other.',$m/name,' != null ) this.',$m/name, ' = other.',$m/name,'.stream().map(s -',$gt)"/>
                 <xsl:choose>
                     <xsl:when test="count($subsets/role[vodml-ref = current()])>0 ">
                         <xsl:value-of select="concat('((',$jt,')s).copyMe()' )"/>
@@ -446,14 +446,14 @@
                 <xsl:value-of select="').collect(java.util.stream.Collectors.toList())'"/>;
             </xsl:when>
             <xsl:when test="$t/name() = 'primitiveType' or $m/name() = 'reference' or $t/name() = 'enumeration'">
-                <xsl:value-of select="concat('this.',$m/name,'= other.',$m/name)"/>;
+                  this.<xsl:value-of select="concat($m/name,'= other.',$m/name)"/>;
             </xsl:when>
             <xsl:when test="count($subsets/role[vodml-ref = current()])>0">
-                <xsl:value-of select="concat('this.',$m/name,'=(',$jt,')other.',$m/name)"/>;
+                this.<xsl:value-of select="concat($m/name,'=(',$jt,')other.',$m/name)"/>;
             </xsl:when>
             <xsl:otherwise>
                 <xsl:if test="not($t/@abstract)">
-                    <xsl:value-of select="concat('if (other.',$m/name,' != null )this.',$m/name,'= new ',$jt,'(other.',$m/name,')')"/>;
+                    if<xsl:value-of select="concat(' (other.',$m/name,' != null )this.',$m/name,'= new ',$jt,'(other.',$m/name,')')"/>;
                 </xsl:if>
             </xsl:otherwise>
         </xsl:choose>
