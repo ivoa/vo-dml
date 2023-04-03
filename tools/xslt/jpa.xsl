@@ -60,7 +60,7 @@
     <xsl:if test="count(vf:baseTypes($vodml-ref) )= 0 and(@abstract or $hasChild)">
     @DiscriminatorColumn( name = "<xsl:value-of select="$discriminatorColumnName"/>", discriminatorType = DiscriminatorType.STRING, length = <xsl:value-of select="$discriminatorColumnLength"/>)
     </xsl:if>
-    <xsl:if test="$extMod or $hasChild">
+    <xsl:if test="$extMod or $hasChild and not(@abstract)">
   @DiscriminatorValue( "<xsl:value-of select="vf:utype(vf:asvodmlref(.))"/>" )
   </xsl:if>
   @NamedQueries( {

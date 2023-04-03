@@ -13,10 +13,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.ivoa.dm.AbstractTest;
 import org.ivoa.dm.ivoa.RealQuantity;
 import org.ivoa.dm.ivoa.Unit;
+import org.ivoa.vodml.ModelManagement;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -64,14 +71,23 @@ class CoordsModelTest extends AbstractTest {
         
     }
     @Test
-    void TestCoordsXML() throws JAXBException {
+    void TestCoordsXML() throws JAXBException, TransformerConfigurationException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
         logger.debug("Starting XML test");
         JAXBContext jc = CoordsModel.contextFactory();
         CoordsModel model = new CoordsModel();
         model.addContent(icrs);
        // model.addContent(pos1); FIXME - need to think about the dtypes should be added to the top level  model object.
-        //TODO actually test
-        
+        CoordsModel modelin = roundtripXML(jc, model, CoordsModel.class);
+    }
+    
+    @Test
+    void testJSON() throws JsonProcessingException {
+      
+       CoordsModel model = new CoordsModel();
+       model.addContent(icrs);
+       CoordsModel modelin = roundTripJSON(model.management());
+       
+ 
     }
 
 }

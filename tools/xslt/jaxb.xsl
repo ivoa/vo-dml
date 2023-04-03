@@ -22,6 +22,12 @@
                 extension-element-prefixes="exsl">
 
 
+  <xsl:variable name="jsontypinfo">
+      @com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver(value = org.ivoa.vodml.json.VodmlTypeResolver.class)
+   //   @com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.CLASS, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.WRAPPER_OBJECT )
+      @com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.CLASS, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY,property = "@class" )
+  </xsl:variable>
+
   <xsl:template match="objectType|dataType" mode="JAXBAnnotation">
 
   @javax.xml.bind.annotation.XmlAccessorType( javax.xml.bind.annotation.XmlAccessType.NONE )  
@@ -39,7 +45,7 @@
  //   @javax.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>")
       </xsl:when>
      </xsl:choose>
-      <xsl:if test="vf:referredTo(vf:asvodmlref(.))">
+      <xsl:if test="vf:referredTo(vf:asvodmlref(.)) and not(extends)">
           <xsl:choose>
               <xsl:when test="attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
   @com.fasterxml.jackson.annotation.JsonIdentityInfo(property = "<xsl:value-of select="attribute/constraint[ends-with(@xsi:type,':NaturalKey')]/preceding-sibling::name"/>", generator = com.fasterxml.jackson.annotation.ObjectIdGenerators.PropertyGenerator.class)
@@ -81,14 +87,21 @@
   <!-- template attribute : adds JAXB annotations for primitive types, data types & enumerations -->
   <xsl:template match="attribute|composition[multiplicity/maxOccurs = 1]" mode="JAXBAnnotation">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
+      <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref)">
+       <xsl:value-of select="$jsontypinfo"/>
+      </xsl:if>
     @javax.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
     <xsl:if test="constraint[ends-with(@xsi:type,':NaturalKey')]"><!-- TODO deal with compound keys -->
-      @javax.xml.bind.annotation.XmlID
+    @javax.xml.bind.annotation.XmlID
     </xsl:if>
   </xsl:template>
 
   <!-- reference resolved via JAXB -->
   <xsl:template match="reference" mode="JAXBAnnotation">
+      <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
+      <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref)">
+          <xsl:value-of select="$jsontypinfo"/>
+      </xsl:if>
     @javax.xml.bind.annotation.XmlIDREF
   </xsl:template>
 
@@ -100,8 +113,7 @@
   <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="JAXBAnnotation">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
   @javax.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
-  @com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.CLASS, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.WRAPPER_OBJECT )
-  @com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver(value = org.ivoa.vodml.json.VodmlTypeResolver.class)
+      <xsl:value-of select="$jsontypinfo"/>
   </xsl:template>
 
   <xsl:template match="literal" mode="JAXBAnnotation">
@@ -199,9 +211,12 @@
     @XmlType
     public static class References {
     <xsl:for-each select="$references-vodmlref"> <!-- looking at all possible refs -->
-      @XmlElement
-      @JsonProperty("<xsl:value-of select="vf:utype(.)"/>")
-      private Set&lt;<xsl:value-of select="vf:QualifiedJavaType(.)"/>&gt;&bl; <xsl:value-of select="vf:lowerFirst($models/key('ellookup',current())/name)"/> = new HashSet&lt;&gt;();
+        @XmlElement
+        @JsonProperty("<xsl:value-of select="vf:utype(.)"/>")
+        <xsl:if test="$models/key('ellookup',current())/@abstract or vf:hasSubTypes(current())">
+            <xsl:value-of select="$jsontypinfo"/>
+        </xsl:if>
+        private Set&lt;<xsl:value-of select="vf:QualifiedJavaType(.)"/>&gt;&bl; <xsl:value-of select="vf:lowerFirst($models/key('ellookup',current())/name)"/> = new HashSet&lt;&gt;();
     </xsl:for-each>
     }
     @XmlElement
@@ -222,8 +237,7 @@
                     <xsl:if test="position() != last()">,</xsl:if>
       </xsl:for-each>
     })
-    @JsonTypeInfo (use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.WRAPPER_OBJECT)
-    @JsonTypeIdResolver(value = org.ivoa.vodml.json.VodmlTypeResolver.class)
+        <xsl:value-of select="$jsontypinfo"/>
     private List&lt;Object&gt; content  = new ArrayList&lt;&gt;();
       <xsl:for-each select="//objectType[not(@abstract='true') and (not(vf:referredTo(vf:asvodmlref(.))) or (vf:asvodmlref(.) = vf:referencesInHierarchy(vf:asvodmlref(.)) )) ]">
 <!--         <xsl:message>ref in hierarchy <xsl:value-of select="vf:asvodmlref(.)"/> refs= <xsl:value-of select="vf:referencesInHierarchy(vf:asvodmlref(.))"/>  </xsl:message>-->
