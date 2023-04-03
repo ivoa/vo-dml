@@ -36,8 +36,11 @@
                    select="count(extends) = 1"/>
     <xsl:variable name="hasName" as="xsd:boolean" select ="count(attribute[name = 'name']) > 0"/>
     <xsl:variable name="idname">
+        <xsl:variable name="supers" select="(.,vf:baseTypes($vodml-ref))"/>
       <xsl:choose>
-        <xsl:when test=" attribute/constraint[ends-with(@xsi:type,':NaturalKey')]"><xsl:value-of select=" attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"/></xsl:when>
+        <xsl:when test=" $supers/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
+            <xsl:value-of select=" $supers/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"/>
+        </xsl:when>
         <xsl:otherwise>_id</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
