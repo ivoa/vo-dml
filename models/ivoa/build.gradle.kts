@@ -39,6 +39,10 @@ dependencies {
 
 }
 
+
+tasks.named<Jar>("jar") {
+    exclude("**/persistence.xml")
+}
 //publishing - IMPL would be nice to factor this out in some way....
 nexusPublishing {
     repositories {
