@@ -378,6 +378,7 @@
 
         /**
         * Copy Constructor. Note that references will remain as is rather than be copied.
+        * @param other the object to be copied.
         */
         public  <xsl:value-of select="vf:capitalize(name)"/> ( final <xsl:value-of select="name"/> other)
         {
@@ -398,6 +399,11 @@
             <xsl:variable name="sparms" select="(concat('final ',vf:JavaType(extends/vodml-ref), ' superinstance'), for $v in $localmembers return map:get($decls, $v))"/>
             /**
             * Constructor from supertype instance.
+            * @param superinstance The supertype.
+            <xsl:for-each select="$localmembers">
+                <xsl:variable name="m" select="$models/key('ellookup',current())"/>
+            * @param <xsl:value-of select="concat($m/name,' ')"/> <xsl:apply-templates select="$m" mode="desc" />
+            </xsl:for-each>
             */
             public  <xsl:value-of select="vf:capitalize(name)"/> ( <xsl:value-of select="string-join($sparms,',')"/> )
             {
