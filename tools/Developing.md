@@ -32,7 +32,7 @@ When a new version of the plugin is being tested before release, the version num
 installed locally using
 
 ```shell
-gradle publishToMavenLocal
+gradle :gradle-plugin:publishToMavenLocal
 ```
 
 ## Publishing
@@ -42,7 +42,7 @@ gradle publishToMavenLocal
 ### Publishing the Gradle plugin
 
 ```shell
-gradle publishPlugins
+gradle :gradle-plugin:publishplugins
 ```
 
 ### Publishing the Java runtime to Maven Central

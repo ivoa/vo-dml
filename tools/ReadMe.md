@@ -10,6 +10,7 @@ relational databases.
 The gradle plugin is intended to replace all the functionality of the 
 previous ant-based build, but to use gradle conventions to make the configuration
 easier, as well as take advantage of the dependency management features and maven repositories.
+The tools require that Java 11 or newer be installed to run.
 
 Note that it is not necessary to check-out this vodml repository as the plugin will be downloaded automatically from the gradle repository. 
 So, in general, a new data model should be started in its own git repository and configured
@@ -142,6 +143,6 @@ indirectly from the generated Java code as can be seen from the [Small java exam
 * 0.3.12 allow references to be contained...
 * 0.3.13 some bug fixes and different vodml metadata handling
 * 0.3.14 proper JPA handling for generated primitives - added validation test for properly formed VODML-IDs
-
+* 0.3.15 added JPA cloning, Java Copy Constructors, JSON improvements
 
 ## Information for [developers of the plugin itself](./Developing.md)
