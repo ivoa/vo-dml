@@ -151,19 +151,23 @@
       <!-- open file for this package -->
     <!-- imported model names -->
     <xsl:variable name="modelsInScope" select="(name,vf:importedModelNames(.))"/>
-    <xsl:message>models in scope <xsl:value-of select="$modelsInScope"/> </xsl:message>
-    <xsl:variable name="hasReferences" select="count(distinct-values($models/vo-dml:model[name = $modelsInScope ]//reference/datatype/vodml-ref))>0"/>
+      <xsl:variable name="possibleRefs" select="distinct-values($models/vo-dml:model[name = $modelsInScope ]//reference/datatype/vodml-ref)" as="xsd:string*"/>
+
+      <xsl:message>models in scope=<xsl:value-of select="concat(string-join($modelsInScope,','), ' hasref=',string-join($possibleRefs,','))"/> </xsl:message>
     <xsl:variable name="references-vodmlref" as="xsd:string*">
-        <xsl:for-each select="distinct-values($models/vo-dml:model[name = $modelsInScope ]//reference/datatype/vodml-ref)">
-            <!-- only care if contained in current model -->
-            <xsl:variable name="contained" select="count($models/vo-dml:model[name = $modelsInScope[1] ]//composition/datatype/vodml-ref[text()=current()])> 0" as="xsd:boolean"/>
-            <xsl:message>model references type=<xsl:value-of select="."/> contained=<xsl:value-of select="$contained" /></xsl:message>
-            <xsl:if test="not($contained)">
+        <xsl:for-each select="$possibleRefs">
+            <xsl:variable name="contained" select="$models/vo-dml:model[name = $modelsInScope ]//*[composition/datatype/vodml-ref/text()=current()]" as="element()*"/> <!-- could be multiply contained? -->
+            <xsl:variable name="okref" select="for $v in $contained return vf:asvodmlref($v) = $possibleRefs" as="xsd:boolean*"/>
+            <xsl:message>model references type=<xsl:value-of select="."/> contained=<xsl:value-of select="string-join(for $v in $contained return vf:asvodmlref($v),',')" /> ok=<xsl:value-of
+                    select="string-join(string($okref),',')"/></xsl:message>
+
+            <xsl:if test="not($contained) or not(true() = $okref)"> <!-- if the reference is not contained or if it is not contained in another ref -->
                 <xsl:message >OK ref = <xsl:value-of select="."/> </xsl:message>
                <xsl:sequence select="."/>
             </xsl:if>
         </xsl:for-each>
     </xsl:variable>
+    <xsl:variable name="hasReferences" select="count($possibleRefs) > 0"/>
     <xsl:message>filtered refs=<xsl:value-of select="string-join($references-vodmlref,',')"/> </xsl:message>
     <xsl:variable name="ModelClass" select="concat(vf:upperFirst(name),'Model')"/>
     <xsl:result-document href="{$file}">

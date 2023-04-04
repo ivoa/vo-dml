@@ -290,14 +290,14 @@
                 <xsl:sequence select="vf:javaAllMembers(extends/vodml-ref)"/>
             </xsl:if>
         </xsl:variable>
-        <xsl:message>members=<xsl:value-of select="string-join($members,',')"/></xsl:message>
+<!--        <xsl:message>members=<xsl:value-of select="string-join($members,',')"/></xsl:message>
         <xsl:message>subsets=<xsl:value-of select="concat(string-join(for $w in $subsets return concat($w/role/vodml-ref,'==', $w/datatype/vodml-ref,'|', $models/key('ellookup',$w/role/vodml-ref)/name(), '|', $models/key('ellookup',$w/role/vodml-ref)/multiplicity/maxOccurs),', '),' subsetssub=',string-join($subsetsInSubtypes,','))"/></xsl:message>
-        <xsl:message><xsl:value-of select="concat('cons=',string-join($consmembers,','),  ' loc=',string-join($localmembers,','),  ' sup=',string-join($superparams,','))"/></xsl:message>
+        <xsl:message><xsl:value-of select="concat('cons=',string-join($consmembers,','),  ' loc=',string-join($localmembers,','),  ' sup=',string-join($superparams,','))"/></xsl:message> -->
         <xsl:variable name="decls" as="map(xsd:string,text())">
             <xsl:map>
             <xsl:for-each select="$consmembers">
                 <xsl:variable name="m" select="$models/key('ellookup',current())"/>
-                <xsl:message>constructor member=<xsl:value-of select="concat(current(),' ',name($m),' insubs=', count($subsets/role[vodml-ref = current()])>0,' insubsubs=',name($m)='attribute' and current() = $subsetsInSubtypes)"/> </xsl:message>
+<!--                <xsl:message>constructor member=<xsl:value-of select="concat(current(),' ',name($m),' insubs=', count($subsets/role[vodml-ref = current()])>0,' insubsubs=',name($m)='attribute' and current() = $subsetsInSubtypes)"/> </xsl:message>-->
                 <xsl:map-entry key = ".">
                     <xsl:choose>
                         <xsl:when test="$this/constraint[ends-with(@xsi:type,':SubsettedRole')]/role[vodml-ref/text() = current()]"><!--TODO test if this condition is actually covered by below -->
