@@ -19,6 +19,6 @@ The most up to date way of processing VO-DML models is to use the [gradle](https
 for which there is more detail of how to use in the [tools/ReadMe.md](./tools/ReadMe.md)
 
 ![main test](https://github.com/ivoa/vo-dml/actions/workflows/test.yml/badge.svg)
-![gradle plugin](https://img.shields.io/gradle-plugin-portal/v/net.ivoa.vo-dml.vodmltools?label=gradle%20plugin)
+[![gradle plugin](https://img.shields.io/gradle-plugin-portal/v/net.ivoa.vo-dml.vodmltools?label=gradle%20plugin)](https://plugins.gradle.org/plugin/net.ivoa.vo-dml.vodmltools)
 
 _note that this project was moved from https://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/_
