@@ -146,10 +146,23 @@ class VodmlGradlePlugin: Plugin<Project> {
              "org.hibernate:hibernate-core:5.6.5.Final"
 //             ,"jakarta.persistence:jakarta.persistence-api:3.0.0" // dont use until go to hibernate 6
              ,"com.fasterxml.jackson.core:jackson-databind:2.14.2"
+             ,"org.eclipse.microprofile.openapi:microprofile-openapi-api:2.0.1"
 
        ).forEach {
             project.dependencies.addProvider(
                 JavaPlugin.API_CONFIGURATION_NAME, // want them exported
+                project.objects.property(Dependency::class.java).convention(
+                    project.dependencies.create(it)
+                )
+            )
+        }
+
+        listOf(
+            "org.eclipse.microprofile.openapi:microprofile-openapi-api:2.0.1"
+
+        ).forEach {
+            project.dependencies.addProvider(
+                JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, // don't want exported
                 project.objects.property(Dependency::class.java).convention(
                     project.dependencies.create(it)
                 )

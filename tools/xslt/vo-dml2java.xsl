@@ -523,7 +523,9 @@
     <xsl:apply-templates select="." mode="JPAAnnotation"/>
     <xsl:apply-templates select="." mode="JAXBAnnotation"/>
     <xsl:call-template name="vodmlAnnotation"/>
-       public&bl;<xsl:if test="@abstract='true'">abstract</xsl:if>&bl;class <xsl:value-of select="vf:capitalize(name)"/>&bl;
+      <xsl:apply-templates select="." mode="openapiAnnotation"/>
+
+      public&bl;<xsl:if test="@abstract='true'">abstract</xsl:if>&bl;class <xsl:value-of select="vf:capitalize(name)"/>&bl;
       <xsl:if test="extends">extends <xsl:value-of select="vf:JavaType(extends/vodml-ref)"/></xsl:if>
       <xsl:variable name="ifs" as="xsd:string*">
           <xsl:sequence>
@@ -647,6 +649,7 @@ package <xsl:value-of select="$path"/>;
       * <xsl:value-of select="$vodmlauthor"/>
       */
       <xsl:call-template name="vodmlAnnotation"/>
+      <xsl:apply-templates select="." mode="openapiAnnotation"/>
       public enum <xsl:value-of select="name"/>&bl;{
 
         <xsl:apply-templates select="literal"  />
@@ -727,6 +730,7 @@ package <xsl:value-of select="$path"/>;
       *  <xsl:value-of select="$vodmlauthor"/>
       */
       <xsl:call-template name="vodmlAnnotation"/>
+      <xsl:apply-templates select="." mode="openapiAnnotation"/>
       <xsl:apply-templates select="." mode="JPAAnnotation"/>
       <xsl:apply-templates select="." mode="JAXBAnnotation"/>
       public class <xsl:value-of select="vf:capitalize(name)"/>&bl; implements java.io.Serializable {
@@ -783,6 +787,7 @@ package <xsl:value-of select="$path"/>;
     *
     */
     <xsl:call-template name="vodmlAnnotation"/>
+    <xsl:apply-templates select="." mode="openapiAnnotation"/>
     <xsl:apply-templates select="." mode="JPAAnnotation"/>
     <xsl:apply-templates select="." mode="JAXBAnnotation"/>
     <xsl:choose>
@@ -940,6 +945,7 @@ package <xsl:value-of select="$path"/>;
     <xsl:apply-templates select="." mode="JAXBAnnotation"/>
     <xsl:apply-templates select="." mode="JPAAnnotation"/>
     <xsl:call-template name="vodmlAnnotation"/>
+      <xsl:apply-templates select="." mode="openapiAnnotation"/>
       <xsl:choose>
            <xsl:when test="vf:isSubSetted(vf:asvodmlref(.)) "><!--  or $rt/@abstract or vf:hasSubTypes(datatype/vodml-ref)-->
      protected List&lt;? extends <xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="name"/> = null;
@@ -963,6 +969,7 @@ package <xsl:value-of select="$path"/>;
         <xsl:apply-templates select="." mode="JAXBAnnotation"/>
         <xsl:apply-templates select="." mode="JPAAnnotation"/>
         <xsl:call-template name="vodmlAnnotation"/>
+        <xsl:apply-templates select="." mode="openapiAnnotation"/>
         protected <xsl:value-of select="$type"/>&bl;<xsl:value-of select="name"/> = null;
     </xsl:template>
 
@@ -1123,6 +1130,7 @@ package <xsl:value-of select="$path"/>;
     <xsl:apply-templates select="." mode="JPAAnnotation"/>
     <xsl:apply-templates select="." mode="JAXBAnnotation"/>
     <xsl:call-template name="vodmlAnnotation"/>
+      <xsl:apply-templates select="." mode="openapiAnnotation"/>
     protected <xsl:value-of select="$type"/>&bl;<xsl:value-of select="name"/> = null;
   </xsl:template>
 
@@ -1402,6 +1410,9 @@ import javax.xml.bind.annotation.XmlNsForm;
           </xsl:otherwise>
       </xsl:choose>
  </xsl:template>
+    <xsl:template match="*" mode="openapiAnnotation">
+    @org.eclipse.microprofile.openapi.annotations.media.Schema(description="<xsl:value-of select="string-join(for $s in description/text() return normalize-space($s),' ')"/>")
+    </xsl:template>
 
 
 </xsl:stylesheet>
