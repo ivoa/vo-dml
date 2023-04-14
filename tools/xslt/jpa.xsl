@@ -85,38 +85,6 @@
 
 
 
-  <xsl:template match="objectType|dataType" mode="JPASpecials">
-    <xsl:param name="hasChild"/>
-    <xsl:param name="hasExtends"/>
-
-    <xsl:if test="name() = 'objectType' and $hasExtends and $hasChild">
-    /** classType gives the discriminator value stored in the database for an inheritance hierarchy */
-    @Column( name = "<xsl:value-of select="$discriminatorColumnName"/>", insertable = false, updatable = false, nullable = false )
-    protected String classType;
-    </xsl:if>
-
-    <xsl:if test="name() = 'objectType' and $hasExtends">
-    /** jpaVersion gives the current version number for that entity (used by pessimistic / optimistic locking in JPA) */
-    @Version()
-    @Column( name = "OPTLOCK" )
-    protected int jpaVersion;
-    </xsl:if>
-
-    <xsl:if test="container">
-      <xsl:variable name="type" select="vf:JavaType(container/vodml-ref)"/>
-    /** container gives the parent entity which owns a collection containing instances of this class */
-    @ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH } )
-    @JoinColumn( name = "containerId", referencedColumnName = "id", nullable = false )
-    protected <xsl:value-of select="$type"/> container;
-
-    /** rank : position in the container collection  */
-    @Basic( optional = false )
-    @Column( name = "rank", nullable = false )
-    protected int rank = -1;
-    </xsl:if>
-  </xsl:template>
-
-
   <xsl:template match="primitiveType" mode="JPAAnnotation">
     <xsl:text>@Embeddable</xsl:text>&cr;
   </xsl:template>
@@ -381,12 +349,6 @@
     </xsl:choose>
   </xsl:template>
 
-
-
-
-  <xsl:template match="reference" mode="JPAAnnotation_reference">
-  @Transient
-  </xsl:template>
 
   <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="JPAAnnotation">
     <xsl:variable name="type" select="$models/key('ellookup', current()/datatype/vodml-ref)"/>

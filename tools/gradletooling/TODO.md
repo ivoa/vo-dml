@@ -72,6 +72,11 @@ VODML Tooling TODO
   * arrays https://thorben-janssen.com/mapping-arrays-with-hibernate/
   * add more of the general JPA choices to mapping... discriminator column name for instance...
 
+
+* JSON
+  * allow refs to be serialized/deserialized as ids always.... - for use in APIs....
+  
+
 # Python production
 
 * using dataclasses - need python 3.10 for the kw_only field specifier - might do better just generating multiple  `__init__()` rather than relying on the dataclass generation.

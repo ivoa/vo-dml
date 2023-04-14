@@ -540,8 +540,8 @@
           /**
           * inserted database key
           */
-          @javax.xml.bind.annotation.XmlTransient
           <xsl:if test="not(vf:referredTo($vodml-ref))">
+          @javax.xml.bind.annotation.XmlTransient
           @com.fasterxml.jackson.annotation.JsonIgnore
           </xsl:if>
           @Id
@@ -576,6 +576,11 @@
               public boolean hasNaturalKey()
               {
                 return false;
+              }
+              @Override
+              public Class idType()
+              {
+                 return Long.class;
               }
           </xsl:if>
 
@@ -617,6 +622,12 @@
           {
           return true;
           }
+          @Override
+          public Class idType()
+          {
+          return String.class;
+          }
+
 
       </xsl:if>
 
@@ -1411,7 +1422,8 @@ import javax.xml.bind.annotation.XmlNsForm;
       </xsl:choose>
  </xsl:template>
     <xsl:template match="*" mode="openapiAnnotation">
-    @org.eclipse.microprofile.openapi.annotations.media.Schema(description="<xsl:value-of select="string-join(for $s in description/text() return normalize-space($s),' ')"/>")
+    @org.eclipse.microprofile.openapi.annotations.media.Schema(description="<xsl:if test="current()/name()='reference'"><xsl:value-of
+            select="'A reference to - '"/></xsl:if><xsl:value-of select="string-join(for $s in description/text() return normalize-space($s),' ')"/>")
     </xsl:template>
 
 

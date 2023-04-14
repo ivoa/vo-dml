@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<m:mappedModels xmlns:m="http://www.ivoa.net/xml/vodml-binding/v0.9.1">
+    <!-- ========================================
+    This is a sample file for mapping VO-DML models to XSD or Java using the gradle tooling
+     -->
+
+    <model>
+        <name>jpatest</name>
+        <file>jpatest.vo-dml.xml</file>
+        <java-package>org.ivoa.dm.jpatest</java-package>
+        <python-package>org.ivoa.dm.jpatest</python-package>
+        <xml-targetnamespace prefix="jpat" schemaFilename="jpatest.xsd">http://ivoa.net/dm/sample/jpatest</xml-targetnamespace>
+        <rdb inheritance-strategy="single-table"
+        discriminatorColumnLength="64"/>
+    </model>
+    <model>
+        <name>lifecycleTest</name>
+        <file>lifecycleTest.vo-dml.xml</file>
+        <java-package>org.ivoa.dm.lifecycle</java-package>
+        <python-package>org.ivoa.dm.lifecycle</python-package>
+        <xml-targetnamespace prefix="life" schemaFilename="lifecycletest.xsd">http://ivoa.net/dm/sample/lifecycle</xml-targetnamespace>
+        <rdb inheritance-strategy="single-table"
+             discriminatorColumnLength="64"/>
+    </model>
+
+</m:mappedModels>
