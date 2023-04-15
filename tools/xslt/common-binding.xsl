@@ -170,6 +170,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
+
     <xsl:function name="vf:PythonModule" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:variable name="modelname" select="substring-before($vodml-ref,':')" />
@@ -303,6 +304,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
 
     </xsl:function>
 
+
     <!--just returning the IDs will work in hierarchy order, but then need to use in for-each -->
     <xsl:function name="vf:baseTypeIds" as="xsd:string*">
         <xsl:param name="vodml-ref"/>
@@ -401,10 +403,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
 
     </xsl:function>
 
-
-
-
-    <!-- is the type used as a reference -->
+    <!-- is the type (sub or base) used as a reference -->
     <xsl:function name="vf:referredTo" as="xsd:boolean">
         <xsl:param name="vodml-ref" as="xsd:string"/>
 
@@ -585,6 +584,10 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
             <xsl:sequence select="for $s in $supers return vf:javaLocalDefines(vf:asvodmlref($s))"/>
     </xsl:function>
 
+    <xsl:function name="vf:attributeIsDtype" as="xsd:boolean">
+        <xsl:param name="attr" as="element()"/>
+        <xsl:value-of select="$models/key('ellookup',$attr/datatype/vodml-ref)/name() = 'dataType'"/>
+    </xsl:function>
 
     <xsl:function name="vf:importedModelNames" as="xsd:string*">
         <xsl:param name="model" as="element()"/>

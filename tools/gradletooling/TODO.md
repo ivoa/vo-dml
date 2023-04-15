@@ -10,7 +10,7 @@ VODML Tooling TODO
  key is used. In this case it might be a lifecycle issue. This is also the distinction between a datatype and an objectType.
 * the rdb and xml schemas produced by the xslt are do not match the java generated ones exactly - they need to be updated.
 * vodml to specify attribute defaults?
-* to generate tapschema - would be nice for vodml to have UCDs as part of the model - could be added in semantic part.
+* to generate tapschema - would be nice for vodml to have UCDs as part of the model - could be added in semantic part?
 * is subsetting references allowed?
 
 * STC
@@ -30,8 +30,9 @@ VODML Tooling TODO
 * ~~can remove all the ant stuff - including the libs and schematron dirs~~
 * generate python
 * integrate with the model mapping in VOT.
-* autogenerate the dependent vosdl files.
-
+* ~~autogenerate the dependent vosdl files.~~
+* improve generated documentation
+  * add description of "is a ref", has subtypes etc....
 
 # Java Production
 
@@ -54,7 +55,7 @@ VODML Tooling TODO
   * should dtypes be root elements? better to add to the modelElement....
   * not dealing well with something that is a composition and also a reference in full model
     * at the moment the logic is conservative in that all references listed - leads to repetition in full model output - e.g. telescopes in proposaldm
-    * would be better 
+    * has been improved from around 0.3.15
   * might want to be more explicit about namespaces in the <refs> and <content> areas....
   * can do better with subsets in subtypes - if supertype is abstract then it is possible to define in a subtype and get better type safety.
   * https://stackoverflow.com/questions/60402092/jackson-custom-deserializer-for-polymorphic-objects-and-string-literals-as-defau and https://stackoverflow.com/questions/18313323/how-do-i-call-the-default-deserializer-from-a-custom-deserializer-in-jackson

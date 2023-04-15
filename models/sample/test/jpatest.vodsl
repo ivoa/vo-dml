@@ -9,6 +9,7 @@ enum AnEnum "enum" {
 dtype ADtype "dtype" {
 	dvalr: ivoa:real "";
 	dvals: ivoa:string "";
+	dref references ReferredTo3  "";
 }
 
 otype ReferredTo1 {
@@ -17,6 +18,10 @@ otype ReferredTo1 {
 }
 
 otype ReferredTo2 "" {
+	sval : ivoa:string "";
+}
+
+otype ReferredTo3 "" {
 	sval : ivoa:string "";
 }
 

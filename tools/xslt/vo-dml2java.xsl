@@ -530,7 +530,7 @@
       <xsl:variable name="ifs" as="xsd:string*">
           <xsl:sequence>
               <xsl:if test="vf:referredTo($vodml-ref)">org.ivoa.vodml.jaxb.XmlIdManagement</xsl:if>
-              <xsl:if test="name(current())='objectType'">org.ivoa.vodml.jpa.JPAManipulations</xsl:if>
+              org.ivoa.vodml.jpa.JPAManipulations
           </xsl:sequence>
       </xsl:variable>
       <xsl:if test="count($ifs)> 0"><xsl:value-of select="concat(' implements ', string-join($ifs,','))"/> </xsl:if>
@@ -637,6 +637,7 @@
 
       <xsl:apply-templates select="." mode="jpawalker"/>
       <xsl:apply-templates select="." mode="cloner"/>
+      <xsl:apply-templates select="." mode="jparefs"/>
 
 <!--      <xsl:if test="local-name() eq 'dataType'">-->
 <!--          <xsl:apply-templates select="." mode="JPAConverter"/>-->
@@ -1070,8 +1071,42 @@ package <xsl:value-of select="$path"/>;
         if( <xsl:value-of select="name"/> != null ) <xsl:value-of select="name"/>.forceLoad();
     </xsl:template>
     <xsl:template match="dataType" mode="jpawalker">
-        <!-- do nothing for datatypes -->
+        @Override
+        public void forceLoad() {
+        <!-- do nothing for datatypes - they cannot contain compositions...-->
+        }
     </xsl:template>
+
+<!-- jparefs-->
+    <xsl:template match="objectType|dataType" mode="jparefs">
+        @Override
+        public void persistRefs(javax.persistence.EntityManager _em) {
+          <xsl:variable name="localdefs" select="vf:javaLocalDefines(vf:asvodmlref(current()))"/>
+          <xsl:apply-templates select="composition[vf:asvodmlref(.) = $localdefs]
+                          |reference[vf:asvodmlref(.) = $localdefs]
+                          |attribute[vf:attributeIsDtype(.) and vf:asvodmlref(.) = $localdefs]
+                          |constraint[ends-with(@xsi:type,':SubsettedRole') and
+                          role[vodml-ref = $localdefs]]" mode="jparefs"/>
+          <xsl:if test="extends">super.persistRefs(_em);</xsl:if>
+          <xsl:if test="vf:referredTo(vf:asvodmlref(current())) and not(extends)">
+              _em.persist(this);
+          </xsl:if>
+        }
+    </xsl:template>
+    <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="jparefs">
+        for( <xsl:value-of select="vf:FullJavaType(datatype/vodml-ref, true())"/> c : <xsl:value-of select="name"/> ) {
+        c.persistRefs(_em);
+        }
+
+    </xsl:template>
+    <xsl:template match="composition|reference|attribute[vf:attributeIsDtype(.)]" mode="jparefs">
+        if( <xsl:value-of select="name"/> != null ) <xsl:value-of select="name"/>.persistRefs(_em);
+    </xsl:template>
+    <xsl:template match="constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="jparefs">
+        <xsl:variable name="ss" select="$models/key('ellookup',current()/role/vodml-ref)"/>
+        if( <xsl:value-of select="$ss/name"/> != null ) <xsl:value-of select="$ss/name"/>.persistRefs(_em);
+    </xsl:template>
+
 
     <xsl:template match="objectType" mode="cloner">
 
@@ -1111,7 +1146,10 @@ package <xsl:value-of select="$path"/>;
         }
     </xsl:template>
     <xsl:template match="dataType" mode="cloner">
-        <!-- do nothing for datatypes -->
+        @Override
+        public void jpaClone(javax.persistence.EntityManager em) {
+        <!-- do nothing for datatypes ??? -->
+        }
     </xsl:template>
 
     <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="add2composition">

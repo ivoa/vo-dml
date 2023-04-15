@@ -24,7 +24,6 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.ivoa.dm.AbstractTest;
 import org.ivoa.dm.sample.SampleModel;
-import org.ivoa.dm.sample.catalog.inner.SourceCatalogue;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,7 +54,8 @@ class JPATestModelTest extends AbstractTest {
         final ReferredTo2 referredToin = new ReferredTo2("lower ref");
         Child refcont = new Child(referredToin);
         atest = Parent.createParent(a -> {
-            a.dval = new ADtype(1.1, "astring");
+            ReferredTo3 ref3 = new ReferredTo3("ref in dtype");
+            a.dval = new ADtype(1.1, "astring", ref3 );
             a.rval = referredTo;
             a.cval = refcont;
             
@@ -86,6 +86,7 @@ class JPATestModelTest extends AbstractTest {
     void jpaInitialCreateTest() {
         javax.persistence.EntityManager em = setupH2Db(SampleModel.pu_name());//the persistence unit is all under the one file....
         em.getTransaction().begin();
+        atest.persistRefs(em); //IMPL need to save references explicitly as they are new.
         em.persist(atest);
         em.getTransaction().commit();
         Long id = atest.getId();
@@ -100,6 +101,10 @@ class JPATestModelTest extends AbstractTest {
                 .setParameter("id", id).getResultList();
         em.getTransaction().commit();
         assertEquals(1, par.size());
+        assertEquals("top level ref",par.get(0).rval.sval);
+        assertEquals("lower ref",par.get(0).cval.rval.sval);
+        assertEquals("ref in dtype",par.get(0).dval.dref.sval);
+        
        
 
     }

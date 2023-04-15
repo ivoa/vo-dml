@@ -342,8 +342,8 @@
 // TODO    [NOT_SUPPORTED_REFERENCE]
       </xsl:when>
       <xsl:otherwise>
-    <!-- do not remove referenced entity : do not cascade delete -->
-    @ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH } )
+    <!-- require manual management of references - do not remove referenced entity : do not cascade delete -->
+    @ManyToOne( cascade = {  CascadeType.REFRESH } )
     @JoinColumn( nullable = <xsl:apply-templates select="." mode="nullable"/> )
       </xsl:otherwise>
     </xsl:choose>
@@ -401,46 +401,6 @@
 
 
 
-  <xsl:template match="objectType|dataType" mode="hashcode_equals">
-    <xsl:variable name="name" select="name"/>
-
-  /**
-   * Returns equals from id attribute here. Child classes can override this method to allow deep equals with
-   * attributes / references / collections
-   *
-   * @param object the reference object with which to compare.
-   * @param isDeep true means to call hashCode(sb, true) for all attributes / references / collections which are
-   *        MetadataElement implementations
-   *
-   * @return &lt;code&gt;true&lt;/code&gt; if this object is the same as the obj argument; &lt;code&gt;false&lt;/code&gt; otherwise.
-   */
-  @Override
-  public boolean equals(final Object object, final boolean isDeep) {
-    /* identity, nullable, class and identifiers checks */
-    if( !(super.equals(object, isDeep))) {
-		  return false;
-		}
-
-    /* do check values (attributes / references / collections) */  
-    <xsl:choose>
-      <xsl:when test="name() = 'dataType'">
-    if (true) {
-      </xsl:when>
-      <xsl:otherwise>
-    if (isDeep) {
-      </xsl:otherwise>
-    </xsl:choose>
-
-      final <xsl:value-of select="$name"/> other = (<xsl:value-of select="$name"/>) object;
-      <xsl:for-each select="attribute">
-        if (! areEquals(this.<xsl:value-of select="name"/>, other.<xsl:value-of select="name"/>)) {
-           return false;
-        }
-		  </xsl:for-each>
-    }
-		return true;
-	}
-  </xsl:template>
 
 
 

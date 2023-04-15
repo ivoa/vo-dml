@@ -8,7 +8,7 @@
       <uri/>
       <title>TBD</title>
       <version>1.0</version>
-      <lastModified>2023-04-14T15:30:34Z</lastModified>
+      <lastModified>2023-04-14T16:44:26Z</lastModified>
       <import>
         <name>null</name><!--should not be needed in modern vo-dml -->
         <url>IVOA-v1.0.vo-dml.xml</url>
@@ -57,6 +57,18 @@
                 <maxOccurs>1</maxOccurs>
               </multiplicity>
             </attribute>
+               <reference>
+                 <vodml-id>ADtype.dref</vodml-id>
+                 <name>dref</name>
+                 <description></description>	    
+                 <datatype>
+                   <vodml-ref>jpatest:ReferredTo3</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </reference>
             </dataType>
             <objectType>
                <vodml-id>ReferredTo1</vodml-id>
@@ -81,6 +93,23 @@
                <description></description>	    
                <attribute>
                  <vodml-id>ReferredTo2.sval</vodml-id>
+                 <name>sval</name>
+                 <description></description>	    
+                 <datatype>
+                    <vodml-ref>ivoa:string</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </attribute>
+            </objectType>
+            <objectType>
+               <vodml-id>ReferredTo3</vodml-id>
+               <name>ReferredTo3</name>
+               <description></description>	    
+               <attribute>
+                 <vodml-id>ReferredTo3.sval</vodml-id>
                  <name>sval</name>
                  <description></description>	    
                  <datatype>
