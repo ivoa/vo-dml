@@ -1093,13 +1093,15 @@ package <xsl:value-of select="$path"/>;
           </xsl:if>
         }
     </xsl:template>
-    <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="jparefs">
-        for( <xsl:value-of select="vf:FullJavaType(datatype/vodml-ref, true())"/> c : <xsl:value-of select="name"/> ) {
-        c.persistRefs(_em);
+    <xsl:template match="composition[multiplicity/maxOccurs != 1]|attribute[multiplicity/maxOccurs != 1]|reference[multiplicity/maxOccurs != 1]" mode="jparefs" >
+        if( <xsl:value-of select="name"/> != null ) {
+          for( <xsl:value-of select="vf:FullJavaType(datatype/vodml-ref, true())"/> _c : <xsl:value-of select="name"/> ) {
+            _c.persistRefs(_em);
+          }
         }
 
     </xsl:template>
-    <xsl:template match="composition|reference|attribute[vf:attributeIsDtype(.)]" mode="jparefs">
+    <xsl:template match="composition|reference|attribute" mode="jparefs">
         if( <xsl:value-of select="name"/> != null ) <xsl:value-of select="name"/>.persistRefs(_em);
     </xsl:template>
     <xsl:template match="constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="jparefs">
