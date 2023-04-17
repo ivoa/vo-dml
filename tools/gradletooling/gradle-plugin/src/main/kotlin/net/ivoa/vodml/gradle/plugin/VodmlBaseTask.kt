@@ -62,6 +62,18 @@ class ExternalModelHelper constructor (private val project: Project, private val
         return  actualCatalog
     }
 
+    fun convertExternalToVODSL()  {
+        val tmpdir = project.mkdir(Paths.get(project.buildDir.absolutePath, "tmp"))
+        val toConvert =  externalModelJars.flatMap { f ->
+            ao.zipTree(f).matching(org.gradle.api.tasks.util.PatternSet().include(vodmlFileName(f))).files
+        }
+        toConvert.forEach{
+            val outvodsl = project.file(Paths.get(tmpdir.absolutePath, it.name.replace(".vo-dml.xml", ".vodsl")))
+            logger.info("writing VODSL for external model to ${outvodsl}")
+            Vodml2Vodsl.doTransform(it, outvodsl)
+        }
+    }
+
     fun externalBinding(): List<File> {
         return externalModelJars.flatMap { f ->
             ao.zipTree(f).matching(org.gradle.api.tasks.util.PatternSet().include(bindingFileName(f))).files

@@ -310,7 +310,7 @@
         }
         /**
         * generate management interface instance for model.
-        * @return
+        * @return the management interface.
         */
         public ModelManagement&lt;<xsl:value-of select="$ModelClass"/>&gt; management() {return new ModelManagement&lt;<xsl:value-of select="$ModelClass"/>&gt;()
         {

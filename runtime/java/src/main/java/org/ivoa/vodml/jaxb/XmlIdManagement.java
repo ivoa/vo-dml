@@ -21,6 +21,9 @@ public interface XmlIdManagement {
      void setXmlId (String id);
      
      boolean hasNaturalKey();
+
+     @SuppressWarnings("rawtypes")
+     Class idType();
     
 }
 

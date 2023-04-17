@@ -85,38 +85,6 @@
 
 
 
-  <xsl:template match="objectType|dataType" mode="JPASpecials">
-    <xsl:param name="hasChild"/>
-    <xsl:param name="hasExtends"/>
-
-    <xsl:if test="name() = 'objectType' and $hasExtends and $hasChild">
-    /** classType gives the discriminator value stored in the database for an inheritance hierarchy */
-    @Column( name = "<xsl:value-of select="$discriminatorColumnName"/>", insertable = false, updatable = false, nullable = false )
-    protected String classType;
-    </xsl:if>
-
-    <xsl:if test="name() = 'objectType' and $hasExtends">
-    /** jpaVersion gives the current version number for that entity (used by pessimistic / optimistic locking in JPA) */
-    @Version()
-    @Column( name = "OPTLOCK" )
-    protected int jpaVersion;
-    </xsl:if>
-
-    <xsl:if test="container">
-      <xsl:variable name="type" select="vf:JavaType(container/vodml-ref)"/>
-    /** container gives the parent entity which owns a collection containing instances of this class */
-    @ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH } )
-    @JoinColumn( name = "containerId", referencedColumnName = "id", nullable = false )
-    protected <xsl:value-of select="$type"/> container;
-
-    /** rank : position in the container collection  */
-    @Basic( optional = false )
-    @Column( name = "rank", nullable = false )
-    protected int rank = -1;
-    </xsl:if>
-  </xsl:template>
-
-
   <xsl:template match="primitiveType" mode="JPAAnnotation">
     <xsl:text>@Embeddable</xsl:text>&cr;
   </xsl:template>
@@ -374,19 +342,13 @@
 // TODO    [NOT_SUPPORTED_REFERENCE]
       </xsl:when>
       <xsl:otherwise>
-    <!-- do not remove referenced entity : do not cascade delete -->
-    @ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH } )
+    <!-- require manual management of references - do not remove referenced entity : do not cascade delete -->
+    @ManyToOne( cascade = {  CascadeType.REFRESH } )
     @JoinColumn( nullable = <xsl:apply-templates select="." mode="nullable"/> )
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
 
-
-
-
-  <xsl:template match="reference" mode="JPAAnnotation_reference">
-  @Transient
-  </xsl:template>
 
   <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="JPAAnnotation">
     <xsl:variable name="type" select="$models/key('ellookup', current()/datatype/vodml-ref)"/>
@@ -439,46 +401,6 @@
 
 
 
-  <xsl:template match="objectType|dataType" mode="hashcode_equals">
-    <xsl:variable name="name" select="name"/>
-
-  /**
-   * Returns equals from id attribute here. Child classes can override this method to allow deep equals with
-   * attributes / references / collections
-   *
-   * @param object the reference object with which to compare.
-   * @param isDeep true means to call hashCode(sb, true) for all attributes / references / collections which are
-   *        MetadataElement implementations
-   *
-   * @return &lt;code&gt;true&lt;/code&gt; if this object is the same as the obj argument; &lt;code&gt;false&lt;/code&gt; otherwise.
-   */
-  @Override
-  public boolean equals(final Object object, final boolean isDeep) {
-    /* identity, nullable, class and identifiers checks */
-    if( !(super.equals(object, isDeep))) {
-		  return false;
-		}
-
-    /* do check values (attributes / references / collections) */  
-    <xsl:choose>
-      <xsl:when test="name() = 'dataType'">
-    if (true) {
-      </xsl:when>
-      <xsl:otherwise>
-    if (isDeep) {
-      </xsl:otherwise>
-    </xsl:choose>
-
-      final <xsl:value-of select="$name"/> other = (<xsl:value-of select="$name"/>) object;
-      <xsl:for-each select="attribute">
-        if (! areEquals(this.<xsl:value-of select="name"/>, other.<xsl:value-of select="name"/>)) {
-           return false;
-        }
-		  </xsl:for-each>
-    }
-		return true;
-	}
-  </xsl:template>
 
 
 

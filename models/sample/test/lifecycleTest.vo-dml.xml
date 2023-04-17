@@ -9,7 +9,7 @@
       <title>TBD</title>
       <author>pharriso</author>
       <version>0.1</version>
-      <lastModified>2022-04-19T11:45:34Z</lastModified>
+      <lastModified>2023-04-14T15:30:34Z</lastModified>
       <import>
         <name>null</name><!--should not be needed in modern vo-dml -->
         <url>IVOA-v1.0.vo-dml.xml</url>

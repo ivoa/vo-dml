@@ -61,6 +61,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
     void sourceCatJPATest() {
        javax.persistence.EntityManager em = setupH2Db(SampleModel.pu_name());
         em.getTransaction().begin();
+        sc.persistRefs(em);
         em.persist(sc);
         em.getTransaction().commit();
         Long id = sc.getId();
@@ -122,6 +123,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
        SampleModel model = new SampleModel();
        javax.persistence.EntityManager em = setupH2Db(SampleModel.pu_name());
        em.getTransaction().begin();
+       sc.persistRefs(em);
        em.persist(sc);
        em.getTransaction().commit();
        model.addContent(sc);

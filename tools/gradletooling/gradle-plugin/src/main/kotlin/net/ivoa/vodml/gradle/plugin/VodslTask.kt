@@ -1,9 +1,11 @@
 package net.ivoa.vodml.gradle.plugin
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.*
+import javax.inject.Inject
 
 
 /*
@@ -12,7 +14,7 @@ import org.gradle.api.tasks.*
 /**
  * Task to generate VO-DML from vodsl.
  */
-open class VodslTask : DefaultTask() {
+open class VodslTask  @Inject constructor(@Internal protected val ao: ArchiveOperations) : DefaultTask() {
     @get:[InputDirectory PathSensitive(PathSensitivity.RELATIVE)] @Optional
     val vodslDir: DirectoryProperty = project.objects.directoryProperty()
 
@@ -26,7 +28,8 @@ open class VodslTask : DefaultTask() {
 
     @TaskAction
     fun doVodslToVodml(){
-
+        val eh = ExternalModelHelper(project, ao, logger)
+        eh.convertExternalToVODSL()
         vodslFiles.forEach{
             logger.info("Generating VO-DML from vodsl ${ it.name } to ${vodmlDir.get().asFile.absolutePath}")
             parser.parse(arrayOf(it.absolutePath),vodmlDir.get().asFile.absolutePath)

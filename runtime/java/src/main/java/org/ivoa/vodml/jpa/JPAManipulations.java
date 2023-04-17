@@ -26,4 +26,13 @@ public interface JPAManipulations {
     * 
     */
    void jpaClone(EntityManager em);
+
+   /**
+    * Persist any references in the object tree. This exists to aid initial persistence of
+    * a model instance, as no JPA operations (apart from refresh) are cascaded to references.
+    * References lifecycle is expected to be managed separately.
+    * @param em the entity manager
+    */
+   void persistRefs(EntityManager em);
+
 }

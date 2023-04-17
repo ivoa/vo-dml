@@ -378,6 +378,7 @@
 
         /**
         * Copy Constructor. Note that references will remain as is rather than be copied.
+        * @param other the object to be copied.
         */
         public  <xsl:value-of select="vf:capitalize(name)"/> ( final <xsl:value-of select="name"/> other)
         {
@@ -398,6 +399,11 @@
             <xsl:variable name="sparms" select="(concat('final ',vf:JavaType(extends/vodml-ref), ' superinstance'), for $v in $localmembers return map:get($decls, $v))"/>
             /**
             * Constructor from supertype instance.
+            * @param superinstance The supertype.
+            <xsl:for-each select="$localmembers">
+                <xsl:variable name="m" select="$models/key('ellookup',current())"/>
+            * @param <xsl:value-of select="concat($m/name,' ')"/> <xsl:apply-templates select="$m" mode="desc" />
+            </xsl:for-each>
             */
             public  <xsl:value-of select="vf:capitalize(name)"/> ( <xsl:value-of select="string-join($sparms,',')"/> )
             {
@@ -517,12 +523,14 @@
     <xsl:apply-templates select="." mode="JPAAnnotation"/>
     <xsl:apply-templates select="." mode="JAXBAnnotation"/>
     <xsl:call-template name="vodmlAnnotation"/>
-       public&bl;<xsl:if test="@abstract='true'">abstract</xsl:if>&bl;class <xsl:value-of select="vf:capitalize(name)"/>&bl;
+      <xsl:apply-templates select="." mode="openapiAnnotation"/>
+
+      public&bl;<xsl:if test="@abstract='true'">abstract</xsl:if>&bl;class <xsl:value-of select="vf:capitalize(name)"/>&bl;
       <xsl:if test="extends">extends <xsl:value-of select="vf:JavaType(extends/vodml-ref)"/></xsl:if>
       <xsl:variable name="ifs" as="xsd:string*">
           <xsl:sequence>
               <xsl:if test="vf:referredTo($vodml-ref)">org.ivoa.vodml.jaxb.XmlIdManagement</xsl:if>
-              <xsl:if test="name(current())='objectType'">org.ivoa.vodml.jpa.JPAManipulations</xsl:if>
+              org.ivoa.vodml.jpa.JPAManipulations
           </xsl:sequence>
       </xsl:variable>
       <xsl:if test="count($ifs)> 0"><xsl:value-of select="concat(' implements ', string-join($ifs,','))"/> </xsl:if>
@@ -532,8 +540,8 @@
           /**
           * inserted database key
           */
-          @javax.xml.bind.annotation.XmlTransient
           <xsl:if test="not(vf:referredTo($vodml-ref))">
+          @javax.xml.bind.annotation.XmlTransient
           @com.fasterxml.jackson.annotation.JsonIgnore
           </xsl:if>
           @Id
@@ -568,6 +576,11 @@
               public boolean hasNaturalKey()
               {
                 return false;
+              }
+              @Override
+              public Class idType()
+              {
+                 return Long.class;
               }
           </xsl:if>
 
@@ -609,6 +622,12 @@
           {
           return true;
           }
+          @Override
+          public Class idType()
+          {
+          return String.class;
+          }
+
 
       </xsl:if>
 
@@ -618,6 +637,7 @@
 
       <xsl:apply-templates select="." mode="jpawalker"/>
       <xsl:apply-templates select="." mode="cloner"/>
+      <xsl:apply-templates select="." mode="jparefs"/>
 
 <!--      <xsl:if test="local-name() eq 'dataType'">-->
 <!--          <xsl:apply-templates select="." mode="JPAConverter"/>-->
@@ -641,6 +661,7 @@ package <xsl:value-of select="$path"/>;
       * <xsl:value-of select="$vodmlauthor"/>
       */
       <xsl:call-template name="vodmlAnnotation"/>
+      <xsl:apply-templates select="." mode="openapiAnnotation"/>
       public enum <xsl:value-of select="name"/>&bl;{
 
         <xsl:apply-templates select="literal"  />
@@ -721,6 +742,7 @@ package <xsl:value-of select="$path"/>;
       *  <xsl:value-of select="$vodmlauthor"/>
       */
       <xsl:call-template name="vodmlAnnotation"/>
+      <xsl:apply-templates select="." mode="openapiAnnotation"/>
       <xsl:apply-templates select="." mode="JPAAnnotation"/>
       <xsl:apply-templates select="." mode="JAXBAnnotation"/>
       public class <xsl:value-of select="vf:capitalize(name)"/>&bl; implements java.io.Serializable {
@@ -777,6 +799,7 @@ package <xsl:value-of select="$path"/>;
     *
     */
     <xsl:call-template name="vodmlAnnotation"/>
+    <xsl:apply-templates select="." mode="openapiAnnotation"/>
     <xsl:apply-templates select="." mode="JPAAnnotation"/>
     <xsl:apply-templates select="." mode="JAXBAnnotation"/>
     <xsl:choose>
@@ -934,6 +957,7 @@ package <xsl:value-of select="$path"/>;
     <xsl:apply-templates select="." mode="JAXBAnnotation"/>
     <xsl:apply-templates select="." mode="JPAAnnotation"/>
     <xsl:call-template name="vodmlAnnotation"/>
+      <xsl:apply-templates select="." mode="openapiAnnotation"/>
       <xsl:choose>
            <xsl:when test="vf:isSubSetted(vf:asvodmlref(.)) "><!--  or $rt/@abstract or vf:hasSubTypes(datatype/vodml-ref)-->
      protected List&lt;? extends <xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="name"/> = null;
@@ -957,6 +981,7 @@ package <xsl:value-of select="$path"/>;
         <xsl:apply-templates select="." mode="JAXBAnnotation"/>
         <xsl:apply-templates select="." mode="JPAAnnotation"/>
         <xsl:call-template name="vodmlAnnotation"/>
+        <xsl:apply-templates select="." mode="openapiAnnotation"/>
         protected <xsl:value-of select="$type"/>&bl;<xsl:value-of select="name"/> = null;
     </xsl:template>
 
@@ -1046,8 +1071,42 @@ package <xsl:value-of select="$path"/>;
         if( <xsl:value-of select="name"/> != null ) <xsl:value-of select="name"/>.forceLoad();
     </xsl:template>
     <xsl:template match="dataType" mode="jpawalker">
-        <!-- do nothing for datatypes -->
+        @Override
+        public void forceLoad() {
+        <!-- do nothing for datatypes - they cannot contain compositions...-->
+        }
     </xsl:template>
+
+<!-- jparefs-->
+    <xsl:template match="objectType|dataType" mode="jparefs">
+        @Override
+        public void persistRefs(javax.persistence.EntityManager _em) {
+          <xsl:variable name="localdefs" select="vf:javaLocalDefines(vf:asvodmlref(current()))"/>
+          <xsl:apply-templates select="composition[vf:asvodmlref(.) = $localdefs]
+                          |reference[vf:asvodmlref(.) = $localdefs]
+                          |attribute[vf:attributeIsDtype(.) and vf:asvodmlref(.) = $localdefs]
+                          |constraint[ends-with(@xsi:type,':SubsettedRole') and
+                          role[vodml-ref = $localdefs]]" mode="jparefs"/>
+          <xsl:if test="extends">super.persistRefs(_em);</xsl:if>
+          <xsl:if test="vf:referredTo(vf:asvodmlref(current())) and not(extends)">
+              _em.persist(this);
+          </xsl:if>
+        }
+    </xsl:template>
+    <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="jparefs">
+        for( <xsl:value-of select="vf:FullJavaType(datatype/vodml-ref, true())"/> c : <xsl:value-of select="name"/> ) {
+        c.persistRefs(_em);
+        }
+
+    </xsl:template>
+    <xsl:template match="composition|reference|attribute[vf:attributeIsDtype(.)]" mode="jparefs">
+        if( <xsl:value-of select="name"/> != null ) <xsl:value-of select="name"/>.persistRefs(_em);
+    </xsl:template>
+    <xsl:template match="constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="jparefs">
+        <xsl:variable name="ss" select="$models/key('ellookup',current()/role/vodml-ref)"/>
+        if( <xsl:value-of select="$ss/name"/> != null ) <xsl:value-of select="$ss/name"/>.persistRefs(_em);
+    </xsl:template>
+
 
     <xsl:template match="objectType" mode="cloner">
 
@@ -1087,7 +1146,10 @@ package <xsl:value-of select="$path"/>;
         }
     </xsl:template>
     <xsl:template match="dataType" mode="cloner">
-        <!-- do nothing for datatypes -->
+        @Override
+        public void jpaClone(javax.persistence.EntityManager em) {
+        <!-- do nothing for datatypes ??? -->
+        }
     </xsl:template>
 
     <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="add2composition">
@@ -1117,6 +1179,7 @@ package <xsl:value-of select="$path"/>;
     <xsl:apply-templates select="." mode="JPAAnnotation"/>
     <xsl:apply-templates select="." mode="JAXBAnnotation"/>
     <xsl:call-template name="vodmlAnnotation"/>
+      <xsl:apply-templates select="." mode="openapiAnnotation"/>
     protected <xsl:value-of select="$type"/>&bl;<xsl:value-of select="name"/> = null;
   </xsl:template>
 
@@ -1396,6 +1459,10 @@ import javax.xml.bind.annotation.XmlNsForm;
           </xsl:otherwise>
       </xsl:choose>
  </xsl:template>
+    <xsl:template match="*" mode="openapiAnnotation">
+    @org.eclipse.microprofile.openapi.annotations.media.Schema(description="<xsl:if test="current()/name()='reference'"><xsl:value-of
+            select="'A reference to - '"/></xsl:if><xsl:value-of select="string-join(for $s in description/text() return normalize-space($s),' ')"/>")
+    </xsl:template>
 
 
 </xsl:stylesheet>

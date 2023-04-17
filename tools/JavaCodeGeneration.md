@@ -34,6 +34,8 @@ A constructor with all the possible properties included is
 ```java
 A a = new A(x,y);
 ```
+In addition there is a copy constructor, and for subclasses there is a constructor with arguments
+that consist of a superclass instance as well as the local members.
 
 #### Fluent with
 
@@ -105,6 +107,10 @@ ObjectMapper mapper = MyModel.jsonMapper();
 
 The generated code has JPA annotations to allow storing in RDBs with compliant systems.
 
+Operations are not in general cascaded into references - so that the references need to be explicitly managed. In most cases this will be the "natural" way to do things 
+for the model - however at creation time it might be inconvenient to do this so that there is a method
+`persistRefs(javax.persistence.EntityManager _em)` that will do a deep persist of any references in the child objects, which in turn then will allow an error free persist of the parent. 
+
 In general collections are marked for lazy loading, and as a convenience there is a `forceLoad()`
 method generated that will do a deep walk of all the collections in a particular type, which will force the loading of the whole instance tree if that is desired.
 
@@ -115,6 +121,8 @@ A second convenience method that is created to make it easy to clone an entity i
  entityManager.merge(to_clone);
 ```
 which will create a new entity along with any contained compositions, but will maintain the original references.
+
+This extra JPA functionality is described by the [JPAManipulations](../runtime/java/src/main/java/org/ivoa/vodml/jpa/JPAManipulations.java) interface.
 
 #### Embeddable dataTypes
 

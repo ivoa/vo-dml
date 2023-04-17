@@ -1,0 +1,38 @@
+model jpatest (1.0) "This is a small model to test some jpa features"
+include "https://raw.githubusercontent.com/ivoa/vodsl-models/master/IVOA-v1.0.vodsl"
+
+enum AnEnum "enum" {
+	eval1 "",
+	eval2 ""
+}
+
+dtype ADtype "dtype" {
+	dvalr: ivoa:real "";
+	dvals: ivoa:string "";
+	dref references ReferredTo3  "";
+}
+
+otype ReferredTo1 {
+	sval : ivoa:string "";
+	
+}
+
+otype ReferredTo2 "" {
+	sval : ivoa:string "";
+}
+
+otype ReferredTo3 "" {
+	sval : ivoa:string "";
+}
+
+otype Child {
+	rval references ReferredTo2 "";
+}
+
+otype Parent "top level type" {
+	dval : ADtype "";
+	rval references ReferredTo1 "";
+	cval : Child  as composition "";
+	
+	
+}

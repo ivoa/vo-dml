@@ -1,7 +1,7 @@
 Using the VO-DML Gradle Plugin
 ===================================
 
-Latest published version ![gradle plugin](https://img.shields.io/gradle-plugin-portal/v/net.ivoa.vo-dml.vodmltools?label=gradle%20plugin)
+Latest published version [![gradle plugin](https://img.shields.io/gradle-plugin-portal/v/net.ivoa.vo-dml.vodmltools?label=gradle%20plugin)](https://plugins.gradle.org/plugin/net.ivoa.vo-dml.vodmltools)
 
 The aim of this plugin is to process VO-DML models to produce documentation and source code that
 can contain instances the model and has the capability of serialising instances of the model to/from XML,JSON and 
@@ -92,6 +92,18 @@ the configurable properties within the vodml extension are;
 
 the task will write the VO-DML files into the `vodmlDir`
 
+Any dependencies that have VO-DML models within them will have their VO-DML automatically converted to VODSL
+and placed in the `build/tmp` directory. Any target VODSL files will have to explicitly include the dependencies with a relative path into that directory.
+
+If you want to have the VO-DML generated automatically from the VODSL rather than running this task manually, then
+
+```kotlin
+tasks.named("vodmlJavaGenerate") {
+        dependsOn("vodslToVodml")
+}
+```
+in the `build.gradle.kts` file would run the task before the Java generation for instance.
+
 ### Creating VODSL from existing VO-DML
 
 If it is desired to create VODSL from some existing VO-DML then there is a special task that can be run from the
@@ -144,5 +156,7 @@ indirectly from the generated Java code as can be seen from the [Small java exam
 * 0.3.13 some bug fixes and different vodml metadata handling
 * 0.3.14 proper JPA handling for generated primitives - added validation test for properly formed VODML-IDs
 * 0.3.15 added JPA cloning, Java Copy Constructors, JSON improvements
+* 0.3.16 Add microservices OpenAPI annotations, auto vodsl generation from model dependencies.
+* 0.3.17 Stop JPA cascading to references.
 
 ## Information for [developers of the plugin itself](./Developing.md)
