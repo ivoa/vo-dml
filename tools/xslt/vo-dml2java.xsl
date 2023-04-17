@@ -1010,7 +1010,7 @@ package <xsl:value-of select="$path"/>;
       public List&lt;<xsl:value-of select="$type"/>&gt;&bl;get<xsl:value-of select="$name"/>() {
       </xsl:otherwise>
       </xsl:choose>
-    return java.util.Collections.unmodifiableList(this.<xsl:value-of select="name"/>);
+    return java.util.Collections.unmodifiableList(this.<xsl:value-of select="name"/> != null?this.<xsl:value-of select="name"/>: new ArrayList&lt;&gt;());
     }
     /**
     * Defines whole <xsl:value-of select="name"/> composition.
