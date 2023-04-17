@@ -157,6 +157,6 @@ indirectly from the generated Java code as can be seen from the [Small java exam
 * 0.3.14 proper JPA handling for generated primitives - added validation test for properly formed VODML-IDs
 * 0.3.15 added JPA cloning, Java Copy Constructors, JSON improvements
 * 0.3.16 Add microservices OpenAPI annotations, auto vodsl generation from model dependencies.
-* 0.3.17 Stop JPA cascading to references.
+* 0.3.17 Stop JPA cascading to references + add convenience persistRefs() to help deal with that...
 
 ## Information for [developers of the plugin itself](./Developing.md)
