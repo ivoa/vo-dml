@@ -1,5 +1,5 @@
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.3.16"
+    id("net.ivoa.vo-dml.vodmltools") version "0.3.17"
 //    id ("com.diffplug.spotless") version "5.17.1"
     `maven-publish`
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
@@ -39,6 +39,10 @@ dependencies {
 
 }
 
+
+tasks.named<Jar>("jar") {
+    exclude("**/persistence.xml")
+}
 //publishing - IMPL would be nice to factor this out in some way....
 nexusPublishing {
     repositories {

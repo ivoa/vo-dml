@@ -5,7 +5,7 @@ import org.gradle.kotlin.dsl.support.classFilePathCandidatesFor
  * 
  */
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.3.16"
+    id("net.ivoa.vo-dml.vodmltools") version "0.3.17"
 //    id ("com.diffplug.spotless") version "5.17.1"
 
 }
@@ -20,13 +20,14 @@ group = "net.ivoa.vo-dml"
 version = "0.2-SNAPSHOT"
 
 vodml {
-    vodmlDir.set(layout.projectDirectory.dir("../../../models/")) // do the models in place, rather than use the symbolic links in subdirs of here
+    vodmlDir.set(layout.projectDirectory.dir("../../../models/sample/test")) // do the models in place, rather than use the symbolic links in subdirs of here
 // just act on one file
     vodmlFiles.setFrom(project.files (
-        vodmlDir.file("sample/sample/vo-dml/Sample.vo-dml.xml"),
-        vodmlDir.file("sample/filter/vo-dml/Filter.vo-dml.xml"),
-        vodmlDir.file("sample/test/like_coords-v1.0.vo-dml.xml"),
-        vodmlDir.file("sample/lifecycle/lifecycleTest.vo-dml.xml")
+        vodmlDir.file("../sample/vo-dml/Sample.vo-dml.xml"),
+        vodmlDir.file("../filter/vo-dml/Filter.vo-dml.xml"),
+        vodmlDir.file("like_coords-v1.0.vo-dml.xml"),
+        vodmlDir.file("lifecycleTest.vo-dml.xml"),
+        vodmlDir.file("jpatest.vo-dml.xml")
 
     ))
 
@@ -37,7 +38,7 @@ vodml {
             )
         )
     )
-
+    vodslDir.set(vodmlDir) // same place for source models
 }
 
 
