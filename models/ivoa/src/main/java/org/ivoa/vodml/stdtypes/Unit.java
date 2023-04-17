@@ -2,7 +2,10 @@
 package org.ivoa.vodml.stdtypes;
 
 
+import org.ivoa.vodml.jpa.JPAManipulations;
+
 import javax.persistence.Embeddable;
+import javax.persistence.EntityManager;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -19,7 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 @javax.xml.bind.annotation.XmlType( name = "Unit")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Unit implements java.io.Serializable {
+public class Unit implements JPAManipulations, java.io.Serializable {
 
   private static final long serialVersionUID = 1L;
 
@@ -58,6 +61,20 @@ public class Unit implements java.io.Serializable {
       return value().toString();
   }
 
+  @Override
+  public void forceLoad() {
+    // nothing to do
+  }
+
+  @Override
+  public void jpaClone(EntityManager em) {
+    // nothing to do
+  }
+
+  @Override
+  public void persistRefs(EntityManager em) {
+    // nothing to do.
+  }
 
 }
   
