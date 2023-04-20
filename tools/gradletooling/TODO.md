@@ -72,7 +72,9 @@ VODML Tooling TODO
     https://thorben-janssen.com/fix-multiplebagfetchexception-hibernate/
     https://blog.jooq.org/no-more-multiplebagfetchexception-thanks-to-multiset-nested-collections/ - perhaps
   * arrays https://thorben-janssen.com/mapping-arrays-with-hibernate/
-  * add more of the general JPA choices to mapping... discriminator column name for instance...
+  * add more of the general JPA choices to mapping
+    * discriminator column name for instance...
+    * whether a type hierarchy should actually use @mappedSuperclass....
 
 
 * JSON
