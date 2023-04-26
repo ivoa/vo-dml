@@ -5,7 +5,7 @@ note that this is just a copy of what
  -->
 <model>
 <name>coords</name>
-<file>like_coords-v1.0.vo-dml.xml</file>
+<file>like_coords.vo-dml.xml</file>
     <java-package>org.ivoa.dm.notstccoords</java-package>
     <python-package>org.ivoa.dm.notstccoords</python-package>
     <xml-targetnamespace prefix="coord">http://ivoa.net/dm/sample/notstc/coords/</xml-targetnamespace>

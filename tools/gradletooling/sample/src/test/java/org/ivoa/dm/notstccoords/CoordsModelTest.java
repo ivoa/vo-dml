@@ -89,6 +89,57 @@ class CoordsModelTest extends AbstractTest {
        
  
     }
+    
+    
+   @org.junit.jupiter.api.Test
+     void testAstroCoordSys() throws JAXBException, ParserConfigurationException, TransformerException, JsonProcessingException {
+       Unit deg = new Unit("deg");
+         SpaceSys ICRS_SYS = new SpaceSys().withFrame(
+               SpaceFrame.createSpaceFrame( f-> {
+                   f.refPosition = new StdRefLocation("TOPOCENTRE");
+                   f.spaceRefFrame="ICRS";
+                   f.planetaryEphem="DE432";
+                  }
+                  ));
+
+         TimeSys TIMESYS_TT = new TimeSys().withFrame(
+               TimeFrame.createTimeFrame( f -> {
+                  f.refPosition = new StdRefLocation("TOPOCENTRE");
+                  f.timescale = "TT";
+                  f.refDirection = new CustomRefLocation()
+                        .withEpoch("J2014.25")
+                        .withPosition(
+                              LonLatPoint.createLonLatPoint(p-> {
+                                 p.lon = new RealQuantity(6.752477,deg);
+                                 p.lat = new RealQuantity(-16.716116,deg);
+                                 p.dist = new RealQuantity(8.6, new Unit("ly"));
+                                 p.coordSys = ICRS_SYS;
+                                    }
+                              )
+                        );
+               })
+         );
+         GenericSys SPECSYS = new GenericSys().withFrame(
+               GenericFrame.createGenericFrame(f -> {
+                  f.refPosition = new StdRefLocation("TOPOCENTRE");
+                  f.planetaryEphem = "DE432";
+                     }
+               )
+         );
+
+
+         CoordsModel model = new CoordsModel();
+         
+         model.addReference(TIMESYS_TT);
+         model.addReference(SPECSYS);
+         model.addReference(ICRS_SYS);
+         model.makeRefIDsUnique();
+         CoordsModel modelin = roundtripXML(CoordsModel.contextFactory(), model, CoordsModel.class);
+         assertNotNull(modelin);
+         CoordsModel modelin2 = roundTripJSON(model.management());
+//         assertNotNull(modelin2);
+    }
+    
 
 }
 
