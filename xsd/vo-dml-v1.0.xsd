@@ -324,15 +324,17 @@ TBD continue based on VO-DML specification document.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
-        <xsd:element name="name" type="ModelName" minOccurs="1">
+        <xsd:element name="name" type="ModelName" minOccurs="0" maxOccurs="1">
             <xsd:annotation>
-                <xsd:documentation>
+               <xsd:documentation>
+                  DEPRECATED - this just repeats information in the referenced model document
+
                     Name by which imported model is used in the current model and its documentation.
                     This name MUST be the same as the 'name' of the model definition in that remote document.
                     For all utypes pointing to elements in the imported model MUST use this name as prefix.
                 </xsd:documentation>
-        </xsd:annotation>
-      </xsd:element>
+            </xsd:annotation>
+        </xsd:element>
             <xsd:element name="identifier" type="xsd:string" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation>
@@ -357,9 +359,10 @@ TBD continue based on VO-DML specification document.
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="documentationURL" type="xsd:anyURI" minOccurs="1">
+      <xsd:element name="documentationURL" type="xsd:anyURI" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
-          <xsd:documentation>
+           <xsd:documentation>            DEPRECATED - this just repeats information in the referenced model document
+    
             URL where a documentation HTML file for the remote model can be downloaded.
             This SHOULD be a document that contains anchors for each element thta has as name attribute the vodml-id of that element.
             I.e. it is assumed that the

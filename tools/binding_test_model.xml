@@ -9,7 +9,8 @@
         <file>jpatest.vo-dml.xml</file>
         <java-package>org.ivoa.dm.jpatest</java-package>
         <python-package>org.ivoa.dm.jpatest</python-package>
-        <xml-targetnamespace prefix="jpat" schemaFilename="jpatest.xsd">http://ivoa.net/dm/sample/jpatest</xml-targetnamespace>
+        <xml-targetnamespace prefix="jpat" schemaFilename="jpatest.xsd">http://ivoa.net/vodml/sample/jpatest</xml-targetnamespace>
+        <xmllegacy-targetnamespace prefix="jpat" schemaLocation="jpatest.xsd">http://ivoa.net/dm/sample/jpatest</xmllegacy-targetnamespace>
         <rdb inheritance-strategy="single-table"
         discriminatorColumnLength="64"/>
     </model>
@@ -18,7 +19,8 @@
         <file>lifecycleTest.vo-dml.xml</file>
         <java-package>org.ivoa.dm.lifecycle</java-package>
         <python-package>org.ivoa.dm.lifecycle</python-package>
-        <xml-targetnamespace prefix="life" schemaFilename="lifecycletest.xsd">http://ivoa.net/dm/sample/lifecycle</xml-targetnamespace>
+        <xml-targetnamespace prefix="life">http://ivoa.net/vodml/sample/lifecycle</xml-targetnamespace>
+        <xmllegacy-targetnamespace prefix="life" schemaLocation="lifecycletest.xsd">http://ivoa.net/dm/sample/lifecycle</xmllegacy-targetnamespace>
         <rdb inheritance-strategy="single-table"
              discriminatorColumnLength="64"/>
     </model>

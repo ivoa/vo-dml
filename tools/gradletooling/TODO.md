@@ -40,6 +40,7 @@ VODML Tooling TODO
 * deal with arrays (present array api, but store as arraylist for JAXB/JPA)
 * compositions are not always Lists if @?
 * nice pluralizations? https://github.com/atteo/evo-inflector
+  * ~~for multiplicity > 1 rename method addToX~~ (also have list as argument)
 * make source prettifier work.
 * builders
   * add convenience builders for the lists.
@@ -48,6 +49,7 @@ VODML Tooling TODO
   * ~~subsets not forced in some SRC coords~~ 
   * add constructor that misses out the optional attributes.
   * think again about the subsetting strategy and type safety
+* make semantic constraints work - i.e. look up the RDF....
 
 * JAXB
   * ~~idrefs referred to objects are not being output - http://stackoverflow.com/questions/12914382/marshalling-unmarshalling-fields-to-tag-with-attributes-using-jaxb~~
@@ -72,7 +74,9 @@ VODML Tooling TODO
     https://thorben-janssen.com/fix-multiplebagfetchexception-hibernate/
     https://blog.jooq.org/no-more-multiplebagfetchexception-thanks-to-multiset-nested-collections/ - perhaps
   * arrays https://thorben-janssen.com/mapping-arrays-with-hibernate/
-  * add more of the general JPA choices to mapping... discriminator column name for instance...
+  * add more of the general JPA choices to mapping
+    * discriminator column name for instance...
+    * whether a type hierarchy should actually use @mappedSuperclass....
 
 
 * JSON

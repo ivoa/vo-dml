@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "net.ivoa.vo-dml"
-version = "0.3.17"
+version = "0.3.18"
 
 repositories {
     mavenLocal() // FIXME remove this when releasing - just here to pick up local vodsl updates

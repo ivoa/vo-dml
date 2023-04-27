@@ -136,27 +136,8 @@ The serializations that are implemented in the generated code are discussed in m
 The gradle plugin does not currently have a task directly to generate XML and RDB schema from the models, however, this can be done
 indirectly from the generated Java code as can be seen from the [Small java example](./gradletooling/sample/src/main/java/WriteSampleSchema.java).
 
-## Changes
 
-* 0.2 java generation changed to cope with STC coords.
-* 0.2.1 minor updates so that proposalDM generation works
-* 0.2.2 make sure that the jpa override will work for mapped primitives - added extra attribute on the mapping
-* 0.3.1 add the vodslToVodml task (0.3.0 would not publish because of SNAPSHOT dependency)
-* 0.3.2 add the XmiTask type
-* 0.3.3 bugfix for html document generation
-* 0.3.4 the plugin now saves VO-DML and binding files to the created jar and then uses them if they are in dependency tree.
-* 0.3.5 better working in the inherited data-model case.
-* 0.3.6 JPA EntityGraphs
-* 0.3.7 To VODSL task added
-* 0.3.8 Add schema generation via the generated Java code.
-* 0.3.9 Add JSON serialization.
-* 0.3.10 Add possibility to do use "SingleTable" inheritance strategy for RDB schema
-* 0.3.11 Add XSD to VODSL task.
-* 0.3.12 allow references to be contained...
-* 0.3.13 some bug fixes and different vodml metadata handling
-* 0.3.14 proper JPA handling for generated primitives - added validation test for properly formed VODML-IDs
-* 0.3.15 added JPA cloning, Java Copy Constructors, JSON improvements
-* 0.3.16 Add microservices OpenAPI annotations, auto vodsl generation from model dependencies.
-* 0.3.17 Stop JPA cascading to references + add convenience persistRefs() to help deal with that...
 
 ## Information for [developers of the plugin itself](./Developing.md)
+
+## [Change Log](./ChangeLog.md)

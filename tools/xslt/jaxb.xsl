@@ -23,9 +23,9 @@
 
 
   <xsl:variable name="jsontypinfo">
-      @com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver(value = org.ivoa.vodml.json.VodmlTypeResolver.class)
-   //   @com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.CLASS, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.WRAPPER_OBJECT )
-      @com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.CLASS, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY,property = "@class" )
+  @com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver(value = org.ivoa.vodml.json.VodmlTypeResolver.class)
+   //   @com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.WRAPPER_OBJECT )
+  @com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY,property = "@type" )
   </xsl:variable>
 
   <xsl:template match="objectType|dataType" mode="JAXBAnnotation">
@@ -33,13 +33,21 @@
   @javax.xml.bind.annotation.XmlAccessorType( javax.xml.bind.annotation.XmlAccessType.NONE )  
   @javax.xml.bind.annotation.XmlType( name = "<xsl:value-of select="name"/>")
   <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
-  <xsl:if test="vf:hasSubTypes($vodml-ref)">
+  <xsl:choose>
+      <xsl:when test="vf:hasSubTypes($vodml-ref)">
   @javax.xml.bind.annotation.XmlSeeAlso({ <xsl:value-of select="string-join(for $s in vf:subTypes($vodml-ref) return concat(vf:QualifiedJavaType(vf:asvodmlref($s)),'.class'),',')"/>  })
   @com.fasterxml.jackson.annotation.JsonSubTypes({
-      <xsl:value-of select="string-join(for $s in vf:subTypes($vodml-ref) return
+          <xsl:value-of select="string-join(for $s in vf:subTypes($vodml-ref) return
               concat('@com.fasterxml.jackson.annotation.JsonSubTypes.Type(value=',vf:QualifiedJavaType(vf:asvodmlref($s)),'.class,name=&quot;',vf:utype(vf:asvodmlref($s)),'&quot;)'),',')"/>
-      })
-  </xsl:if>
+  })
+          <xsl:value-of select="$jsontypinfo" />
+      </xsl:when>
+      <xsl:otherwise>
+          <!-- actually only necessary when there is a supertype - but probably harmless otherwise -->
+  @com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NONE )
+      </xsl:otherwise>
+  </xsl:choose>
+
     <xsl:choose>
       <xsl:when test="not(vf:isContained(vf:asvodmlref(.))) and not(@abstract = 'true')">
  //   @javax.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>")
@@ -150,7 +158,7 @@
     <xsl:message >Writing to Overall Model file <xsl:value-of select="$file"/></xsl:message>
       <!-- open file for this package -->
     <!-- imported model names -->
-    <xsl:variable name="modelsInScope" select="(name,vf:importedModelNames(.))"/>
+    <xsl:variable name="modelsInScope" select="(name,vf:importedModelNames(name))"/>
       <xsl:variable name="possibleRefs" select="distinct-values($models/vo-dml:model[name = $modelsInScope ]//reference/datatype/vodml-ref)" as="xsd:string*"/>
 
       <xsl:message>models in scope=<xsl:value-of select="concat(string-join($modelsInScope,','), ' hasref=',string-join($possibleRefs,','))"/> </xsl:message>
@@ -220,7 +228,8 @@
         <xsl:if test="$models/key('ellookup',current())/@abstract or vf:hasSubTypes(current())">
             <xsl:value-of select="$jsontypinfo"/>
         </xsl:if>
-        private Set&lt;<xsl:value-of select="vf:QualifiedJavaType(.)"/>&gt;&bl; <xsl:value-of select="vf:lowerFirst($models/key('ellookup',current())/name)"/> = new HashSet&lt;&gt;();
+        private Set&lt;<xsl:value-of select="vf:QualifiedJavaType(current())"/>&gt;&bl; <xsl:value-of select="vf:lowerFirst($models/key('ellookup',current())/name)"/> = new HashSet&lt;&gt;();
+        void add(<xsl:value-of select="vf:QualifiedJavaType(current())"/> r){<xsl:value-of select="vf:lowerFirst($models/key('ellookup',current())/name)"/>.add(r);}
     </xsl:for-each>
     }
     @XmlElement
@@ -252,6 +261,7 @@
           org.ivoa.vodml.nav.Util.findReferences(c, refmap);
       </xsl:if>
       }
+
       public void deleteContent( final <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/> c)
       {
       content.remove(c);
@@ -264,7 +274,17 @@
       </xsl:if>
       }
       </xsl:for-each>
-      @SuppressWarnings("unchecked")
+        <xsl:for-each select="$references-vodmlref">
+        <!--         <xsl:message>ref in hierarchy <xsl:value-of select="vf:asvodmlref(.)"/> refs= <xsl:value-of select="vf:referencesInHierarchy(vf:asvodmlref(.))"/>  </xsl:message>-->
+        /** directly add reference. N.B. should not be necessary in normal operation adding content should find embedded references.
+         * @param c the reference to be added.
+         */
+        public void addReference( final <xsl:value-of select="vf:QualifiedJavaType(current())"/> c)
+        {
+            refs.add(c);
+        }
+        </xsl:for-each>
+        @SuppressWarnings("unchecked")
       public &lt;T&gt; List&lt;T&gt; getContent(Class&lt;T&gt; c) {
       return (List&lt;T&gt;) content.stream().filter(p -> p.getClass().isAssignableFrom(c)).collect(
       Collectors.toUnmodifiableList()
@@ -274,6 +294,11 @@
       public void makeRefIDsUnique()
       {
         List&lt;XmlIdManagement&gt; il = org.ivoa.vodml.nav.Util.findXmlIDs(content);
+        <xsl:if test="$hasReferences">
+        @SuppressWarnings("unchecked")
+        Stream&lt;Object&gt; t = refmap.values().stream().flatMap(f->f.stream());
+        il.addAll(t.map(f->(XmlIdManagement)f).collect(Collectors.toList()));
+        </xsl:if>
         org.ivoa.vodml.nav.Util.makeUniqueIDs(il);
       }
       public static boolean hasReferences(){
@@ -292,13 +317,17 @@
         }
 
 
-        public static void writeXMLSchema() throws JAXBException, IOException {
+        public static void writeXMLSchema() {
         final Map&lt;String,String&gt; schemaMap = new HashMap&lt;&gt;();
         <xsl:for-each select="$mapping/bnd:mappedModels/model/xml-targetnamespace">
             schemaMap.put("<xsl:value-of select="normalize-space(text())"/>","<xsl:value-of select="@schemaFilename"/>");
         </xsl:for-each>
 
+        try {
         contextFactory().generateSchema(new org.javastro.ivoa.jaxb.SchemaNamer(schemaMap));
+        } catch (IOException | JAXBException e) {
+        throw new RuntimeException("Problem writing XML Schema",e);
+        }
         }
         /**
         * Return a Jackson objectMapper suitable for JSON serialzation.

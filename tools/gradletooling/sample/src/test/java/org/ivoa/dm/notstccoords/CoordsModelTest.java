@@ -22,7 +22,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.ivoa.dm.AbstractTest;
 import org.ivoa.dm.ivoa.RealQuantity;
-import org.ivoa.vodml.stdtypes.Unit;
+import org.ivoa.dm.ivoa.Unit;
+import org.ivoa.vodml.ModelManagement;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +37,7 @@ class CoordsModelTest extends AbstractTest {
     /** logger for this class */
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory
             .getLogger(CoordsModelTest.class);
-    private SphericalPoint pos1;
+    private LonLatPoint pos1;
     private SpaceSys spacesys;
     private SpaceFrame icrs;
     
@@ -64,7 +65,7 @@ class CoordsModelTest extends AbstractTest {
         PhysicalCoordSpace coordspace = new SphericalCoordSpace();
         spacesys = new SpaceSys(coordspace, icrs);
         
-        pos1 = new SphericalPoint(new RealQuantity(45.0, degree), new RealQuantity(22.0, degree),new RealQuantity(22.0, metre), spacesys );
+        pos1 = new LonLatPoint(new RealQuantity(45.0, degree), new RealQuantity(22.0, degree),new RealQuantity(22.0, metre), spacesys );
         
         
         
@@ -78,14 +79,68 @@ class CoordsModelTest extends AbstractTest {
        // model.addContent(pos1); FIXME - need to think about the dtypes should be added to the top level  model object.
         CoordsModel modelin = roundtripXML(jc, model, CoordsModel.class);
     }
-
+    
     @Test
     void testJSON() throws JsonProcessingException {
-
-        CoordsModel model = new CoordsModel();
-        model.addContent(icrs);
-        CoordsModel modelin = roundTripJSON(model.management());
-
-
+      
+       CoordsModel model = new CoordsModel();
+       model.addContent(icrs);
+       CoordsModel modelin = roundTripJSON(model.management());
+       
+ 
     }
+    
+    
+   @org.junit.jupiter.api.Test
+     void testAstroCoordSys() throws JAXBException, ParserConfigurationException, TransformerException, JsonProcessingException {
+       Unit deg = new Unit("deg");
+         SpaceSys ICRS_SYS = new SpaceSys().withFrame(
+               SpaceFrame.createSpaceFrame( f-> {
+                   f.refPosition = new StdRefLocation("TOPOCENTRE");
+                   f.spaceRefFrame="ICRS";
+                   f.planetaryEphem="DE432";
+                  }
+                  ));
+
+         TimeSys TIMESYS_TT = new TimeSys().withFrame(
+               TimeFrame.createTimeFrame( f -> {
+                  f.refPosition = new StdRefLocation("TOPOCENTRE");
+                  f.timescale = "TT";
+                  f.refDirection = new CustomRefLocation()
+                        .withEpoch("J2014.25")
+                        .withPosition(
+                              LonLatPoint.createLonLatPoint(p-> {
+                                 p.lon = new RealQuantity(6.752477,deg);
+                                 p.lat = new RealQuantity(-16.716116,deg);
+                                 p.dist = new RealQuantity(8.6, new Unit("ly"));
+                                 p.coordSys = ICRS_SYS;
+                                    }
+                              )
+                        );
+               })
+         );
+         GenericSys SPECSYS = new GenericSys().withFrame(
+               GenericFrame.createGenericFrame(f -> {
+                  f.refPosition = new StdRefLocation("TOPOCENTRE");
+                  f.planetaryEphem = "DE432";
+                     }
+               )
+         );
+
+
+         CoordsModel model = new CoordsModel();
+         
+         model.addReference(TIMESYS_TT);
+         model.addReference(SPECSYS);
+         model.addReference(ICRS_SYS);
+         model.makeRefIDsUnique();
+         CoordsModel modelin = roundtripXML(CoordsModel.contextFactory(), model, CoordsModel.class);
+         assertNotNull(modelin);
+         CoordsModel modelin2 = roundTripJSON(model.management());
+//         assertNotNull(modelin2);
+    }
+    
+
 }
+
+

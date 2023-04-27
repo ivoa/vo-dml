@@ -255,8 +255,10 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
             <xsl:when test="$lang eq 'python'">
                 <xsl:copy-of select="$mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/python-type"/>
             </xsl:when>
+            <xsl:when test="$lang eq 'xsd'">
+                <xsl:copy-of select="$mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/xsd-type"/>
+            </xsl:when>
         </xsl:choose>
-
     </xsl:function>
 
     <xsl:function name="vf:hasMapping" as="xsd:boolean">
@@ -403,9 +405,36 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
 
     </xsl:function>
 
+
+    <xsl:function name="vf:importedModelNames" as="xsd:string*">
+        <xsl:param name="thisModel" as="xsd:string"/>
+        <xsl:choose>
+            <xsl:when test="$models/vo-dml:model[name=$thisModel]/import">
+                <xsl:variable name="m" as="xsd:string*">
+                    <xsl:for-each select="$models/vo-dml:model[name=$thisModel]/import">
+                        <xsl:sequence select="distinct-values(document(url)/vo-dml:model/name)"/>
+                    </xsl:for-each>
+                </xsl:variable>
+                <xsl:message><xsl:value-of select="concat('imports=',$thisModel,' --',string-join($m,','))"/> </xsl:message>
+                <xsl:variable name="r" as="xsd:string*">
+                    <xsl:sequence select="$m"/>
+                    <xsl:for-each select="$m">
+                        <xsl:sequence select="vf:importedModelNames(.)"/>  <!-- do recursion? see https://github.com/ivoa/vo-dml/issues/7 -->
+                    </xsl:for-each>
+                </xsl:variable>
+                <xsl:sequence select="distinct-values($r)"/>
+            </xsl:when>
+        </xsl:choose>
+
+    </xsl:function>
     <!-- is the type (sub or base) used as a reference -->
     <xsl:function name="vf:referredTo" as="xsd:boolean">
+    <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:value-of select="vf:referredToInModels($vodml-ref,$models/vo-dml:model/name/text())"/>
+    </xsl:function>
+    <xsl:function name="vf:referredToInModels" as="xsd:boolean">
         <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:param name="modelsToSearch" as="xsd:string*"/>
 
         <xsl:choose>
             <xsl:when test="$models/key('ellookup',$vodml-ref)">
@@ -417,13 +446,15 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
                       </xsl:sequence>
                   </xsl:variable>
 <!--                <xsl:message>refs <xsl:value-of select="concat ($vodml-ref,' ',count($models//reference/datatype[vodml-ref = $hier])> 0,' h=',string-join($hier,','))"/></xsl:message>-->
-                <xsl:value-of select="count($models//reference/datatype[vodml-ref = $hier])> 0"/>
+                <xsl:value-of select="count($models/vo-dml:model[name = $modelsToSearch]//reference/datatype[vodml-ref = $hier])> 0"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:message terminate="yes">type '<xsl:value-of select="$vodml-ref"/>' not in considered models</xsl:message>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
+
+
 
     <xsl:function name="vf:referencesInHierarchy" as="xsd:string*">
         <xsl:param name="vodml-ref"/>
@@ -589,12 +620,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
         <xsl:value-of select="$models/key('ellookup',$attr/datatype/vodml-ref)/name() = 'dataType'"/>
     </xsl:function>
 
-    <xsl:function name="vf:importedModelNames" as="xsd:string*">
-        <xsl:param name="model" as="element()"/>
-        <xsl:for-each select="$model/import">  <!--TODO  implement recursive model lookup (still not sure it this is expected see https://github.com/ivoa/vo-dml/issues/7) -->
-            <xsl:value-of select="document(url)/vo-dml:model/name"/>
-        </xsl:for-each>
-    </xsl:function>
+
 
     <xsl:function name="vf:upperFirst" as="xsd:string">
         <xsl:param name="s" as="xsd:string"/>

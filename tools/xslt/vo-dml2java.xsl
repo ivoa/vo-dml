@@ -1031,7 +1031,7 @@ package <xsl:value-of select="$path"/>;
     * Add a <xsl:value-of select="$type"/> to the composition.
     * @param p&bl;<xsl:value-of select="$type"/> to add
     */
-    public void add<xsl:value-of select="$name"/>(final <xsl:value-of select="$type"/> p) {
+    public void addTo<xsl:value-of select="$name"/>(final <xsl:value-of select="$type"/> p) {
       if(this.<xsl:value-of select="name"/> == null) {
         this.<xsl:value-of select="name"/> = new ArrayList&lt;&gt;();
       }
@@ -1039,9 +1039,9 @@ package <xsl:value-of select="$path"/>;
     }
     /**
     * Remove a <xsl:value-of select="$type"/> from the composition.
-    * @param p&bl;<xsl:value-of select="$type"/> to add
+    * @param p&bl;<xsl:value-of select="$type"/> to remove
     */
-    public void remove<xsl:value-of select="$name"/>(final <xsl:value-of select="$type"/> p) {
+    public void removeFrom<xsl:value-of select="$name"/>(final <xsl:value-of select="$type"/> p) {
         if(this.<xsl:value-of select="name"/> != null) {
             this.<xsl:value-of select="name"/>.remove(p);
         }
@@ -1154,18 +1154,6 @@ package <xsl:value-of select="$path"/>;
         }
     </xsl:template>
 
-    <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="add2composition">
-    <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
-    <xsl:variable name="name">
-      <xsl:call-template name="upperFirst">
-        <xsl:with-param name="val" select="name"/>
-      </xsl:call-template>
-    </xsl:variable>
-    if ("<xsl:apply-templates select="vodml-id" mode="asvodml-ref"/>".equals(vodmlRef)) {
-      add<xsl:value-of select="$name"/>((<xsl:value-of select="$type"/>)object);
-      return true;
-    }
-  </xsl:template>
 
 
 
@@ -1462,8 +1450,10 @@ import javax.xml.bind.annotation.XmlNsForm;
       </xsl:choose>
  </xsl:template>
     <xsl:template match="*" mode="openapiAnnotation">
-    @org.eclipse.microprofile.openapi.annotations.media.Schema(description="<xsl:if test="current()/name()='reference'"><xsl:value-of
-            select="'A reference to - '"/></xsl:if><xsl:value-of select="string-join(for $s in description/text() return normalize-space($s),' ')"/>")
+        <xsl:variable name="AllowedSymbols" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789()*%$#@!,.?[]=- +   /\'''"/>
+
+        @org.eclipse.microprofile.openapi.annotations.media.Schema(description="<xsl:if test="current()/name()='reference'"><xsl:value-of
+            select="'A reference to - '"/></xsl:if><xsl:value-of select="translate(string-join(for $s in description/text() return normalize-space($s),' '),'&quot;','''')"/>")
     </xsl:template>
 
 
