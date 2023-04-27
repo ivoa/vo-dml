@@ -37,7 +37,7 @@ class CoordsModelTest extends AbstractTest {
     /** logger for this class */
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory
             .getLogger(CoordsModelTest.class);
-    private SphericalPoint pos1;
+    private LonLatPoint pos1;
     private SpaceSys spacesys;
     private SpaceFrame icrs;
     
@@ -65,7 +65,7 @@ class CoordsModelTest extends AbstractTest {
         PhysicalCoordSpace coordspace = new SphericalCoordSpace();
         spacesys = new SpaceSys(coordspace, icrs);
         
-        pos1 = new SphericalPoint(new RealQuantity(45.0, degree), new RealQuantity(22.0, degree),new RealQuantity(22.0, metre), spacesys );
+        pos1 = new LonLatPoint(new RealQuantity(45.0, degree), new RealQuantity(22.0, degree),new RealQuantity(22.0, metre), spacesys );
         
         
         
