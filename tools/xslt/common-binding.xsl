@@ -410,19 +410,19 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
         <xsl:param name="thisModel" as="xsd:string"/>
         <xsl:choose>
             <xsl:when test="$models/vo-dml:model[name=$thisModel]/import">
-                <xsl:variable name="m">
+                <xsl:variable name="m" as="xsd:string*">
                     <xsl:for-each select="$models/vo-dml:model[name=$thisModel]/import">
-                        <xsl:value-of select="distinct-values(document(url)/vo-dml:model/name)"/>
+                        <xsl:sequence select="distinct-values(document(url)/vo-dml:model/name)"/>
                     </xsl:for-each>
                 </xsl:variable>
                 <xsl:message><xsl:value-of select="concat('imports=',$thisModel,' --',string-join($m,','))"/> </xsl:message>
-                <xsl:variable name="r">
+                <xsl:variable name="r" as="xsd:string*">
                     <xsl:sequence select="$m"/>
                     <xsl:for-each select="$m">
                         <xsl:sequence select="vf:importedModelNames(.)"/>  <!-- do recursion? see https://github.com/ivoa/vo-dml/issues/7 -->
                     </xsl:for-each>
                 </xsl:variable>
-                <xsl:value-of select="distinct-values($r)"/>
+                <xsl:sequence select="distinct-values($r)"/>
             </xsl:when>
         </xsl:choose>
 
