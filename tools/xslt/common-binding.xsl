@@ -255,8 +255,10 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
             <xsl:when test="$lang eq 'python'">
                 <xsl:copy-of select="$mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/python-type"/>
             </xsl:when>
+            <xsl:when test="$lang eq 'xsd'">
+                <xsl:copy-of select="$mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/xsd-type"/>
+            </xsl:when>
         </xsl:choose>
-
     </xsl:function>
 
     <xsl:function name="vf:hasMapping" as="xsd:boolean">

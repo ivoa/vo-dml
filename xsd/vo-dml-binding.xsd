@@ -30,9 +30,14 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
     <xsd:element name="python-package" type="PythonName" minOccurs="0" maxOccurs="1"/>
     <xsd:element name="xml-targetnamespace" type="xmlnsMapping" minOccurs="0" maxOccurs="1">
        <xsd:annotation>
-          <xsd:documentation>the xml namepace that is to be the target namespace for the generated model code</xsd:documentation>
-       </xsd:annotation></xsd:element>
-  <xsd:element name="rdb"  minOccurs="0" maxOccurs="1">
+          <xsd:documentation>the xml namespace that is to be the target namespace for the generated model code</xsd:documentation>
+       </xsd:annotation>
+    </xsd:element>
+      <xsd:element name="xmllegacy-targetnamespace" type="legacyxmlnsMapping" minOccurs="0" maxOccurs="1">
+          <xsd:annotation>
+              <xsd:documentation>the xml namespace that is to be the target namespace for the generated model code</xsd:documentation>
+          </xsd:annotation>
+      </xsd:element>  <xsd:element name="rdb"  minOccurs="0" maxOccurs="1">
     <xsd:complexType>
        <xsd:attribute name="inheritance-strategy">
                         <xsd:annotation>
@@ -66,15 +71,30 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
             <xsd:documentation>The namespace prefix to use in generated code</xsd:documentation>
           </xsd:annotation>
         </xsd:attribute>
-        <xsd:attribute name="schemaFilename" type="xsd:string">
-          <xsd:annotation>
-            <xsd:documentation>The filename to use in generated schema</xsd:documentation>
-          </xsd:annotation>
-        </xsd:attribute>
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>
-
+   <xsd:complexType name="legacyxmlnsMapping">
+      <xsd:simpleContent>
+         <xsd:extension base="xsd:anyURI">
+            <xsd:attribute name="prefix" type="xsd:NCName">
+               <xsd:annotation>
+                  <xsd:documentation>The namespace prefix to use in generated code</xsd:documentation>
+               </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="schemaFilename" type="xsd:string">
+               <xsd:annotation>
+                  <xsd:documentation>The filename to use in generated schema</xsd:documentation>
+               </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="schemaLocation" type="xsd:string">
+               <xsd:annotation>
+                  <xsd:documentation>The location to use in generated schema</xsd:documentation>
+               </xsd:annotation>
+            </xsd:attribute>
+         </xsd:extension>
+      </xsd:simpleContent>
+   </xsd:complexType>
 <xsd:complexType name="TypeMapping">
         <xsd:annotation>
            <xsd:documentation>This allows a type from a model to be mapped onto an exiting rather than a generated type.

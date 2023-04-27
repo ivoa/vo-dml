@@ -1,10 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-This is still an experimentalimplementation - the canonical form of the XSD schema is the schema that can be generated from the generated java code.
-t
-The intention is that this wll eventually be a better documented, but equivalent version to the java generated schema
+<!--**NB** this stylesheet produces the legacy schema, which is not the schema to which the generated code conforms - Paul Harrison-->
 
-note that this schema is substantially different from the era when this code was stored in volute
+<!-- Gerard Lemson (glemson1@jhu.edu, gerard.lemson@gmail.com) 2017-11-04 -->
+<!--
+This style sheet generates an XML schema document from a VO-DML/XML model.
+It follows the serialization prescription specified in appendix B of that specification.
+It relies on a mapping_config.xml that provides some configuration and type-mapping elements.
+TODO This can be cleaned up more no doubt.
+
+- map VODML model to single schema document defining ONLY types.
+- map types to either complex (objectType, dataType) or simpleTypes.
+Use fully qualified type names, i.e. <package-path-with-dots>.typename. (i.e. ala generated vodml-id for types!)
+- simple types may be mapped to existing xsd primitive types in a  file.
+- This makes import much easier as well as prefix choice: use model prefix!!!
+Note, XML files will not need type name, apart from in xsi:type.
+- ONLY (?) non-trivial choice is how to represent References.
+Choice made here is for them to be of type vodml-base:VODMLReference defined in the separate schema vodml-base.xsd.
+This schema defines a base type for ObjectTypes that defines an ID attribute (of type xsd:ID).
+And it defines a VODMLReference type that declares an IDREF and a REMOTEID attribute.
+When using the IDREF the referenced object must (obviously) be in the same document as the referrer.
+REMOTEID is of type xsd:anyURI and MUST have a suffix  '#<IDREF>'. The IDREF fragment identifier MUST match an ID in the document identified by the URL.
+
+If someone can come up with something better, please!
+
+
+Notes to self ...
+- No root elements defined, root element definitions up to user.
+OR
+- TODO Create a separate XSD document with element definitions for all complexTypes.
+Idea is that this schema document can be used to validate for example the result of an interpretation of a VOTable.
+Note, this also will allow one to create elements representing an abstract type, using an anonymous type definition extending it.
+This is because sometimes in VOTable one might just want to declare a certain type to be an instance of an abstract type, without
+being able to choose a more specific sub-type.
  -->
 
 <!DOCTYPE stylesheet [
@@ -17,9 +44,10 @@ note that this schema is substantially different from the era when this code was
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
                 xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
+                xmlns:vfs="http://www.ivoa.net/xml/VODML/schemaFunctions"
                 xmlns:bnd="http://www.ivoa.net/xml/vodml-binding/v0.9.1"
                 xmlns:vodml-base="http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1"
-                exclude-result-prefixes="map"
+                exclude-result-prefixes="bnd vf vfs"
 >
 
 
@@ -40,6 +68,7 @@ note that this schema is substantially different from the era when this code was
   <xsl:variable name="xsd-ns">http://www.w3.org/2001/XMLSchema</xsl:variable>
   <xsl:variable name="base-prefix">vodml-base</xsl:variable>
   <xsl:variable name="base-schemanamespace" select="'http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1'"/>
+  <xsl:variable name="base-schemalocation" select="'http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1'"/>
 
   <xsl:variable name="baseType" select="'vodml-base:VODMLObject'"/>
   <xsl:variable name="referenceType" select="'vodml-base:VODMLReference'"/>
@@ -53,27 +82,22 @@ note that this schema is substantially different from the era when this code was
   <xsl:template match="vo-dml:model">
 
     <xsl:variable name="modelname" select="name"/>
-    <xsl:message>Model = <xsl:value-of select="$modelname"/></xsl:message>
-    <xsl:variable name="path">
-      <xsl:apply-templates select="." mode="xsd-path">
-        <xsl:with-param name="delimiter" select="'/'"/>
-      </xsl:apply-templates>
-    </xsl:variable>
 
     <xsl:variable name="xsd-location">
-      <xsl:value-of select="concat($modelname,'.xsd')"/>
+      <xsl:value-of select="vfs:xsdFileName($modelname)"/>
     </xsl:variable>
 
     <xsl:variable name="targetNamespace">
-      <xsl:value-of select="vf:ns4model($modelname)"/>
+      <xsl:value-of select="vfs:xsdNs($modelname)"/>
     </xsl:variable>
 
     <xsl:variable name="modelns">
-      <xsl:value-of select="vf:nsprefix4model($modelname)"/>
+      <xsl:value-of select="vfs:xsdNsPrefix($modelname)"/>
     </xsl:variable>
 
-    <xsl:message >Opening file <xsl:value-of select="$xsd-location"/></xsl:message>
+    <xsl:message >Writing to XSD file -<xsl:value-of select="$xsd-location"/></xsl:message>
     <xsl:result-document href="{$xsd-location}" >
+      <xsl:comment>Generated by gradle vodml tools <xsl:value-of select="current-dateTime()"/></xsl:comment>
       <xsd:schema>
         <xsl:namespace name="{$modelns}">
           <xsl:value-of select="$targetNamespace"/>
@@ -83,12 +107,11 @@ note that this schema is substantially different from the era when this code was
         </xsl:attribute>
         <!--  import base schema -->
         <xsl:apply-templates select="import" mode="xmlns"/>
-        <xsl:element name="xsd:import">
-          <xsl:attribute name="namespace" select="$mapping/bnd:mappedModels/model[file=current()/url]/vodml-base-namespace"/>
-          <xsl:attribute name="schemaLocation" select="$mapping/bnd:mappedModels/model[file=current()/url]/vodml-base-location">
-          </xsl:attribute>
-        </xsl:element>
 
+        <xsl:element name="xsd:import">
+          <xsl:attribute name="namespace" ><xsl:value-of select="$base-schemanamespace"/></xsl:attribute>
+          <xsl:attribute name="schemaLocation"><xsl:value-of select="$base-schemalocation"/></xsl:attribute>
+        </xsl:element>
         <xsl:apply-templates select="import" mode="ns-import"/>
 
         <xsl:apply-templates select="objectType" mode="test"/>
@@ -105,9 +128,9 @@ note that this schema is substantially different from the era when this code was
 
   <xsl:template match="import" mode="xmlns" >
     <xsl:variable name="mname" select="vf:modelNameFromFile(url)"/>
-    <xsl:message>import model <xsl:value-of select="string-join(($mname,vf:nsprefix4model($mname), vf:ns4model($mname)),',')"/> </xsl:message>
-    <xsl:namespace name="{vf:nsprefix4model($mname)}">
-      <xsl:value-of select="vf:ns4model($mname)"/>
+    <xsl:message>import model <xsl:value-of select="string-join(($mname,vfs:xsdNsPrefix($mname), vfs:xsdNs($mname)),',')"/> </xsl:message>
+    <xsl:namespace name="{vfs:xsdNsPrefix($mname)}">
+      <xsl:value-of select="vfs:xsdNs($mname)"/>
     </xsl:namespace>
   </xsl:template>
 
@@ -115,9 +138,11 @@ note that this schema is substantially different from the era when this code was
     <xsl:variable name="mname" select="vf:modelNameFromFile(url)"/>
     <xsl:element name="xsd:import">
       <xsl:attribute name="namespace">
-        <xsl:value-of select="vf:ns4model($mname)"/>
+        <xsl:value-of select="vfs:xsdNs($mname)"/>
       </xsl:attribute>
-      <xsl:attribute name="schemaLocation" select="vf:schema-location4model($mname)"/>
+      <xsl:attribute name="schemaLocation">
+        <xsl:value-of select="vfs:xsdLocation($mname)"/>
+      </xsl:attribute>
     </xsl:element>
   </xsl:template>
 
@@ -132,46 +157,17 @@ note that this schema is substantially different from the era when this code was
   </xsl:template>
 
   <xsl:template match="objectType|dataType|enumeration|primitiveType" mode="test">
-    <xsl:variable name="mappedtype" select="vf:findmapping(vf:asvodmlref(.),'xsd')"/>
+    <xsl:variable name="mappedtype" select="vf:findmapping(vf:asvodmlref(current()),'xsd')"/>
 
     <xsl:if test="not($mappedtype) or $mappedtype = ''" >
       <xsl:apply-templates select="." mode="declare"/>
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="objectType|dataType" mode="element">
-    <xsl:variable name="typename">
-      <xsl:apply-templates select="." mode="type-name"/>
-    </xsl:variable>
-    <xsd:element>
-      <xsl:attribute name="name">
-        <xsl:value-of select="concat('a_',$typename)"/>
-      </xsl:attribute>
-      <xsl:choose>
-        <xsl:when test="@abstract='true'">
-          <xsd:complexType>
-            <xsd:complexContent>
-              <xsd:extension>
-                <xsl:attribute name="base">
-                  <xsl:value-of select="concat(./ancestor::vo-dml:model/name,':',$typename)"/>
-                </xsl:attribute>
-              </xsd:extension>
-            </xsd:complexContent>
-          </xsd:complexType>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:attribute name="type">
-            <xsl:value-of select="concat(./ancestor::vo-dml:model/name,':',$typename)"/>
-          </xsl:attribute>
-        </xsl:otherwise>
-      </xsl:choose>
-    </xsd:element>
-  </xsl:template>
-
   <xsl:template match="objectType" mode="declare">
 
     <xsl:variable name="typename">
-      <xsl:apply-templates select="." mode="type-name"/>
+      <xsl:call-template name="localTypeName"/>
     </xsl:variable>
     <xsd:complexType>
       <xsl:attribute name="name">
@@ -188,10 +184,7 @@ note that this schema is substantially different from the era when this code was
           <xsl:attribute name="base">
             <xsl:choose>
               <xsl:when test="extends">
-                <xsl:call-template name="XSDType">
-                  <xsl:with-param name="model" select="ancestor::vo-dml:model"/>
-                  <xsl:with-param name="vodml-ref" select="extends/vodml-ref"/>
-                </xsl:call-template>
+                <xsl:value-of select="vfs:xsdType(extends/vodml-ref)"/>
               </xsl:when>
               <xsl:otherwise>
                 <xsl:value-of select="$baseType"/>
@@ -226,12 +219,9 @@ note that this schema is substantially different from the era when this code was
 
 
   <xsl:template match="dataType" mode="declare">
-    <xsl:variable name="typename">
-      <xsl:apply-templates select="." mode="type-name"/>
-    </xsl:variable>
     <xsd:complexType>
       <xsl:attribute name="name">
-        <xsl:value-of select="$typename"/>
+        <xsl:call-template name="localTypeName"/>
       </xsl:attribute>
       <xsl:if test="@abstract = 'true'">
         <xsl:attribute name="abstract">
@@ -244,11 +234,7 @@ note that this schema is substantially different from the era when this code was
           <xsd:complexContent>
             <xsd:extension>
               <xsl:attribute name="base">
-                <xsl:call-template name="XSDType">
-                  <xsl:with-param name="model" select="ancestor::vo-dml:model"/>
-                  <xsl:with-param name="vodml-ref" select="extends/vodml-ref"/>
-                </xsl:call-template>
-
+                <xsl:value-of select="vfs:xsdType(extends/vodml-ref)"/>
               </xsl:attribute>
               <xsl:apply-templates select="." mode="content"/>
             </xsd:extension>
@@ -278,12 +264,9 @@ note that this schema is substantially different from the era when this code was
 
 
   <xsl:template match="enumeration" mode="declare">
-    <xsl:variable name="typename">
-      <xsl:apply-templates select="." mode="type-name"/>
-    </xsl:variable>
     <xsd:simpleType>
       <xsl:attribute name="name">
-        <xsl:value-of select="$typename"/>
+        <xsl:call-template name="localTypeName"/>
       </xsl:attribute>
       <xsl:call-template name="add_annotation"/>
       <xsd:restriction base="xsd:string">
@@ -306,12 +289,9 @@ note that this schema is substantially different from the era when this code was
 
 
   <xsl:template match="primitiveType" mode="declare">
-    <xsl:variable name="typename">
-      <xsl:apply-templates select="." mode="type-name"/>
-    </xsl:variable>
     <xsd:simpleType>
       <xsl:attribute name="name">
-        <xsl:value-of select="$typename"/>
+        <xsl:call-template name="localTypeName"/>
       </xsl:attribute>
       <xsl:call-template name="add_annotation"/>
       <xsd:restriction base="xsd:string">
@@ -322,18 +302,13 @@ note that this schema is substantially different from the era when this code was
 
 
   <xsl:template match="attribute" >
-    <xsl:variable name="type">
-      <xsl:call-template name="XSDType">
-        <xsl:with-param name="model" select="ancestor::vo-dml:model"/>
-        <xsl:with-param name="vodml-ref" select="datatype/vodml-ref"/>
-      </xsl:call-template>
-    </xsl:variable>
+
     <xsd:element>
       <xsl:attribute name="name" >
         <xsl:value-of select="name"/>
       </xsl:attribute>
       <xsl:attribute name="type" >
-        <xsl:value-of select="$type"/>
+        <xsl:value-of select="vfs:xsdType(datatype/vodml-ref)"/>
       </xsl:attribute>
       <xsl:apply-templates select="multiplicity"/>
       <xsl:call-template name="add_annotation"/>
@@ -361,30 +336,18 @@ note that this schema is substantially different from the era when this code was
 
 
   <xsl:template match="composition" >
-    <xsl:variable name="type">
-      <xsl:call-template name="XSDType">
-        <xsl:with-param name="model" select="ancestor::vo-dml:model"/>
-        <xsl:with-param name="vodml-ref" select="datatype/vodml-ref"/>
-      </xsl:call-template>
-    </xsl:variable>
     <xsd:element>
       <xsl:attribute name="name" >
         <xsl:value-of select="name"/>
       </xsl:attribute>
       <xsl:attribute name="type" >
-        <xsl:value-of select="$type"/>
+        <xsl:value-of select="vfs:xsdType(current()/datatype/vodml-ref)"/>
       </xsl:attribute>
       <xsl:apply-templates select="multiplicity"/>
     </xsd:element>
   </xsl:template>
 
   <xsl:template match="reference" >
-    <xsl:variable name="type">
-      <xsl:call-template name="XSDType">
-        <xsl:with-param name="model" select="ancestor::vo-dml:model"/>
-        <xsl:with-param name="vodml-ref" select="datatype/vodml-ref"/>
-      </xsl:call-template>
-    </xsl:variable>
     <xsd:element>
       <xsl:attribute name="name" >
         <xsl:value-of select="name"/>
@@ -399,23 +362,24 @@ note that this schema is substantially different from the era when this code was
 
 
   <xsl:template match="attribute" mode="declare">
-    <xsl:variable name="type">
-      <xsl:call-template name="XSDType">
-        <xsl:with-param name="model" select="ancestor::vo-dml:model"/>
-        <xsl:with-param name="vodml-ref" select="datatype/vodml-ref"/>
-      </xsl:call-template>
-    </xsl:variable>
+
     <xsd:element>
       <xsl:attribute name="name">
         <xsl:value-of select="name"/>
       </xsl:attribute>
       <xsl:attribute name="type">
-        <xsl:value-of select="$type"/>
+        <xsl:call-template name="typeAssignment"/>
       </xsl:attribute>
     </xsd:element>
   </xsl:template>
 
+  <xsl:template name="localTypeName">
+    <xsl:value-of select="substring-after(vfs:xsdType(vf:asvodmlref(current())),':')"/>
+  </xsl:template>
 
+  <xsl:template name="typeAssignment">
+    <xsl:value-of select="vfs:xsdType(datatype/vodml-ref)"/>
+  </xsl:template>
 
 
 
@@ -446,128 +410,45 @@ note that this schema is substantially different from the era when this code was
     </xsd:appinfo>
   </xsl:template>
 
-  <!-- copied from vo-dml2pojo -->
-  <xsl:template name="Model4vodml-ref" as="element()">
-    <xsl:param name="model"/>
-    <xsl:param name="vodml-ref"/>
-    <xsl:if test="not($model)">
-      <xsl:message>Model4vodml-ref: No model supplied for </xsl:message>
-    </xsl:if>
-    <xsl:variable name="prefix" select="substring-before($vodml-ref,':')"/>
-    <xsl:variable name="vodml-id" select="substring-after($vodml-ref,':')"/>
-    <xsl:if test="not($prefix) or $prefix=''">
-      <xsl:message>!!!!!!! ERROR No prefix found in Model4vodml-ref for <xsl:value-of select="$vodml-ref"/></xsl:message>
-    </xsl:if>
-    <xsl:choose>
-      <xsl:when test="not($prefix) or $prefix = '' or $model/name = $prefix">
-        <xsl:copy-of select="$model"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:choose>
-          <xsl:when test="$mapping/bnd:mappedModels/model[name=$prefix]/file">
-            <xsl:variable name="file" select="$mapping/bnd:mappedModels/model[name=$prefix]/file"/>
-            <xsl:copy-of select="document($file)/vo-dml:model"/>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:variable name="import" select="$model/import[name = $prefix]/url"/>
-            <xsl:copy-of select="document($import)/vo-dml:model"/>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
 
-
-  <xsl:template name="XSDType">
-    <xsl:param name="model" />
-    <xsl:param name="vodml-ref"/> <!-- assumed to be fully qualified! i.e. also for elements in local model, the prefix is included! -->
-    <xsl:param name="length" select="''"/>
-    <xsl:param name="fullpath" select="'true'"/>
-
-    <xsl:if test="not($model)">
-      <xsl:message>XSDType: No model supplied for <xsl:value-of select="$vodml-ref"/></xsl:message>
-    </xsl:if>
-
-    <xsl:variable name="mappedtype">
-      <xsl:call-template name="findmapping">
-        <xsl:with-param name="model" select="$model"/>
-        <xsl:with-param name="vodml-ref" select="$vodml-ref"/>
-      </xsl:call-template>
-    </xsl:variable>
-    <xsl:choose>
-      <xsl:when test="$mappedtype != ''">
-        <xsl:value-of select="$mappedtype"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:choose>
-          <xsl:when test="$fullpath='true'">
-            <!--         <xsl:message >Finding full path for <xsl:value-of select="$vodml-ref"/></xsl:message>   -->
-            <xsl:call-template  name="fullpath">
-              <xsl:with-param name="model" select="$model"/>
-              <xsl:with-param name="vodml-ref" select="$vodml-ref"/>
-            </xsl:call-template>
-          </xsl:when>
-          <xsl:otherwise>
-
-            <xsl:variable name="type" select="vf:element4vodmlref($vodml-ref)"/>
-
-
-            <xsl:value-of select="$type/name"/>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-
-  <xsl:template name="findmapping">
-    <xsl:param name="model" as="element()"/>
-    <xsl:param name="vodml-ref"/>
-
-    <xsl:variable name="modelname" select="substring-before($vodml-ref,':')"/>
-    <xsl:if test="not($modelname) or $modelname=''">
-      <xsl:message>!!!!!!! ERROR No prefix found in findmaping for <xsl:value-of select="$vodml-ref"/></xsl:message>
-    </xsl:if>
-    <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/xsd-type"/>
-  </xsl:template>
-
-  <!-- find a java package path towards the type identified with the name -->
-  <xsl:template name="fullpath">
-    <xsl:param name="vodml-ref"/>
-    <xsl:param name="model"/>
-
-    <xsl:variable name="themodel" as="element()">
-      <xsl:call-template name="Model4vodml-ref">
-        <xsl:with-param name="model" select="$model"/>
-        <xsl:with-param name="vodml-ref" select="$vodml-ref"/>
-      </xsl:call-template>
-    </xsl:variable>
-
-    <xsl:variable name="root" select="$themodel/name"/>
-
-    <xsl:variable name="vodmlid" select="substring-after($vodml-ref,':' )"/>
-    <xsl:variable name="path">
-      <xsl:for-each select="$themodel//*[vodml-id=$vodmlid]/ancestor-or-self::*[name() != 'vo-dml:model']">
-        <xsl:value-of select="./name"/>
-        <xsl:if test="position() != last()">
-          <xsl:text>.</xsl:text>
-        </xsl:if>
-      </xsl:for-each>
-    </xsl:variable>
-    <xsl:value-of select="concat($root,':',$path)"/>
-
-  </xsl:template>
 
   <xsl:template match="objectType|dataType|enumeration|primitiveType" mode="type-name">
-    <xsl:variable name="path">
-      <xsl:for-each select="./ancestor-or-self::*[name() != 'vo-dml:model']">
-        <xsl:value-of select="./name"/>
-        <xsl:if test="position() != last()">
-          <xsl:text>.</xsl:text>
-        </xsl:if>
-      </xsl:for-each>
-    </xsl:variable>
-    <xsl:value-of select="$path"/>
+    <xsl:value-of select="substring-after(vfs:xsdType(vf:asvodmlref(current())),':')"/>
   </xsl:template>
+
+  <xsl:function name="vfs:xsdType" as="xsd:string">
+    <xsl:param name="vodml-ref" as="xsd:string"/> <!-- assumed to be fully qualified! i.e. also for elements in local model, the prefix is included! -->
+    <xsl:variable name="type">
+      <xsl:variable name="mappedtype" select="vf:findmapping($vodml-ref,'xsd')"/>
+      <xsl:choose>
+        <xsl:when test="$mappedtype != ''">
+          <xsl:value-of select="$mappedtype"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:variable name="modelname" select="substring-before($vodml-ref,':')"/>
+          <xsl:variable name="root" select="vfs:xsdNsPrefix($modelname)"/>
+          <xsl:value-of select="concat($root,':',substring-after($vodml-ref,':'))"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:value-of select="$type"/>
+  </xsl:function>
+
+  <xsl:function name="vfs:xsdNsPrefix" as="xsd:string">
+    <xsl:param name="modelName" as="xsd:string"/>
+    <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/xmllegacy-targetnamespace/@prefix"/>
+  </xsl:function>
+  <xsl:function name="vfs:xsdNs" as="xsd:string">
+    <xsl:param name="modelName" as="xsd:string"/>
+    <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/xmllegacy-targetnamespace/text()"/>
+  </xsl:function>
+  <xsl:function name="vfs:xsdFileName" as="xsd:string">
+    <xsl:param name="modelName" as="xsd:string"/>
+    <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/xmllegacy-targetnamespace/@schemaFilename"/>
+  </xsl:function>
+  <xsl:function name="vfs:xsdLocation" as="xsd:string">
+    <xsl:param name="modelName" as="xsd:string"/>
+    <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/xmllegacy-targetnamespace/@schemaLocation"/>
+  </xsl:function>
 
 </xsl:stylesheet>
