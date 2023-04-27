@@ -317,13 +317,17 @@
         }
 
 
-        public static void writeXMLSchema() throws JAXBException, IOException {
+        public static void writeXMLSchema() {
         final Map&lt;String,String&gt; schemaMap = new HashMap&lt;&gt;();
         <xsl:for-each select="$mapping/bnd:mappedModels/model/xml-targetnamespace">
             schemaMap.put("<xsl:value-of select="normalize-space(text())"/>","<xsl:value-of select="@schemaFilename"/>");
         </xsl:for-each>
 
+        try {
         contextFactory().generateSchema(new org.javastro.ivoa.jaxb.SchemaNamer(schemaMap));
+        } catch (IOException | JAXBException e) {
+        throw new RuntimeException("Problem writing XML Schema",e);
+        }
         }
         /**
         * Return a Jackson objectMapper suitable for JSON serialzation.
