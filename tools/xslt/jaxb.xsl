@@ -347,7 +347,7 @@
         public String pu_name() {return <xsl:value-of select="$ModelClass"/>.pu_name();}
 
         @Override
-        public void writeXMLSchema() throws JAXBException, IOException { <xsl:value-of select="$ModelClass"/>.writeXMLSchema();}
+        public void writeXMLSchema() { <xsl:value-of select="$ModelClass"/>.writeXMLSchema();}
 
         @Override
         public JAXBContext contextFactory() throws JAXBException {  return <xsl:value-of select="$ModelClass"/>.contextFactory();}

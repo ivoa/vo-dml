@@ -50,10 +50,8 @@ public interface ModelManagement <T>{
     String pu_name();
      /**
       * Write XML schema for the model.
-     * @throws JAXBException if something goes wrong with the creation of the context.
-     * @throws IOException if something goes wrong with actually writing the schema files.
      */
-    void writeXMLSchema() throws JAXBException, IOException;
+    void writeXMLSchema();
     
     /**
      * The context factory that can be used for full XML serialization.

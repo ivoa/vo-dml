@@ -71,7 +71,7 @@ class JPATestModelTest extends AbstractTest {
     }
 
     @Test
-    void jaxbtest() throws JAXBException, TransformerConfigurationException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException, IOException {
+    void jaxbtest() throws JAXBException,  ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException{
         
         JAXBContext jc = JpatestModel.contextFactory();
         JpatestModel model = new JpatestModel();
