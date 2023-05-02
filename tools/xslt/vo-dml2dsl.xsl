@@ -208,9 +208,16 @@ enum <xsl:value-of select="name"/><xsl:text> </xsl:text>
      subset </xsl:text> <xsl:value-of select="role/vodml-ref"/><xsl:text> as </xsl:text><xsl:value-of select="datatype/vodml-ref"/><xsl:text>;</xsl:text>
 </xsl:template>
 
+    <xsl:template match="constraint[@xsi:type='vo-dml:NaturalKey']">
+        <xsl:text> iskey </xsl:text>
+    </xsl:template>
+
+    <xsl:template match="constraint[parent::objectType]"> <!-- FIXME - need to work out where this goes for plain constraint -->
+        <xsl:text>// constraint  </xsl:text><xsl:value-of select="description"/>
+    </xsl:template>
 
 <xsl:template match="constraint"> <!-- FIXME - need to work out where this goes for plain constraint -->
-  <xsl:text>// constraint  </xsl:text><xsl:value-of select="description"/> 
+  <xsl:text>&lt; &quot;</xsl:text><xsl:value-of select="description"/><text>&quot; as Natural &gt;</text>
 </xsl:template>
 
 <!-- I think that these specialized constraints have disappeared now -->
