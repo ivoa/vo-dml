@@ -3,10 +3,11 @@ VODML Tooling TODO
 
 # vodml
 
-* used twice in composition schematron rule should not necessarily matter
+* schematron rules
+  * used twice in composition schematron rule should not necessarily matter
+  * should not even be warning (just a note!) for references multiplicity...aggregation OK when you know what you are doing ;)
 * clear up array intentions in multiplicity
 * multiple attribute should be OK - happens for DTypes in coordinates for example...
-* should only be a note for references multiplicity...aggregation OK when you know what you are doing...
 * unique constraint in composition...- would result in Set as the container - are compositions assumed to contain unique members anyway - that is effectively what is happening in the JPA interpretation where a surrogate 
  key is used. In this case it might be a lifecycle issue. This is also the distinction between a datatype and an objectType.
 * the rdb and xml schemas produced by the xslt are do not match the java generated ones exactly - they need to be updated.
