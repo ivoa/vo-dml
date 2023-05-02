@@ -1,12 +1,15 @@
 import net.ivoa.vodml.gradle.plugin.VodmlToVodslTask
 import org.gradle.kotlin.dsl.support.classFilePathCandidatesFor
+import ru.vyarus.gradle.plugin.python.PythonExtension
+import ru.vyarus.gradle.plugin.python.task.PythonTask
 
 /*
  * 
  */
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.3.18"
+    id("net.ivoa.vo-dml.vodmltools") version "0.3.19"
 //    id ("com.diffplug.spotless") version "5.17.1"
+    id("ru.vyarus.use-python") version "3.0.0"
 
 }
 
@@ -81,5 +84,21 @@ dependencies {
     testImplementation("org.javastro:jaxbjpa-utils:0.1.2:test")
     compileOnly("com.google.googlejavaformat:google-java-format:1.12.0")
 
+}
+
+python {
+    pythonBinary = "python3"
+    scope = PythonExtension.Scope.VIRTUALENV
+    envPath = "../../../venv"
+    environment = mapOf("PYTHONPATH" to layout.buildDirectory.dir("generated/sources/vodml/python").get().asFile.absolutePath)
+
+   pip("pytest:7.3.1")
+   pip("SQLAlchemy:2.0.11")
+}
+
+
+tasks.register("pytest", PythonTask::class.java) {
+    command = "src/test/python/SourceCatalogueTest.py"
+//    command = "-c \"import sys; print(sys.path)\""
 }
 

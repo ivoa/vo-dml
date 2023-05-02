@@ -8,3 +8,4 @@ build
 models/ivoa/bin/
 tools/gradletooling/gradle-plugin/bin/
 /models/sample/test/src-gen/
+/venv/
