@@ -565,12 +565,12 @@
               @javax.xml.bind.annotation.XmlID
               @Override
               public String getXmlId(){
-              return _id.toString();
+              return org.ivoa.vodml.jaxb.XmlIdManagement.createXMLId(_id);
               }
               @Override
               public void setXmlId (String id)
               {
-              this._id = Long.parseLong(id);
+              this._id = org.ivoa.vodml.jaxb.XmlIdManagement.parseXMLId(id);
               }
               @Override
               public boolean hasNaturalKey()
