@@ -23,8 +23,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.ivoa.dm.AbstractTest;
+import org.ivoa.dm.AutoRoundTripTest;
 import org.ivoa.vodml.VodmlModel;
-import org.ivoa.vodml.validation.AutoRoundTripTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;

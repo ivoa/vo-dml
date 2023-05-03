@@ -9,3 +9,4 @@ models/ivoa/bin/
 tools/gradletooling/gradle-plugin/bin/
 /models/sample/test/src-gen/
 /venv/
+/tools/gradletooling/sample/.pytest_cache/

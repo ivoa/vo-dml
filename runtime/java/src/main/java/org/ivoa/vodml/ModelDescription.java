@@ -20,6 +20,10 @@ public interface ModelDescription  {
     
     @SuppressWarnings("rawtypes")
     Map<String, Class > utypeToClassMap();
+    
+    Map<String,String> schemaMap();
+    
+    String xmlNamespace();
 
 }
 

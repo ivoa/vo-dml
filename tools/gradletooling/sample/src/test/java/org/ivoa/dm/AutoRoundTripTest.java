@@ -7,10 +7,11 @@
  * You may obtain a copy of the License in file LICENSE
  */ 
 
-package org.ivoa.vodml.validation;
+package org.ivoa.dm;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
@@ -19,7 +20,12 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+import org.ivoa.vodml.ModelDescription;
 import org.ivoa.vodml.VodmlModel;
+import org.ivoa.vodml.validation.BaseValidationTest;
+import org.ivoa.vodml.validation.ModelValidator.ValidationResult;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -34,6 +40,20 @@ public abstract  class AutoRoundTripTest <T extends VodmlModel<T>> extends BaseV
     
     public abstract void testModel(T m);
     
+    @Test
+    void validationTest() throws JAXBException {
+        final T model = createModel(); 
+        model.management().writeXMLSchema();
+        final ModelDescription desc = model.descriptor();
+        File schemaFile = new File(desc.schemaMap().get(desc.xmlNamespace()));
+        ValidationResult vr = validate(model.management(), schemaFile );
+        if(!vr.isOk)
+        {
+            vr.printValidationErrors(System.out);
+        }
+       
+    }
+  
     
     @Test
     void testXmlRoundTrip() throws JAXBException, TransformerConfigurationException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException, IOException {
@@ -46,7 +66,7 @@ public abstract  class AutoRoundTripTest <T extends VodmlModel<T>> extends BaseV
     }
 
     @Test
-    void testJSONRoundTrip() throws JAXBException, TransformerConfigurationException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException, IOException {
+    void testJSONRoundTrip() throws JsonProcessingException  {
         
         T model = createModel();
         RoundTripResult<T> result = roundTripJSON(model.management());
@@ -54,6 +74,8 @@ public abstract  class AutoRoundTripTest <T extends VodmlModel<T>> extends BaseV
         assertNotNull(result.retval,"returned object from JSON serialization null");
         testModel(model);
     }
+    
+    
 
 
 }
