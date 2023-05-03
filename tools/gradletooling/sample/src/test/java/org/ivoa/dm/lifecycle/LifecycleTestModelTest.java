@@ -23,6 +23,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.ivoa.dm.AbstractTest;
+import org.ivoa.vodml.VodmlModel;
+import org.ivoa.vodml.validation.AutoRoundTripTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +35,7 @@ import org.junit.jupiter.api.Test;
  * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
  * @since 21 Oct 2022
  */
-class LifecycleTestModelTest extends AbstractTest {
+class LifecycleTestModelTest extends AutoRoundTripTest<LifecycleTestModel> {
 
     private ATest atest;
     private ATest2 atest2;
@@ -50,6 +52,24 @@ class LifecycleTestModelTest extends AbstractTest {
      */
     @BeforeEach
     void setUp() throws Exception {
+
+    }
+
+    /**
+     * @throws java.lang.Exception
+     */
+    @AfterEach
+    void tearDown() throws Exception {
+    }
+
+  
+
+    /**
+     * {@inheritDoc}
+     * overrides @see org.ivoa.vodml.validation.AutoRoundTripTest#createModel()
+     */
+    @Override
+    public LifecycleTestModel createModel() {
         final ReferredTo referredTo = new ReferredTo(3);
         List<Contained> contained = Arrays.asList(new Contained("firstcontained"),new Contained("secondContained"));
         List<ReferredLifeCycle> refcont = Arrays.asList(new ReferredLifeCycle("rc1"), new ReferredLifeCycle("rc2"));
@@ -60,27 +80,24 @@ class LifecycleTestModelTest extends AbstractTest {
             
         });
         atest2 = new ATest2(referredTo, refcont.get(0));
-    }
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @AfterEach
-    void tearDown() throws Exception {
-    }
-
-    @Test
-    void jaxbtest() throws JAXBException, TransformerConfigurationException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException, IOException {
         
-        JAXBContext jc = LifecycleTestModel.contextFactory();
         LifecycleTestModel model = new LifecycleTestModel();
         model.addContent(atest);
         model.addContent(atest2);
         model.makeRefIDsUnique();
         assertTrue(atest.refandcontained.get(1).getId() != 0, "id setting did not work");
-        LifecycleTestModel modelin = modelRoundTripXMLwithTest(model);
-        System.out.println("generating schema");
-        LifecycleTestModel.writeXMLSchema();
+        return model;
+    }
+
+    /**
+     * {@inheritDoc}
+     * overrides @see org.ivoa.vodml.validation.AutoRoundTripTest#testModel(org.ivoa.vodml.VodmlModel)
+     */
+    @Override
+    public void testModel(LifecycleTestModel m) {
+        // TODO actually test something in the model.
+        
+        
     }
 
 }
