@@ -78,7 +78,7 @@ class JPATestModelTest extends AbstractTest {
         model.addContent(atest);
         model.makeRefIDsUnique();
         assertTrue(atest.cval.rval._id != 0, "id setting did not work");
-        JpatestModel modelin = roundtripXML(jc, model, JpatestModel.class);
+        JpatestModel modelin = modelRoundTripXMLwithTest(model);
         System.out.println("generating schema");
         JpatestModel.writeXMLSchema();
     }

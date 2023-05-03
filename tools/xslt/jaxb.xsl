@@ -209,6 +209,7 @@
 
     import org.ivoa.vodml.jaxb.XmlIdManagement;
     import org.ivoa.vodml.ModelManagement;
+    import org.ivoa.vodml.VodmlModel;
     import org.ivoa.vodml.ModelDescription;
     import org.ivoa.vodml.annotation.VoDml;
     import org.ivoa.vodml.annotation.VodmlRole;
@@ -218,7 +219,7 @@
     @JsonTypeInfo(include=JsonTypeInfo.As.WRAPPER_OBJECT, use=JsonTypeInfo.Id.NAME)
     @JsonIgnoreProperties({"refmap"})
     @VoDml(id="<xsl:value-of select="name"/>" ,role = VodmlRole.model, type="<xsl:value-of select="name"/>")
-    public class <xsl:value-of select="$ModelClass"/> implements org.ivoa.vodml.jaxb.JaxbManagement {
+    public class <xsl:value-of select="$ModelClass"/> implements VodmlModel&lt;<xsl:value-of select="$ModelClass"/>&gt; {
 
     @XmlType
     public static class References {
@@ -341,6 +342,7 @@
         * generate management interface instance for model.
         * @return the management interface.
         */
+        @Override
         public ModelManagement&lt;<xsl:value-of select="$ModelClass"/>&gt; management() {return new ModelManagement&lt;<xsl:value-of select="$ModelClass"/>&gt;()
         {
         @Override

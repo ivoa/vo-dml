@@ -16,6 +16,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.hibernate.Session;
 import org.ivoa.dm.sample.SampleModel;
 import org.ivoa.dm.sample.catalog.inner.SourceCatalogue;
+import org.ivoa.vodml.VodmlModel;
 
 /*
  * Created on 20/08/2021 by Paul Harrison (paul.harrison@manchester.ac.uk).
@@ -48,7 +49,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
 //        assertTrue(mvalidation.valid, "errors on whole model");
 
 
-        SampleModel modelin = roundtripXML(jc, model, SampleModel.class); 
+        SampleModel modelin = modelRoundTripXMLwithTest(model); 
         checkModel(modelin.getContent(SourceCatalogue.class));
         
 
@@ -103,7 +104,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
       SampleModel model = new SampleModel();
       model.addContent(sc);
       model.makeRefIDsUnique();
-      SampleModel modelin = roundTripJSON(model.management());
+      SampleModel modelin = modelRoundTripJSONwithTest(model);
       checkModel(modelin.getContent(SourceCatalogue.class));
      
    }
@@ -114,7 +115,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
       model.addContent(sc);
       model.makeRefIDsUnique();
       model.deleteContent(sc); //
-      SampleModel modelin = roundTripJSON(model.management()); // FIXME need to test that the refenences are gone
+      SampleModel modelin = modelRoundTripJSONwithTest(model); // FIXME need to test that the refenences are gone
 
    }
 
@@ -144,7 +145,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
            model.addContent(s); 
        }
 
-       SampleModel modelin = roundTripJSON(model.management());
+       SampleModel modelin = modelRoundTripJSONwithTest(model);
        assertNotNull(modelin);
        long ncat = (long) em.createQuery("select count(o) from SourceCatalogue o").getSingleResult();
        assertEquals(2, ncat,"number of catalogues");
@@ -165,7 +166,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
        model.addContent(sc);
        model.addContent(newsc);
        model.makeRefIDsUnique();
-       SampleModel modelin = roundTripJSON(model.management());
+       SampleModel modelin = modelRoundTripJSONwithTest(model);
        assertNotNull(modelin);
    }
 
