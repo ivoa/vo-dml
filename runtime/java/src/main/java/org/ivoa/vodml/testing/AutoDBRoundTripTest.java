@@ -7,7 +7,7 @@
  * You may obtain a copy of the License in file LICENSE
  */ 
 
-package org.ivoa.dm;
+package org.ivoa.vodml.testing;
 
 import static org.junit.jupiter.api.Assertions.*;
 

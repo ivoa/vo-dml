@@ -6,6 +6,7 @@ package org.ivoa.vodml.validation;
 import java.io.File;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.sql.PreparedStatement;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +32,7 @@ import javax.xml.transform.stream.StreamSource;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.hibernate.Session;
 import org.ivoa.vodml.ModelDescription;
 import org.ivoa.vodml.ModelManagement;
 import org.ivoa.vodml.VodmlModel;
@@ -174,6 +176,20 @@ public abstract class AbstractBaseValidation {
         ModelValidator v = new ModelValidator(schemaFile, m.management().contextFactory());
         return v.validate(m);
         
+    }
+
+    /**
+     * Write the contents of the database to a file.
+     * @param em the entity manager for the database.
+     */
+    protected void dumpDbData(javax.persistence.EntityManager em) {
+        //IMPL hibernate specific way of getting connection... generally dirty, see  https://stackoverflow.com/questions/3493495/getting-database-connection-in-pure-jpa-setup
+            Session sess = em.unwrap(Session.class);
+            sess.doWork(conn -> {
+                PreparedStatement ps = conn.prepareStatement("SCRIPT TO ?"); // this is H2db specific
+                ps.setString(1, "test_dump.sql");
+                ps.execute();
+            });
     }
 
 }

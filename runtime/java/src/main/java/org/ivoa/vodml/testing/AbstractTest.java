@@ -7,11 +7,9 @@
  * You may obtain a copy of the License in file LICENSE
  */ 
 
-package org.ivoa.dm;
+package org.ivoa.vodml.testing;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.sql.PreparedStatement;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.PropertyException;
@@ -22,7 +20,6 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import org.hibernate.Session;
 import org.ivoa.vodml.ModelManagement;
 import org.ivoa.vodml.VodmlModel;
 import org.ivoa.vodml.jpa.JPAManipulationsForObjectType;
@@ -61,20 +58,6 @@ public abstract class AbstractTest extends AbstractBaseValidation {
         assertNotNull(result.retval,"returned object from rdb serialization null");
         return result.retval;
     }
-
-/**
- * Write the contents of the database to a file.
- * @param em
- */
-protected void dumpDbData(javax.persistence.EntityManager em) {
-    //IMPL hibernate specific way of getting connection... generally dirty, see  https://stackoverflow.com/questions/3493495/getting-database-connection-in-pure-jpa-setup
-        Session sess = em.unwrap(Session.class);
-        sess.doWork(conn -> {
-            PreparedStatement ps = conn.prepareStatement("SCRIPT TO ?"); // this is H2db specific
-            ps.setString(1, "test_dump.sql");
-            ps.execute();
-        });
-}
 
 
 

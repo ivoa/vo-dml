@@ -20,9 +20,9 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import org.ivoa.dm.AbstractTest;
 import org.ivoa.dm.ivoa.RealQuantity;
 import org.ivoa.dm.ivoa.Unit;
+import org.ivoa.vodml.testing.AbstractTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

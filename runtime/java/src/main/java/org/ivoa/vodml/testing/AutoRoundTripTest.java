@@ -7,28 +7,22 @@
  * You may obtain a copy of the License in file LICENSE
  */ 
 
-package org.ivoa.dm;
+package org.ivoa.vodml.testing;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.File;
-import java.io.IOException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.ivoa.vodml.VodmlModel;
+import org.ivoa.vodml.validation.AbstractBaseValidation;
+import org.junit.jupiter.api.Test;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
+import java.io.IOException;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
-import org.ivoa.vodml.ModelDescription;
-import org.ivoa.vodml.ModelManagement;
-import org.ivoa.vodml.VodmlModel;
-import org.ivoa.vodml.jpa.JPAManipulationsForObjectType;
-import org.ivoa.vodml.validation.AbstractBaseValidation;
-import org.ivoa.vodml.validation.ModelValidator.ValidationResult;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * An abstract base Test that does XML and JSON serialization round-trip tests .
