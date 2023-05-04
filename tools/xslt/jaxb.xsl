@@ -292,7 +292,7 @@
       );
       }
       @Override
-      public void makeRefIDsUnique()
+      public void processReferences()
       {
         List&lt;XmlIdManagement&gt; il = org.ivoa.vodml.nav.Util.findXmlIDs(content);
         <xsl:if test="$hasReferences">

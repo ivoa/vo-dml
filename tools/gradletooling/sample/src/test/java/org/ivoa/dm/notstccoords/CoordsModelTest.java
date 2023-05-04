@@ -133,7 +133,7 @@ class CoordsModelTest extends AbstractTest {
          model.addReference(TIMESYS_TT);
          model.addReference(SPECSYS);
          model.addReference(ICRS_SYS);
-         model.makeRefIDsUnique();
+         model.processReferences();
          CoordsModel modelin = modelRoundTripJSONwithTest(model);
          CoordsModel modelin2 = modelRoundTripJSONwithTest(model);
     }

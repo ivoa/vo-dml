@@ -20,4 +20,5 @@
 * 0.3.15 added JPA cloning, Java Copy Constructors, JSON improvements
 * 0.3.16 Add microservices OpenAPI annotations, auto vodsl generation from model dependencies.
 * 0.3.17 Stop JPA cascading to references + add convenience persistRefs() to help deal with that...
-* 0.3.18 restore the old xml schema generation for legacy applications.
+* 0.3.18 Restore the old xml schema generation for legacy applications.
+* 0.3.19 Better model validation/testing support. Note also that makeRefIDsUnique() has been renamed to processReferences() to reflect the expanded functionality of the method.

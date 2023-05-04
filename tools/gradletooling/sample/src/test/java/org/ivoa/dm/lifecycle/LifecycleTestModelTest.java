@@ -76,7 +76,7 @@ class LifecycleTestModelTest extends AutoRoundTripTest<LifecycleTestModel> {
         LifecycleTestModel model = new LifecycleTestModel();
         model.addContent(atest);
         model.addContent(atest2);
-        model.makeRefIDsUnique();
+        model.processReferences();
         assertTrue(atest.refandcontained.get(1).getId() != 0, "id setting did not work");
         return model;
     }
@@ -91,7 +91,7 @@ class LifecycleTestModelTest extends AutoRoundTripTest<LifecycleTestModel> {
          List<ATest> ratest = m.getContent(ATest.class);
          ratest.get(0).getRefandcontained().get(0).setTest3("changed");
          List<ATest2> ratest2 = m.getContent(ATest2.class);
-         m.makeRefIDsUnique();
+         m.processReferences();
          System.out.println("ref and contained val ="+ratest2.get(0).getRefcont().getTest3());
         
         

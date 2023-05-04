@@ -33,7 +33,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
 
         SampleModel model = new SampleModel();
         model.addContent(sc);
-        model.makeRefIDsUnique();
+        model.processReferences();
 
         SampleModel modelin = modelRoundTripXMLwithTest(model); 
         checkModel(modelin.getContent(SourceCatalogue.class));
@@ -79,7 +79,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
    void sourceCatJSONTest() throws JsonProcessingException {
       SampleModel model = new SampleModel();
       model.addContent(sc);
-      model.makeRefIDsUnique();
+      model.processReferences();
       SampleModel modelin = modelRoundTripJSONwithTest(model);
       checkModel(modelin.getContent(SourceCatalogue.class));
      
@@ -89,7 +89,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
    void sourceCatDeleteTest() throws JsonProcessingException {
       SampleModel model = new SampleModel();
       model.addContent(sc);
-      model.makeRefIDsUnique();
+      model.processReferences();
       model.deleteContent(sc); //
       SampleModel modelin = modelRoundTripJSONwithTest(model); // FIXME need to test that the refenences are gone
 
@@ -141,7 +141,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
        SampleModel model = new SampleModel();
        model.addContent(sc);
        model.addContent(newsc);
-       model.makeRefIDsUnique();
+       model.processReferences();
        SampleModel modelin = modelRoundTripJSONwithTest(model);
        assertNotNull(modelin);
    }

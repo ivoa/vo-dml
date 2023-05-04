@@ -76,7 +76,7 @@ class JPATestModelTest extends AbstractTest {
         JAXBContext jc = JpatestModel.contextFactory();
         JpatestModel model = new JpatestModel();
         model.addContent(atest);
-        model.makeRefIDsUnique();
+        model.processReferences();
         assertTrue(atest.cval.rval._id != 0, "id setting did not work");
         JpatestModel modelin = modelRoundTripXMLwithTest(model);
         System.out.println("generating schema");

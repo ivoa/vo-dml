@@ -71,7 +71,7 @@ For each of the concrete objectTypes in the model there is
 an overloaded `addContent()` method, which will add the content to the
 overall instance and find any references.
 
-Once all the content has been added, then there is a `makeRefIDsUnique()` method
+Once all the content has been added, then there is a `processReferences()` method
 which will go through the whole model and automatically assign IDs for any
 references that do not already have them.
 
