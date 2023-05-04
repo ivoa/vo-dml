@@ -3,10 +3,11 @@ package org.ivoa.vodml.validation;
  * Created on 03/05/2023 by Paul Harrison (paul.harrison@manchester.ac.uk).
  */
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.ivoa.vodml.ModelManagement;
-import org.ivoa.vodml.validation.ModelValidator.ValidationResult;
+import java.io.File;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.xml.bind.JAXBContext;
@@ -27,13 +28,16 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import java.io.File;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-public abstract class BaseValidationTest {
+import org.ivoa.vodml.ModelDescription;
+import org.ivoa.vodml.ModelManagement;
+import org.ivoa.vodml.VodmlModel;
+import org.ivoa.vodml.jpa.JPAManipulationsForObjectType;
+import org.ivoa.vodml.validation.ModelValidator.ValidationResult;
+
+public abstract class AbstractBaseValidation {
     protected  <T> RoundTripResult<T> roundTripJSON(ModelManagement<T> m) throws JsonProcessingException {
         T model = m.theModel();
         @SuppressWarnings("unchecked")
@@ -94,6 +98,30 @@ public abstract class BaseValidationTest {
         T modelin = el.getValue();
         return new RoundTripResult<T>(!vc.hasEvents(), modelin);
     }
+    
+    protected <M, I, T extends JPAManipulationsForObjectType<I>> RoundTripResult<T> roundtripRDB(ModelManagement<M> modelManagement, T  entity)
+    {
+       
+        javax.persistence.EntityManager em = setupH2Db(modelManagement.pu_name());
+        em.getTransaction().begin();
+        entity.persistRefs(em);
+        em.persist(entity);
+        em.getTransaction().commit();
+        I id = entity.getId();
+
+        //flush any existing entities
+        em.clear();
+        em.getEntityManagerFactory().getCache().evictAll();
+
+        // now read back
+        @SuppressWarnings("unchecked")
+        T r = (T) em.createNamedQuery(entity.getClass().getSimpleName()+".findById", entity.getClass())
+                .setParameter("id", id).getSingleResult();
+        
+        return new RoundTripResult<T>(true, r);
+
+    }
+    
     protected EntityManager setupH2Db(String puname){
         Map<String, String> props = new HashMap<>();
 
@@ -139,9 +167,12 @@ public abstract class BaseValidationTest {
 
     }
     
-    protected <T> ValidationResult validate(ModelManagement<T> mm, File schema) throws JAXBException {
-        ModelValidator v = new ModelValidator(schema, mm.contextFactory());
-        return v.validate(mm.theModel());
+    protected <T> ValidationResult validateModel(VodmlModel<T> m) throws JAXBException {
+        
+        final ModelDescription desc = m.descriptor();
+        File schemaFile = new File(desc.schemaMap().get(desc.xmlNamespace()));
+        ModelValidator v = new ModelValidator(schemaFile, m.management().contextFactory());
+        return v.validate(m);
         
     }
 

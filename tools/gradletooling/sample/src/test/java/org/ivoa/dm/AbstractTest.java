@@ -11,10 +11,8 @@ package org.ivoa.dm;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.PreparedStatement;
 
-import javax.persistence.EntityManager;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.PropertyException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -23,18 +21,19 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.hibernate.Session;
 import org.ivoa.vodml.ModelManagement;
 import org.ivoa.vodml.VodmlModel;
-import org.ivoa.vodml.validation.BaseValidationTest;
+import org.ivoa.vodml.jpa.JPAManipulationsForObjectType;
+import org.ivoa.vodml.validation.AbstractBaseValidation;
 
 /**
  * Base Class for the test classes .
  * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
  * @since 5 Nov 2021
  */
-public abstract class AbstractTest extends BaseValidationTest {
+public abstract class AbstractTest extends AbstractBaseValidation {
 
 
 //    abstract <T> ModelManagement<T> getModelManagement();
@@ -54,6 +53,31 @@ public abstract class AbstractTest extends BaseValidationTest {
         assertNotNull(result.retval,"returned object from JSON serialization null");
         return result.retval;
     }
+
+   public <M, I, T extends JPAManipulationsForObjectType<I>> T modelRoundTripRDBwithTest(ModelManagement<M> modelManagement, T entity)
+    {
+        RoundTripResult<T> result = roundtripRDB(modelManagement, entity);
+        assertTrue(result.isValid, "reading rdb back had errors");
+        assertNotNull(result.retval,"returned object from rdb serialization null");
+        return result.retval;
+    }
+
+/**
+ * Write the contents of the database to a file.
+ * @param em
+ */
+protected void dumpDbData(javax.persistence.EntityManager em) {
+    //IMPL hibernate specific way of getting connection... generally dirty, see  https://stackoverflow.com/questions/3493495/getting-database-connection-in-pure-jpa-setup
+        Session sess = em.unwrap(Session.class);
+        sess.doWork(conn -> {
+            PreparedStatement ps = conn.prepareStatement("SCRIPT TO ?"); // this is H2db specific
+            ps.setString(1, "test_dump.sql");
+            ps.execute();
+        });
+}
+
+
+
 
 
 }

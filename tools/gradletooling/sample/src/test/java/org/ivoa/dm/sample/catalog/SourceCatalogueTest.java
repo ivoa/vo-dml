@@ -3,7 +3,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 import java.io.IOException;
-import java.sql.PreparedStatement;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -13,7 +12,6 @@ import javax.xml.transform.TransformerException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import org.hibernate.Session;
 import org.ivoa.dm.sample.SampleModel;
 import org.ivoa.dm.sample.catalog.inner.SourceCatalogue;
 import org.ivoa.vodml.VodmlModel;
@@ -32,28 +30,13 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
         logger.debug("starting JAXB test");
  
         JAXBContext jc = SampleModel.contextFactory();
-//        JaxbAnnotationMeta<SourceCatalogue> meta = JaxbAnnotationMeta.of(SourceCatalogue.class);
-//        DescriptionValidator<SourceCatalogue> validator = new DescriptionValidator<>(jc, meta);
-//        DescriptionValidator.Validation validation = validator.validate(sc);
-//        if(!validation.valid) {
-//            System.err.println(validation.message);
-//        }
-//        assertTrue(validation.valid);
 
         SampleModel model = new SampleModel();
         model.addContent(sc);
         model.makeRefIDsUnique();
-//        JaxbAnnotationMeta<SampleModel> mmeta = JaxbAnnotationMeta.of(SampleModel.class);
-//        DescriptionValidator<SampleModel> mvalidator = new DescriptionValidator<>(jc, mmeta);
-//        DescriptionValidator.Validation mvalidation = mvalidator.validate(model);
-//        assertTrue(mvalidation.valid, "errors on whole model");
-
 
         SampleModel modelin = modelRoundTripXMLwithTest(model); 
         checkModel(modelin.getContent(SourceCatalogue.class));
-        
-
-
         System.out.println("generating schema");
         SampleModel.writeXMLSchema();
     }
@@ -87,19 +70,12 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
 
 
         em.getTransaction().commit();
-       //IMPL hibernate specific way of getting connection... generally dirty, see  https://stackoverflow.com/questions/3493495/getting-database-connection-in-pure-jpa-setup
-        Session sess = em.unwrap(Session.class);
-        sess.doWork(conn -> {
-            PreparedStatement ps = conn.prepareStatement("SCRIPT TO ?"); // this is H2db specific
-            ps.setString(1, "test_dump.sql");
-            ps.execute();
-        });
+       dumpDbData(em);
         
 
     }
-    
-   
-   @org.junit.jupiter.api.Test
+
+    @org.junit.jupiter.api.Test
    void sourceCatJSONTest() throws JsonProcessingException {
       SampleModel model = new SampleModel();
       model.addContent(sc);

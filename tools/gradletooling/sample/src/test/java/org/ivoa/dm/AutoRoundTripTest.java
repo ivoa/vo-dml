@@ -23,58 +23,58 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.ivoa.vodml.ModelDescription;
+import org.ivoa.vodml.ModelManagement;
 import org.ivoa.vodml.VodmlModel;
-import org.ivoa.vodml.validation.BaseValidationTest;
+import org.ivoa.vodml.jpa.JPAManipulationsForObjectType;
+import org.ivoa.vodml.validation.AbstractBaseValidation;
 import org.ivoa.vodml.validation.ModelValidator.ValidationResult;
 import org.junit.jupiter.api.Test;
 
 /**
- * An abstract base Test that does some tests .
+ * An abstract base Test that does XML and JSON serialization round-trip tests .
  * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
  * @since 3 May 2023
  */
-public abstract  class AutoRoundTripTest <T extends VodmlModel<T>> extends BaseValidationTest {
+public abstract class AutoRoundTripTest <M extends VodmlModel<M>> extends AbstractBaseValidation {
     
     
-    public abstract  T createModel();
+    /**
+     * Create the model instance.
+     * @return the model to round-trip
+     */
+    public abstract  M createModel();
     
-    public abstract void testModel(T m);
+    /**
+     * Run some tests on the model.
+     * @param m the model to be tested
+     */
+    public abstract void testModel(M m);
     
-    @Test
-    void validationTest() throws JAXBException {
-        final T model = createModel(); 
-        model.management().writeXMLSchema();
-        final ModelDescription desc = model.descriptor();
-        File schemaFile = new File(desc.schemaMap().get(desc.xmlNamespace()));
-        ValidationResult vr = validate(model.management(), schemaFile );
-        if(!vr.isOk)
-        {
-            vr.printValidationErrors(System.out);
-        }
-       
-    }
+    
+   
   
     
     @Test
     void testXmlRoundTrip() throws JAXBException, TransformerConfigurationException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException, IOException {
         
-        T model = createModel();
-        RoundTripResult<T> result = roundtripXML(model.management());
+        M model = createModel();
+        RoundTripResult<M> result = roundtripXML(model.management());
         assertTrue(result.isValid, "reading XML back had errors");
         assertNotNull(result.retval,"returned object from XML serialization null");
-        testModel(model);
+        testModel(result.retval);
     }
 
     @Test
     void testJSONRoundTrip() throws JsonProcessingException  {
         
-        T model = createModel();
-        RoundTripResult<T> result = roundTripJSON(model.management());
+        M model = createModel();
+        RoundTripResult<M> result = roundTripJSON(model.management());
         assertTrue(result.isValid, "reading JSON back had errors");
         assertNotNull(result.retval,"returned object from JSON serialization null");
-        testModel(model);
+        testModel(result.retval);
     }
-    
+
+   
     
 
 
