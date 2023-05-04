@@ -34,9 +34,7 @@ public interface XmlIdManagement {
      */
     boolean hasNaturalKey();
 
-    @SuppressWarnings("rawtypes")
-    Class idType();
-
+  
     /**
      * Create and XMLID.
      * @param i the key value;

@@ -527,13 +527,16 @@
 
       public&bl;<xsl:if test="@abstract='true'">abstract</xsl:if>&bl;class <xsl:value-of select="vf:capitalize(name)"/>&bl;
       <xsl:if test="extends">extends <xsl:value-of select="vf:JavaType(extends/vodml-ref)"/></xsl:if>
-      <xsl:variable name="ifs" as="xsd:string*">
-          <xsl:sequence>
-              <xsl:if test="vf:referredTo($vodml-ref)">org.ivoa.vodml.jaxb.XmlIdManagement</xsl:if>
-              org.ivoa.vodml.jpa.JPAManipulations
-          </xsl:sequence>
+      <xsl:variable name="ifs">
+              org.ivoa.vodml.jpa.JPAManipulations<xsl:if test="current()/name() = 'objectType'">ForObjectType&lt;<xsl:choose>
+              <xsl:when test="attribute[ends-with(constraint/@xsi:type,':NaturalKey')]">
+                  <xsl:value-of select="vf:QualifiedJavaType(attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/datatype/vodml-ref)"/>
+              </xsl:when>
+              <xsl:otherwise>Long</xsl:otherwise>
+      </xsl:choose>&gt;</xsl:if>
+          <xsl:if test="vf:referredTo($vodml-ref)">,org.ivoa.vodml.jaxb.XmlIdManagement</xsl:if>
       </xsl:variable>
-      <xsl:if test="count($ifs)> 0"><xsl:value-of select="concat(' implements ', string-join($ifs,','))"/> </xsl:if>
+      <xsl:value-of select="concat(' implements ', $ifs)"/>
 
     &bl;{
       <xsl:if test="local-name() eq 'objectType' and not (extends) and not(attribute/constraint[ends-with(@xsi:type,':NaturalKey')])" >
@@ -552,6 +555,7 @@
           /**
           * @return the id
           */
+          @Override
           public Long getId() {
           return _id;
           }
@@ -577,11 +581,7 @@
               {
                 return false;
               }
-              @Override
-              public Class idType()
-              {
-                 return Long.class;
-              }
+
           </xsl:if>
 
 
@@ -608,26 +608,29 @@
       <xsl:if test="vf:referredTo($vodml-ref) and attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
           <!--TODO deal with multiple natural keys -->
           <!-- TODO this assumes that the natural key is a string -->
+          <xsl:variable name="nk" select="attribute[ends-with(constraint/@xsi:type,':NaturalKey')]"/>
           @Override
           public String getXmlId(){
-          return <xsl:value-of select="attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"/>;
+          return <xsl:value-of select="$nk/name"/>;
           }
           @Override
           public void setXmlId (String id)
           {
-          this.<xsl:value-of select="attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"/> = id;
+          this.<xsl:value-of select="$nk/name"/> = id;
           }
           @Override
           public boolean hasNaturalKey()
           {
           return true;
           }
+          /**
+          * return the database key id. Note that this is the same as attribute <xsl:value-of select="$nk/name"/>.
+          * @return the id
+          */
           @Override
-          public Class idType()
-          {
-          return String.class;
+          public String getId() {
+          return <xsl:value-of select="$nk/name"/>;
           }
-
 
       </xsl:if>
 
