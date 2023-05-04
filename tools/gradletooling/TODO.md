@@ -51,7 +51,8 @@ VODML Tooling TODO
   * add constructor that misses out the optional attributes.
   * think again about the subsetting strategy and type safety
 * make semantic constraints work - i.e. look up the RDF....
-
+* before and after serialization, the references need to be processed - it would be nice to do this automatically.... e.g. https://github.com/FasterXML/jackson-databind/issues/279 for jackson.
+* 
 * JAXB
   * ~~idrefs referred to objects are not being output - http://stackoverflow.com/questions/12914382/marshalling-unmarshalling-fields-to-tag-with-attributes-using-jaxb~~
   * make the subsets create substitution group xml (i.e. have elements rather than xsi:type) http://blog.bdoughan.com/2010/11/jaxb-and-inheritance-using-substitution.html
@@ -63,7 +64,7 @@ VODML Tooling TODO
   * might want to be more explicit about namespaces in the <refs> and <content> areas....
   * can do better with subsets in subtypes - if supertype is abstract then it is possible to define in a subtype and get better type safety.
   * https://stackoverflow.com/questions/60402092/jackson-custom-deserializer-for-polymorphic-objects-and-string-literals-as-defau and https://stackoverflow.com/questions/18313323/how-do-i-call-the-default-deserializer-from-a-custom-deserializer-in-jackson
-  
+  * problem with the "lifecycle" example that is not present in json serialization - the contained and referenced example is output twice 
 
 
 * JPA 
