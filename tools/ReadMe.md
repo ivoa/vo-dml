@@ -35,10 +35,10 @@ to be configured in a variety of ways).
 There are 3 associated tasks
 
 * vodmlValidate - runs validation on the models.
-* vodmlDoc - generate standard documentation. This will produce a model diagram, latex and html formatted documentation, as well as a graphml representation of the model 
-  that can be hand edited with https://www.yworks.com/products/yed for nicer looking model diagrams.
+* vodmlDoc - generate standard documentation. This will produce a model diagram (needs [graphviz](https://graphviz.org) to be installed), latex and html formatted documentation, as well as a graphml representation of the model 
+  that can be hand edited with [yEd](https://www.yworks.com/products/yed) for nicer looking model diagrams.
 * vodmlJavaGenerate - generate java classes. See [generated code guide](JavaCodeGeneration.md) for details of how to use the generated java code to serialize instances to XML and RDB.
-
+ Note that it is also possible to test models using the generated code.
 
 ## configurable plugin properties
 
@@ -135,8 +135,6 @@ The serializations that are implemented in the generated code are discussed in m
 
 The gradle plugin does not currently have a task directly to generate XML and RDB schema from the models, however, this can be done
 indirectly from the generated Java code as can be seen from the [Small java example](./gradletooling/sample/src/main/java/WriteSampleSchema.java).
-
-
 
 ## Information for [developers of the plugin itself](./Developing.md)
 
