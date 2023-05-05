@@ -212,7 +212,8 @@ enum <xsl:value-of select="name"/><xsl:text> </xsl:text>
         <xsl:text> iskey </xsl:text>
     </xsl:template>
 
-    <xsl:template match="constraint[parent::objectType]"> <!-- FIXME - need to work out where this goes for plain constraint -->
+
+    <xsl:template match="constraint[parent::objectType and not (@xsi:type='vo-dml:SubsettedRole') ]"> <!-- FIXME - need to work out where this goes for plain constraint -->
         <xsl:text>// constraint  </xsl:text><xsl:value-of select="description"/>
     </xsl:template>
 
