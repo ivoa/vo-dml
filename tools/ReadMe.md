@@ -14,10 +14,12 @@ The tools require that Java 11 or newer be installed to run.
 
 Note that it is not necessary to check-out this vodml repository as the plugin will be downloaded automatically from the gradle repository. 
 So, in general, a new data model should be started in its own git repository and configured
-as below (see [ProposalDM](https://github.com/ivoa/ProposalDM) for a complete example separate from this repository).
+as below (see [ProposalDM](https://github.com/ivoa/ProposalDM) for a complete example separate from this repository). 
+If starting a completely new data model then the [Template DM Project](https://github.com/ivoa/DataModelTemplate) is probably the easiest way to get going.
 
+If adapting an existing data model repository then
 
-1. [Install gradle](https://gradle.org/install/) and run `gradle init` and make choices for a library written in java (with a Kotlin build script DSL).
+1. [Install gradle](https://gradle.org/install/) 
 2. Edit a `build.gradle.kts` file with reference to the plugin (note substitute ![latest published version](https://img.shields.io/gradle-plugin-portal/v/net.ivoa.vo-dml.vodmltools?label=latest%20published%20version) below)
 
 ```kotlin
@@ -25,7 +27,9 @@ plugins {
     id("net.ivoa.vo-dml.vodmltools") version "0.x.x"
 }
 ```
-3. create the  binding files for the model (see below in the configuration section) 
+3. create a `settings.gradle.kts` - it is possible just to copy the [template versino](https://github.com/ivoa/DataModelTemplate/blob/master/settings.gradle.kts) and just edit the `rootProject.name`.
+
+4. create the  binding files for the model (see below in the configuration section) 
 
 There is nothing else that needs to be done if the VO-DML files in the default place 
 (see [sample build file](gradletooling/sample/build.gradle.kts) for some more 
