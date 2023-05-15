@@ -7,7 +7,7 @@ import ru.vyarus.gradle.plugin.python.task.PythonTask
  * 
  */
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.3.19"
+    id("net.ivoa.vo-dml.vodmltools") version "0.3.20"
 //    id ("com.diffplug.spotless") version "5.17.1"
     id("ru.vyarus.use-python") version "3.0.0"
 
@@ -93,11 +93,14 @@ python {
 
    pip("pytest:7.3.1")
    pip("SQLAlchemy:2.0.11")
+    pip("xsdata[lxml,cli]:22.4")
+    pip("pydantic:1.10.7")
 }
 
 
 tasks.register("pytest", PythonTask::class.java) {
     command = "src/test/python/SourceCatalogueTest.py"
-//    command = "-c \"import sys; print(sys.path)\""
+ //   command = "-c \"import sys; print(sys.path)\""
+ //   dependsOn("vodmlPythonGenerate")
 }
 
