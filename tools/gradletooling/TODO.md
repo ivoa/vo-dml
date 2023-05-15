@@ -13,7 +13,8 @@ VODML Tooling TODO
 * the rdb and xml schemas produced by the xslt are do not match the java generated ones exactly - they need to be updated.
 * vodml to specify attribute defaults?
 * to generate tapschema - would be nice for vodml to have UCDs as part of the model - could be added in semantic part?
-* is subsetting references allowed?
+* is subsetting references allowed? yes!
+* would a oneOf/Choice be good?
 
 * STC
   * epoch - not really defined as something that is used properly

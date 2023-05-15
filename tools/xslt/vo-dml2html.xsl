@@ -66,7 +66,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>
-<xsl:value-of select="title"/>
+<xsl:call-template name="doTitle"/>
 </title>
     <link rel="stylesheet" href="https://www.ivoa.net/misc/ivoa_wd.css" type="text/css"/>
     <style type="text/css">
@@ -201,7 +201,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->  
   
   <xsl:template match="vo-dml:model" mode="TOC">
-  <h1><xsl:value-of select="title"/></h1>
+  <h1><xsl:call-template name="doTitle"/></h1>
 <h2><a id="contents" name="contents">Table of Contents</a></h2>
 <div class="head">
 <table class=".toc">
@@ -262,9 +262,9 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   <tr><td><xsl:value-of select="$modelimports_section_number"/></td><td>
 &tab;<a href="#modelimports">Imported Models</a></td></tr>
 <xsl:for-each select="import">
-    <xsl:sort select="name"/>
   <tr><td><xsl:value-of select="concat($modelimports_section_number,position())"/></td><td>
-&tab;<a><xsl:attribute name="href" select="concat('#',name)"/><xsl:value-of select="name"/></a></td></tr>
+    <xsl:variable name="iname" select="document(url)/vo-dml:model/name"/>
+&tab;<a><xsl:attribute name="href" select="concat('#',$iname)"/><xsl:value-of select="$iname"/></a></td></tr>
   </xsl:for-each>
 </xsl:if>
 <xsl:if test="$pathsfile">
@@ -326,7 +326,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->  
     
   <xsl:template match="vo-dml:model" mode="section">
-  <h1><a name="model_section">1. Model: <xsl:value-of select="title"/> (<xsl:value-of select="name"/>)</a></h1>
+  <h1><a name="model_section">1. Model: <xsl:call-template name="doTitle"/> (<xsl:value-of select="name"/>)</a></h1>
   <table>
   <tr><td align="right"><b>Authors</b></td><td>&bl;:&bl;</td><td> <xsl:for-each select="author"><xsl:if test="position()>1">,&bl;</xsl:if><xsl:value-of select="."/></xsl:for-each></td></tr>
   <tr><td align="right"><b>Date</b></td><td>&bl;:&bl;</td><td><xsl:value-of select="lastModified"/></td></tr>
@@ -576,23 +576,22 @@ For each imported model we list URLs to the VO-DML and HTML representations and 
   
   <xsl:template match="import" mode="contents">
     <xsl:param name="section_number"/>
-    <xsl:variable name="import" select="url"/>
-    <xsl:variable name="docURL" select="documentationURL"/>
-    <!-- 
-    <xsl:variable name="doc" select="document($import)"/>
-    <xsl:variable name="name" select="$doc/vo-dml:model/name"/>
-		 -->
-    <h2><a><xsl:attribute name="name" select="name"/></a>
-    <xsl:value-of select="concat($section_number,' ',name)"/></h2>
+
+    <xsl:variable name="impm" select="document(url)"/>
+    <xsl:variable name="name" select="$impm/vo-dml:model/name"/>
+    <xsl:variable name="docurl" select="replace(url,'.xml','.html')"/>
+
+    <h2><a name="{$name}"></a>
+    <xsl:value-of select="concat($section_number,' ',$name)"/></h2>
     <table border="1" cellspacing="2" width="100%">
       <tr>
         <td class="objecttype-title" width="20%">Model vodml-id</td>
         <td class="objecttype-name">
-          <xsl:value-of select="name"/>
+          <xsl:value-of select="$name"/>
         </td>
       </tr>
     <tr><td width="30%" class="info-title">url</td><td><a><xsl:attribute name="href" select="url"/><xsl:value-of select="url"/></a></td></tr>
-    <tr><td width="30%" class="info-title">documentation url</td><td><a><xsl:attribute name="href" select="documentationURL"/><xsl:value-of select="documentationURL"/></a></td></tr>
+    <tr><td width="30%" class="info-title">documentation url</td><td><a><xsl:attribute name="href" select="$docurl"/><xsl:value-of select="$docurl"/></a></td></tr>
   </table>
   </xsl:template>
 
@@ -1098,5 +1097,11 @@ The following table shows all legal PATH expressions that can be used as alterna
     </xsl:apply-templates>
   </xsl:template>
 
+  <xsl:template name="doTitle">
+    <xsl:choose>
+      <xsl:when test="title and title/text() != 'TBD'"><xsl:value-of select="title"></xsl:value-of></xsl:when>
+      <xsl:otherwise><xsl:value-of select="name"/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
   
 </xsl:stylesheet>

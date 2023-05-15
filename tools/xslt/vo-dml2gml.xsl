@@ -327,7 +327,7 @@ derived from the vo-dml2gvd.xsl file
 <!--       <xsl:value-of select="concat('&quot;',/vodml:model/name,':',./vodml-id,'&quot;')"/>   -->
 <!--       <xsl:value-of select="concat(//vodml:model/name,':',./vodml-id)"/>  -->
     <xsl:call-template name="package-path">
-    <xsl:with-param name="model" select="/vodml:model"/>
+    <xsl:with-param name="model" select="ancestor::vodml:model"/>
     <xsl:with-param name="packageid" select="../vodml-id"/>
     <xsl:with-param name="delimiter" select="'/'"/>
     <xsl:with-param name="suffix" select="name"/>

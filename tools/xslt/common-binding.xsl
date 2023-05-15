@@ -38,7 +38,7 @@
 
   <!-- return the targetnamespace for the schema document for the package with the given id -->
   <xsl:template name="namespace-for-package">
-    <xsl:param name="model" select="ancestor-or-self::vo-dml:model"/>
+    <xsl:param name="model"/>
     <xsl:param name="packageid"/>
     <xsl:variable name="path">
       <xsl:call-template name="package-path">
