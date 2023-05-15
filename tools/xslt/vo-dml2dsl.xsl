@@ -117,7 +117,7 @@ package <xsl:value-of select="concat(name,' ')"/> <xsl:call-template name= "do-d
 <xsl:template name ="do-description">
   <xsl:choose>
       <xsl:when test="description">
-          <xsl:text> "</xsl:text><xsl:if test="not(matches(text(),'^\s*TODO'))"><xsl:value-of select='translate(.,$dq,$sq)'/></xsl:if><xsl:text>"</xsl:text>
+          <xsl:text> "</xsl:text><xsl:if test="not(matches(description/text(),'^\s*TODO'))"><xsl:value-of select='translate(description,$dq,$sq)'/></xsl:if><xsl:text>"</xsl:text>
       </xsl:when>
       <xsl:otherwise>
           <xsl:text>""</xsl:text>
