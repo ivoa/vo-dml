@@ -23,9 +23,9 @@ public class XsdToVodslTask extends DefaultTask {
       );
    }
 
-   @Option(option = "dsl", description = "The VODSL output file - will appear in the project directory")
+   @Option(option = "dsl", description = "The VODSL output filey")
    public void setDsl(String dsl){
-      this.dsl =  new File(getProject().getProjectDir(), dsl);
+      this.dsl =  new File( dsl);
    }
 
 

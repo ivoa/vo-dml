@@ -79,10 +79,11 @@ model <xsl:value-of select="$modname"/> (<xsl:value-of select="translate(@versio
 	  <xsl:apply-templates select="xs:annotation"/>
       include "IVOA-v1.0.vodsl"
      <xsl:apply-templates select="xs:import"/>
-     <!-- define any local enums -->
+     <!-- define any local definitions -->
       <xsl:apply-templates select="//xs:simpleType[not(@name) and xs:restriction/xs:enumeration]" mode="declare"/>
       <xsl:apply-templates select="//xs:simpleContent[xs:restriction/xs:enumeration]" mode="declare"/>
-      <xsl:apply-templates select="* except (xs:annotation|xs:import|xs:element)"/> <!-- do not process top level elements -->
+      <xsl:apply-templates select="/*//xs:element[not(@type) and xs:complexType]" mode="declare"/>
+      <xsl:apply-templates select="* except (xs:annotation|xs:import)"/> <!-- do not process top level elements -->
   </xsl:template>
  
  <xsl:template match="xs:import">
@@ -103,7 +104,7 @@ model <xsl:value-of select="$modname"/> (<xsl:value-of select="translate(@versio
   <xsl:template name='localref'> 
      <xsl:param name="ref"/>
      <xsl:choose>
-        <xsl:when test="substring-before( $ref,':') = $targetprefix">
+        <xsl:when test="contains($ref, ':') and substring-before( $ref,':') = $targetprefix">
            <xsl:value-of select="substring-after($ref,':')"/>
         </xsl:when>
         <xsl:otherwise>
@@ -114,7 +115,15 @@ model <xsl:value-of select="$modname"/> (<xsl:value-of select="translate(@versio
      
   </xsl:template>
 
-<xsl:template match="xs:complexType[xs:simpleContent/xs:extension]">
+<xsl:template match="xs:element[not(@type) and xs:complexType]" mode="declare">
+    <xsl:value-of select="concat($nl,'otype ',@name)"/>
+    <xsl:call-template name="doAnnotation"/>
+    {
+       <xsl:apply-templates select="xs:complexType"/>
+    }
+</xsl:template>
+
+<xsl:template match="xs:schema/xs:complexType[@name and xs:simpleContent/xs:extension]">
   <xsl:value-of select="$nl"/><xsl:if test="@abstract">abstract </xsl:if>dtype <xsl:value-of select="@name"/><xsl:text> </xsl:text>
   
   <xsl:call-template name="doAnnotation"/>
@@ -125,7 +134,7 @@ model <xsl:value-of select="$modname"/> (<xsl:value-of select="translate(@versio
 </xsl:template>
 
 
-<xsl:template match="xs:complexType[xs:simpleContent/xs:restriction]">
+<xsl:template match="xs:schema/xs:complexType[@name and xs:simpleContent/xs:restriction]">
   <xsl:value-of select="$nl"/><xsl:if test="@abstract">abstract </xsl:if>dtype <xsl:value-of select="@name"/><xsl:text> </xsl:text>
   <xsl:apply-templates select= "xs:simpleContent/xs:restriction"/>
   <xsl:call-template name="doAnnotation"/>
@@ -138,7 +147,7 @@ model <xsl:value-of select="$modname"/> (<xsl:value-of select="translate(@versio
 </xsl:template>
 
 
-<xsl:template match="xs:complexType[xs:complexContent/xs:extension]">
+<xsl:template match="xs:schema/xs:complexType[@name and xs:complexContent/xs:extension]">
   <xsl:value-of select="$nl"/><xsl:if test="@abstract">abstract </xsl:if>otype <xsl:value-of select="@name"/><xsl:text> </xsl:text>
   <xsl:apply-templates select= "xs:complexContent/xs:extension"/>
   <xsl:call-template name="doAnnotation"/>
@@ -146,7 +155,7 @@ model <xsl:value-of select="$modname"/> (<xsl:value-of select="translate(@versio
   }
 </xsl:template>
 
-<xsl:template match="xs:complexType[xs:complexContent/xs:restriction]">
+<xsl:template match="xs:schema/xs:complexType[@name and xs:complexContent/xs:restriction]">
   <xsl:value-of select="$nl"/><xsl:if test="@abstract">abstract </xsl:if>otype <xsl:value-of select="@name"/><xsl:text> </xsl:text>
   <xsl:apply-templates select= "xs:complexContent/xs:restriction"/>
   <xsl:call-template name="doAnnotation"/>
@@ -156,16 +165,27 @@ model <xsl:value-of select="$modname"/> (<xsl:value-of select="translate(@versio
 </xsl:template>
 
 
-<xsl:template match="xs:complexType">
+<xsl:template match="xs:schema/xs:complexType[@name and not(xs:complexContent or xs:simpleContent)]">
   <xsl:value-of select="$nl"/><xsl:if test="@abstract">abstract </xsl:if>otype <xsl:value-of select="@name"/><xsl:text> </xsl:text>
   <xsl:call-template name="doAnnotation"/>
   {   <xsl:apply-templates select="* except xs:annotation"/>
   }
 </xsl:template>
 
+<xsl:template match="xs:complexType[not(@name) and not(parent::xs:schema)]"> <!--anonymous type in another definition -->
+       <xsl:apply-templates select="* except xs:annotation"/>
+</xsl:template>
+
 <xsl:template match="xs:sequence">
     <xsl:apply-templates select="*"/>
 </xsl:template>
+<xsl:template match="xs:choice">
+    <xsl:apply-templates select="*"/>
+</xsl:template>
+<xsl:template match="xs:all">
+    <xsl:apply-templates select="*"/>
+</xsl:template>
+
 <xsl:template match="xs:simpleType[@name and xs:restriction/xs:enumeration]">
 enum <xsl:value-of select="@name"/><xsl:text> </xsl:text> 
 <xsl:call-template name="doAnnotation"/>
@@ -223,7 +243,7 @@ enum <xsl:value-of select="concat(ancestor::*/@name, '_enum')"/><xsl:text> </xsl
   <xsl:text> "</xsl:text><xsl:if test="not(matches(text(),'^\s*TODO'))"><xsl:value-of select='translate(string-join(xs:documentation, " "),$dq,$sq)'/></xsl:if><xsl:text>"</xsl:text>
 </xsl:template>
 
-<xsl:template match="xs:element[@name]">
+<xsl:template match="xs:element[not(parent::xs:schema) and @name and @type]">
   <xsl:message>element <xsl:value-of select="@name"/></xsl:message>
   <xsl:text>
         </xsl:text>
@@ -231,24 +251,52 @@ enum <xsl:value-of select="concat(ancestor::*/@name, '_enum')"/><xsl:text> </xsl
   <xsl:apply-templates select="@type"/><xsl:text> </xsl:text> 
   <xsl:call-template name="multiplicity"/><xsl:text> </xsl:text> 
   <!-- crude guess at composition - only looking for local types at moment - could probably do better-->
-  <xsl:variable name="thetype" select="tokenize(@type, ':')"/>
-  <xsl:if test="$thetype[1] = $targetprefix and /xs:schema/xs:complexType[@name=$thetype[2] and not(xs:simpleContent)]">
+  <xsl:variable name="thetype" select="tokenize(@type, ':')[last()]"/>
+  <xsl:if test=" /xs:schema/xs:complexType[@name=$thetype and not(xs:simpleContent)]">
     <xsl:text> as composition </xsl:text>
   </xsl:if>
   <xsl:call-template name="doAnnotation"/>
   <xsl:text>;</xsl:text>
 </xsl:template>
+<xsl:template match="xs:element[not(parent::xs:schema) and @name and not(@type)]">
+    <xsl:message>element <xsl:value-of select="@name"/> with local definition that will have been previously defined</xsl:message>
+    <xsl:text>
+    </xsl:text>
+    <xsl:value-of select="concat(@name, ': ', @name)"/>
+    <xsl:call-template name="multiplicity"/><xsl:text> </xsl:text>
+    <xsl:if test="not(xs:simpleContent)">
+        <xsl:text> as composition </xsl:text>
+    </xsl:if>
+    <xsl:call-template name="doAnnotation"/>
+    <xsl:text>;</xsl:text>
+</xsl:template>
 
+
+<xsl:template match="xs:element[@fixed]">
+    <xsl:value-of select="concat('//',$lt,$dq,@name,'=',@fixed, ' as Natural',$gt)"/>
+</xsl:template>
 <xsl:template match="xs:element[@ref]">
-  <xsl:message>element ref <xsl:value-of select="@ref"/></xsl:message> <!-- TODO is this the right thing -->
+  <xsl:message>element subset <xsl:value-of select="@ref"/></xsl:message> <!-- TODO is this the right thing -->
   <xsl:text>
         </xsl:text>
-  <xsl:value-of select="concat(@ref, ' references ')"/> 
+  <xsl:value-of select="concat('subset ',@ref, ' as ')"/>
   <xsl:apply-templates select="@type"/><xsl:text> </xsl:text> 
   <xsl:call-template name="multiplicity"/><xsl:text> </xsl:text> 
   <xsl:call-template name="doAnnotation"/>
-  <xsl:text>;</xsl:text>
+  <xsl:text>;</xsl:text> // this is almost certainly wrong - check the intended subsetting....
 </xsl:template>
+    <xsl:template match="/xs:schema/xs:element[not(@type)]">
+        <xsl:message>top container element <xsl:value-of select="@name"/></xsl:message>
+    </xsl:template>
+    <xsl:template match="/xs:schema/xs:element[@substitutionGroup]">
+        <xsl:message>element <xsl:value-of select="@name"/></xsl:message>
+        <xsl:if test="@abstract">abstract </xsl:if>
+        otype <xsl:value-of select="@name"/> -&gt;  <xsl:apply-templates select="@substitutionGroup"/><xsl:text> </xsl:text>
+        <xsl:call-template name="doAnnotation"/>
+        {
+        <xsl:apply-templates select="* except xs:annotation"/>
+        }
+    </xsl:template>
 
 <xsl:template match="xs:attribute[xs:simpleType/xs:restriction/xs:enumeration]"> <!-- also possibility of subsetting -->
   <xsl:message>attribute <xsl:value-of select="@name"/></xsl:message>  
@@ -303,7 +351,8 @@ enum <xsl:value-of select="concat(ancestor::*/@name, '_enum')"/><xsl:text> </xsl
      <xsl:when test="$t = concat($xsd,':float')or $t = concat($xsd,':double')">ivoa:real</xsl:when>
      <xsl:when test="$t = concat($xsd,':integer') or $t = concat($xsd,':int') or $t = concat($xsd,':positiveInteger')">ivoa:integer</xsl:when>
      <xsl:when test="$t = concat($xsd,':boolean')">ivoa:boolean</xsl:when>
-     <xsl:when test="$t = concat($xsd,':dateTime')">ivoa:datetime</xsl:when>
+      <xsl:when test="$t = concat($xsd,':dateTime')">ivoa:datetime</xsl:when>
+      <xsl:when test="$t = concat($xsd,':nonNegativeInteger')">ivoa:nonnegativeInteger</xsl:when>
      <xsl:otherwise>
          <xsl:call-template name="localref">
       <xsl:with-param name="ref" select = "$t" />
@@ -331,10 +380,6 @@ enum <xsl:value-of select="concat(ancestor::*/@name, '_enum')"/><xsl:text> </xsl
 <xsl:template match="xs:restriction">
   <xsl:text> -&gt; </xsl:text><xsl:apply-templates select="@base"/>
 </xsl:template>
-
-
-
-
 
 <xsl:template match="text()|*">
   <xsl:value-of select="."/>
