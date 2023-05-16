@@ -1,6 +1,11 @@
 from datetime import datetime
 import unittest
 
+
+from xsdata.formats.dataclass.serializers import XmlSerializer
+from xsdata.formats.dataclass.serializers.config import SerializerConfig
+
+
 from org.ivoa.dm.filter.filter import PhotometryFilter
 from org.ivoa.dm.samplemodel.sample_catalog import LuminosityMeasurement, SkyCoordinateFrame, AlignedEllipse
 from org.ivoa.dm.samplemodel.sample_catalog import SDSSSource
@@ -63,6 +68,9 @@ class MyTestCase(unittest.TestCase):
                                  )
 
     def test_something(self):
+        config = SerializerConfig(pretty_print=True)
+        serializer = XmlSerializer(config=config)
+        print(serializer.render(self.sc))
         assert self.sc is not None  # TODO do some meaningful tests
 
 
