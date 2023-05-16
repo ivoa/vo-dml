@@ -19,24 +19,25 @@ XML was produced in the previous (ant based) versions of this tooling, and as su
 
 ## XML
 
-The overall model object will produce xml like
+For the [small example model](./models/sample/test/serializationExample.vodsl), the overall model object will produce xml like
 
 ```xml
-<MyModel>
+<ser:myModelModel xmlns:ser="http://ivoa.net/vodml/sample/serialization" >
     <refs>
-        <aref id="1000">...</aref>
-        <bref name="bid">...</bref>
+        <refa id="id_0">
+            <val>a value</val>
+        </refa>
+        <refb>
+            <name>a name</name>
+            <val>another val</val>
+        </refb>
     </refs>
-    <contentObjectType1> 
-        <bref>bid</bref>
-        ...
-    </contentObjectType1>
-    <contentObjectType1>
-        <aref>1000</aref>
-        ...
-    </contentObjectType1>
-    ...
-</MyModel>
+    <SomeContent>
+        <zval>a z val</zval>
+        <ref1>id_0</ref1>
+        <ref2>a name</ref2>
+    </SomeContent>
+</ser:myModelModel>
 ```
 
 ## JSON
@@ -47,34 +48,27 @@ as a reference to the object if the data model is known.
 
 ```json
 {
-  "MyModel": {
-    "refs": {
-        "mymodel:package.refa" : [
-          {"name": "a1", "val" : "aval"},
-          {"name": "a2", "val" : "aval2"}
-        ],
-      "mymodel:package.refb" : [
-        {"_id" : 1000, "val" : "aval"},
-        {"_id" : 1001, "val" : "aval2"}
-      ]
-    }, 
-    "content" : [ {
-      "mymodel:package.content1" : {"zval" : "aval", "refa" : "a1"}
+  "MyModelModel" : {
+    "refs" : {
+      "MyModel:Refa" : [ {
+        "_id" : 0,
+        "val" : "a value"
+      } ],
+      "MyModel:Refb" : [ {
+        "name" : "a name",
+        "val" : "another val"
+      } ]
     },
-      {
-      "mymodel:package.another1" : {
-        "nval" : "aval", "refb" : 1001, 
-        "enc": {"foo": 23, "bar": "value"}
-      }
-     }
-    ]
+    "content" : [ {
+      "@type" : "MyModel:SomeContent",
+      "zval" : "a z val",
+      "ref1" : 0,
+      "ref2" : "a name"
+    } ]
   }
 }
 ```
-In general where the type of an object cannot be inferred unambiguously from the model, then the object instance is 
-created by enclosing the object as the value of a member where the member name is the UType of the object. This choice,
-as opposed to for instance having a member called `type` with the UType as value, was made to avoid any potential 
-clashes with members generated from the data model.
+In general where the type of an object cannot be inferred unambiguously from the model,  a member called `@type` with the UType as value is added.
 
 ## Relational Databases
 The object relational mapping has been done with the capabilities offered by JPA. The general design 

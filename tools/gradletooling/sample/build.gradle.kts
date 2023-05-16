@@ -30,7 +30,8 @@ vodml {
         vodmlDir.file("../filter/vo-dml/Filter.vo-dml.xml"),
         vodmlDir.file("like_coords.vo-dml.xml"),
         vodmlDir.file("lifecycleTest.vo-dml.xml"),
-        vodmlDir.file("jpatest.vo-dml.xml")
+        vodmlDir.file("jpatest.vo-dml.xml"),
+        vodmlDir.file("serializationExample.vo-dml.xml")
 
     ))
 

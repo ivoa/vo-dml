@@ -24,5 +24,15 @@
         <rdb inheritance-strategy="single-table"
              discriminatorColumnLength="64"/>
     </model>
+    <model>
+        <name>MyModel</name>
+        <file>serializationExample.vo-dml.xml</file>
+        <java-package>org.ivoa.dm.serializationsample</java-package>
+        <python-package>org.ivoa.dm.serializationsample</python-package>
+        <xml-targetnamespace prefix="ser">http://ivoa.net/vodml/sample/serialization</xml-targetnamespace>
+        <xmllegacy-targetnamespace prefix="ser" schemaLocation="serialization.xsd">http://ivoa.net/dm/sample/serialization</xmllegacy-targetnamespace>
+        <rdb inheritance-strategy="single-table"
+             discriminatorColumnLength="64"/>
+    </model>
 
 </m:mappedModels>

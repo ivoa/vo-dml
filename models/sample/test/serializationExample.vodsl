@@ -1,0 +1,27 @@
+model MyModel (1.0) "Small Model for serialization"
+include "https://raw.githubusercontent.com/ivoa/vodsl-models/master/IVOA-v1.0.vodsl"
+
+/* originally wanted to have this base class with refs with different types of keys - the generated
+ * code always puts the ref in the base....
+abstract otype aref ""
+{
+	val : ivoa:string "";
+}
+ */
+otype Refa  ""
+{
+		val : ivoa:string "";
+	
+}
+otype Refb  ""
+{
+	name: ivoa:string iskey "";
+	val : ivoa:string "";
+	
+}
+
+otype SomeContent "" {
+	ref1 references Refa "";
+	ref2 references Refb "";
+	zval : ivoa:string "";
+}
