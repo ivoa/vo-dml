@@ -3,16 +3,18 @@ VODML Tooling TODO
 
 # vodml
 
-* used twice in composition schematron rule should not necessarily matter
+* schematron rules
+  * used twice in composition schematron rule should not necessarily matter
+  * should not even be warning (just a note!) for references multiplicity...aggregation OK when you know what you are doing ;)
 * clear up array intentions in multiplicity
 * multiple attribute should be OK - happens for DTypes in coordinates for example...
-* should only be a note for references multiplicity...aggregation OK when you know what you are doing...
 * unique constraint in composition...- would result in Set as the container - are compositions assumed to contain unique members anyway - that is effectively what is happening in the JPA interpretation where a surrogate 
  key is used. In this case it might be a lifecycle issue. This is also the distinction between a datatype and an objectType.
 * the rdb and xml schemas produced by the xslt are do not match the java generated ones exactly - they need to be updated.
 * vodml to specify attribute defaults?
 * to generate tapschema - would be nice for vodml to have UCDs as part of the model - could be added in semantic part?
-* is subsetting references allowed?
+* is subsetting references allowed? yes!
+* would a oneOf/Choice be good?
 
 * STC
   * epoch - not really defined as something that is used properly
@@ -50,7 +52,8 @@ VODML Tooling TODO
   * add constructor that misses out the optional attributes.
   * think again about the subsetting strategy and type safety
 * make semantic constraints work - i.e. look up the RDF....
-
+* before and after serialization, the references need to be processed - it would be nice to do this automatically.... e.g. https://github.com/FasterXML/jackson-databind/issues/279 for jackson.
+* 
 * JAXB
   * ~~idrefs referred to objects are not being output - http://stackoverflow.com/questions/12914382/marshalling-unmarshalling-fields-to-tag-with-attributes-using-jaxb~~
   * make the subsets create substitution group xml (i.e. have elements rather than xsi:type) http://blog.bdoughan.com/2010/11/jaxb-and-inheritance-using-substitution.html
@@ -62,7 +65,7 @@ VODML Tooling TODO
   * might want to be more explicit about namespaces in the <refs> and <content> areas....
   * can do better with subsets in subtypes - if supertype is abstract then it is possible to define in a subtype and get better type safety.
   * https://stackoverflow.com/questions/60402092/jackson-custom-deserializer-for-polymorphic-objects-and-string-literals-as-defau and https://stackoverflow.com/questions/18313323/how-do-i-call-the-default-deserializer-from-a-custom-deserializer-in-jackson
-  
+  * problem with the "lifecycle" example that is not present in json serialization - the contained and referenced example is output twice 
 
 
 * JPA 

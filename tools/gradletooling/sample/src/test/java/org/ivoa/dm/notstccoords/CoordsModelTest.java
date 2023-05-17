@@ -9,138 +9,73 @@
 
 package org.ivoa.dm.notstccoords;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-
-import org.ivoa.dm.AbstractTest;
 import org.ivoa.dm.ivoa.RealQuantity;
 import org.ivoa.dm.ivoa.Unit;
-import org.ivoa.vodml.ModelManagement;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.ivoa.vodml.testing.AutoRoundTripWithValidationTest;
 
 /**
- *  .
+ * An example test for the "not coords" model.
+ * note that this test runs JSON and XML serialisation test as well as validating the model instance.
  * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
  * @since 5 Nov 2021
  */
-class CoordsModelTest extends AbstractTest {
+class CoordsModelTest extends AutoRoundTripWithValidationTest<CoordsModel> {
 
     /** logger for this class */
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory
             .getLogger(CoordsModelTest.class);
-    private LonLatPoint pos1;
-    private SpaceSys spacesys;
-    private SpaceFrame icrs;
-    
-    /**
-     * @throws java.lang.Exception
-     */
-    @BeforeAll
-    static void setUpBeforeClass() throws Exception {
-    }
 
-    
-    @org.junit.jupiter.api.BeforeEach
-    void setUp() {
-        
-        
-        RefLocation ssbc = new StdRefLocation("BARYCENTRE");
-        icrs = new SpaceFrame().withEquinox("J2000").withRefPosition(ssbc).withSpaceRefFrame("ICRS");
-        
-        
-        RefLocation geocentric = new StdRefLocation("GEOCENTRIC");
-        SpaceFrame fk4 = new SpaceFrame().withEquinox("B1950").withRefPosition(geocentric).withSpaceRefFrame("FK4");
-        
-        Unit degree = new Unit("degree");
-        Unit metre = new Unit("metre");
-        PhysicalCoordSpace coordspace = new SphericalCoordSpace();
-        spacesys = new SpaceSys(coordspace, icrs);
-        
-        pos1 = new LonLatPoint(new RealQuantity(45.0, degree), new RealQuantity(22.0, degree),new RealQuantity(22.0, metre), spacesys );
-        
-        
-        
-    }
-    @Test
-    void TestCoordsXML() throws JAXBException, TransformerConfigurationException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
-        logger.debug("Starting XML test");
-        JAXBContext jc = CoordsModel.contextFactory();
-        CoordsModel model = new CoordsModel();
-        model.addContent(icrs);
-       // model.addContent(pos1); FIXME - need to think about the dtypes should be added to the top level  model object.
-        CoordsModel modelin = roundtripXML(jc, model, CoordsModel.class);
-    }
-    
-    @Test
-    void testJSON() throws JsonProcessingException {
-      
-       CoordsModel model = new CoordsModel();
-       model.addContent(icrs);
-       CoordsModel modelin = roundTripJSON(model.management());
-       
- 
-    }
-    
-    
-   @org.junit.jupiter.api.Test
-     void testAstroCoordSys() throws JAXBException, ParserConfigurationException, TransformerException, JsonProcessingException {
-       Unit deg = new Unit("deg");
-         SpaceSys ICRS_SYS = new SpaceSys().withFrame(
-               SpaceFrame.createSpaceFrame( f-> {
-                   f.refPosition = new StdRefLocation("TOPOCENTRE");
-                   f.spaceRefFrame="ICRS";
-                   f.planetaryEphem="DE432";
+   @Override
+   public CoordsModel createModel() {
+      //see https://github.com/mcdittmar/ivoa-dm-examples/blob/master/assets/examples/coords/current/instances/astrocoordsys.jovial for jovial version of this test.
+      Unit deg = new Unit("deg");
+      SpaceSys ICRS_SYS = new SpaceSys().withFrame(
+            SpaceFrame.createSpaceFrame( f-> {
+                     f.refPosition = new StdRefLocation("TOPOCENTRE");
+                     f.spaceRefFrame="ICRS";
+                     f.planetaryEphem="DE432";
                   }
-                  ));
+            ));
 
-         TimeSys TIMESYS_TT = new TimeSys().withFrame(
-               TimeFrame.createTimeFrame( f -> {
-                  f.refPosition = new StdRefLocation("TOPOCENTRE");
-                  f.timescale = "TT";
-                  f.refDirection = new CustomRefLocation()
-                        .withEpoch("J2014.25")
-                        .withPosition(
-                              LonLatPoint.createLonLatPoint(p-> {
-                                 p.lon = new RealQuantity(6.752477,deg);
-                                 p.lat = new RealQuantity(-16.716116,deg);
-                                 p.dist = new RealQuantity(8.6, new Unit("ly"));
-                                 p.coordSys = ICRS_SYS;
-                                    }
-                              )
-                        );
-               })
-         );
-         GenericSys SPECSYS = new GenericSys().withFrame(
-               GenericFrame.createGenericFrame(f -> {
-                  f.refPosition = new StdRefLocation("TOPOCENTRE");
-                  f.planetaryEphem = "DE432";
-                     }
-               )
-         );
+      TimeSys TIMESYS_TT = new TimeSys().withFrame(
+            TimeFrame.createTimeFrame( f -> {
+               f.refPosition = new StdRefLocation("TOPOCENTRE");
+               f.timescale = "TT";
+               f.refDirection = new CustomRefLocation()
+                     .withEpoch("J2014.25")
+                     .withPosition(
+                           LonLatPoint.createLonLatPoint(p-> {
+                                    p.lon = new RealQuantity(6.752477,deg);
+                                    p.lat = new RealQuantity(-16.716116,deg);
+                                    p.dist = new RealQuantity(8.6, new Unit("ly"));
+                                    p.coordSys = ICRS_SYS;
+                                 }
+                           )
+                     );
+            })
+      );
+      GenericSys SPECSYS = new GenericSys().withFrame(
+            GenericFrame.createGenericFrame(f -> {
+                     f.refPosition = new StdRefLocation("TOPOCENTRE");
+                     f.planetaryEphem = "DE432";
+                  }
+            )
+      );
 
 
-         CoordsModel model = new CoordsModel();
-         
-         model.addReference(TIMESYS_TT);
-         model.addReference(SPECSYS);
-         model.addReference(ICRS_SYS);
-         model.makeRefIDsUnique();
-         CoordsModel modelin = roundtripXML(CoordsModel.contextFactory(), model, CoordsModel.class);
-         assertNotNull(modelin);
-         CoordsModel modelin2 = roundTripJSON(model.management());
-//         assertNotNull(modelin2);
-    }
-    
+      CoordsModel modelInstance = new CoordsModel();
 
+      modelInstance.addReference(TIMESYS_TT);
+      modelInstance.addReference(SPECSYS);
+      modelInstance.addReference(ICRS_SYS);
+      modelInstance.processReferences();
+      return modelInstance;
+   }
+
+   @Override
+   public void testModel(CoordsModel coordsModel) {
+      //TODO actually make some specialist tests on returned model instance.
+   }
 }
 
 

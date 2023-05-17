@@ -71,7 +71,7 @@ For each of the concrete objectTypes in the model there is
 an overloaded `addContent()` method, which will add the content to the
 overall instance and find any references.
 
-Once all the content has been added, then there is a `makeRefIDsUnique()` method
+Once all the content has been added, then there is a `processReferences()` method
 which will go through the whole model and automatically assign IDs for any
 references that do not already have them.
 
@@ -138,7 +138,33 @@ made non-nullable - a bug has been submitted https://hibernate.atlassian.net/bro
 
 There are also eclipselink bugs that mean that the suggested way of doing inherited embeddables does not seem to work.
 
-#### General interfaces
+
+### Testing models
+
+The java runtime has a number of [base classes](../runtime/java/src/main/java/org/ivoa/vodml/testing) that aid the testing of model instances - there is an [example for the mock coords model](gradletooling/sample/src/test/java/org/ivoa/dm/notstccoords/CoordsModelTest.java).
+Although it is not obvious from the source code presented because most of the behaviour is inherited
+from the base test class, this test will actually
+
+* round trip the model instance to JSON
+* round trip the model instance to XML
+* validate the model instance
+
+simply by running
+
+```shell
+gradle test
+```
+
+will generate the actual model code (if not already done) and run the tests as long as
+
+```kotlin
+tasks.test {
+    useJUnitPlatform()
+}
+```
+is set up in the `build.gradle.kts` file.
+
+### General interfaces
 
 Much of the functionality described above is defined in two interfaces
 [ModelManagement](../runtime/java/src/main/java/org/ivoa/vodml/ModelManagement.java) an 

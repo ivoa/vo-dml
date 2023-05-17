@@ -75,14 +75,14 @@ model <xsl:value-of select="$modname"/> (<xsl:value-of select="version"/>) "<xsl
 
 
   <xsl:template match="package">
-package <xsl:value-of select="concat(name,' ')"/> <xsl:apply-templates select= "description"/>
+package <xsl:value-of select="concat(name,' ')"/> <xsl:call-template name= "do-description"/>
 {
       <xsl:apply-templates select="* except (vodml-id|description|name)" />
 }
   </xsl:template>
   
   <xsl:template match="primitiveType">
-    primitive <xsl:value-of select="concat(name, ' ')"/> <xsl:apply-templates select="description"/>
+    primitive <xsl:value-of select="concat(name, ' ')"/> <xsl:call-template name= "do-description"/>
   </xsl:template>  
 
 <!-- remove the local namespace -->  
@@ -102,20 +102,27 @@ package <xsl:value-of select="concat(name,' ')"/> <xsl:apply-templates select= "
 <xsl:template match="objectType">
   <xsl:value-of select="$nl"/><xsl:if test="@abstract">abstract </xsl:if>otype <xsl:value-of select="name"/><xsl:text> </xsl:text>
   <xsl:apply-templates select= "extends"/>
-  <xsl:apply-templates select= "description"/>
+  <xsl:call-template name= "do-description"/>
   {   <xsl:apply-templates select="* except (vodml-id|description|name|extends)"/>
   }
 </xsl:template>
 <xsl:template match="dataType"><!-- is this really so different from object? -->
   <xsl:value-of select="$nl"/><xsl:if test="@abstract">abstract </xsl:if>dtype <xsl:value-of select="name"/><xsl:text> </xsl:text>
   <xsl:apply-templates select= "extends"/>
-  <xsl:apply-templates select= "description"/>
+  <xsl:call-template name= "do-description"/>
   {   <xsl:apply-templates select="* except (vodml-id|description|name|extends)"/>
   }
 </xsl:template>
 
-<xsl:template match ="description">
-  <xsl:text> "</xsl:text><xsl:if test="not(matches(text(),'^\s*TODO'))"><xsl:value-of select='translate(.,$dq,$sq)'/></xsl:if><xsl:text>"</xsl:text>
+<xsl:template name ="do-description">
+  <xsl:choose>
+      <xsl:when test="description">
+          <xsl:text> "</xsl:text><xsl:if test="not(matches(description/text(),'^\s*TODO'))"><xsl:value-of select='translate(description,$dq,$sq)'/></xsl:if><xsl:text>"</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+          <xsl:text>""</xsl:text>
+      </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 <xsl:template match="attribute">
@@ -124,7 +131,7 @@ package <xsl:value-of select="concat(name,' ')"/> <xsl:apply-templates select= "
   <xsl:value-of select="concat(name, ': ')"/> 
   <xsl:apply-templates select="datatype/vodml-ref"/><xsl:text> </xsl:text> 
   <xsl:apply-templates select="multiplicity"/><xsl:text> </xsl:text> 
-  <xsl:apply-templates select="description"/>
+  <xsl:call-template name="do-description"/>
   <xsl:apply-templates select="* except (description|datatype|name|vodml-id|multiplicity)"/>
   <xsl:text>;</xsl:text>
 </xsl:template>
@@ -160,13 +167,13 @@ package <xsl:value-of select="concat(name,' ')"/> <xsl:apply-templates select= "
 
 <xsl:template match="enumeration">
 enum <xsl:value-of select="name"/><xsl:text> </xsl:text> 
-<xsl:apply-templates select="description"/>
+<xsl:call-template name= "do-description"/>
 {
 <xsl:apply-templates select="literal"/>
 }
 </xsl:template>
 <xsl:template match="literal">
-<xsl:value-of select="name"/><xsl:text> </xsl:text><xsl:apply-templates select="description"/>
+<xsl:value-of select="name"/><xsl:text> </xsl:text><xsl:call-template name= "do-description"/>
 <xsl:if test="position() != last()">,
 </xsl:if>
 </xsl:template>
@@ -179,7 +186,7 @@ enum <xsl:value-of select="name"/><xsl:text> </xsl:text>
   <xsl:text> as</xsl:text>
   <xsl:if test="@isOrdered"><xsl:text> ordered</xsl:text></xsl:if>
   <xsl:text> composition</xsl:text>
-  <xsl:apply-templates select="description"/>
+  <xsl:call-template name= "do-description"/>
   <xsl:text>;</xsl:text>
 </xsl:template>
 
@@ -190,7 +197,7 @@ enum <xsl:value-of select="name"/><xsl:text> </xsl:text>
   <xsl:apply-templates select="multiplicity"/>
   <xsl:text> references </xsl:text>
   <xsl:apply-templates select="datatype/vodml-ref"/>
-  <xsl:apply-templates select="description"/>
+  <xsl:call-template name= "do-description"/>
   <xsl:text>;</xsl:text>
 </xsl:template>
 
@@ -208,9 +215,17 @@ enum <xsl:value-of select="name"/><xsl:text> </xsl:text>
      subset </xsl:text> <xsl:value-of select="role/vodml-ref"/><xsl:text> as </xsl:text><xsl:value-of select="datatype/vodml-ref"/><xsl:text>;</xsl:text>
 </xsl:template>
 
+    <xsl:template match="constraint[@xsi:type='vo-dml:NaturalKey']">
+        <xsl:text> iskey </xsl:text>
+    </xsl:template>
+
+
+    <xsl:template match="constraint[parent::objectType and not (@xsi:type='vo-dml:SubsettedRole') ]"> <!-- FIXME - need to work out where this goes for plain constraint -->
+        <xsl:text>// constraint  </xsl:text><xsl:value-of select="description"/>
+    </xsl:template>
 
 <xsl:template match="constraint"> <!-- FIXME - need to work out where this goes for plain constraint -->
-  <xsl:text>// constraint  </xsl:text><xsl:value-of select="description"/> 
+  <xsl:text>&lt; &quot;</xsl:text><xsl:value-of select="description"/><text>&quot; as Natural &gt;</text>
 </xsl:template>
 
 <!-- I think that these specialized constraints have disappeared now -->

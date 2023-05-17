@@ -22,8 +22,8 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import org.ivoa.dm.AbstractTest;
 import org.ivoa.dm.sample.SampleModel;
+import org.ivoa.vodml.testing.AbstractTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,14 +71,14 @@ class JPATestModelTest extends AbstractTest {
     }
 
     @Test
-    void jaxbtest() throws JAXBException, TransformerConfigurationException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException, IOException {
+    void jaxbtest() throws JAXBException,  ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException{
         
         JAXBContext jc = JpatestModel.contextFactory();
         JpatestModel model = new JpatestModel();
         model.addContent(atest);
-        model.makeRefIDsUnique();
+        model.processReferences();
         assertTrue(atest.cval.rval._id != 0, "id setting did not work");
-        JpatestModel modelin = roundtripXML(jc, model, JpatestModel.class);
+        JpatestModel modelin = modelRoundTripXMLwithTest(model);
         System.out.println("generating schema");
         JpatestModel.writeXMLSchema();
     }

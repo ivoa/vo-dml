@@ -18,8 +18,24 @@ import java.util.Map;
  */
 public interface ModelDescription  {
     
+    /**
+     * A map from the UTYPE to the class that implements that model element.
+     * @return the map.
+     */
     @SuppressWarnings("rawtypes")
     Map<String, Class > utypeToClassMap();
+    
+    /**
+     * mapping between XML namespace and the schema file for that namespace.
+     * @return the mapping with namespace as the key and schema filename as the value
+     */
+    Map<String,String> schemaMap();
+    
+    /**
+     * The main namespace for the top level model element.
+     * @return the namespace for the model.
+     */
+    String xmlNamespace();
 
 }
 

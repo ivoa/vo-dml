@@ -6,7 +6,7 @@ plugins {
     signing
 }
 group = "org.javastro.ivoa.vo-dml"
-version = "0.4.0"
+version = "0.4.1"
 
 
 dependencies {
@@ -16,9 +16,12 @@ dependencies {
 //    implementation("org.glassfish.jaxb:jaxb-runtime:2.3.6")
     implementation("javax.persistence:javax.persistence-api:2.2")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
+    implementation("org.hibernate:hibernate-core:5.6.5.Final")
     
     implementation("org.slf4j:slf4j-api:1.7.36")
     api("org.javastro:jaxbjpa-utils:0.1.2")
+    compileOnly("org.junit.jupiter:junit-jupiter-api:5.7.1")// have put the base test classes in the runtime main - naughty, but easier to make everything work without changing dependencies
+
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.1")
@@ -49,11 +52,11 @@ tasks.test {
 }
 
 
+
 tasks.named("sourcesJar") //explicitly add the fact that sources jar depends on the generation.
 {
  //    dependsOn(tasks.named("xjc"))
 }
-
 
 //publishing
 nexusPublishing {
@@ -75,33 +78,36 @@ publishing {
                     fromResolutionResult()
                 }
             }
-            pom {
-                name.set("VO-DML Runtime")
-                description.set("Library needed as dependency for java code generated from VO-DML")
-                url.set("https://www.ivoa.net/documents/VODML/")
-                licenses {
-                    license {
-                        name.set("The Apache License, Version 2.0")
-                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                    }
-                }
-                developers {
-                    developer {
-                        id.set("pahjbo")
-                        name.set("Paul Harrison")
-                        email.set("paul.harrison@manchester.ac.uk")
-                    }
-                }
-                scm {
-                    connection.set("scm:git:git://github.com/ivoa/vo-dml.git")
-                    developerConnection.set("scm:git:ssh://github.com/ivoa/vo-dml.git")
-                    url.set("https://github.com/ivoa/vo-dml")
-                }
-            }
         }
     }
 }
+// just in case we manage to create more than one publication for test classes
+publishing.publications.withType(MavenPublication::class.java).forEach { publication ->
+    with(publication.pom) {
+        name.set("VO-DML Runtime")
+        description.set("Library needed as dependency for java code generated from VO-DML")
+        url.set("https://www.ivoa.net/documents/VODML/")
+        licenses {
+            license {
+                name.set("The Apache License, Version 2.0")
+                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+            }
+        }
+        developers {
+            developer {
+                id.set("pahjbo")
+                name.set("Paul Harrison")
+                email.set("paul.harrison@manchester.ac.uk")
+            }
+        }
+        scm {
+            connection.set("scm:git:git://github.com/ivoa/vo-dml.git")
+            developerConnection.set("scm:git:ssh://github.com/ivoa/vo-dml.git")
+            url.set("https://github.com/ivoa/vo-dml")
+        }
 
+    }
+}
 println ("java property skipSigning= " + project.hasProperty("skipSigning"))
 repositories {
     mavenCentral()

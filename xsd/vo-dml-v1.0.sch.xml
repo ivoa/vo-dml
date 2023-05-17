@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sch:schema xmlns:sch="http://purl.oclc.org/dsdl/schematron" queryBinding="xslt2"
+<sch:schema xmlns:sch="http://purl.oclc.org/dsdl/schematron" queryBinding="xslt3"
 	xmlns:fct="localFunctions"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -13,22 +13,41 @@
    <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
 
 <sch:title>Schematron VO-DML Validator</sch:title>
+    <xsl:function name="fct:asvodmlref" as="xs:string">
+        <xsl:param name="el" as="element()"/>
+        <xsl:variable name="vr" select="concat($el/ancestor::vo-dml:model/name,':',string-join($el/ancestor-or-self::*/name[not(../name() = 'vo-dml:model')], '.'))"/>
+<!--        <xsl:message>fcv = <xsl:value-of select="$vr"/> type=<xsl:value-of select="$el/name()"/> vml-id=type=<xsl:value-of select="$el/vodml-id"/> </xsl:message>-->
+        <xsl:value-of select="$vr"/>
+    </xsl:function>
+    <xsl:function name="fct:vo-dml-ref-exists" as="xs:boolean">
+        <!--  returns name of element containing the vodml-id identified by the vodml-ref -->
+        <xsl:param name="vodml-ref" />
+        <xsl:param name="model" />
 
+        <xsl:variable name="prefix" select="substring-before($vodml-ref,':')" />
+        <xsl:choose>
+            <xsl:when test="$prefix = $model/name">
+                <xsl:value-of select="count($model//*[name and fct:asvodmlref(.) = $vodml-ref]) = 1" />
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="count($models/vo-dml:model[name=$prefix]//*[name and fct:asvodmlref(.) = $vodml-ref]) =1 " />
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
 <xsl:function name="fct:vo-dml_element" as="xs:string">
     <!--  returns name of element containing the vodml-id identified by the vodml-ref -->
         <xsl:param name="vodml-ref" />
         <xsl:param name="model" />
 
 		<xsl:variable name="prefix" select="substring-before($vodml-ref,':')" />
-        <xsl:variable name="targetvodml-ref" select="substring-after($vodml-ref,concat($prefix,':'))" />
         <xsl:choose>
             <xsl:when test="$prefix = $model/name">
-                <xsl:value-of select="$model//*[vodml-id = $targetvodml-ref]/name()" />
+                <xsl:value-of select="$model//*[name and fct:asvodmlref(.) = $vodml-ref]/name()" />
             </xsl:when>
             <xsl:otherwise>
             	<xsl:choose>
-            	<xsl:when test="$models/vo-dml:model[name=$prefix]//*[vodml-id = $targetvodml-ref]">
-                  <xsl:value-of select="$models/vo-dml:model[name=$prefix]//*[vodml-id = $targetvodml-ref]/name()" />
+            	<xsl:when test="$models/vo-dml:model[name=$prefix]//*[name and fct:asvodmlref(.) = $vodml-ref]">
+                  <xsl:value-of select="$models/vo-dml:model[name=$prefix]//*[name and fct:asvodmlref(.) = $vodml-ref]/name()" />
             	</xsl:when>
             	<xsl:otherwise>
             	<xsl:value-of select="concat('ERROR as cannot find ',$vodml-ref,
@@ -122,9 +141,10 @@ vodml-id '<sch:value-of select="."/>' is not unique, there are <sch:value-of sel
 <sch:pattern name="Unique_composition">
   <sch:rule context="composition/datatype/vodml-ref">
     <sch:let name="count" value="count(//composition/datatype/vodml-ref[. = current()])"/>
+    <sch:let name="container" value="fct:asvodmlref(current()/ancestor::objectType)"/>
     <sch:assert test="$count = 1" flag="error">
-objecttype <sch:value-of select="."/> is used more than once, namely <sch:value-of select="$count"/> times as target of composition relation.
-** (this message will repeat itself <sch:value-of select="$count"/> times!) **
+objecttype <sch:value-of select="."/> is used more than once, as target of composition relation. In this case for containing objectType <sch:value-of select="$container"/>
+        ** (this message will repeat itself <sch:value-of select="$count"/> times!, once for each different container) **
     </sch:assert>
   </sch:rule>
 </sch:pattern>
@@ -133,19 +153,26 @@ objecttype <sch:value-of select="."/> is used more than once, namely <sch:value-
 
 <sch:pattern name="vodml-refs">
   <sch:rule context="objectType/attribute | dataType/attribute">
-    <sch:let name="owner" value="./vodml-id"/>
+    <sch:let name="owner" value="fct:asvodmlref(current())"/>
+    <sch:assert test="fct:vo-dml-ref-exists(datatype/vodml-ref,/vo-dml:model)" flag="error">
+vodml-ref  <sch:value-of select="datatype/vodml-ref"/> for type of  <sch:value-of select="$owner"/> does not exist
+    </sch:assert>
+
     <sch:let name="target" value="fct:vo-dml_element(datatype/vodml-ref,/vo-dml:model)"/>
     <sch:assert test="$target = 'primitiveType' or $target = 'dataType' or $target='enumeration'" flag="error">
-datatype <sch:value-of select="datatype/vodml-ref"/> of <sch:value-of select="$owner"/> is not a value type but a '<sch:value-of select="$target"/>'
+type <sch:value-of select="datatype/vodml-ref"/> of <sch:value-of select="$owner"/> is not a value type but a '<sch:value-of select="$target"/>'
     </sch:assert>
   </sch:rule>
 
   <sch:rule context="reference">
-    <sch:let name="owner" value="./vodml-id"/>
+    <sch:let name="owner" value="fct:asvodmlref(current())"/>
+      <sch:assert test="fct:vo-dml-ref-exists(datatype/vodml-ref,/vo-dml:model)" flag="error">
+      vodml-ref  <sch:value-of select="datatype/vodml-ref"/> for type of  <sch:value-of select="$owner"/> does not exist
+  </sch:assert>
     <sch:let name="target" value="fct:vo-dml_element(datatype/vodml-ref,/vo-dml:model)"/>
     <sch:let name="composition" value="//objectType[composition/datatype/vodml-ref = current()/datatype/vodml-ref]"/>
     <sch:assert test="$target = 'objectType'" flag="error">
-datatype <sch:value-of select="datatype/vodml-ref"/> of reference <sch:value-of select="$owner"/> is not an object type but a '<sch:value-of select="$target"/>'
+type <sch:value-of select="datatype/vodml-ref"/> of reference <sch:value-of select="$owner"/> is not an object type but a '<sch:value-of select="$target"/>'
     </sch:assert>
       <!--rules implementing a reference should not be used in composition - this does not work well with the current tooling, however, if references allowed unlimited multiplicities then...     -->
       <sch:report test="$composition" flag="warning">
@@ -154,7 +181,7 @@ Reference <sch:value-of select="./datatype/vodml-ref"/> used in <sch:value-of se
    </sch:rule>
 
   <sch:rule context="objectType/composition">
-    <sch:let name="owner" value="./vodml-id"/>
+    <sch:let name="owner" value="fct:asvodmlref(current())"/>
     <sch:let name="target" value="fct:vo-dml_element(datatype/vodml-ref,/vo-dml:model)"/>
     <sch:assert test="$target = 'objectType'" flag="error">
 datatype <sch:value-of select="datatype/vodml-ref"/> of composition <sch:value-of select="$owner"/> is not an object type but a '<sch:value-of select="$target"/>'
@@ -162,7 +189,7 @@ datatype <sch:value-of select="datatype/vodml-ref"/> of composition <sch:value-o
   </sch:rule>
 
   <sch:rule context="objectType/extends">
-    <sch:let name="owner" value="../vodml-id"/>
+    <sch:let name="owner" value="fct:asvodmlref(current()/parent::*)"/>
     <sch:let name="target" value="fct:vo-dml_element(vodml-ref,/vo-dml:model)"/>
     <sch:assert test="$target = 'objectType'" flag="error">
 Super type <sch:value-of select="vodml-ref"/> of objectType <sch:value-of select="$owner"/> is not an object type but a '<sch:value-of select="$target"/>'
@@ -170,7 +197,7 @@ Super type <sch:value-of select="vodml-ref"/> of objectType <sch:value-of select
   </sch:rule>
 
   <sch:rule context="dataType/extends">
-    <sch:let name="owner" value="./vodml-id"/>
+    <sch:let name="owner" value="fct:asvodmlref(current()/parent::*)"/>
     <sch:let name="target" value="fct:vo-dml_element(vodml-ref,/vo-dml:model)"/>
     <sch:assert test="$target = 'dataType'" flag="error">
 Super type <sch:value-of select="vodml-ref"/> of dataType/extends <sch:value-of select="$owner"/> is not a data type but a '<sch:value-of select="$target"/>'
@@ -179,7 +206,7 @@ Super type <sch:value-of select="vodml-ref"/> of dataType/extends <sch:value-of 
 
 <!-- rule implementing Attribute multiplicity to be either min=0,max=1 or min=max=positive integer-->
 <sch:rule context="attribute/multiplicity">
-  <sch:let name="owner" value="./../vodml-id"/>
+  <sch:let name="owner" value="fct:asvodmlref(current()/parent::*)"/>
     <sch:let name="minOccurs" value="./minOccurs"/>
     <sch:let name="maxOccurs" value="./maxOccurs"/>
 <!--   <sch:assert test="($minOccurs = '0' and $maxOccurs = '1') or (($minOccurs = $maxOccurs) and ($maxOccurs != '-1'))" flag="error">  -->

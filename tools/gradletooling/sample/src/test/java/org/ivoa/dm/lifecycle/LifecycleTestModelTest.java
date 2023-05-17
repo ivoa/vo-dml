@@ -9,31 +9,25 @@
 
 package org.ivoa.dm.lifecycle;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-
-import org.ivoa.dm.AbstractTest;
+import org.ivoa.vodml.testing.AutoRoundTripTest;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeAll; 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 /**
- *  .
+ * Test for lifecycle proposal .
+ * 
+ * JSON and Rdb serialization work with this model - however XML serialization does not - the ReferredLifeCycle("rc1") object gets represented twice.
+ * The XML serialization appears to work properly, but the XML is not valid because there are two objects with the same id (they really are the same object of course).
  * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
  * @since 21 Oct 2022
  */
-class LifecycleTestModelTest extends AbstractTest {
+class LifecycleTestModelTest extends AutoRoundTripTest<LifecycleTestModel> {
 
     private ATest atest;
     private ATest2 atest2;
@@ -50,6 +44,24 @@ class LifecycleTestModelTest extends AbstractTest {
      */
     @BeforeEach
     void setUp() throws Exception {
+
+    }
+
+    /**
+     * @throws java.lang.Exception
+     */
+    @AfterEach
+    void tearDown() throws Exception {
+    }
+
+  
+
+    /**
+     * {@inheritDoc}
+     * overrides @see org.ivoa.vodml.validation.AutoRoundTripTest#createModel()
+     */
+    @Override
+    public LifecycleTestModel createModel() {
         final ReferredTo referredTo = new ReferredTo(3);
         List<Contained> contained = Arrays.asList(new Contained("firstcontained"),new Contained("secondContained"));
         List<ReferredLifeCycle> refcont = Arrays.asList(new ReferredLifeCycle("rc1"), new ReferredLifeCycle("rc2"));
@@ -60,27 +72,30 @@ class LifecycleTestModelTest extends AbstractTest {
             
         });
         atest2 = new ATest2(referredTo, refcont.get(0));
-    }
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @AfterEach
-    void tearDown() throws Exception {
-    }
-
-    @Test
-    void jaxbtest() throws JAXBException, TransformerConfigurationException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException, IOException {
         
-        JAXBContext jc = LifecycleTestModel.contextFactory();
         LifecycleTestModel model = new LifecycleTestModel();
         model.addContent(atest);
         model.addContent(atest2);
-        model.makeRefIDsUnique();
+        model.processReferences();
         assertTrue(atest.refandcontained.get(1).getId() != 0, "id setting did not work");
-        LifecycleTestModel modelin = roundtripXML(jc, model, LifecycleTestModel.class);
-        System.out.println("generating schema");
-        LifecycleTestModel.writeXMLSchema();
+        return model;
+    }
+
+    /**
+     * {@inheritDoc}
+     * overrides @see org.ivoa.vodml.validation.AutoRoundTripTest#testModel(org.ivoa.vodml.VodmlModel)
+     */
+    @Override
+    public void testModel(LifecycleTestModel m) {
+        
+         List<ATest> ratest = m.getContent(ATest.class);
+         ratest.get(0).getRefandcontained().get(0).setTest3("changed");
+         List<ATest2> ratest2 = m.getContent(ATest2.class);
+         m.processReferences();
+         System.out.println("ref and contained val ="+ratest2.get(0).getRefcont().getTest3());
+        
+        
+        
     }
 
 }

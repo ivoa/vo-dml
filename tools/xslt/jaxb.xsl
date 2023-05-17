@@ -209,6 +209,7 @@
 
     import org.ivoa.vodml.jaxb.XmlIdManagement;
     import org.ivoa.vodml.ModelManagement;
+    import org.ivoa.vodml.VodmlModel;
     import org.ivoa.vodml.ModelDescription;
     import org.ivoa.vodml.annotation.VoDml;
     import org.ivoa.vodml.annotation.VodmlRole;
@@ -218,7 +219,7 @@
     @JsonTypeInfo(include=JsonTypeInfo.As.WRAPPER_OBJECT, use=JsonTypeInfo.Id.NAME)
     @JsonIgnoreProperties({"refmap"})
     @VoDml(id="<xsl:value-of select="name"/>" ,role = VodmlRole.model, type="<xsl:value-of select="name"/>")
-    public class <xsl:value-of select="$ModelClass"/> implements org.ivoa.vodml.jaxb.JaxbManagement {
+    public class <xsl:value-of select="$ModelClass"/> implements VodmlModel&lt;<xsl:value-of select="$ModelClass"/>&gt; {
 
     @XmlType
     public static class References {
@@ -291,7 +292,7 @@
       );
       }
       @Override
-      public void makeRefIDsUnique()
+      public void processReferences()
       {
         List&lt;XmlIdManagement&gt; il = org.ivoa.vodml.nav.Util.findXmlIDs(content);
         <xsl:if test="$hasReferences">
@@ -316,17 +317,11 @@
         return "<xsl:value-of select='concat("vodml_",name)'/>";
         }
 
-
         public static void writeXMLSchema() {
-        final Map&lt;String,String&gt; schemaMap = new HashMap&lt;&gt;();
-        <xsl:for-each select="$mapping/bnd:mappedModels/model/xml-targetnamespace">
-            schemaMap.put("<xsl:value-of select="normalize-space(text())"/>","<xsl:value-of select="@schemaFilename"/>");
-        </xsl:for-each>
-
         try {
-        contextFactory().generateSchema(new org.javastro.ivoa.jaxb.SchemaNamer(schemaMap));
+            contextFactory().generateSchema(new org.javastro.ivoa.jaxb.SchemaNamer(description().schemaMap()));
         } catch (IOException | JAXBException e) {
-        throw new RuntimeException("Problem writing XML Schema",e);
+            throw new RuntimeException("Problem writing XML Schema",e);
         }
         }
         /**
@@ -341,13 +336,14 @@
         * generate management interface instance for model.
         * @return the management interface.
         */
+        @Override
         public ModelManagement&lt;<xsl:value-of select="$ModelClass"/>&gt; management() {return new ModelManagement&lt;<xsl:value-of select="$ModelClass"/>&gt;()
         {
         @Override
         public String pu_name() {return <xsl:value-of select="$ModelClass"/>.pu_name();}
 
         @Override
-        public void writeXMLSchema() throws JAXBException, IOException { <xsl:value-of select="$ModelClass"/>.writeXMLSchema();}
+        public void writeXMLSchema() { <xsl:value-of select="$ModelClass"/>.writeXMLSchema();}
 
         @Override
         public JAXBContext contextFactory() throws JAXBException {  return <xsl:value-of select="$ModelClass"/>.contextFactory();}
@@ -382,10 +378,46 @@
         return retval;
         }
 
+        @Override
+        public Map&lt;String, String&gt; schemaMap() {
+        final  Map&lt;String,String&gt; schemaMap = new HashMap&lt;&gt;();
+        <xsl:for-each select="$mapping/bnd:mappedModels/model/xml-targetnamespace">
+            <xsl:choose>
+                <xsl:when test="@schemaFilename">
+                    schemaMap.put("<xsl:value-of select="normalize-space(text())"/>","<xsl:value-of select="@schemaFilename"/>");
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:variable name="ns" select="normalize-space(text())"/>
+                    schemaMap.put("<xsl:value-of select="$ns"/>","<xsl:value-of select="concat(tokenize($ns,'/+')[string-length(.)>0][last()],'.xsd')"/>");
+                </xsl:otherwise>
+            </xsl:choose>
+
+        </xsl:for-each>
+        return schemaMap;
+        }
+
+        @Override
+        public String xmlNamespace() {
+        return "<xsl:value-of select="$mapping/bnd:mappedModels/model[name=current()/name]/xml-targetnamespace"/>";
+
+        }
+
         };
         }
 
-}
+
+        /**
+        * Return the model description in non-static fashion.
+        * overrides @see org.ivoa.vodml.VodmlModel#descriptor()
+        * @return the model description.
+        */
+        @Override
+        public ModelDescription descriptor() {
+        return description();
+
+        }
+
+        }
     </xsl:result-document>
 
   </xsl:template>
