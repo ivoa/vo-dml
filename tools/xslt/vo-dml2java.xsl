@@ -191,7 +191,6 @@
 
     <xsl:template match="objectType|dataType|primitiveType|enumeration" mode="typeimports">
         <!-- do not import types - always refer to fully qualified - makes life easier -->
-       import javax.persistence.*;
     </xsl:template>
 
 
@@ -547,9 +546,9 @@
           @javax.xml.bind.annotation.XmlTransient
           @com.fasterxml.jackson.annotation.JsonIgnore
           </xsl:if>
-          @Id
-          @GeneratedValue
-          @Column(name = "ID")
+          @javax.persistence.Id
+          @javax.persistence.GeneratedValue
+          @javax.persistence.Column(name = "ID")
           protected Long _id = (long) 0;
 
           /**
