@@ -379,7 +379,7 @@
         * Copy Constructor. Note that references will remain as is rather than be copied.
         * @param other the object to be copied.
         */
-        public  <xsl:value-of select="vf:capitalize(name)"/> ( final <xsl:value-of select="name"/> other)
+        public  <xsl:value-of select="vf:capitalize(name)"/> ( final <xsl:value-of select="vf:capitalize(name)"/> other)
         {
            super ();
 
@@ -597,7 +597,7 @@
       /**
        * Creates a new <xsl:value-of select="name"/>
        */
-      public <xsl:value-of select="name"/>() {
+      public <xsl:value-of select="vf:capitalize(name)"/>() {
         super();
       }
       <xsl:apply-templates select="." mode="constructor"/>
