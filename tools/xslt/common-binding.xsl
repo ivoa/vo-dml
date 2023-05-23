@@ -534,7 +534,24 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
         </xsl:choose>
     </xsl:function>
 
-
+    <!-- will ensure that a member name is not a keyword byu appending '_' if it is-->
+    <xsl:function name="vf:javaMemberName" as="xsd:string">
+        <xsl:param name="n"/>
+        <xsl:choose>
+            <xsl:when test="$n = ('interface', 'long', 'class', 'default', 'native','super', 'transient', 'abstract','continue','for','new','switch',
+            'assert', 'goto',	'package',	'synchronized',
+'boolean',	'do',	'if',	'private',	'this',
+'break',	'double',	'implements',	'protected',	'throw',
+'byte',	'else',	'import',	'public',	'throws',
+'case',	'enum','instanceof',	'return',
+'catch',	'extends',	'int',	'short',	'try',
+'char',	'final', 'static',	'void',
+'finally',	'strictfp',	'volatile',
+'const',	'float','while')"><xsl:sequence select="concat($n,'_')"/></xsl:when>
+            <xsl:otherwise><xsl:sequence select="$n"/></xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+    
     <!-- This will return all the subsets found in the sub hierarchy - will not return subset when it is the same type as the thing it subsets (happens when the only reason for the subset is semantic constraint?)
   -->
     <xsl:function name="vf:subSettingInSubHierarchy" as="element()*">
