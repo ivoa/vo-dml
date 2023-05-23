@@ -438,6 +438,9 @@
             <xsl:when test="$m/multiplicity/maxOccurs != 1"> <!-- TODO consider multiple references -->
                 if<xsl:value-of select="concat(' (other.',$m/name,' != null ) this.',$m/name, ' = other.',$m/name,'.stream().map(s -',$gt)"/>
                 <xsl:choose>
+                    <xsl:when test="name($t) = 'enumeration'">
+                        <xsl:text>s</xsl:text> <!-- this is just an identity - probably better to do something different at higher level -->
+                    </xsl:when>
                     <xsl:when test="count($subsets/role[vodml-ref = current()])>0 ">
                         <xsl:value-of select="concat('((',$jt,')s).copyMe()' )"/>
                     </xsl:when>
@@ -763,12 +766,20 @@ package <xsl:value-of select="$path"/>;
         public <xsl:value-of select="vf:capitalize(name)"/>(final <xsl:value-of select="$valuetype"/> v) {
             this.value = v;
         }
-        /**
-         * no arg constructor.
-         */
-        protected <xsl:value-of select="vf:capitalize(name)"/>() {}
+      /**
+      * no arg constructor.
+      */
+      protected <xsl:value-of select="vf:capitalize(name)"/>() {}
 
-        /**
+      /**
+      * copy constructor.
+      */
+      public <xsl:value-of select="vf:capitalize(name)"/>(<xsl:value-of select="vf:capitalize(name)"/> c)
+      {
+         this(c.value);
+      }
+
+      /**
          * Return the representation of this primitive (value)
          * @return string representation of this primitive( value)
          */
