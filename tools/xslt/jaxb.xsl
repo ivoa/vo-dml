@@ -44,7 +44,7 @@
       </xsl:when>
       <xsl:otherwise>
           <!-- actually only necessary when there is a supertype - but probably harmless otherwise -->
-  @com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NONE )
+  @com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME )
       </xsl:otherwise>
   </xsl:choose>
 
