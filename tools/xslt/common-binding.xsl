@@ -428,9 +428,10 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
 
     </xsl:function>
     <!-- is the type (sub or base) used as a reference -->
+
     <xsl:function name="vf:referredTo" as="xsd:boolean">
     <xsl:param name="vodml-ref" as="xsd:string"/>
-        <xsl:value-of select="vf:referredToInModels($vodml-ref,$models/vo-dml:model/name/text())"/>
+        <xsl:sequence select="vf:referredToInModels($vodml-ref,$models/vo-dml:model/name/text())"/>
     </xsl:function>
     <xsl:function name="vf:referredToInModels" as="xsd:boolean">
         <xsl:param name="vodml-ref" as="xsd:string"/>
@@ -617,7 +618,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
 
     <xsl:function name="vf:attributeIsDtype" as="xsd:boolean">
         <xsl:param name="attr" as="element()"/>
-        <xsl:value-of select="$models/key('ellookup',$attr/datatype/vodml-ref)/name() = 'dataType'"/>
+        <xsl:sequence select="$models/key('ellookup',$attr/datatype/vodml-ref)/name() = 'dataType'"/>
     </xsl:function>
 
 
