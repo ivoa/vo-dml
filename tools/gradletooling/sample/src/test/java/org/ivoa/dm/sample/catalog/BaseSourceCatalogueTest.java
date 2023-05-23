@@ -21,8 +21,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.ivoa.dm.ivoa.RealQuantity;
-import org.ivoa.dm.ivoa.Unit;
 import org.ivoa.dm.sample.catalog.inner.SourceCatalogue;
+import org.ivoa.vodml.stdtypes.Unit;
 import org.ivoa.vodml.testing.AbstractTest;
 
 /**
