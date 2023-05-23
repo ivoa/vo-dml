@@ -191,7 +191,6 @@
 
     <xsl:template match="objectType|dataType|primitiveType|enumeration" mode="typeimports">
         <!-- do not import types - always refer to fully qualified - makes life easier -->
-       import javax.persistence.*;
     </xsl:template>
 
 
@@ -380,7 +379,7 @@
         * Copy Constructor. Note that references will remain as is rather than be copied.
         * @param other the object to be copied.
         */
-        public  <xsl:value-of select="vf:capitalize(name)"/> ( final <xsl:value-of select="name"/> other)
+        public  <xsl:value-of select="vf:capitalize(name)"/> ( final <xsl:value-of select="vf:capitalize(name)"/> other)
         {
            super ();
 
@@ -547,9 +546,9 @@
           @javax.xml.bind.annotation.XmlTransient
           @com.fasterxml.jackson.annotation.JsonIgnore
           </xsl:if>
-          @Id
-          @GeneratedValue
-          @Column(name = "ID")
+          @javax.persistence.Id
+          @javax.persistence.GeneratedValue
+          @javax.persistence.Column(name = "ID")
           protected Long _id = (long) 0;
 
           /**
@@ -598,7 +597,7 @@
       /**
        * Creates a new <xsl:value-of select="name"/>
        */
-      public <xsl:value-of select="name"/>() {
+      public <xsl:value-of select="vf:capitalize(name)"/>() {
         super();
       }
       <xsl:apply-templates select="." mode="constructor"/>
