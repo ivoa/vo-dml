@@ -675,6 +675,19 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
         </xsl:choose>
     </xsl:function>
 
+    <xsl:function name="vf:JavaKeyType" as="xsd:string">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="supers" select="($models/key('ellookup',$vodml-ref),vf:baseTypes($vodml-ref))"/>
+        <xsl:choose>
+            <xsl:when test="$supers/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]">
+                <xsl:value-of select="vf:QualifiedJavaType($supers/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/datatype/vodml-ref)"/>
+            </xsl:when>
+            <xsl:otherwise>Long</xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
+
+
     <!-- returns the vodml-refs of the members including inherited ones -->
     <xsl:template name="allInheritedMembers" as="xsd:string*">
         <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>

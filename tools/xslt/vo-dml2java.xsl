@@ -529,16 +529,9 @@
 
       public&bl;<xsl:if test="@abstract='true'">abstract</xsl:if>&bl;class <xsl:value-of select="vf:capitalize(name)"/>&bl;
       <xsl:if test="extends">extends <xsl:value-of select="vf:JavaType(extends/vodml-ref)"/></xsl:if>
-      <xsl:variable name="ifs">
-              org.ivoa.vodml.jpa.JPAManipulations<xsl:if test="current()/name() = 'objectType'">ForObjectType&lt;<xsl:choose>
-              <xsl:when test="attribute[ends-with(constraint/@xsi:type,':NaturalKey')]">
-                  <xsl:value-of select="vf:QualifiedJavaType(attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/datatype/vodml-ref)"/>
-              </xsl:when>
-              <xsl:otherwise>Long</xsl:otherwise>
-      </xsl:choose>&gt;</xsl:if>
+       implements org.ivoa.vodml.jpa.JPAManipulations<xsl:if test="./name() = 'objectType'">ForObjectType&lt;<xsl:value-of
+              select="vf:JavaKeyType(vf:asvodmlref(current()))"/>&gt;</xsl:if>
           <xsl:if test="vf:referredTo($vodml-ref)">,org.ivoa.vodml.jaxb.XmlIdManagement</xsl:if>
-      </xsl:variable>
-      <xsl:value-of select="concat(' implements ', $ifs)"/>
 
     &bl;{
       <xsl:if test="local-name() eq 'objectType' and not (extends) and not(attribute/constraint[ends-with(@xsi:type,':NaturalKey')])" >
@@ -625,6 +618,7 @@
           {
           return true;
           }
+          <xsl:if test="$nk/name != 'id'"> <!--only produce this method if the ID is not called ID -->
           /**
           * return the database key id. Note that this is the same as attribute <xsl:value-of select="$nk/name"/>.
           * @return the id
@@ -632,7 +626,7 @@
           @Override
           public String getId() {
           return <xsl:value-of select="$nk/name"/>;
-          }
+          }</xsl:if>
 
       </xsl:if>
 
