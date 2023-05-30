@@ -6,8 +6,9 @@ VODML Tooling TODO
 * schematron rules
   * used twice in composition schematron rule should not necessarily matter
   * should not even be warning (just a note!) for references multiplicity...aggregation OK when you know what you are doing ;)
+  * should check that attribute name does not override supertype attribute.
 * clear up array intentions in multiplicity
-* multiple attribute should be OK - happens for DTypes in coordinates for example...
+* multiple attribute can be OK (small fixed numbers) - happens for DTypes in coordinates for example...
 * unique constraint in composition...- would result in Set as the container - are compositions assumed to contain unique members anyway - that is effectively what is happening in the JPA interpretation where a surrogate 
  key is used. In this case it might be a lifecycle issue. This is also the distinction between a datatype and an objectType.
 * the rdb and xml schemas produced by the xslt are do not match the java generated ones exactly - they need to be updated.
@@ -15,6 +16,9 @@ VODML Tooling TODO
 * to generate tapschema - would be nice for vodml to have UCDs as part of the model - could be added in semantic part?
 * is subsetting references allowed? yes!
 * would a oneOf/Choice be good?
+* idea of an Any type...
+* idea of how unique the natural key is - see provenance model (for whole model or just the type)
+  * could make xmlid depend on type....
 
 * STC
   * epoch - not really defined as something that is used properly
@@ -36,6 +40,10 @@ VODML Tooling TODO
 * ~~autogenerate the dependent vosdl files.~~
 * improve generated documentation
   * add description of "is a ref", has subtypes etc....
+* improve generation of vodsl from xsd
+  * add better heuristics for dealing with restriction patterns
+* Perhaps add a more general transformation of the VO-DML step prior to generation
+  * could allow some more meta-modelling....
 
 # Java Production
 
@@ -80,6 +88,7 @@ VODML Tooling TODO
   * add more of the general JPA choices to mapping
     * discriminator column name for instance...
     * whether a type hierarchy should actually use @mappedSuperclass....
+    * whether a type should be included at all.
 
 
 * JSON
