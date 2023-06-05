@@ -7,18 +7,30 @@ VODML Tooling TODO
   * used twice in composition schematron rule should not necessarily matter
   * should not even be warning (just a note!) for references multiplicity...aggregation OK when you know what you are doing ;)
   * should check that attribute name does not override supertype attribute.
+  * attribute multiplicity OK if type primitive (should result in , separated list in DB)
 * clear up array intentions in multiplicity
 * multiple attribute can be OK (small fixed numbers) - happens for DTypes in coordinates for example...
 * unique constraint in composition...- would result in Set as the container - are compositions assumed to contain unique members anyway - that is effectively what is happening in the JPA interpretation where a surrogate 
  key is used. In this case it might be a lifecycle issue. This is also the distinction between a datatype and an objectType.
 * the rdb and xml schemas produced by the xslt are do not match the java generated ones exactly - they need to be updated.
 * vodml to specify attribute defaults?
-* to generate tapschema - would be nice for vodml to have UCDs as part of the model - could be added in semantic part?
-* is subsetting references allowed? yes!
-* would a oneOf/Choice be good?
+* semantic
+  * need to overhaul the main meaning - need exact mapping to current vocabularies - more than just for lists for enums...
+  * to generate tapschema - would be nice for vodml to have UCDs as part of the model - could be added in semantic part?
+  * more general linking to RDF? - via CURIEs... special imports of ontologies....
+    * possibly very small subset of OWL...
+      * allow the idea of mix-ins/traits - small fragments that could be multiply-inherited to model things like hasParent
+* ~~is subsetting references allowed? yes!~~
+* idea of a oneOf/Choice
 * idea of an Any type...
 * idea of how unique the natural key is - see provenance model (for whole model or just the type)
   * could make xmlid depend on type....
+* constraints
+  * add more simple ones - min, max, regexp..
+* VODML Metamodel
+  * different serializations of VO-DML itself (json top of list)
+  * allow attributes to be 
+* Anything that might help in mapping to OPENAPI
 
 * STC
   * epoch - not really defined as something that is used properly
