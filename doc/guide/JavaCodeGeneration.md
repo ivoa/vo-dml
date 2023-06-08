@@ -6,15 +6,31 @@ models. The code is annotated to allow JAXB and JPA to operate, which mean that 
 read and write model instances to XML and standard relational databases. It should be noted that
 the generated code uses java 1.8 constructs.
 
-The generated Java code depends on the [VO-DML java runtime library](../runtime/java), which the plugin will automatically add to the
+The generated Java code depends on the [VO-DML java runtime library](https://github.com/ivoa/vo-dml/tree/master/runtime/java), which the plugin will automatically add to the
 dependencies along with the necessary JAXB and JPA libraries.
 
-## Characteristics of the Generated code
+# Generating The Java code
+
+The command
+```shell
+gradle vodmlJavaGenerate
+```
+will generate java code in `./build/generated/sources/vodml/java` which is on the build classpath and so 
+```shell
+gradle build
+```
+will compile and run tests on the generated code. In fact `gradle build` will 
+automatically run `gradle vodmlJavaGenerate` if the code is out of date because the model has been updated.
+
+# Characteristics of the Generated code
 
 In general the code creates POJOs or data classes - i.e. the classes have very little functionality
 apart from being stores of the data model. The functionality that they do have is described below.
 
-### Instance Creation
+
+
+
+## Instance Creation
 
 To be JPA and JAXB compliant, the classes are Java beans with a no argument constructor, so they can be 
 default constructed and then getX/setX can be used on the properties.
@@ -27,7 +43,7 @@ a.setY(y);
 
 In addition, there are several other ways of creating objects
 
-#### Full constructor
+### Full constructor
 
 A constructor with all the possible properties included is
 
@@ -37,7 +53,7 @@ A a = new A(x,y);
 In addition there is a copy constructor, and for subclasses there is a constructor with arguments
 that consist of a superclass instance as well as the local members.
 
-#### Fluent with
+### Fluent 
 
 Each property has a withX(X x) function
 
@@ -45,7 +61,7 @@ Each property has a withX(X x) function
 A a = new A().withX(x).withY(y);
 ```
 
-#### Fluent functional builder
+### Fluent functional builder
 
 A static builder that takes a functional argument.
 
@@ -60,13 +76,15 @@ It should be noted that this style becomes most desirable when there are attribu
 which themselves are of a non-primitive type.
 
 
-### Serializing Models
+## Serializing Models
 
 As well as all the individual Enum, ObjectType, and DataType classes, there is
 an overall ${modelname}Model class generated, that is intended to act as 
 a 'container' for the individual elements. This is especially useful in the case
-where the model has references, as then there are some convenience methods.
-#### Functions for adding content
+where the model has references, as then there are some convenience methods for dealing with the
+automatic setting of reference IDs if necessary.
+
+### Functions for adding content
 For each of the concrete objectTypes in the model there is
 an overloaded `addContent()` method, which will add the content to the
 overall instance and find any references.
@@ -85,16 +103,16 @@ can be used to check if the model has any references - if it does not then much 
 machinery above (apart from the JAXBContext) is necessary, and individual ObjectTypes may be
 written.
 
-The [unit tests](./gradletooling/sample/src/test/java/org/ivoa/dm/sample/catalog/SourceCatalogueTest.java) for this project show most of the various code features being used
+The [unit tests](https://github.com/ivoa/vo-dml/tree/master/tools/gradletooling/sample/src/test/java/org/ivoa/dm/sample/catalog/SourceCatalogueTest.java) for this project show most of the various code features being used
 
-#### XML Serialization
+### XML Serialization
 
 A static function to create a suitable JAXBContext is present
 ```java
 JAXBContext jc = MyModel.contextFactory();
 ```
 
-#### JSON Serialisation
+### JSON Serialisation
 The JSON serialization is implemented with the [Jackson](https://github.com/FasterXML/jackson) library
 
 A suitable ObjectMapper is obtained with
@@ -103,7 +121,7 @@ ObjectMapper mapper = MyModel.jsonMapper();
 ```
 
 
-### Reading and Writing from RDBs
+## Reading and Writing from RDBs
 
 The generated code has JPA annotations to allow storing in RDBs with compliant systems.
 
@@ -122,9 +140,9 @@ A second convenience method that is created to make it easy to clone an entity i
 ```
 which will create a new entity along with any contained compositions, but will maintain the original references.
 
-This extra JPA functionality is described by the [JPAManipulations](../runtime/java/src/main/java/org/ivoa/vodml/jpa/JPAManipulations.java) interface.
+This extra JPA functionality is described by the [JPAManipulations](https://github.com/ivoa/vo-dml/tree/master/runtime/java/src/main/java/org/ivoa/vodml/jpa/JPAManipulations.java) interface.
 
-#### Embeddable dataTypes
+### Embeddable dataTypes
 
 The most natural way to represent dataTypes in JPA is as embeddable, this means that they do
 not have a separate "identity" and are simply represented as columns within the parent entity table.
@@ -139,9 +157,9 @@ made non-nullable - a bug has been submitted https://hibernate.atlassian.net/bro
 There are also eclipselink bugs that mean that the suggested way of doing inherited embeddables does not seem to work.
 
 
-### Testing models
+## Testing models
 
-The java runtime has a number of [base classes](../runtime/java/src/main/java/org/ivoa/vodml/testing) that aid the testing of model instances - there is an [example for the mock coords model](gradletooling/sample/src/test/java/org/ivoa/dm/notstccoords/CoordsModelTest.java).
+The java runtime has a number of [base classes](https://github.com/ivoa/vo-dml/tree/master/runtime/java/src/main/java/org/ivoa/vodml/testing) that aid the testing of model instances - there is an [example for the mock coords model](https://github.com/ivoa/vo-dml/tree/master/tools/gradletooling/sample/src/test/java/org/ivoa/dm/notstccoords/CoordsModelTest.java).
 Although it is not obvious from the source code presented because most of the behaviour is inherited
 from the base test class, this test will actually
 
@@ -164,12 +182,12 @@ tasks.test {
 ```
 is set up in the `build.gradle.kts` file.
 
-### General interfaces
+## General interfaces
 
 Much of the functionality described above is defined in two interfaces
-[ModelManagement](../runtime/java/src/main/java/org/ivoa/vodml/ModelManagement.java) an 
-instance of which can be obtained with the `managmenent()` method on the model class and
-[ModelDescription](../runtime/java/src/main/java/org/ivoa/vodml/ModelDescription.java) an
+[ModelManagement](https://github.com/ivoa/vo-dmltree/master//runtime/java/src/main/java/org/ivoa/vodml/ModelManagement.java) an 
+instance of which can be obtained with the `management()` method on the model class and
+[ModelDescription](https://github.com/ivoa/vo-dml/tree/master/runtime/java/src/main/java/org/ivoa/vodml/ModelDescription.java) an
 instance of which can be obtained with the `description()` method on the model class.
 These interfaces allow generic model handling code to be written.
 
