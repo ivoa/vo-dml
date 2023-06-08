@@ -5,7 +5,7 @@
 
 
 Although it is possible to edit VODSL with any plain text editor as
-discussed in [the introduction](../index.md), an Eclipse plug-in has been
+discussed in [the introduction](./modellingIntro.md), an Eclipse plug-in has been
 created, that allows VOSDL source to be edited whilst taking
 advantage of the all the features of the Eclipse that make understanding
 an navigating the code easier. As well as the expected IDE conveniences

@@ -371,7 +371,7 @@ VODSL.
 
 ### Relationship to VO-DML
 
-The [diagram in the introduction](../index.md) shows the role that VODSL plays in
+The [diagram in the introduction](modellingIntro.md) shows the role that VODSL plays in
 the VO-DML creation ecosystem - The yellow arrows indicate
 transformations that can be made programmatically between the different
 formats, and the green arrows indicate ways in which the source can be

@@ -1,11 +1,13 @@
 site_name: VO-DML Tools Guide
 docs_dir: guide
-repo_url: https://github.com/ivoa/vo-dml
+repo_url: 'https://github.com/ivoa/vo-dml'
+edit_uri: 'edit/master/doc/guide/'
 theme:
   name: material
   features:
     - navigation.instant
     - navigation.tabs
+    - content.action.edit
 nav:
   - Home: index.md
   - Getting Started:
@@ -17,7 +19,7 @@ nav:
       - Java Generation: JavaCodeGeneration.md
       - Serialization: Serialization.md
   - Writing Models:
-      - Introduction: modelling/index.md
+      - Introduction: modelling/modellingIntro.md
       - VODSL : modelling/VODSL.md
       - Eclipse Editor: modelling/EclipseVODSL.md
       - UML : modelling/UML.md

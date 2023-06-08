@@ -1,6 +1,6 @@
 # Introduction
 
-VO-DML is defined formally in an [IVOA Standard](https://www.ivoa.net/documents/VODML/index.html), 
+VO-DML is defined formally in an [IVOA Standard](https://www.ivoa.net/documents/VODML/index.html), however,
 this guide is intended to offer practical assistance to those who want to 
 use VO-DML to create data models, and then create code that can serialize those 
 models to various formats. 
