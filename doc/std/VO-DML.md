@@ -1,3 +1,10 @@
+---
+title: 'VO-DML: a consistent modeling language for IVOA data models'
+---
+
+
+
+
 +--------------------------------------------------+-------------------+
 | ![](media/image1.jpeg)                           | ***               |
 |                                                  |  I**nternational* |
@@ -10,8 +17,6 @@
 |                                                  | ***A**lliance*    |
 +--------------------------------------------------+-------------------+
 
-[]{#_Toc513524804 .anchor}VO-DML: a consistent modeling language for
-IVOA data models
 
 **Version 1.0**
 
@@ -45,7 +50,6 @@ Gerard Lemson, Omar Laurino, Laurent Bourges, Mark Cresitello-Dittmar,
 Markus Demleitner, Tom Donaldson, Patrick Dowler, Matthew Graham, Norman
 Gray, Laurent Michel, Jesus Salgado
 
-![](media/image2.wmf)
 
 **Abstract**
 
@@ -1324,7 +1328,7 @@ ElementRef.
         <xsd:extension base="ReferableElement">
             <xsd:sequence>
                 <xsd:element name="extends" type="ElementRef"
-                             minOccurs="0">
+                             minOccurs="0"/>
                 <xsd:element name="constraints" type="Constraint"
                              minOccurs="0" maxOccurs="unbounded"/>
             </xsd:sequence>
@@ -2112,10 +2116,10 @@ VO-DML/XML
         </multiplicity>
         <semanticconcept>
             <topConcept>
-                <http://purl.org/astronomy/vocab/DataObjectTypes/DataObjectType>
+                http://purl.org/astronomy/vocab/DataObjectTypes/DataObjectType
             </topConcept>
             <vocabularyURI>
-                <http://purl.org/astronomy/vocab/DataObjectTypes>
+                http://purl.org/astronomy/vocab/DataObjectTypes
             </vocabularyURI>
         </semanticconcept>
     </attribute>
@@ -3027,187 +3031,216 @@ definition in [www.uml-diagrams.org](http://www.uml-diagrams.org). Below
 the table we discuss some UML meta-types that we have *not* included in
 VO-DML and motivate our decision.
 
-+--------------+------------------------+-----------------------------+
-| **VO-DML     | **Relevant UML         | **VO-UML graphical          |
-| concept**    | MetaClass(es)**        | notation**                  |
-+==============+========================+=============================+
-| [**Mode      | [Model](http://www.u   | ![](media/image9.png){w     |
-| l**](#model) | ml-diagrams.org/packag | idth="1.5333333333333334in" |
-|              | e-diagrams/model.html) | hei                         |
-|              | §17.3.1                | ght="0.8666666666666667in"} |
-+--------------+------------------------+-----------------------------+
-| [**Mode      | [Model](http://www.u   |                             |
-| lImport**](# | ml-diagrams.org/packag |                             |
-| modelimport) | e-diagrams/model.html) |                             |
-|              | §17.3.1                |                             |
-|              |                        |                             |
-|              | [PackageImport]        |                             |
-|              | (http://www.uml-diagra |                             |
-|              | ms.org/package-diagram |                             |
-|              | s.html#package-import) |                             |
-|              | §7.3.40                |                             |
-|              |                        |                             |
-|              | [ElementImport]        |                             |
-|              | (http://www.uml-diagra |                             |
-|              | ms.org/package-diagram |                             |
-|              | s.html#element-import) |                             |
-|              | §7.3.15                |                             |
-+--------------+------------------------+-----------------------------+
-| [***Ref      | [Name                  |                             |
-| erableElemen | dElement](http://www.u |                             |
-| t***](#refer | ml-diagrams.org/uml-co |                             |
-| ableelement) | re.html#named-element) |                             |
-|              | §7.3.34                |                             |
-+--------------+------------------------+-----------------------------+
-| [**Package** | [P                     | ![](media/i                 |
-| ](#package-e | ackage](http://www.uml | mage24.png){width="0.725in" |
-| xtends-refer | -diagrams.org/package- | height="0.7in"}             |
-| ableelement) | diagrams.html#package) |                             |
-|              | §7.3.38                |                             |
-+--------------+------------------------+-----------------------------+
-| [***Type     | [Type](htt             |                             |
-| ***](#type-e | p://www.uml-diagrams.o |                             |
-| xtends-refer | rg/uml-core.html#type) |                             |
-| ableelement) | §7.3.52                |                             |
-|              |                        |                             |
-|              | [Classifier](          |                             |
-|              | http://www.uml-diagram |                             |
-|              | s.org/classifier.html) |                             |
-|              | §7.3.8                 |                             |
-+--------------+------------------------+-----------------------------+
-| [***Typ      | [Generalization](http  | ![](media/image25.png){w    |
-| e*.extends** | ://www.uml-diagrams.or | idth="0.7583333333333333in" |
-| ](#_extends: | g/generalization.html) | height="1.025in"}           |
-| _ElementRef) | §7.3.20                |                             |
-+--------------+------------------------+-----------------------------+
-| [**Obj       | [Class](http://www     | ![](media                   |
-| ectType**](# | .uml-diagrams.org/clas | /image16.png){width="1.8in" |
-| objecttype-e | s-diagrams.html#class) | hei                         |
-| xtends-type) | §7.3.7                 | ght="0.9666666666666667in"} |
-+--------------+------------------------+-----------------------------+
-| [***Va       | [Da                    |                             |
-| lueType***]( | taType](http://www.uml |                             |
-| #valuetype-e | -diagrams.org/class-di |                             |
-| xtends-type) | agrams.html#data-type) |                             |
-|              | §7.3.11                |                             |
-+--------------+------------------------+-----------------------------+
-| [**Data      | [Da                    | ![](media/                  |
-| Type**](#dat | taType](http://www.uml | image26.png){width="1.95in" |
-| atype-extend | -diagrams.org/class-di | height="0.775in"}           |
-| s-valuetype) | agrams.html#data-type) |                             |
-|              | §7.3.11                |                             |
-+--------------+------------------------+-----------------------------+
-| [**Pr        | [PrimitiveTyp          | ![](media/i                 |
-| imitiveType* | e](http://www.uml-diag | mage27.png){width="1.625in" |
-| *](#primitiv | rams.org/class-diagram | hei                         |
-| etype-extend | s.html#primitive-type) | ght="0.5166666666666667in"} |
-| s-valuetype) | §7.3.44                |                             |
-+--------------+------------------------+-----------------------------+
-| [            | [Enumera               | ![](media/image14.png){w    |
-| **Enumeratio | tion](http://www.uml-d | idth="1.1583333333333334in" |
-| n**](#enumer | iagrams.org/class-diag | height="1.1in"}             |
-| ation-extend | rams.html#enumeration) |                             |
-| s-valuetype) | §7.3.16                |                             |
-+--------------+------------------------+-----------------------------+
-| [**E         | EnumerationLiteral     | See Enumeration above       |
-| numLiteral** | §7.3.17                |                             |
-| ](#_Literal) |                        |                             |
-+--------------+------------------------+-----------------------------+
-| [***Role     | [Feature](http:/       |                             |
-| ***](#role-e | /www.uml-diagrams.org/ |                             |
-| xtends-refer | uml-core.html#feature) |                             |
-| ableelement) | §7.3.19                |                             |
-|              |                        |                             |
-|              | [StructuralFeat        |                             |
-|              | ure](http://www.uml-di |                             |
-|              | agrams.org/uml-core.ht |                             |
-|              | ml#structural-feature) |                             |
-|              | §7.3.50                |                             |
-|              |                        |                             |
-|              | [TypedElement](htt     |                             |
-|              | p://www.uml-diagrams.o |                             |
-|              | rg/uml-core.html#type) |                             |
-|              | §7.3.53                |                             |
-|              |                        |                             |
-|              | [Property              |                             |
-|              | ](http://www.uml-diagr |                             |
-|              | ams.org/property.html) |                             |
-|              | §7.3.45                |                             |
-+--------------+------------------------+-----------------------------+
-| [**A         | [Property              | See ObjectType and DataType |
-| ttribute**]( | ](http://www.uml-diagr | above.                      |
-| #attribute-e | ams.org/property.html) |                             |
-| xtends-role) | §7.3.45                |                             |
-+--------------+------------------------+-----------------------------+
-| [***         | [Association](h        |                             |
-| Relation***] | ttp://www.uml-diagrams |                             |
-| (#relation-e | .org/association.html) |                             |
-| xtends-role) | §7.3.3                 |                             |
-|              |                        |                             |
-|              | [Association           |                             |
-|              | End](http://www.uml-di |                             |
-|              | agrams.org/association |                             |
-|              | .html#association-end) |                             |
-|              |                        |                             |
-|              | [Property              |                             |
-|              | ](http://www.uml-diagr |                             |
-|              | ams.org/property.html) |                             |
-|              | §7.3.45                |                             |
-+--------------+------------------------+-----------------------------+
-| [**Refer     | [Association](h        | ![](media/                  |
-| ence**](#ref | ttp://www.uml-diagrams | image28.png){width="3.05in" |
-| erence-exten | .org/association.html) | hei                         |
-| ds-relation) | §7.3.3                 | ght="0.5916666666666667in"} |
-|              |                        |                             |
-|              | [Association           |                             |
-|              | End](http://www.uml-di |                             |
-|              | agrams.org/association |                             |
-|              | .html#association-end) |                             |
-|              |                        |                             |
-|              | [Property              |                             |
-|              | ](http://www.uml-diagr |                             |
-|              | ams.org/property.html) |                             |
-|              | §7.3.45                |                             |
-+--------------+------------------------+-----------------------------+
-| [**Compositi | [Association](h        | ![](media/image29.png){w    |
-| on**](#compo | ttp://www.uml-diagrams | idth="1.3833333333333333in" |
-| sition-exten | .org/association.html) | hei                         |
-| ds-relation) | §7.3.3                 | ght="1.2583333333333333in"} |
-|              |                        |                             |
-|              | [Association           |                             |
-|              | End](http://www.uml-di |                             |
-|              | agrams.org/association |                             |
-|              | .html#association-end) |                             |
-|              |                        |                             |
-|              | [Property              |                             |
-|              | ](http://www.uml-diagr |                             |
-|              | ams.org/property.html) |                             |
-|              | §7.3.45                |                             |
-|              |                        |                             |
-|              | AggregationKind §7.3.2 |                             |
-+--------------+------------------------+-----------------------------+
-| [**Multip    | [Multiplicity](ht      | See annotation in diagram   |
-| licity**](#m | tp://www.uml-diagrams. | for attributes, reference,  |
-| ultiplicity) | org/multiplicity.html) | composition                 |
-|              | §                      |                             |
-+--------------+------------------------+-----------------------------+
-| [**Co        | [Constraint](          |                             |
-| nstraint**]( | http://www.uml-diagram |                             |
-| #constraint) | s.org/constraint.html) |                             |
-|              | §7.3.10                |                             |
-+--------------+------------------------+-----------------------------+
-| [**Sub       | Prope                  |                             |
-| settedRole** | rty.subsettedProperty, |                             |
-| ](#subsetted | Pro                    |                             |
-| role-extends | pery.redefinedProperty |                             |
-| -constraint) | §7.3.45                |                             |
-+--------------+------------------------+-----------------------------+
-| [**          |                        | \<\<semanticconcept\>\>     |
-| SemanticConc |                        | with tags:                  |
-| ept**](#sema |                        |                             |
-| nticconcept) |                        | topConcept\                 |
-|              |                        | vocabularyURI               |
-+--------------+------------------------+-----------------------------+
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>VO-DML concept</strong></th>
+<th><strong>Relevant UML MetaClass(es)</strong></th>
+<th><strong>VO-UML graphical notation</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="#model"><strong>Model</strong></a></td>
+<td><a
+href="http://www.uml-diagrams.org/package-diagrams/model.html">Model</a>
+§17.3.1</td>
+<td><img src="media/image9.png"
+style="width:1.53333in;height:0.86667in" /></td>
+</tr>
+<tr class="even">
+<td><a href="#modelimport"><strong>ModelImport</strong></a></td>
+<td><p><a
+href="http://www.uml-diagrams.org/package-diagrams/model.html">Model</a>
+§17.3.1</p>
+<p><a
+href="http://www.uml-diagrams.org/package-diagrams.html#package-import">PackageImport</a>
+§7.3.40</p>
+<p><a
+href="http://www.uml-diagrams.org/package-diagrams.html#element-import">ElementImport</a>
+§7.3.15</p></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><a
+href="#referableelement"><em><strong>ReferableElement</strong></em></a></td>
+<td><a
+href="http://www.uml-diagrams.org/uml-core.html#named-element">NamedElement</a>
+§7.3.34</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><a
+href="#package-extends-referableelement"><strong>Package</strong></a></td>
+<td><a
+href="http://www.uml-diagrams.org/package-diagrams.html#package">Package</a>
+§7.3.38</td>
+<td><img src="media/image24.png"
+style="width:0.725in;height:0.7in" /></td>
+</tr>
+<tr class="odd">
+<td><a
+href="#type-extends-referableelement"><em><strong>Type</strong></em></a></td>
+<td><p><a href="http://www.uml-diagrams.org/uml-core.html#type">Type</a>
+§7.3.52</p>
+<p><a href="http://www.uml-diagrams.org/classifier.html">Classifier</a>
+§7.3.8</p></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><a
+href="#_extends:_ElementRef"><strong><em>Type</em>.extends</strong></a></td>
+<td><a
+href="http://www.uml-diagrams.org/generalization.html">Generalization</a>
+§7.3.20</td>
+<td><img src="media/image25.png"
+style="width:0.75833in;height:1.025in" /></td>
+</tr>
+<tr class="odd">
+<td><a
+href="#objecttype-extends-type"><strong>ObjectType</strong></a></td>
+<td><a
+href="http://www.uml-diagrams.org/class-diagrams.html#class">Class</a>
+§7.3.7</td>
+<td><img src="media/image16.png"
+style="width:1.8in;height:0.96667in" /></td>
+</tr>
+<tr class="even">
+<td><a
+href="#valuetype-extends-type"><em><strong>ValueType</strong></em></a></td>
+<td><a
+href="http://www.uml-diagrams.org/class-diagrams.html#data-type">DataType</a>
+§7.3.11</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><a
+href="#datatype-extends-valuetype"><strong>DataType</strong></a></td>
+<td><a
+href="http://www.uml-diagrams.org/class-diagrams.html#data-type">DataType</a>
+§7.3.11</td>
+<td><img src="media/image26.png"
+style="width:1.95in;height:0.775in" /></td>
+</tr>
+<tr class="even">
+<td><a
+href="#primitivetype-extends-valuetype"><strong>PrimitiveType</strong></a></td>
+<td><a
+href="http://www.uml-diagrams.org/class-diagrams.html#primitive-type">PrimitiveType</a>
+§7.3.44</td>
+<td><img src="media/image27.png"
+style="width:1.625in;height:0.51667in" /></td>
+</tr>
+<tr class="odd">
+<td><a
+href="#enumeration-extends-valuetype"><strong>Enumeration</strong></a></td>
+<td><a
+href="http://www.uml-diagrams.org/class-diagrams.html#enumeration">Enumeration</a>
+§7.3.16</td>
+<td><img src="media/image14.png"
+style="width:1.15833in;height:1.1in" /></td>
+</tr>
+<tr class="even">
+<td><a href="#_Literal"><strong>EnumLiteral</strong></a></td>
+<td>EnumerationLiteral §7.3.17</td>
+<td>See Enumeration above</td>
+</tr>
+<tr class="odd">
+<td><a
+href="#role-extends-referableelement"><em><strong>Role</strong></em></a></td>
+<td><p><a
+href="http://www.uml-diagrams.org/uml-core.html#feature">Feature</a>
+§7.3.19</p>
+<p><a
+href="http://www.uml-diagrams.org/uml-core.html#structural-feature">StructuralFeature</a>
+§7.3.50</p>
+<p><a
+href="http://www.uml-diagrams.org/uml-core.html#type">TypedElement</a>
+§7.3.53</p>
+<p><a href="http://www.uml-diagrams.org/property.html">Property</a>
+§7.3.45</p></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><a
+href="#attribute-extends-role"><strong>Attribute</strong></a></td>
+<td><a href="http://www.uml-diagrams.org/property.html">Property</a>
+§7.3.45</td>
+<td>See ObjectType and DataType above.</td>
+</tr>
+<tr class="odd">
+<td><a
+href="#relation-extends-role"><em><strong>Relation</strong></em></a></td>
+<td><p><a
+href="http://www.uml-diagrams.org/association.html">Association</a>
+§7.3.3</p>
+<p><a
+href="http://www.uml-diagrams.org/association.html#association-end">AssociationEnd</a></p>
+<p><a href="http://www.uml-diagrams.org/property.html">Property</a>
+§7.3.45</p></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><a
+href="#reference-extends-relation"><strong>Reference</strong></a></td>
+<td><p><a
+href="http://www.uml-diagrams.org/association.html">Association</a>
+§7.3.3</p>
+<p><a
+href="http://www.uml-diagrams.org/association.html#association-end">AssociationEnd</a></p>
+<p><a href="http://www.uml-diagrams.org/property.html">Property</a>
+§7.3.45</p></td>
+<td><img src="media/image28.png"
+style="width:3.05in;height:0.59167in" /></td>
+</tr>
+<tr class="odd">
+<td><a
+href="#composition-extends-relation"><strong>Composition</strong></a></td>
+<td><p><a
+href="http://www.uml-diagrams.org/association.html">Association</a>
+§7.3.3</p>
+<p><a
+href="http://www.uml-diagrams.org/association.html#association-end">AssociationEnd</a></p>
+<p><a href="http://www.uml-diagrams.org/property.html">Property</a>
+§7.3.45</p>
+<p>AggregationKind §7.3.2</p></td>
+<td><img src="media/image29.png"
+style="width:1.38333in;height:1.25833in" /></td>
+</tr>
+<tr class="even">
+<td><a href="#multiplicity"><strong>Multiplicity</strong></a></td>
+<td><a
+href="http://www.uml-diagrams.org/multiplicity.html">Multiplicity</a>
+§</td>
+<td>See annotation in diagram for attributes, reference,
+composition</td>
+</tr>
+<tr class="odd">
+<td><a href="#constraint"><strong>Constraint</strong></a></td>
+<td><a href="http://www.uml-diagrams.org/constraint.html">Constraint</a>
+§7.3.10</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><a
+href="#subsettedrole-extends-constraint"><strong>SubsettedRole</strong></a></td>
+<td>Property.subsettedProperty, Propery.redefinedProperty §7.3.45</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><a href="#semanticconcept"><strong>SemanticConcept</strong></a></td>
+<td></td>
+<td><p>&lt;&lt;semanticconcept&gt;&gt; with tags:</p>
+<p>topConcept<br />
+vocabularyURI</p></td>
+</tr>
+</tbody>
+</table>
 
 UML meta-classes not included in VO-DML
 
