@@ -18,23 +18,7 @@
 
   <xsl:param name="targetnamespace_root"/>
 
-  <xsl:template match="vo-dml:model" mode="xsd-path">
-    <xsl:param name="delimiter"/>
-    <xsl:param name="suffix" select="''"/>
-    <xsl:value-of select="concat(vodml-id,$suffix)"/>
-  </xsl:template>
 
-  <xsl:template match="package" mode="xsd-path">
-    <xsl:param name="delimiter"/>
-    <xsl:param name="suffix" select="''"/>
-    <xsl:variable name="newsuffix">
-      <xsl:value-of select="concat($delimiter,./name,$suffix)"/>
-    </xsl:variable>
-    <xsl:apply-templates select=".." mode="xsd-path">
-       <xsl:with-param name="suffix" select="$newsuffix"/>
-       <xsl:with-param name="delimiter" select="$delimiter"/>
-    </xsl:apply-templates>
-  </xsl:template>
 
   <!-- return the targetnamespace for the schema document for the package with the given id -->
   <xsl:template name="namespace-for-package">
@@ -49,49 +33,7 @@
     </xsl:variable>    
     <xsl:value-of select="concat($targetnamespace_root,'/',$path)"/>
   </xsl:template>
-  
 
-
-  <!-- calculate a prefix for the package with the given id -->
-  <xsl:template name="package-prefix">
-    <xsl:param name="packageid"/>
-    <xsl:variable name="rank">
-      <xsl:value-of select="count(/*//package[@xmiid &lt; $packageid])+1"/>
-    </xsl:variable>
-    <xsl:value-of select="concat('p',$rank)"/>
-  </xsl:template>
-
-
-
-  <!-- calculate a prefix for the given object -->
-  <xsl:template match="objectType" mode="package-prefix">
-    <xsl:call-template name="package-prefix">
-      <xsl:with-param name="packageid" select="./ancestor::package[1]/@xmiid"/>
-    </xsl:call-template>
-  </xsl:template>
-
-
-  
-
-  
-<!--  Do we potentially want to generate root elements even for dadaType-s?
-See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode="JAXBAnnotation">
- -->
-  <xsl:template match="objectType|dataType" mode="root-element-name">
-      <xsl:variable name="firstletterisvowel" select="translate(substring(name,1,1),'AEIOU','11111')"/>
-      <xsl:variable name="article">
-        <xsl:choose>
-          <xsl:when test="$firstletterisvowel = '1'" >
-            <xsl:text>an</xsl:text>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:text>a</xsl:text>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:variable>
-      <xsl:value-of select="concat($article,name)"/>
-  </xsl:template>
-  
    <xsl:template name="getmodel">
     <xsl:param name="vodml-ref"/> <!-- assumed to be fully qualified! i.e. also for elements in local model, the prefix is included! -->
     <xsl:variable name="modelname" select="substring-before($vodml-ref,':')"/>
@@ -205,20 +147,6 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
 
 
 
-    <!-- it would be better if this function was not needed and every vodml-id also contained the model prefix - or vodml-id removed entirely... -->
-    <xsl:function name="vf:asvodmlref" as="xsd:string">
-        <xsl:param name="el" as="element()"/>
-        <xsl:value-of select="concat($el/ancestor::vo-dml:model/name,':',$el/vodml-id/text())"/>
-    </xsl:function>
-
-    <xsl:function name="vf:isOptional" as="xsd:boolean">
-        <xsl:param name="el" as="element()"/>
-        <xsl:sequence select="number($el/multiplicity/minOccurs) = 0 and number($el/multiplicity/maxOccurs) = 1" />
-    </xsl:function>
-    <xsl:function name="vf:isArrayLike" as="xsd:boolean">
-        <xsl:param name="el" as="element()"/>
-        <xsl:sequence select="number($el/multiplicity/minOccurs) >  1 and number($el/multiplicity/maxOccurs) > 1" />
-    </xsl:function>
 
 
     <xsl:function name="vf:isRdbSingleTable" as="xsd:boolean">
@@ -295,7 +223,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
                  </xsl:variable>
                  <xsl:choose>
                      <xsl:when test="$el/extends">
-                         <xsl:sequence select="($models/key('ellookup',$el/extends/vodml-ref),vf:baseTypes($el/extends/vodml-ref))" />
+                         <xsl:sequence select="($models/key('ellookup',$el/extends/vodml-ref), vf:baseTypes($el/extends/vodml-ref))" />
                      </xsl:when>
                  </xsl:choose>
             </xsl:when>
@@ -352,6 +280,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
 
     </xsl:function>
 
+
     <!-- this means does the model have children in inheritance hierarchy -->
     <xsl:function name="vf:hasSubTypes" as="xsd:boolean">
         <xsl:param name="vodml-ref"/>
@@ -368,14 +297,7 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
 
     <xsl:function name="vf:hasSuperTypes" as="xsd:boolean">
         <xsl:param name="vodml-ref"/>
-        <xsl:choose>
-            <xsl:when test="$models/key('ellookup',$vodml-ref)">
-                <xsl:value-of select="count($models//extends[vodml-ref = $vodml-ref])> 0"/>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:message terminate="yes">type <xsl:value-of select="$vodml-ref"/> not in considered models</xsl:message>
-            </xsl:otherwise>
-        </xsl:choose>
+        <xsl:sequence select="count($models/key('ellookup',$vodml-ref)/extends) > 0"/>
     </xsl:function>
 
 
@@ -640,14 +562,6 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
 
 
 
-    <xsl:function name="vf:upperFirst" as="xsd:string">
-        <xsl:param name="s" as="xsd:string"/>
-        <xsl:value-of select="concat(upper-case(substring($s,1,1)),substring($s,2))"/>
-    </xsl:function>
-    <xsl:function name="vf:lowerFirst" as="xsd:string">
-        <xsl:param name="s" as="xsd:string"/>
-        <xsl:value-of select="concat(lower-case(substring($s,1,1)),substring($s,2))"/>
-    </xsl:function>
 
     <xsl:function name="vf:utype" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/>
@@ -732,8 +646,5 @@ See similar comment in jaxb.xsl:  <xsl:template match="objectType|dataType" mode
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
-    <xsl:function name="vf:capitalize">
-        <xsl:param name="name"/>
-        <xsl:value-of select="concat(upper-case(substring($name,1,1)),substring($name,2))"/>
-    </xsl:function>
+
 </xsl:stylesheet>

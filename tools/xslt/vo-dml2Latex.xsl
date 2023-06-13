@@ -24,12 +24,6 @@ for possible ways to make images with links
   <xsl:strip-space elements="*" />
 
   <xsl:variable name="packages" select="//package/vodml-id"/>
-  <xsl:variable name="sq"><xsl:text>'</xsl:text></xsl:variable>
-  <xsl:variable name="dq"><xsl:text>"</xsl:text></xsl:variable>
-  <xsl:variable name='nl'><xsl:text>
-</xsl:text></xsl:variable>
-  <xsl:variable name='lt'><xsl:text disable-output-escaping="yes">&lt;</xsl:text></xsl:variable>
-  <xsl:variable name='gt'><xsl:text disable-output-escaping="yes">&gt;</xsl:text></xsl:variable>
 
 
   <xsl:variable name="modname">

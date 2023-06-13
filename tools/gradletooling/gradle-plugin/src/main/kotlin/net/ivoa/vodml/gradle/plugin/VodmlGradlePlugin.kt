@@ -1,6 +1,5 @@
 package net.ivoa.vodml.gradle.plugin
 
-import net.ivoa.vodml.gradle.plugin.VodmlToVodslTask
 import net.ivoa.vodml.gradle.plugin.internal.MIN_REQUIRED_GRADLE_VERSION
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
@@ -26,6 +25,7 @@ class VodmlGradlePlugin: Plugin<Project> {
         const val VODML_PLUGIN_ID = "net.ivoa.vo-dml.vodmltools"
         const val VODML_CONFIG_NAME = "vodml"
         const val VODML_DOC_TASK_NAME = "vodmlDoc"
+        const val VODML_SITE_DOC_TASK_NAME = "vodmlSite"
         const val VODML_VAL_TASK_NAME = "vodmlValidate"
         const val VODML_JAVA_TASK_NAME_OLD = "vodmlGenerateJava"
         const val VODML_JAVA_TASK_NAME = "vodmlJavaGenerate"
@@ -47,6 +47,13 @@ class VodmlGradlePlugin: Plugin<Project> {
         // register the doc task
         project.tasks.register(VODML_DOC_TASK_NAME,VodmlDocTask::class.java) {
             it.description = "create documentation for VO-DML models"
+            setVodmlFiles(it,extension,project)
+            it.docDir.set(extension.outputDocDir)
+            it.modelsToDocument.set(extension.modelsToDocument)
+        }
+        // register the site doc task
+        project.tasks.register(VODML_SITE_DOC_TASK_NAME,VodmlSiteTask::class.java) {
+            it.description = "create mkdocs site for VO-DML models"
             setVodmlFiles(it,extension,project)
             it.docDir.set(extension.outputDocDir)
             it.modelsToDocument.set(extension.modelsToDocument)

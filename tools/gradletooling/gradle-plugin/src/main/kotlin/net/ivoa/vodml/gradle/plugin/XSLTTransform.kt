@@ -93,3 +93,5 @@ object Vodml2Vodsl : XSLTTransformer("vo-dml2dsl.xsl", "text")
 object Vodml2Python : XSLTTransformer("vo-dml2python.xsl", "text")
 object Xsd2Vodsl : XSLTTransformer("xsd2dsl.xsl", "text")
 object Vodml2json : XSLTTransformer("vo-dml2jsonschema.xsl", "text")
+
+object Vodml2md : XSLTTransformer("vo-dml2md.xsl", "text")
