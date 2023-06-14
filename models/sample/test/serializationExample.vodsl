@@ -25,3 +25,5 @@ otype SomeContent "" {
 	ref2 references Refb "";
 	zval : ivoa:string "";
 }
+
+primitive ivorn -> ivoa:anyURI "a specialization for IVORNs"

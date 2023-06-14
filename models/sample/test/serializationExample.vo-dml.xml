@@ -8,12 +8,17 @@
       <uri/>
       <title>TBD</title>
       <version>1.0</version>
-      <lastModified>2023-05-16T18:01:58Z</lastModified>
+      <lastModified>2023-06-14T09:41:35Z</lastModified>
       <import>
         <name>null</name><!--should not be needed in modern vo-dml -->
         <url>IVOA-v1.0.vo-dml.xml</url>
         <documentationURL>not known</documentationURL>
       </import>
+      <primitiveType>
+        <vodml-id>ivorn</vodml-id>
+        <name>ivorn</name>
+        <description>a specialization for IVORNs</description>	    
+      </primitiveType>
             <objectType>
                <vodml-id>Refa</vodml-id>
                <name>Refa</name>

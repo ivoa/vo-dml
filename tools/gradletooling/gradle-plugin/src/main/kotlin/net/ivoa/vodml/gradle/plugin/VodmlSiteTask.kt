@@ -56,9 +56,12 @@ import javax.inject.Inject
                  logger.error(proc.errorStream.bufferedReader().readText())
 
              outfile = docDir.file("$shortname.md")
-             Vodml2md.doTransform(it.absoluteFile, mapOf("graphviz_png" to docDir.file("$shortname.svg").get().asFile.absolutePath,
+             val params = mutableMapOf(
+                 "graphviz_png" to docDir.file("$shortname.svg").get().asFile.absolutePath,
                  "binding" to allBinding.joinToString(separator = ",") { it.absolutePath },
-             ),
+             )
+             if (modelsToDocument.isPresent) params["modelsToDocument"] = modelsToDocument.get()
+             Vodml2md.doTransform(it.absoluteFile, params,
                  actualCatalog, outfile.get().asFile)
              outfile = docDir.file("$shortname.graphml")
              Vodml2Gml.doTransform(it.absoluteFile, emptyMap(), actualCatalog, outfile.get().asFile)

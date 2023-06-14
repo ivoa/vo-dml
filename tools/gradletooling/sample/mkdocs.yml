@@ -4,6 +4,7 @@ theme:
   name: material
 
 markdown_extensions:
+  - tables
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
