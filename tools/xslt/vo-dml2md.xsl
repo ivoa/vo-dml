@@ -16,6 +16,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
     xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                xmlns:bnd="http://www.ivoa.net/xml/vodml-binding/v0.9.1"
 
 >
     <xsl:output method="text" encoding="UTF-8" indent="no" />
@@ -50,20 +51,21 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   
   <xsl:template match="vo-dml:model">
 # <xsl:value-of select="name"/>
-&bl;
+&cr;
+<xsl:value-of select="concat('version ',version, ' _',(format-dateTime(xsd:dateTime(lastModified),'[Y0001]-[M01]-[D01]')),'_')"/>
+
+&cr;
 ## Introduction
 
 <xsl:value-of select="description"/>
-&bl;
+&cr;
 ### Authors
 
-<xsl:for-each select="author">
-* <xsl:value-of select="author"/>
-</xsl:for-each>
+<xsl:value-of select="author"/>
+
 
     <xsl:if test="$graphviz_png">
-
-&bl;
+&cr;
 ### Overview diagram
 
 The whole model is represented in a model diagram below
@@ -115,6 +117,17 @@ The whole model is represented in a model diagram below
 * <xsl:call-template name="linkTo"/>
     </xsl:for-each>
       </xsl:if>
+
+      <xsl:if test="import">
+&cr;
+## Imports
+          <xsl:for-each select="import">
+              <xsl:variable name="bnd" select="$mapping/bnd:mappedModels/model[file=current()/url]"/>
+* <xsl:value-of select="concat($bnd/name, $nl)"/>
+          </xsl:for-each>
+      </xsl:if>
+
+
       <!-- now main doc for each type in separate files -->
      <xsl:apply-templates select="(primitiveType|enumeration|dataType|objectType|package)"/>
   </xsl:template>
@@ -149,8 +162,9 @@ The whole model is represented in a model diagram below
       </xsl:if>
 
       <xsl:apply-templates select="description"/>
+      <xsl:if test="name() != 'primitiveType'">
       <xsl:apply-templates select="current()" mode="mermdiag"/>
-<xsl:if test="name() != 'primitiveType'">
+
 
 ## Members
 
@@ -219,6 +233,8 @@ classDiagram
         <xsl:call-template name="doSubs"><xsl:with-param name="vodml-ref" select="$vodml-ref"/> </xsl:call-template>
         <xsl:call-template name="doRefs"/>
         <xsl:call-template name="doComposition"/>
+        <xsl:call-template name="doDiagLinks"><xsl:with-param name="vodml-ref" select="$vodml-ref"/> </xsl:call-template>
+
     </xsl:template>
 
     <xsl:template match="attribute" mode="merm">
@@ -248,7 +264,9 @@ classDiagram
         <xsl:text> | </xsl:text>
         <xsl:value-of select="vf:nameFromVodmlref(role/vodml-ref)"/>
         <xsl:text> | </xsl:text>
-        <xsl:apply-templates select="datatype/vodml-ref" /><xsl:text> | </xsl:text>
+        <xsl:apply-templates select="datatype/vodml-ref" />
+        <xsl:value-of select="concat(' [subset](#',vf:nameFromVodmlref(role/vodml-ref),')')" />
+        <xsl:text> | </xsl:text>
         <xsl:apply-templates select="multiplicity"/><xsl:if test="@isOrdered"><xsl:text> ordered</xsl:text></xsl:if>
         <xsl:text> | </xsl:text>
         <xsl:value-of select="string-join(for $s in description/text() return normalize-space($s),' ')"/>
@@ -264,7 +282,9 @@ classDiagram
         </xsl:variable>
 Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in ',vf:doLink($subSettedTypeId), ' from type ')"/>
         <xsl:value-of select="concat(vf:doLink($subsettedThing/datatype/vodml-ref), ' to ',vf:doLink(current()/datatype/vodml-ref))"/>
-
+        <xsl:if test="semanticconcept">
+            <xsl:text> with </xsl:text><xsl:apply-templates select="semanticconcept" mode="ssdetail"/>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template match='vodml-ref'>
@@ -279,8 +299,15 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
         <!-- nothing in general description -->
     </xsl:template>
 
-    <xsl:template match="semanticconcept">
-        <xsl:text>semantic "</xsl:text><xsl:value-of select="topConcept"/><xsl:text>" in "</xsl:text><xsl:value-of select="vocabularyURI"/><xsl:text>"</xsl:text>
+    <xsl:template match="semanticconcept" mode="ssdetail">
+        <xsl:choose>
+            <xsl:when test="count(topConcept) = 0">
+                <text> vocabulary from </text><xsl:value-of select="concat('[',vocabularyURI,'](',vocabularyURI,')')"/><!-- TODO  would be nice to display vocab inline as collapsible tree-->
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:text>semantic meaning "</xsl:text><xsl:value-of select="topConcept"/><xsl:text>" in "</xsl:text><xsl:value-of select="vocabularyURI"/><xsl:text>"</xsl:text>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
 
@@ -319,6 +346,22 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
             </xsl:for-each>
         </xsl:if>
     </xsl:template>
+    <xsl:template name="doDiagLinks">
+        <xsl:param name="vodml-ref"/>
+        <xsl:variable name="thisClass" as="element()">
+            <xsl:copy-of select="$models/key('ellookup',$vodml-ref)" />
+        </xsl:variable>
+        <xsl:variable name="classIds" as="xsd:string*">
+            <xsl:sequence  select="vf:baseTypeIds($vodml-ref)"/>
+            <xsl:sequence select="for $x in //*[extends/vodml-ref = $vodml-ref] return vf:asvodmlref($x)"/>
+            <xsl:sequence select="$thisClass/reference/datatype/vodml-ref"/>
+            <xsl:sequence select="$thisClass/composition/datatype/vodml-ref"/>
+        </xsl:variable>
+        <xsl:for-each select="$classIds">
+            <xsl:value-of select="concat($nl,vf:doMermaidLink(current()))"/>
+        </xsl:for-each>
+
+    </xsl:template>
     <xsl:template name="doSubs">
         <xsl:param name="vodml-ref"/>
         <xsl:if test="count(//*[extends/vodml-ref = $vodml-ref]) > 0">
@@ -332,7 +375,6 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
     </xsl:template>
     <xsl:template name="doRefs">
         <xsl:variable name="thisClass" select="current()/name"/>
-        <xsl:message select="concat($thisClass,' refs=',string-join(current()/reference/name,','))"/>
         <xsl:if test="reference">
             <xsl:for-each select="reference">
                 <xsl:value-of select="concat($thisClass,' --',$gt,' ',vf:nameFromVodmlref(current()/datatype/vodml-ref),' : ',current()/name,$nl)"/>
@@ -341,7 +383,6 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
     </xsl:template>
     <xsl:template name="doComposition">
         <xsl:variable name="thisClass" select="current()/name"/>
-        <xsl:message select="concat($thisClass,' comps=',string-join(current()/reference/name,','))"/>
         <xsl:if test="composition">
             <xsl:for-each select="composition">
                 <xsl:value-of select="concat($thisClass,' *-- ',vf:nameFromVodmlref(current()/datatype/vodml-ref),' : ',current()/name,$nl)"/>
@@ -381,6 +422,24 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
             </xsl:when>
             <xsl:otherwise>
                 <xsl:value-of select="$vodml-ref"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+    <xsl:function name="vf:doMermaidLink" >
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:choose>
+            <xsl:when test="substring-before($vodml-ref,':') = $docmods">
+                <xsl:choose>
+                    <xsl:when test="substring-before($vodml-ref,':')= $thisModelName">
+                        <xsl:value-of select="concat('link ', vf:nameFromVodmlref($vodml-ref),' ',$dq,'../',substring-after($vodml-ref,':'),$dq)"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="concat('link ',vf:nameFromVodmlref($vodml-ref),' ',$dq,'../../',substring-before($vodml-ref,':'),'/',substring-after($vodml-ref,':'),$dq)"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <!-- do nothing - TODO link to external? -->
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
