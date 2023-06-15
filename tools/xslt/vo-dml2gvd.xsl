@@ -31,7 +31,7 @@ intermediate representation to a GraphViz dot file.
   <xsl:param name="project.name"/>
   <xsl:param name="usesubgraph" select="'F'"/>
   <!-- if mode is stadalone then the links are internal -->
-  <xsl:param name="mode" select="standalone"/>
+  <xsl:param name="linkmode" select="standalone"/>
   
   <xsl:variable name="packages" select="//package/vodml-id"/>
 
@@ -293,9 +293,9 @@ must create next as variable to select from inside the atomic context of the dis
 
   <xsl:template name="hyperlink" as="xsd:string">
     <xsl:choose>
-      <xsl:when test="$mode = 'md'">
+      <xsl:when test="$linkmode = 'md'"> <!-- note assuming mkdocs "directory style linking" -->
         <xsl:variable name="vodmlid" select="tokenize(vf:asvodmlref(current()),':')" as="xsd:string*"/>
-        <xsl:value-of select="concat('URL=',$dq,'/',$vodmlid[1],'/',$vodmlid[2],$dq)"/>
+        <xsl:value-of select="concat('URL=',$dq,'../',$vodmlid[1],'/',$vodmlid[2],$dq)"/>
       </xsl:when>
       <xsl:otherwise><xsl:value-of select="concat('URL=',$dq,'#',vodml-id,$dq)"/></xsl:otherwise>
     </xsl:choose>

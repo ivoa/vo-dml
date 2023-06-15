@@ -55,7 +55,7 @@ class VodmlGradlePlugin: Plugin<Project> {
         project.tasks.register(VODML_SITE_DOC_TASK_NAME,VodmlSiteTask::class.java) {
             it.description = "create mkdocs site for VO-DML models"
             setVodmlFiles(it,extension,project)
-            it.docDir.set(extension.outputDocDir)
+            it.docDir.set(extension.outputSiteDir)
             it.modelsToDocument.set(extension.modelsToDocument)
         }
         // register the schame task

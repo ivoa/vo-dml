@@ -11,3 +11,4 @@ tools/gradletooling/gradle-plugin/bin/
 /venv/
 /tools/gradletooling/sample/.pytest_cache/
 /doc/site/
+/tools/gradletooling/sample/docs/

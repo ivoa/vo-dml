@@ -17,7 +17,6 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                 xmlns:bnd="http://www.ivoa.net/xml/vodml-binding/v0.9.1"
-
 >
     <xsl:output method="text" encoding="UTF-8" indent="no" />
     <xsl:output method="xml" encoding="UTF-8" indent="no" name="svgform" omit-xml-declaration="true" />
@@ -151,7 +150,7 @@ The whole model is represented in a model diagram below
         <xsl:apply-templates select="(primitiveType|enumeration|dataType|objectType|package)"/>
     </xsl:template>
 
-  <xsl:template match="primitiveType|enumeration|dataType|objectType" mode="desc">
+  <xsl:template match="primitiveType|dataType|objectType" mode="desc">
       <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
 # <xsl:if test="@abstract">_abstract_</xsl:if>  <xsl:value-of select="concat(' ', name(),' ', name)"/>
 
@@ -160,8 +159,9 @@ The whole model is represented in a model diagram below
           <xsl:apply-templates select="extends/vodml-ref"/>
           &cr;
       </xsl:if>
-
+&cr;&cr;
       <xsl:apply-templates select="description"/>
+&cr;
       <xsl:if test="name() != 'primitiveType'">
       <xsl:apply-templates select="current()" mode="mermdiag"/>
 
@@ -180,8 +180,23 @@ The whole model is represented in a model diagram below
     </xsl:if>
 </xsl:if>
 
-
   </xsl:template>
+    <xsl:template match="enumeration" mode="desc">
+        <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
+# <xsl:if test="@abstract">_abstract_</xsl:if>  <xsl:value-of select="concat(' ', name(),' ', name)"/>
+
+&cr;
+
+
+        <xsl:apply-templates select="description"/>
+        <xsl:apply-templates select="current()" mode="mermdiag"/>
+
+## Values
+
+        <xsl:apply-templates select="literal"/>
+
+    </xsl:template>
+
     <xsl:template match="package" mode="desc">
 # Package <xsl:value-of select="concat(name,$nl)"/>
 
@@ -198,7 +213,6 @@ The whole model is represented in a model diagram below
     </xsl:template>
 
     <xsl:template match="description">
-        &cr;&cr;
         <xsl:if test="not(matches(text(),'^\s*TODO'))"><xsl:value-of select='.'/></xsl:if><xsl:text></xsl:text>
     </xsl:template>
 
@@ -292,7 +306,7 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
     </xsl:template>
 
     <xsl:template match="literal">
- *  <xsl:value-of select="name"/><xsl:text> </xsl:text><xsl:apply-templates select="description"/>&cr;
+ *  <xsl:value-of select="concat('*',name,'*')"/><xsl:text> - </xsl:text><xsl:apply-templates select="description"/>&cr;
     </xsl:template>
 
     <xsl:template match="extends">

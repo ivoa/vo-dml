@@ -7,7 +7,7 @@ import ru.vyarus.gradle.plugin.python.task.PythonTask
  * 
  */
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.3.21"
+    id("net.ivoa.vo-dml.vodmltools") version "0.3.22"
 //    id ("com.diffplug.spotless") version "5.17.1"
     id("ru.vyarus.use-python") version "3.0.0"
 
@@ -42,7 +42,10 @@ vodml {
             )
         )
     )
+    outputDocDir.set(layout.projectDirectory.dir("docs"))
+    outputSiteDir.set(outputDocDir)
     vodslDir.set(vodmlDir) // same place for source models
+    modelsToDocument.set("sample,filter,coords,jpatest,lifecycleTest")
 }
 
 

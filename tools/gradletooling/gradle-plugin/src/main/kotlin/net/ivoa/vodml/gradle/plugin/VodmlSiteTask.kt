@@ -35,7 +35,7 @@ import javax.inject.Inject
              val shortname = it.nameWithoutExtension
              logger.info("doing graphviz generation")
              var outfile = docDir.file(shortname +".gvd")
-             Vodml2Gvd.doTransform(it.absoluteFile, mapOf("mode" to "md"),
+             Vodml2Gvd.doTransform(it.absoluteFile, mapOf("linkmode" to "md"),
                  actualCatalog, outfile.get().asFile)
 
              val proc = ProcessBuilder(listOf(

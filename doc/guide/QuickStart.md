@@ -47,18 +47,19 @@ vodml {
 ```
 section in the `build.gradle.kts` file.
 
-* vodmlDir - the default is `src/main/vo-dml`
+* _vodmlDir_ - the default is `src/main/vo-dml`
   ```kotlin
   vodmlDir.set(file("vo-dml"))
   ```
   will set the directory to be `vo-dml`
-* vodmlFiles - this is set by default to be all the `*.vo-dml.xml` files in the vodmlDir, but can be individually set
-* bindingFiles - the files that specify the mapping details between the models and the generated code
+* _vodmlFiles_ - this is set by default to be all the `*.vo-dml.xml` files in the vodmlDir, but can be individually overridden.
+* _bindingFiles_ - the files that specify the mapping details between the models and the generated code.
 
-* outputDocDir - where the generated documentation is created - default `build/generated/docs/vodml/`
-* outputJavaDir - where the generated Java is created - the default is `build/generated/sources/vodml/java/` and it should not 
+* _outputDocDir_ - where the generated documentation is created by the `gradle vodmlDoc` command- default `build/generated/docs/vodml/`.
+* _outputSiteDir_ - where the [mkdocs](https://www.mkdocs.org) suitable model description is created by the `gradle vodmlSite` command - default `build/generated/docs/vodml-site`.
+* _outputJavaDir_ - where the generated Java is created - the default is `build/generated/sources/vodml/java/` and it should not 
   be necessary to ever alter this as gradle will integrate this automatically into the various source paths.
-* catalogFile - in general it is not necessary to set this, as the plugin will create a catalogue file automatically from the vodmlDir and vodmlFiles properties (as well as including files in any dependencies that also contain VO-DML models)
+* _catalogFile_ - in general it is not necessary to set this, as the plugin will create a catalogue file automatically from the vodmlDir and vodmlFiles properties (as well as including files in any dependencies that also contain VO-DML models)
   A catalogue file is necessary as the rest of the tooling is designed to use only the filename (no path) for inclusions and references.
   If it is desired to create a file manually for a special purpose, then the file should have the format as below - it should be noted that all references to model files will have to be specified if this is done.
 ```xml
