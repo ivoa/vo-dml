@@ -630,6 +630,10 @@
         <xsl:param name="filename" as="xsd:string"/>
         <xsl:value-of select="$mapping/bnd:mappedModels/model[file=$filename]/name"/>
     </xsl:function>
+    <xsl:function name="vf:fileNameFromModelName" as="xsd:string"><!-- note allowed empty sequence -->
+        <xsl:param name="model" as="xsd:string"/>
+        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$model]/file"/>
+    </xsl:function>
     <xsl:function name="vf:element4vodmlref" as="element()"> <!-- once rest of code working - can remove this and just use key directly -->
         <xsl:param name="vodml-ref" as="xsd:string" />
         <xsl:variable name="prefix" select="substring-before($vodml-ref,':')" />

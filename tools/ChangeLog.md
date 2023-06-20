@@ -25,3 +25,4 @@
 * 0.3.20 updates to model documentation generation
 * 0.3.21 General improvements/bug fixes as a result of processing a wider variety of models
 * 0.3.22 add site documentation including mermaid diagrams
+* 0.3.23 improved navigation in the generated site.

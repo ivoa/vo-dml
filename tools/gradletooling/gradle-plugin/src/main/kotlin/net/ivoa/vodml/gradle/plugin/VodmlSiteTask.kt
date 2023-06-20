@@ -1,5 +1,9 @@
 package net.ivoa.vodml.gradle.plugin
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
@@ -68,6 +72,18 @@ import javax.inject.Inject
 
 
          }
+
+         val mapper = ObjectMapper()
+         var allnav = mapper.createArrayNode();
+         vodmlFiles.forEach {
+             val shortname = it.nameWithoutExtension
+             val infile =  docDir.file("${shortname}_nav.json").get().asFile
+             val json = mapper.readTree(infile)
+             allnav.add(json)
+         }
+         val outmapper = ObjectMapper(YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER))
+         outmapper.writeValue(File("allnav.yml"), allnav)
+
 
      }
 

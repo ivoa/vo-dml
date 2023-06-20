@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "net.ivoa.vo-dml"
-version = "0.3.22"
+version = "0.3.23"
 
 repositories {
     mavenLocal() // FIXME remove this when releasing - just here to pick up local vodsl updates
@@ -33,6 +33,7 @@ dependencies {
     implementation("name.dmaus.schxslt:java:3.1.1") // for modern schematron
     implementation("org.xmlresolver:xmlresolver:4.5.2") // for xml catalogues - note that the apache xml-commons resolver is out of date
     implementation("org.javastro.vodsl:vodslparser:0.4.5") //standalone vodsl parser
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
 
 
     // Align versions of all Kotlin components

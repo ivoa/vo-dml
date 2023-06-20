@@ -34,7 +34,7 @@
   @javax.xml.bind.annotation.XmlType( name = "<xsl:value-of select="name"/>")
   <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
   <xsl:choose>
-      <xsl:when test="vf:hasSubTypes($vodml-ref)">
+      <xsl:when test="vf:hasSubTypes($vodml-ref)"> <!-- TODO perhaps only necessary if abstract -->
   @javax.xml.bind.annotation.XmlSeeAlso({ <xsl:value-of select="string-join(for $s in vf:subTypes($vodml-ref) return concat(vf:QualifiedJavaType(vf:asvodmlref($s)),'.class'),',')"/>  })
   @com.fasterxml.jackson.annotation.JsonSubTypes({
           <xsl:value-of select="string-join(for $s in vf:subTypes($vodml-ref) return
@@ -43,8 +43,14 @@
           <xsl:value-of select="$jsontypinfo" />
       </xsl:when>
       <xsl:otherwise>
-          <!-- actually only necessary when there is a supertype - but probably harmless otherwise -->
-  @com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME )
+          <xsl:choose>
+              <xsl:when test="extends">
+@com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME )
+              </xsl:when>
+              <xsl:otherwise>
+@com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NONE )
+              </xsl:otherwise>
+          </xsl:choose>
       </xsl:otherwise>
   </xsl:choose>
 

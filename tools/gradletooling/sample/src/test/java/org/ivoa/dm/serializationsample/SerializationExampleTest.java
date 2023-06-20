@@ -1,4 +1,9 @@
 package org.ivoa.dm.serializationsample;
+
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
 /*
  * Created on 16/05/2023 by Paul Harrison (paul.harrison@manchester.ac.uk).
  */
@@ -9,7 +14,10 @@ public class SerializationExampleTest extends org.ivoa.vodml.testing.AutoRoundTr
       MyModelModel retval = new MyModelModel();
       Refa refa = new Refa("a value");
       Refb refb = new Refb("a name", "another val");
-      SomeContent c = new SomeContent("a z val", refa, refb);
+
+      List<BaseC> cc = List.of(new Dcont("a D","dval"), new Econt("an E", "eval"));
+
+      SomeContent c = new SomeContent("a z val",  cc, refa, refb);
       retval.addContent(c);
 
       return retval;
@@ -18,5 +26,10 @@ public class SerializationExampleTest extends org.ivoa.vodml.testing.AutoRoundTr
    @Override
    public void testModel(org.ivoa.dm.serializationsample.MyModelModel myModelModel) {
 
+   }
+
+   @Test
+   public void testStandaloneList(){
+      List<BaseC> cc = List.of(new Dcont("a D","dval"), new Econt("an E", "eval"));
    }
 }

@@ -20,6 +20,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 >
     <xsl:output method="text" encoding="UTF-8" indent="no" />
     <xsl:output method="xml" encoding="UTF-8" indent="no" name="svgform" omit-xml-declaration="true" />
+    <xsl:output method="text" encoding="UTF-8" indent="no" name="nav" />
 
   <xsl:param name="binding"/>
   <!-- IF Graphviz png and map are available use these  -->
@@ -31,12 +32,14 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         </xsl:choose>
     </xsl:variable>
     <xsl:param name="modelsToDocument" select="$modname"/>
+    <xsl:param name="autoGenDirName" select="'generated'"/>
 
     <xsl:variable name="docmods" as="xsd:string*">
         <xsl:sequence select="tokenize($modelsToDocument,',')"/>
     </xsl:variable>
 
     <xsl:variable name="thisModelName" select="/vo-dml:model/name"/>
+
 
   <xsl:include href="binding_setup.xsl"/>
   
@@ -129,7 +132,69 @@ The whole model is represented in a model diagram below
 
       <!-- now main doc for each type in separate files -->
      <xsl:apply-templates select="(primitiveType|enumeration|dataType|objectType|package)"/>
+     <xsl:apply-templates select="current()" mode="nav"/>
   </xsl:template>
+
+    <xsl:template match="vo-dml:model" mode="nav">
+        <xsl:variable name="outf" select="concat(substring-before(vf:fileNameFromModelName(name),'.xml'),'_nav.json')"/>
+        <xsl:result-document href="{$outf}" format="nav" >
+
+            {
+            "<xsl:value-of select="concat(name,' model')" />": [
+            {
+            "Overview": "<xsl:value-of select="concat($autoGenDirName,'/',substring-before(vf:fileNameFromModelName(name),'.xml'),'.md')"/>"
+            }
+
+            <xsl:if test="//objectType">
+                ,{
+                "ObjectTypes": [
+
+                <xsl:for-each select="//objectType">
+                    <xsl:sort select="name"/>
+                    <xsl:call-template name="jsonNav"/>
+                    <xsl:if test="position() != last()">,</xsl:if>
+                </xsl:for-each>
+                ]
+                }
+            </xsl:if>
+            <xsl:if test="//dataType">
+                ,{
+                "DataTypes": [
+                <xsl:for-each select="//dataType">
+                    <xsl:sort select="name"/>
+                    <xsl:call-template name="jsonNav"/>
+                    <xsl:if test="position() != last()">,</xsl:if>
+                </xsl:for-each>
+                ]
+                }
+            </xsl:if>
+            <xsl:if test="//primitiveType">
+                ,{
+                "PrimitiveTypes": [
+                <xsl:for-each select="//primitiveType">
+                    <xsl:sort select="name"/>
+                    <xsl:call-template name="jsonNav"/>
+                    <xsl:if test="position() != last()">,</xsl:if>
+                </xsl:for-each>
+                ]
+                }
+            </xsl:if>
+            <xsl:if test="//enumeration">
+                ,{
+                "Enumerations": [
+                <xsl:for-each select="//enumeration">
+                    <xsl:sort select="name"/>
+                    <xsl:if test="position() != 1">,</xsl:if>
+                    <xsl:call-template name="jsonNav"/>
+                </xsl:for-each>
+                ]
+                }
+            </xsl:if>
+            ]
+            }
+
+        </xsl:result-document>
+    </xsl:template>
 
   <xsl:template match="primitiveType|enumeration|dataType|objectType">
       <xsl:variable name="vodml-id" select="tokenize(vf:asvodmlref(current()),':')" as="xsd:string*"/>
@@ -420,6 +485,12 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
         <xsl:variable name="vodml-id" select="tokenize(vf:asvodmlref(current()),':')" as="xsd:string*"/>
         <xsl:value-of select="concat('[',$vodml-id[2],'](',$vodml-id[1],'/',$vodml-id[2],'.md)')"/>
     </xsl:template>
+
+    <xsl:template name="jsonNav" as="xsd:string" > <!-- only works from top level overview -->
+        <xsl:variable name="vodml-id" select="tokenize(vf:asvodmlref(current()),':')" as="xsd:string*"/>
+        <xsl:value-of select="concat('{',$dq,$vodml-id[2],$dq,' : ',$dq,$autoGenDirName,'/',$vodml-id[1],'/',$vodml-id[2],'.md',$dq,'}')"/>
+    </xsl:template>
+
 
     <xsl:function name="vf:doLink" >
         <xsl:param name="vodml-ref" as="xsd:string"/>
