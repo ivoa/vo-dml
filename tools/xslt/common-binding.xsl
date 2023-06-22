@@ -300,6 +300,11 @@
         <xsl:sequence select="count($models/key('ellookup',$vodml-ref)/extends) > 0"/>
     </xsl:function>
 
+    <!-- number of supertypes in hierarchy -->
+    <xsl:function name="vf:numberSupertypes" as="xsd:integer">
+        <xsl:param name="vodml-ref"/>
+        <xsl:sequence select="count(vf:baseTypeIds($vodml-ref))"/>
+    </xsl:function>
 
 
     <!-- is the type (or supertypes) contained anywhere -->
