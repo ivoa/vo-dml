@@ -110,6 +110,11 @@ from __future__ import annotations
 import dataclasses
 from typing import Optional, List
 from enum import Enum
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Double
+from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped
+from vodml_runtime.registry import mapper_registry
+
 
 </xsl:text>
           <xsl:for-each select="distinct-values((*/((attribute|reference|composition|constraint[contains(@xsi:type,'SubsettedRole')])/datatype/vodml-ref)|*/extends/vodml-ref))">
@@ -121,7 +126,6 @@ from <xsl:value-of select="vf:PythonModule(.)"/> import <xsl:value-of select="to
                       </xsl:if>
               </xsl:if>
           </xsl:for-each>
-
 
           <xsl:apply-templates select="objectType|dataType|enumeration|primitiveType" mode="file">
               <xsl:sort select="vf:numberSupertypes(vf:asvodmlref(current()))" data-type="number"/>
@@ -155,24 +159,42 @@ from <xsl:value-of select="vf:PythonModule(.)"/> import <xsl:value-of select="to
           <xsl:when test="name()='composition' and multiplicity/maxOccurs != 1" >
               <xsl:choose>
                   <xsl:when test="vf:isSubSetted(vf:asvodmlref(.))">
-                      <xsl:value-of select="concat(name,' : List[',$type, '] =field(default_factory=list, kw_only=True,metadata={',$dq,'type',$dq,':',$dq,'Element',$dq,'})')" />
+                      <xsl:value-of select="concat(name,' : List[',$type, ']')"/> = field(default_factory=list, kw_only=True,
+                      metadata={
+                      "type": "Element"
+                      })
                   </xsl:when>
                   <xsl:otherwise>
-                      <xsl:value-of select="concat(name,' : List[',$type, '] =field(default_factory=list, kw_only=True,metadata={',$dq,'type',$dq,':',$dq,'Element',$dq,'})')" />
+                      <xsl:value-of select="concat(name,' : List[',$type, ']')"/> = dataclasses.field(default_factory=list, kw_only=True,
+                      metadata={
+                          "type": "Element"
+                      })
                   </xsl:otherwise>
               </xsl:choose>
 
           </xsl:when>
           <xsl:otherwise>
               <xsl:choose>
-                  <xsl:when test="xsd:int(multiplicity/maxOccurs) gt 1">
-                      <xsl:value-of select="concat(name,' : List[',$type, ']=field(default_factory=list, kw_only=True,metadata={',$dq,'type',$dq,':',$dq,'Element',$dq,'})')" /> <!-- IMPL arrays are just lists for now -->
+                  <xsl:when test="xsd:int(multiplicity/maxOccurs) gt 1"> <!-- IMPL arrays are just lists for now -->
+                      <xsl:value-of select="concat(name,' : List[',$type, ']')"/> = dataclasses.field(default_factory=list, kw_only=True,
+                      metadata={
+                      "type": "Element"
+                      })
                   </xsl:when>
                   <xsl:when test="multiplicity/maxOccurs = -1">
-                      <xsl:value-of select="concat(name,' : List[',$type, ']=field(default_factory=list, kw_only=True,metadata={',$dq,'type',$dq,':',$dq,'Element',$dq,'})')" />
+                      <xsl:value-of select="concat(name,' : List[',$type, ']')"/> = dataclasses.field(default_factory=list, kw_only=True,
+                      metadata={
+                      "type": "Element"
+                      })
                   </xsl:when>
                   <xsl:otherwise>
-                      <xsl:value-of select="concat(name, ': ',$type)" />
+                      <xsl:value-of select="concat(name, ': ',$type)" /> = dataclasses.field(kw_only=True,
+                         metadata = {
+                        <xsl:if test="vf:PythonFormat(datatype/vodml-ref)">
+                          "format":"<xsl:value-of select="vf:PythonFormat(datatype/vodml-ref)"/>"
+                        </xsl:if>
+
+                      })
                   </xsl:otherwise>
               </xsl:choose>
 
@@ -184,12 +206,14 @@ from <xsl:value-of select="vf:PythonModule(.)"/> import <xsl:value-of select="to
     <!-- template class creates a java class (JPA compliant) for UML object & data types -->
   <xsl:template match="objectType|dataType" mode="content">
     <xsl:param name="path"/>
-    <xsl:variable name="vodml-ref"><xsl:apply-templates select="vodml-id" mode="asvodml-ref"/></xsl:variable>
+    <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
     <xsl:text>
 </xsl:text>
-    <xsl:call-template name="vodmlAnnotation"/><xsl:text>
-
-@dataclasses.dataclass</xsl:text><xsl:if test="@abstract"><xsl:text>(init=False)</xsl:text></xsl:if>
+    <xsl:call-template name="vodmlAnnotation"/>
+    <xsl:if test="local-name() eq 'objectType'">
+@mapper_registry.mapped
+    </xsl:if>
+@dataclasses.dataclass<xsl:if test="@abstract"><xsl:text>(init=False)</xsl:text></xsl:if>
 class <xsl:value-of select="name"/>
       <xsl:if test="extends"><xsl:value-of select="concat('(',vf:PythonType(extends/vodml-ref),')')"/></xsl:if>:
     """
@@ -199,11 +223,36 @@ class <xsl:value-of select="name"/>
     *
     * <xsl:value-of select="$vodmlauthor"/>
     """
-      <xsl:if test="local-name() eq 'objectType' and not (extends) and not(attribute/constraint[ends-with(@xsi:type,':NaturalKey')])" >
-
-          <xsl:if test="vf:referredTo($vodml-ref)">
-           </xsl:if>
-
+      <xsl:if test="local-name() eq 'objectType'">
+    __sa_dataclass_metadata_key__ = "sa"
+    __tablename__ = "<xsl:value-of select="name"/>"
+    <xsl:if test="vf:hasSubTypes($vodml-ref) or extends">
+    dtype: str = dataclasses.field(init=False,
+                 metadata={
+                      "sa": Column(String)
+                    }
+                )
+    __mapper_args__ = {
+        "polymorphic_identity": "<xsl:value-of select="$vodml-ref"/>",
+        <xsl:if test="not(extends)">
+        "polymorphic_on": "dtype",
+        </xsl:if>
+    }
+    </xsl:if>
+      <xsl:if test="not(attribute/constraint[ends-with(@xsi:type,':NaturalKey')])" >
+          <xsl:choose>
+              <xsl:when test="not(extends)">
+    id: int = dataclasses.field(init=False, metadata={
+                  "sa": Column(Integer, primary_key=True)
+                  })
+              </xsl:when>
+              <xsl:otherwise>
+    id: int = dataclasses.field(init=False, metadata={
+                  "sa": Column(Integer, ForeignKey("<xsl:value-of select="vf:PythonType(extends/vodml-ref)"/>.id"), primary_key=True)
+                  })
+              </xsl:otherwise>
+          </xsl:choose>
+     </xsl:if>
       </xsl:if>
 <!-- 
       /** serial uid = last modification date of the UML model */
@@ -215,12 +264,6 @@ class <xsl:value-of select="name"/>
       <xsl:apply-templates select="constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="declare" />
 <!--      <xsl:apply-templates select="." mode="constructor"/>-->
 
-
-      <xsl:if test="vf:referredTo($vodml-ref) and attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
-          <!--TODO deal with multiple natural keys -->
-          <!-- TODO this assumes that the natural key is a string -->
-
-      </xsl:if>
 
       <xsl:if test="not(@abstract)">
       </xsl:if>
@@ -298,7 +341,26 @@ class </xsl:text><xsl:value-of select="name"/>:
                             <xsl:value-of select="concat(name,': Optional[',$type,']')"/><xsl:text> = dataclasses.field(kw_only=True, default=None)</xsl:text>
                         </xsl:when>
                        <xsl:otherwise>
-                           <xsl:value-of select="concat(name,': ',$type)"/>
+                           <xsl:value-of select="concat(name,': ',$type)"/> = dataclasses.field (kw_only=True,
+                           metadata={
+                              <xsl:variable name="meta" as="xsd:string*">
+                                  <xsl:choose>
+                                      <xsl:when test="constraint[ends-with(@xsi:type,':NaturalKey')]"> <!-- FIXME need to get type of index -->
+                                          <xsl:text>"sa": Column(String, primary_key=True)</xsl:text>
+                                      </xsl:when>
+                                      <xsl:otherwise>
+                                          <xsl:if test="vf:PythonFormat(datatype/vodml-ref)">
+                                              <xsl:sequence select="concat($dq,'format',$dq,': ',$dq,vf:PythonFormat(datatype/vodml-ref),$dq)"/>
+                                          </xsl:if>
+                                          <xsl:if test="vf:PythonAlchemyType(datatype/vodml-ref)">
+                                              <xsl:sequence select="concat($dq,'sa',$dq,': Column(',vf:PythonAlchemyType(datatype/vodml-ref),')')"/>
+                                          </xsl:if>
+                                      </xsl:otherwise>
+                                  </xsl:choose>
+                              </xsl:variable>
+                              <xsl:value-of select="string-join($meta,',')"/>
+                              }
+                           )
                        </xsl:otherwise>
                     </xsl:choose>
                 </xsl:otherwise>
@@ -320,8 +382,14 @@ class </xsl:text><xsl:value-of select="name"/>:
             <xsl:variable name="name" select="tokenize(role/vodml-ref/text(),'[.]')[last()]"/>
             <xsl:text>
     </xsl:text>
-            <xsl:value-of select="concat($name,': ',$javatype)"/><xsl:text>
-    """</xsl:text>
+            <xsl:value-of select="concat($name,': ',$javatype)"/>= dataclasses.field(kw_only=True,
+                  metadata = {
+                     <xsl:if test="vf:PythonFormat(datatype/vodml-ref)">
+                         "format": "<xsl:value-of select="vf:PythonFormat(datatype/vodml-ref)"/>"
+                     </xsl:if>
+                }
+                )
+    """
     * Attribute <xsl:value-of select="name"/> : subsetted
     *
             <xsl:apply-templates select="$subsetted" mode="desc"/>.
@@ -344,7 +412,11 @@ class </xsl:text><xsl:value-of select="name"/>:
                 <xsl:value-of select="concat(name, ': List[',$type,']=dataclasses.field(default_factory=list, kw_only=True, metadata={',$dq,'type',$dq,': ',$dq,'Element',$dq,'})')"/> # IMPL is subsetted
             </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="concat(name, ': List[',$type,']=dataclasses.field(default_factory=list, kw_only=True, metadata={',$dq,'type',$dq,': ',$dq,'Element',$dq,'})')"/>
+                <xsl:value-of select="concat(name, ': List[',$type,']')"/> = dataclasses.field(default_factory=list, kw_only=True,
+                metadata={
+                "type": "Element"
+                ,"sa": relationship("<xsl:value-of select="$type"/>")
+                })
             </xsl:otherwise>
         </xsl:choose>
         <xsl:text>

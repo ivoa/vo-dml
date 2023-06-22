@@ -84,6 +84,23 @@
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:value-of select="vf:FullPythonType($vodml-ref,false())"/>
     </xsl:function>
+    <!-- this function is a bit of a hack for xsdata https://xsdata.readthedocs.io/en/latest/data-types.html#converters - would be better to have a more general mechanism -->
+    <xsl:function name="vf:PythonFormat" as="xsd:string?">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:if test="$vodml-ref='ivoa:datetime'">
+            <xsl:sequence select="'%y-%m-%dT%H:%M:%SZ'"/>
+       </xsl:if>
+    </xsl:function>
+    <xsl:function name="vf:PythonAlchemyType" as="xsd:string?">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:choose>
+            <xsl:when test="$vodml-ref='ivoa:datetime'"><xsl:sequence select="'DateTime'"/></xsl:when>
+            <xsl:when test="$vodml-ref='ivoa:string'"><xsl:sequence select="'String'"/></xsl:when>
+            <xsl:when test="$vodml-ref='ivoa:integer'"><xsl:sequence select="'Integer'"/></xsl:when>
+            <xsl:when test="$vodml-ref='ivoa:real'"><xsl:sequence select="'Double'"/></xsl:when>
+            <xsl:otherwise><xsl:sequence/></xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
     <xsl:function name="vf:FullPythonType" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/> <!-- assumed to be fully qualified! i.e. also for elements in local model, the prefix is included! -->
         <xsl:param name="fullpath" as="xsd:boolean"/>

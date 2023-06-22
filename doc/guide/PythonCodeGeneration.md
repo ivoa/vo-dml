@@ -15,3 +15,8 @@ Depends on python 3.10+
 *NB* this is not feature complete - there is no serialization yet implemented
 
 
+## notes
+
+* difficult to make xsdata and sqlalchemy work together - probably this legacy style https://docs.sqlalchemy.org/en/20/orm/dataclasses.html#mapping-pre-existing-dataclasses-using-declarative-style-fields best
+* dataclasses -> composites? https://docs.sqlalchemy.org/en/20/orm/composites.html
+* 
