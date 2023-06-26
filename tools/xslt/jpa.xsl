@@ -374,10 +374,11 @@
       <xsl:otherwise>
 
         <xsl:if test="isOrdered">
-    @javax.persistence.OrderBy( value = "rank" )
+@javax.persistence.OrderBy( value = "rank" )
         </xsl:if>
-    @javax.persistence.OneToMany( cascade = javax.persistence.CascadeType.ALL, fetch = javax.persistence.FetchType.LAZY, targetEntity=<xsl:value-of select="concat(vf:JavaType(datatype/vodml-ref),'.class')" />)
-    @org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
+@javax.persistence.OneToMany(  cascade = javax.persistence.CascadeType.ALL, fetch = javax.persistence.FetchType.LAZY, targetEntity=<xsl:value-of select="concat(vf:JavaType(datatype/vodml-ref),'.class')" />)
+@javax.persistence.JoinColumn( name="<xsl:value-of select="concat(upper-case(current()/parent::*/name),'_ID')"/>")
+@org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
