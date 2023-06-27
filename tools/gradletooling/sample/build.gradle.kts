@@ -95,6 +95,7 @@ python {
     scope = PythonExtension.Scope.VIRTUALENV
     envPath = "../../../venv"
     environment = mapOf("PYTHONPATH" to layout.projectDirectory.dir("pythontest/generated").asFile.absolutePath
+                        + ":" + layout.projectDirectory.dir("../../../runtime/python").asFile.absolutePath
 //                     +":"+layout.projectDirectory.dir("../../../models/ivoa/build/generated/sources/vodml/python").asFile.absolutePath
     )
 
