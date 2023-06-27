@@ -17,6 +17,7 @@ nav:
       - Introduction: Transformers.md
       - Documentation: Documentation.md
       - Java Generation: JavaCodeGeneration.md
+      - Python Generation: PythonCodeGeneration.md
       - Serialization: Serialization.md
   - Writing Models:
       - Introduction: modelling/modellingIntro.md

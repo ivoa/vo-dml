@@ -9,7 +9,7 @@ the generated code uses java 1.8 constructs.
 The generated Java code depends on the [VO-DML java runtime library](https://github.com/ivoa/vo-dml/tree/master/runtime/java), which the plugin will automatically add to the
 dependencies along with the necessary JAXB and JPA libraries.
 
-# Generating The Java code
+## Generating The Java code
 
 The command
 ```shell
@@ -22,7 +22,7 @@ gradle build
 will compile and run tests on the generated code. In fact `gradle build` will 
 automatically run `gradle vodmlJavaGenerate` if the code is out of date because the model has been updated.
 
-# Characteristics of the Generated code
+## Characteristics of the Generated code
 
 In general the code creates POJOs or data classes - i.e. the classes have very little functionality
 apart from being stores of the data model. The functionality that they do have is described below.
@@ -30,7 +30,7 @@ apart from being stores of the data model. The functionality that they do have i
 
 
 
-## Instance Creation
+### Instance Creation
 
 To be JPA and JAXB compliant, the classes are Java beans with a no argument constructor, so they can be 
 default constructed and then getX/setX can be used on the properties.
@@ -43,7 +43,7 @@ a.setY(y);
 
 In addition, there are several other ways of creating objects
 
-### Full constructor
+#### Full constructor
 
 A constructor with all the possible properties included is
 
@@ -53,7 +53,7 @@ A a = new A(x,y);
 In addition there is a copy constructor, and for subclasses there is a constructor with arguments
 that consist of a superclass instance as well as the local members.
 
-### Fluent 
+#### Fluent 
 
 Each property has a withX(X x) function
 
@@ -61,7 +61,7 @@ Each property has a withX(X x) function
 A a = new A().withX(x).withY(y);
 ```
 
-### Fluent functional builder
+#### Fluent functional builder
 
 A static builder that takes a functional argument.
 
