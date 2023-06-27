@@ -181,13 +181,14 @@ public abstract class AbstractBaseValidation {
     /**
      * Write the contents of the database to a file.
      * @param em the entity manager for the database.
+     * @param filename The name of the file to write the DDL to.
      */
-    protected void dumpDbData(javax.persistence.EntityManager em) {
+    protected void dumpDbData(javax.persistence.EntityManager em, String filename) {
         //IMPL hibernate specific way of getting connection... generally dirty, see  https://stackoverflow.com/questions/3493495/getting-database-connection-in-pure-jpa-setup
             Session sess = em.unwrap(Session.class);
             sess.doWork(conn -> {
                 PreparedStatement ps = conn.prepareStatement("SCRIPT TO ?"); // this is H2db specific
-                ps.setString(1, "test_dump.sql");
+                ps.setString(1, filename);
                 ps.execute();
             });
     }

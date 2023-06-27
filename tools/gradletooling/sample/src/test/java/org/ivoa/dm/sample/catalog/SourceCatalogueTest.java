@@ -70,7 +70,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
 
 
         em.getTransaction().commit();
-       dumpDbData(em);
+       dumpDbData(em, "test_dump.sql");
         
 
     }
