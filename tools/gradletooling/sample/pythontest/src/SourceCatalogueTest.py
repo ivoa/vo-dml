@@ -78,12 +78,12 @@ class MyTestCase(unittest.TestCase):
         engine = create_engine("sqlite+pysqlite:///:memory:", echo=True, future=True)
 
         mapper_registry.metadata.create_all(engine)
-        with Session(engine) as session:
+        with Session(engine, expire_on_commit=False) as session:
             session.add_all([self.sc])
             session.commit()
             session.close()
             con = engine.raw_connection()
-            # con.execute("vacuum main into 'alchemytest.db'") # dumps the memory db to disk
+            con.execute("vacuum main into 'alchemytest.db'") # dumps the memory db to disk
             with open('alchemydump.sql', 'w') as p:
                 for line in con.iterdump():
                     p.write('%s\n' % line)

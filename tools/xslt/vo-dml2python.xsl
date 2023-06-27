@@ -111,7 +111,7 @@ import dataclasses
 from typing import Optional, List
 from enum import Enum
 from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Double
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, composite,mapped_column
 from sqlalchemy.orm import Mapped
 from vodml_runtime.registry import mapper_registry
 
@@ -254,6 +254,15 @@ class <xsl:value-of select="name"/>
           </xsl:choose>
      </xsl:if>
       </xsl:if>
+      <xsl:if test="vf:isContained($vodml-ref)">
+         <xsl:for-each select="vf:containingTypes($vodml-ref)"><!--TODO need to deal with natural keys -->
+    fk_<xsl:value-of select="concat(current()/name,':int = dataclasses.field(init=False,')"/>
+             metadata = {
+                "type": "Ignore",
+                "sa": Column("<xsl:value-of select="concat(upper-case(current()/name),'_ID')"/>", Integer, ForeignKey("<xsl:value-of select="concat(current()/name,'.id')"/>"))
+             })
+         </xsl:for-each>
+      </xsl:if>
 <!-- 
       /** serial uid = last modification date of the UML model */
       private static final long serialVersionUID = LAST_MODIFICATION_DATE;
@@ -330,10 +339,10 @@ class </xsl:text><xsl:value-of select="name"/>:
             <xsl:call-template name="vodmlAnnotation"/>
             <xsl:choose>
                 <xsl:when test="xsd:int(multiplicity/maxOccurs) gt 1">
-                    <xsl:value-of select="concat(name, ': List[',$type,'] =dataclasses.field(default_factory=list, kw_only=True, metadata={',$dq,'type',$dq,': ',$dq,'Element',$dq,'})')"/> <!-- IMPL arrays are just lists for now -->
+                    <xsl:value-of select="concat(name, ': List[',$type,'] = dataclasses.field(default_factory=list, kw_only=True, metadata={',$dq,'type',$dq,': ',$dq,'Element',$dq,'})')"/> <!-- IMPL arrays are just lists for now -->
                 </xsl:when>
                 <xsl:when test="xsd:int(multiplicity/maxOccurs) lt 0">
-                    <xsl:value-of select="concat(name, ': List[',$type,'] =dataclasses.field(default_factory=list, kw_only=True, metadata={',$dq,'type',$dq,': ',$dq,'Element',$dq,'})')"/>
+                    <xsl:value-of select="concat(name, ': List[',$type,'] = dataclasses.field(default_factory=list, kw_only=True, metadata={',$dq,'type',$dq,': ',$dq,'Element',$dq,'})')"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:choose>
@@ -341,7 +350,7 @@ class </xsl:text><xsl:value-of select="name"/>:
                             <xsl:value-of select="concat(name,': Optional[',$type,']')"/><xsl:text> = dataclasses.field(kw_only=True, default=None)</xsl:text>
                         </xsl:when>
                        <xsl:otherwise>
-                           <xsl:value-of select="concat(name,': ',$type)"/> = dataclasses.field (kw_only=True,
+                           <xsl:value-of select="concat(name,': ',$type)"/> = dataclasses.field(kw_only=True,
                            metadata={
                               <xsl:variable name="meta" as="xsd:string*">
                                   <xsl:choose>

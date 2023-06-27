@@ -335,7 +335,7 @@
 <!--                <xsl:message>contained <xsl:value-of select="concat($vodml-ref, ' ', count($models//(attribute|composition)/datatype[vodml-ref=$vodml-ref])>0)"/> </xsl:message>-->
                 <xsl:choose>
                     <xsl:when test="not($el/extends)">
-                        <xsl:value-of select="count($models//(attribute|composition)/datatype[vodml-ref=$vodml-ref])>0"/>
+                        <xsl:value-of select="count($models//(attribute|composition)/datatype[vodml-ref=$vodml-ref])>0"/><!-- TODO should this not be just composition? -->
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:value-of select="count($models//(attribute|composition)/datatype[vodml-ref=$vodml-ref])>0 or vf:isContained($el/extends/vodml-ref)"/>
@@ -349,6 +349,29 @@
 
     </xsl:function>
 
+    <xsl:function name="vf:containingTypes" as="element()*">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:choose>
+            <xsl:when test="$models/key('ellookup',$vodml-ref)">
+                <xsl:variable name="el" as="element()">
+                    <xsl:copy-of select="$models/key('ellookup',$vodml-ref)" />
+                </xsl:variable>
+                <!--                <xsl:message>contained <xsl:value-of select="concat($vodml-ref, ' ', count($models//(attribute|composition)/datatype[vodml-ref=$vodml-ref])>0)"/> </xsl:message>-->
+                <xsl:choose>
+                    <xsl:when test="not($el/extends)">
+                        <xsl:sequence select="$models//objectType[(attribute|composition)/datatype/vodml-ref=$vodml-ref]"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="($models//objectType[(attribute|composition)/datatype/vodml-ref=$vodml-ref] , vf:containingTypes($el/extends/vodml-ref))"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">type <xsl:value-of select="$vodml-ref"/> not in considered models</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:function>
 
     <xsl:function name="vf:importedModelNames" as="xsd:string*">
         <xsl:param name="thisModel" as="xsd:string"/>
