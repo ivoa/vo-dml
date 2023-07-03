@@ -26,9 +26,23 @@ class Point:
     def __composite_values__(self) -> Tuple[Any, ...]:
         """generate a row from a  CircleError"""
         return  self.x, self.y
-@mapper_registry.mapped
+
 @dataclasses.dataclass
 class Vertex:
+    start: Point
+    end: Point
+    @classmethod
+    def _generate(cls, x1: int, y1: int, x2: int, y2: int) -> Vertex:
+        """generate a Vertex from a row"""
+        return Vertex(Point(x1, y1), Point(x2, y2))
+
+    def __composite_values__(self) -> Tuple[Any, ...]:
+        """generate a row from a Vertex"""
+        return dataclasses.astuple(self.start) + dataclasses.astuple(self.end)
+
+@mapper_registry.mapped
+@dataclasses.dataclass
+class HasVertex:
     __table__ = Table("vertices", mapper_registry.metadata,
                       Column("id",Integer,Identity(),primary_key=True),
                       Column("x1", Integer),
@@ -38,29 +52,25 @@ class Vertex:
                       )
     __sa_dataclass_metadata_key__ = "sa"
 
-    id: int = dataclasses.field( init=False,
+    id: int = dataclasses.field(init=False,
                                          metadata={
                                              "sa": __table__.c.id
                                          }
                                          )
 
-    start: Point = dataclasses.field( metadata={
-        "sa": composite(__table__.c.x1,__table__.c.y1)
+    vx: Vertex = dataclasses.field(metadata={
+        "sa": composite(Vertex._generate,__table__.c.x1,__table__.c.y1,__table__.c.x2,__table__.c.y2)
     }
-    )
-    end: Point = dataclasses.field( metadata={
-           "sa": composite(__table__.c.x2, __table__.c.y2)
-         }
     )
 
     def __repr__(self):
-        return f"Vertex(start={self.start}, end={self.end})"
+        return f"Vertex(start={self.vx.start}, end={self.vx.end})"
 
 class CompositeTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.vert = Vertex(Point(1, 2), Point(3, 4))
+        cls.vert = HasVertex(Vertex(Point(1, 2), Point(3, 4)))
 
     def test_rdbserialize(self):
 

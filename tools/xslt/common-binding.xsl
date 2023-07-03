@@ -43,6 +43,7 @@
     <xsl:copy-of select="$models/vo-dml:model[name=$modelname]"/>
     </xsl:template>
 
+
     <xsl:function name="vf:JavaType" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:value-of select="vf:FullJavaType($vodml-ref,true())"/>
@@ -91,14 +92,25 @@
             <xsl:sequence select="'%y-%m-%dT%H:%M:%SZ'"/>
        </xsl:if>
     </xsl:function>
-    <xsl:function name="vf:PythonAlchemyType" as="xsd:string?">
+    <!-- also a bit of a hack will only be called on something that is a primitive -->
+    <xsl:function name="vf:PythonAlchemyType" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="mappedtype" select="vf:findmapping($vodml-ref,'python')"/>
         <xsl:choose>
-            <xsl:when test="$vodml-ref='ivoa:datetime'"><xsl:sequence select="'DateTime'"/></xsl:when>
-            <xsl:when test="$vodml-ref='ivoa:string'"><xsl:sequence select="'String'"/></xsl:when>
-            <xsl:when test="$vodml-ref='ivoa:integer'"><xsl:sequence select="'Integer'"/></xsl:when>
-            <xsl:when test="$vodml-ref='ivoa:real'"><xsl:sequence select="'Double'"/></xsl:when>
-            <xsl:otherwise><xsl:sequence/></xsl:otherwise>
+            <xsl:when test="$mappedtype != ''">
+                <xsl:choose>
+                    <xsl:when test="$mappedtype='datetime.datetime'"><xsl:sequence select="'sqlalchemy.DateTime'"/></xsl:when>
+                    <xsl:when test="$mappedtype='str'"><xsl:sequence select="'sqlalchemy.String'"/></xsl:when>
+                    <xsl:when test="$mappedtype='int'"><xsl:sequence select="'sqlalchemy.Integer'"/></xsl:when>
+                    <xsl:when test="$mappedtype='float'"><xsl:sequence select="'sqlalchemy.Double'"/></xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="'sqlalchemy.Ignore'"/> <!-- IMPL this is nonsense - should not really be called -->
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="'sqlalchemy.String'"/> <!-- IMPL assume locally defined primitive -->
+            </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
     <xsl:function name="vf:FullPythonType" as="xsd:string">
@@ -150,7 +162,7 @@
     <xsl:function name="vf:PythonImportedType" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:choose>
-            <xsl:when test="vf:hasMapping($vodml-ref,'pythom')">
+            <xsl:when test="vf:hasMapping($vodml-ref,'python')">
                 <xsl:value-of select="string-join(tokenize(vf:findmapping($vodml-ref,'python'),'\.')[position() > last() -1],'.')"/>
             </xsl:when>
             <xsl:otherwise>
@@ -161,7 +173,32 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
-
+    <xsl:function name="vf:PythonDataTypeMemberInfo" ><!--FIXME need to do something with references -->
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="supers" select="($models/key('ellookup',$vodml-ref),vf:baseTypes($vodml-ref))"/>
+        <xsl:for-each select="$supers/attribute">
+            <xsl:variable name="type" select="vf:el4vodmlref(current()/datatype/vodml-ref)"/>
+            <xsl:element name="member">
+                <xsl:attribute name="name" select="current()/name"/>
+                <xsl:attribute name="ptype" select="vf:PythonType(current()/datatype/vodml-ref)"/>
+                <xsl:attribute name="pyprim" select="vf:isPythonBuiltin(current()/datatype/vodml-ref)"/>
+                <xsl:choose>
+                    <xsl:when test="vf:PythonAlchemyType(current()/datatype/vodml-ref)">
+                        <xsl:attribute name="altype" select="vf:PythonAlchemyType(current()/datatype/vodml-ref)"/>
+                    </xsl:when>
+                    <xsl:when test="$type/name() = 'primitiveType'">
+                        <xsl:attribute name="altype" select="'sqlalchemy.String'"/><!--TODO assumption that underlying representation is string -->
+                    </xsl:when>
+                    <xsl:when test="$type/name() = 'enumeration'">
+                        <xsl:attribute name="altype" select="concat('sqlalchemy.Enum(',$type/name,')')"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:copy-of select="vf:PythonDataTypeMemberInfo(current()/datatype/vodml-ref)"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+        </xsl:for-each>
+    </xsl:function>
 
 
 
@@ -224,7 +261,7 @@
         </xsl:choose>
 
     </xsl:function>
-    <xsl:function name="vf:isPythonBuiltin" as="xsd:boolean">
+    <xsl:function name="vf:isPythonBuiltin" as="xsd:boolean"> <!-- TODO does this really mean python primitive? -->
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:variable name="modelname" select="substring-before($vodml-ref,':')" />
         <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/python-type/@built-in = 'true'"/>
@@ -648,17 +685,30 @@
 
 
     <!-- returns the vodml-refs of the members including inherited ones -->
-    <xsl:template name="allInheritedMembers" as="xsd:string*">
-        <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
-        <xsl:variable name="supers" select="(.,vf:baseTypes($vodml-ref))"/>
+    <xsl:function name="vf:allInheritedMembers" as="xsd:string*">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="supers" select="($models/key('ellookup',$vodml-ref),vf:baseTypes($vodml-ref))"/>
         <!--        <xsl:message>inherited <xsl:value-of select="concat($vodml-ref, ' subsets=',string-join($subsets,','),' members=',-->
         <!--        string-join(for $v in ($supers/attribute,$supers/composition,$supers/reference) return vf:asvodmlref($v), ',') )" /></xsl:message>-->
         <xsl:sequence>
             <xsl:for-each select="$supers/attribute,$supers/composition,$supers/reference">
-                <xsl:value-of select="vf:asvodmlref(.)"/>
+                <xsl:sequence select="vf:asvodmlref(.)"/>
             </xsl:for-each>
         </xsl:sequence>
-    </xsl:template>
+    </xsl:function>
+
+    <xsl:function name="vf:dataTypeInheritedMembers" as="element()*">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="supers" select="($models/key('ellookup',$vodml-ref),vf:baseTypes($vodml-ref))"/>
+        <!--        <xsl:message>inherited <xsl:value-of select="concat($vodml-ref, ' subsets=',string-join($subsets,','),' members=',-->
+        <!--        string-join(for $v in ($supers/attribute,$supers/composition,$supers/reference) return vf:asvodmlref($v), ',') )" /></xsl:message>-->
+        <xsl:sequence>
+            <xsl:for-each select="$supers/attribute,$supers/reference">
+                <xsl:sequence select="."/>
+            </xsl:for-each>
+        </xsl:sequence>
+    </xsl:function>
+
     <xsl:function name="vf:ns4model" as="xsd:string">
         <xsl:param name="s" as="xsd:string"/>
         <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$s]/xml-targetnamespace"/>
@@ -679,21 +729,9 @@
         <xsl:param name="model" as="xsd:string"/>
         <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$model]/file"/>
     </xsl:function>
-    <xsl:function name="vf:element4vodmlref" as="element()"> <!-- once rest of code working - can remove this and just use key directly -->
+    <xsl:function name="vf:el4vodmlref" as="element()?"> <!-- once rest of code working - can remove this and just use key directly -->
         <xsl:param name="vodml-ref" as="xsd:string" />
-        <xsl:variable name="prefix" select="substring-before($vodml-ref,':')" />
-        <xsl:if test="not($prefix) or $prefix=''">
-            <xsl:message>!!!!!!! ERROR No prefix found in Element4vodml-ref for <xsl:value-of select="$vodml-ref" /></xsl:message>
-        </xsl:if>
-        <xsl:variable name="vodml-id" select="substring-after($vodml-ref,':')" />
-        <xsl:choose>
-            <xsl:when test="$models/key('ellookup',$vodml-ref)">
-                <xsl:copy-of select="$models/key('ellookup',$vodml-ref)" />
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:message>**ERROR** failed to find '<xsl:value-of select="$vodml-ref" />'</xsl:message>
-            </xsl:otherwise>
-        </xsl:choose>
+        <xsl:sequence select="$models/key('ellookup',$vodml-ref)" />
     </xsl:function>
 
 </xsl:stylesheet>

@@ -1,14 +1,12 @@
 from datetime import datetime
 import unittest
 
-
 from xsdata.formats.dataclass.serializers import XmlSerializer
 from xsdata.formats.dataclass.context import XmlContext
 from xsdata.formats.dataclass.serializers.config import SerializerConfig
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
-
 
 from org.ivoa.dm.filter.filter import PhotometryFilter
 from org.ivoa.dm.samplemodel.sample_catalog import LuminosityMeasurement, SkyCoordinateFrame, AlignedEllipse
@@ -20,6 +18,7 @@ from org.ivoa.dm.samplemodel.sample_catalog import SourceClassification
 from org.ivoa.dm.samplemodel.sample_catalog import LuminosityType
 
 from vodml_runtime.registry import mapper_registry
+
 
 class MyTestCase(unittest.TestCase):
 
@@ -38,8 +37,10 @@ class MyTestCase(unittest.TestCase):
         cls.sc = SourceCatalogue(name="testCat",
                                  entry=[SDSSSource(name="testSource", classification=SourceClassification.AGN,
                                                    position=SkyCoordinate(frame=frame,
-                                                                          latitude=RealQuantity(value=52.5, unit=degree),
-                                                                          longitude=RealQuantity(value=2.5, unit=degree)),
+                                                                          latitude=RealQuantity(value=52.5,
+                                                                                                unit=degree),
+                                                                          longitude=RealQuantity(value=2.5,
+                                                                                                 unit=degree)),
                                                    positionError=ellipseError,
                                                    # note subsetting forces compile need AlignedEllipse
                                                    luminosity=[
@@ -49,8 +50,9 @@ class MyTestCase(unittest.TestCase):
                                                                              error=RealQuantity(value=.25, unit=jansky),
                                                                              filter=PhotometryFilter(bandName="C-Band",
                                                                                                      spectralLocation=
-                                                                                                     RealQuantity(value=5.0,
-                                                                                                                  unit=GHz),
+                                                                                                     RealQuantity(
+                                                                                                         value=5.0,
+                                                                                                         unit=GHz),
                                                                                                      dataValidityFrom=datetime.now(),
                                                                                                      dataValidityTo=datetime.now(),
                                                                                                      description="radio band",
@@ -61,7 +63,8 @@ class MyTestCase(unittest.TestCase):
                                                                              error=RealQuantity(value=.25, unit=jansky),
                                                                              filter=PhotometryFilter(bandName="L-Band",
                                                                                                      spectralLocation=RealQuantity(
-                                                                                                         value=1.5, unit=GHz),
+                                                                                                         value=1.5,
+                                                                                                         unit=GHz),
                                                                                                      dataValidityFrom=datetime.now(),
                                                                                                      dataValidityTo=datetime.now(),
                                                                                                      description="radio band",
@@ -72,18 +75,16 @@ class MyTestCase(unittest.TestCase):
 
                                  )
 
-
     def test_rdbserialize(self):
-
         engine = create_engine("sqlite+pysqlite:///:memory:", echo=True, future=True)
-
+        print("running test")
         mapper_registry.metadata.create_all(engine)
         with Session(engine, expire_on_commit=False) as session:
             session.add_all([self.sc])
             session.commit()
             session.close()
             con = engine.raw_connection()
-            con.execute("vacuum main into 'alchemytest.db'") # dumps the memory db to disk
+            con.execute("vacuum main into 'alchemytest.db'")  # dumps the memory db to disk
             with open('alchemydump.sql', 'w') as p:
                 for line in con.iterdump():
                     p.write('%s\n' % line)
