@@ -173,7 +173,7 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
-    <xsl:function name="vf:PythonDataTypeMemberInfo" ><!--FIXME need to do something with references -->
+    <xsl:function name="vf:PythonDataTypeMemberInfo" as="element()*" ><!--FIXME need to do something with references -->
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:variable name="supers" select="($models/key('ellookup',$vodml-ref),vf:baseTypes($vodml-ref))"/>
         <xsl:for-each select="$supers/attribute">
@@ -183,7 +183,7 @@
                 <xsl:attribute name="ptype" select="vf:PythonType(current()/datatype/vodml-ref)"/>
                 <xsl:attribute name="pyprim" select="vf:isPythonBuiltin(current()/datatype/vodml-ref)"/>
                 <xsl:choose>
-                    <xsl:when test="vf:PythonAlchemyType(current()/datatype/vodml-ref)">
+                    <xsl:when test="vf:findmapping(current()/datatype/vodml-ref,'python')">
                         <xsl:attribute name="altype" select="vf:PythonAlchemyType(current()/datatype/vodml-ref)"/>
                     </xsl:when>
                     <xsl:when test="$type/name() = 'primitiveType'">

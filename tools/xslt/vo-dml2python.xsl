@@ -279,7 +279,7 @@ class <xsl:value-of select="name"/>
         </xsl:variable>
         <xsl:if test="not(@abstract)"><!-- TODO - do not need if DataClass does not contain DataClasses -->
     @classmethod
-    def _generate(cls,
+    def _generate_sqla(cls,
         <xsl:message select="$memberinfo"/>
         <xsl:variable name="args" as="xsd:string*">
             <xsl:apply-templates select="$memberinfo//member[count(*) = 0]" mode="datt"/>
@@ -300,13 +300,28 @@ class <xsl:value-of select="name"/>
         </xsl:if>
     </xsl:template>
     <xsl:template match="member[not(*)]" mode="tuple">
-        <xsl:value-of select="concat('(self.',@name,',)')"/>
+        <xsl:choose>
+            <xsl:when  test="@pyprim = 'true'">
+                <xsl:value-of select="concat('(self.',@name,',)')"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="concat('(self.',@name,'.value,)')"/><!-- TODO - this only applies to VODML generated primitives - think about datetime -->
+            </xsl:otherwise>
+        </xsl:choose>
+
     </xsl:template>
     <xsl:template match="member[*]" mode="tuple">
-        <xsl:value-of select="concat('dataclasses.astuple(self.',@name,')')"/>
+        <xsl:value-of select="concat('self.',@name,'.__composite_values__()')"/>
     </xsl:template>
     <xsl:template match="member" mode="datt"> <!-- processes the output of PythonDataTypeMemberInfo -->
-        <xsl:value-of select="concat(string-join(ancestor-or-self::*/@name,'_'),': ', @ptype)"/>
+        <xsl:choose>
+            <xsl:when test="@pyprim = 'true'">
+                <xsl:value-of select="concat(string-join(ancestor-or-self::*/@name,'_'),': ', @ptype)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="concat(string-join(ancestor-or-self::*/@name,'_'),': str')"/>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     <xsl:template match="member[count(*)> 0]" mode="dcall"> <!-- processes the output of PythonDataTypeMemberInfo -->
             <xsl:value-of select="concat(@ptype,'(')"/>
@@ -315,7 +330,14 @@ class <xsl:value-of select="name"/>
                 <xsl:if test="count(following-sibling::*) > 0">, </xsl:if>
     </xsl:template>
     <xsl:template match="member" mode="dcall"> <!-- processes the output of PythonDataTypeMemberInfo -->
-        <xsl:value-of select="string-join(ancestor-or-self::*/@name,'_')"/>
+        <xsl:choose>
+            <xsl:when test="@pyprim = 'true'">
+                <xsl:value-of select="concat(@name,' = ',string-join(ancestor-or-self::*/@name,'_'))"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="concat(@name,' = ',@ptype,'(',string-join(ancestor-or-self::*/@name,'_'),')')"/>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:if test="count(following-sibling::* )>0">, </xsl:if>
     </xsl:template>
 
@@ -494,7 +516,8 @@ class </xsl:text><xsl:value-of select="name"/>:
 
                     <xsl:choose>
                         <xsl:when test="vf:isOptional(.)">
-                            <xsl:value-of select="concat(name,': Optional[',$type,']')"/>= dataclasses.field(default=None,kw_only=<xsl:value-of select="$kwstatus"/>,
+                            <xsl:value-of select="concat(name,': Optional[',$type,']')"/>= dataclasses.field(
+                            <xsl:if test="current()/parent::objectType">default=None,</xsl:if>kw_only=<xsl:value-of select="$kwstatus"/>,
                         </xsl:when>
                        <xsl:otherwise>
                            <xsl:value-of select="concat(name,': ',$type)"/> = dataclasses.field(kw_only=<xsl:value-of select="$kwstatus"/>,
@@ -514,10 +537,16 @@ class </xsl:text><xsl:value-of select="name"/>:
                                       <!-- do nothing -->
                                       </xsl:when>
                                       <xsl:otherwise>
-                                          <xsl:variable name="atts" as="xsd:string*">
-                                              <xsl:apply-templates select="vf:PythonDataTypeMemberInfo(datatype/vodml-ref)//member[not(*)]" mode="datt"/>
+                                          <xsl:variable name="meb">
+                                              <xsl:element name="meb">
+                                                  <xsl:copy-of select="vf:PythonDataTypeMemberInfo(datatype/vodml-ref)"/>
+                                              </xsl:element>
                                           </xsl:variable>
-                                          <xsl:sequence select="concat($dq,'sa',$dq,': sqlalchemy.orm.composite(',vf:PythonType(datatype/vodml-ref),'._generate,',
+                                          <xsl:message>xxx=<xsl:copy-of select="$meb"/> </xsl:message>
+                                          <xsl:variable name="atts" as="xsd:string*">
+                                              <xsl:apply-templates select="$meb//member[not(*)]" mode="datt"/>
+                                          </xsl:variable>
+                                          <xsl:sequence select="concat($dq,'sa',$dq,': sqlalchemy.orm.composite(',vf:PythonType(datatype/vodml-ref),'._generate_sqla,',
                                           string-join(for $x in $atts return
                                           concat('__table__.c.',current()/name,'_',substring-before($x,':')),', '),')')"/>
                                       </xsl:otherwise>
