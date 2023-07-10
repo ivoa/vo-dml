@@ -26,3 +26,4 @@
 * 0.3.21 General improvements/bug fixes as a result of processing a wider variety of models
 * 0.3.22 add site documentation including mermaid diagrams
 * 0.3.23 improved navigation in the generated site.
+* 0.3.24 improved python generation - removed join tables.

@@ -14,3 +14,4 @@ tools/gradletooling/gradle-plugin/bin/
 /tools/gradletooling/sample/docs/
 /tools/gradletooling/sample/allnav.yml
 /tools/gradletooling/sample/pythontest/generated/
+/tools/gradletooling/sample/mkdocs.yml

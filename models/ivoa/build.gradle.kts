@@ -1,5 +1,5 @@
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.3.23"
+    id("net.ivoa.vo-dml.vodmltools") version "0.3.24"
 //    id ("com.diffplug.spotless") version "5.17.1"
     `maven-publish`
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
@@ -18,8 +18,8 @@ version = "1.0-SNAPSHOT"
 
 vodml {
     vodmlDir.set(file("vo-dml"))
-    bindingFiles.setFrom(file("vo-dml/ivoa_base.vodml-binding.xml")
-    )
+    bindingFiles.setFrom(file("vo-dml/ivoa_base.vodml-binding.xml"))
+    outputPythonDir.set(layout.projectDirectory.dir("../../tools/gradletooling/sample/pythontest/generated"))
 
 }
 

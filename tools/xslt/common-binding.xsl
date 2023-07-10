@@ -81,6 +81,40 @@
           </xsl:otherwise>
       </xsl:choose>
   </xsl:function>
+
+    <xsl:function name="vf:CPPType" as="xsd:string">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:value-of select="vf:fullCPPType($vodml-ref,false())"/>
+    </xsl:function>
+    <xsl:function name="vf:fullCPPType" as="xsd:string">
+        <xsl:param name="vodml-ref" as="xsd:string"/> <!-- assumed to be fully qualified! i.e. also for elements in local model, the prefix is included! -->
+        <xsl:param name="fullpath" as="xsd:boolean"/>
+        <xsl:variable name="type">
+            <xsl:variable name="mappedtype" select="vf:findmapping($vodml-ref,'java')"/>
+            <xsl:choose>
+                <xsl:when test="$mappedtype != ''">
+                    <xsl:value-of select="$mappedtype"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:variable name="modelname" select="substring-before($vodml-ref,':')"/>
+
+                    <xsl:variable name="root" select="$mapping/bnd:mappedModels/model[name=$modelname]/java-package"/>
+                    <xsl:variable name="path"
+                                  select="string-join($models/key('ellookup',$vodml-ref)/(ancestor::*[name() != 'vo-dml:model']/string(name),concat(upper-case(substring(name,1,1)),substring(name,2))),'::')"/>
+                    <xsl:value-of select="concat($root,'::',$path)"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="$fullpath">
+                <xsl:value-of select="$type"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="tokenize($type,'\.')[last()]"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
     <xsl:function name="vf:PythonType" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:value-of select="vf:FullPythonType($vodml-ref,false())"/>
@@ -240,6 +274,9 @@
             <xsl:when test="$lang eq 'xsd'">
                 <xsl:copy-of select="$mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/xsd-type"/>
             </xsl:when>
+            <xsl:when test="$lang eq 'cpp'">
+                <xsl:copy-of select="$mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/cpp-type"/>
+            </xsl:when>
         </xsl:choose>
     </xsl:function>
 
@@ -253,6 +290,9 @@
             </xsl:when>
             <xsl:when test="$lang eq 'python'">
                 <xsl:value-of select="count($mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/python-type) > 0"/>
+            </xsl:when>
+            <xsl:when test="$lang eq 'cpp'">
+                <xsl:value-of select="count($mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/cpp-type) > 0"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:message terminate="yes">unknown language <xsl:value-of select="$lang"/> </xsl:message>

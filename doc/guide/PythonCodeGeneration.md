@@ -37,5 +37,5 @@ gradle pytest
 ## notes
 
 * difficult to make xsdata and SQlAlchemy work together as they both want to use the same typing style - the generated code is using [SQLAlchemy legacy style](https://docs.sqlalchemy.org/en/20/orm/dataclasses.html#mapping-pre-existing-dataclasses-using-declarative-style-fields) to allow both libraries to work simultaneously with the same dataclasses.
-* VO-DML dataTypes -> composites? https://docs.sqlalchemy.org/en/20/orm/composites.html
+* VO-DML dataTypes -> composites?  https://docs.sqlalchemy.org/en/20/orm/composites.html#nesting-composites
 * with Dataclasses kw_only attributes seem the only practical route when there is inheritance, otherwise ordering the kw arguments after the others is painful in the code...

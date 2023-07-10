@@ -7,6 +7,7 @@ from xsdata.formats.dataclass.serializers.config import SerializerConfig
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 from org.ivoa.dm.filter.filter import PhotometryFilter
 from org.ivoa.dm.samplemodel.sample_catalog import LuminosityMeasurement, SkyCoordinateFrame, AlignedEllipse
@@ -82,12 +83,19 @@ class MyTestCase(unittest.TestCase):
         with Session(engine, expire_on_commit=False) as session:
             session.add_all([self.sc])
             session.commit()
-            session.close()
+
+            # read back the source....
+            stmt = select(SDSSSource).where(SDSSSource.name.in_(["testSource"]))
+            for src in session.scalars(stmt):
+                print(src)
+
+            #dump the database
             con = engine.raw_connection()
             con.execute("vacuum main into 'alchemytest.db'")  # dumps the memory db to disk
             with open('alchemydump.sql', 'w') as p:
                 for line in con.iterdump():
                     p.write('%s\n' % line)
+
 
     def test_xmlserialize(self):
         context = XmlContext()
