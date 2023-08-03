@@ -30,12 +30,12 @@
 
   <xsl:template match="objectType|dataType" mode="JAXBAnnotation">
 
-  @javax.xml.bind.annotation.XmlAccessorType( javax.xml.bind.annotation.XmlAccessType.NONE )  
-  @javax.xml.bind.annotation.XmlType( name = "<xsl:value-of select="name"/>")
+  @jakarta.xml.bind.annotation.XmlAccessorType( jakarta.xml.bind.annotation.XmlAccessType.NONE )
+  @jakarta.xml.bind.annotation.XmlType( name = "<xsl:value-of select="name"/>")
   <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
   <xsl:choose>
       <xsl:when test="vf:hasSubTypes($vodml-ref)"> <!-- TODO perhaps only necessary if abstract -->
-  @javax.xml.bind.annotation.XmlSeeAlso({ <xsl:value-of select="string-join(for $s in vf:subTypes($vodml-ref) return concat(vf:QualifiedJavaType(vf:asvodmlref($s)),'.class'),',')"/>  })
+  @jakarta.xml.bind.annotation.XmlSeeAlso({ <xsl:value-of select="string-join(for $s in vf:subTypes($vodml-ref) return concat(vf:QualifiedJavaType(vf:asvodmlref($s)),'.class'),',')"/>  })
   @com.fasterxml.jackson.annotation.JsonSubTypes({
           <xsl:value-of select="string-join(for $s in vf:subTypes($vodml-ref) return
               concat('@com.fasterxml.jackson.annotation.JsonSubTypes.Type(value=',vf:QualifiedJavaType(vf:asvodmlref($s)),'.class,name=&quot;',vf:utype(vf:asvodmlref($s)),'&quot;)'),',')"/>
@@ -56,7 +56,7 @@
 
     <xsl:choose>
       <xsl:when test="not(vf:isContained(vf:asvodmlref(.))) and not(@abstract = 'true')">
- //   @javax.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>")
+ //   @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>")
       </xsl:when>
      </xsl:choose>
       <xsl:if test="vf:referredTo(vf:asvodmlref(.)) and not(extends)">
@@ -72,7 +72,7 @@
   </xsl:template>
 
   <xsl:template match="primitiveType" mode="JAXBAnnotation">
-    @javax.xml.bind.annotation.XmlType( name = "<xsl:value-of select="name"/>")
+    @jakarta.xml.bind.annotation.XmlType( name = "<xsl:value-of select="name"/>")
   </xsl:template>
 
 <!--
@@ -94,8 +94,8 @@
   </xsl:template>
 
   <xsl:template match="enumeration" mode="JAXBAnnotation">
-    @javax.xml.bind.annotation.XmlType( name = "<xsl:value-of select="name"/>")
-    @javax.xml.bind.annotation.XmlEnum
+    @jakarta.xml.bind.annotation.XmlType( name = "<xsl:value-of select="name"/>")
+    @jakarta.xml.bind.annotation.XmlEnum
   </xsl:template>
 
   <!-- template attribute : adds JAXB annotations for primitive types, data types & enumerations -->
@@ -104,9 +104,9 @@
       <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref)">
        <xsl:value-of select="$jsontypinfo"/>
       </xsl:if>
-    @javax.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+    @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
     <xsl:if test="constraint[ends-with(@xsi:type,':NaturalKey')]"><!-- TODO deal with compound keys -->
-    @javax.xml.bind.annotation.XmlID
+    @jakarta.xml.bind.annotation.XmlID
     </xsl:if>
   </xsl:template>
 
@@ -116,22 +116,22 @@
       <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref)">
           <xsl:value-of select="$jsontypinfo"/>
       </xsl:if>
-    @javax.xml.bind.annotation.XmlIDREF
+    @jakarta.xml.bind.annotation.XmlIDREF
   </xsl:template>
 
   <xsl:template match="reference" mode="JAXBAnnotation_reference">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
-    @javax.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = Reference.class)
+    @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = Reference.class)
   </xsl:template>
 
   <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="JAXBAnnotation">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
-  @javax.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+  @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
       <xsl:value-of select="$jsontypinfo"/>
   </xsl:template>
 
   <xsl:template match="literal" mode="JAXBAnnotation">
-    @javax.xml.bind.annotation.XmlEnumValue("<xsl:value-of select="value"/>")
+    @jakarta.xml.bind.annotation.XmlEnumValue("<xsl:value-of select="value"/>")
   </xsl:template>
 
   <xsl:template match="attribute|reference|composition" mode="required">
@@ -198,14 +198,14 @@
     import java.util.stream.Stream;
     import java.util.AbstractMap;
 
-    import javax.xml.bind.JAXBContext;
-    import javax.xml.bind.annotation.XmlElement;
-    import javax.xml.bind.annotation.XmlElements;
-    import javax.xml.bind.annotation.XmlRootElement;
-    import javax.xml.bind.annotation.XmlType;
-    import javax.xml.bind.annotation.XmlAccessType;
-    import javax.xml.bind.annotation.XmlAccessorType;
-    import javax.xml.bind.JAXBException;
+    import jakarta.xml.bind.JAXBContext;
+    import jakarta.xml.bind.annotation.XmlElement;
+    import jakarta.xml.bind.annotation.XmlElements;
+    import jakarta.xml.bind.annotation.XmlRootElement;
+    import jakarta.xml.bind.annotation.XmlType;
+    import jakarta.xml.bind.annotation.XmlAccessType;
+    import jakarta.xml.bind.annotation.XmlAccessorType;
+    import jakarta.xml.bind.JAXBException;
 
     import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
     import com.fasterxml.jackson.annotation.JsonTypeInfo;

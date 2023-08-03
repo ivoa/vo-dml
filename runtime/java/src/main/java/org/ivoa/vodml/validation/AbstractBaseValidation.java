@@ -10,15 +10,15 @@ import java.sql.PreparedStatement;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.PropertyException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.util.ValidationEventCollector;
+import jakarta.persistence.EntityManager;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.PropertyException;
+import jakarta.xml.bind.Unmarshaller;
+import jakarta.xml.bind.ValidationEvent;
+import jakarta.xml.bind.util.ValidationEventCollector;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -89,7 +89,7 @@ public abstract class AbstractBaseValidation {
 
         //try to read in again
         Unmarshaller um = jc.createUnmarshaller();
-        ValidationEventCollector vc = new javax.xml.bind.util.ValidationEventCollector();
+        ValidationEventCollector vc = new jakarta.xml.bind.util.ValidationEventCollector();
         um.setEventHandler(vc);
         JAXBElement<T> el = um.unmarshal(new StreamSource(new StringReader(sw2.toString())),clazz);
         if (vc.hasEvents()) {
@@ -104,7 +104,7 @@ public abstract class AbstractBaseValidation {
     protected <M, I, T extends JPAManipulationsForObjectType<I>> RoundTripResult<T> roundtripRDB(ModelManagement<M> modelManagement, T  entity)
     {
        
-        javax.persistence.EntityManager em = setupH2Db(modelManagement.pu_name());
+        jakarta.persistence.EntityManager em = setupH2Db(modelManagement.pu_name());
         em.getTransaction().begin();
         entity.persistRefs(em);
         em.persist(entity);
@@ -130,14 +130,14 @@ public abstract class AbstractBaseValidation {
         //
 
         //derby
-        //      props.put("javax.persistence.jdbc.url", "jdbc:derby:memory:"+puname+";create=true");//IMPL differenrt DB for each PU to stop interactions
+        //      props.put("jakarta.persistence.jdbc.url", "jdbc:derby:memory:"+puname+";create=true");//IMPL differenrt DB for each PU to stop interactions
         //        props.put(PersistenceUnitProperties.JDBC_URL, "jdbc:derby:emerlindb;create=true;traceFile=derbytrace.out;traceLevel=-1;traceDirectory=/tmp");
-        //      props.put("javax.persistence.jdbc.driver", "org.apache.derby.jdbc.EmbeddedDriver");
+        //      props.put("jakarta.persistence.jdbc.driver", "org.apache.derby.jdbc.EmbeddedDriver");
         // props.put(PersistenceUnitProperties.TARGET_DATABASE, "org.eclipse.persistence.platform.database.DerbyPlatform");
 
         //        //h2
-        props.put("javax.persistence.jdbc.url", "jdbc:h2:mem:"+puname+";DB_CLOSE_DELAY=-1");//IMPL differenrt DB for each PU to stop interactions
-        props.put("javax.persistence.jdbc.driver", "org.h2.Driver");
+        props.put("jakarta.persistence.jdbc.url", "jdbc:h2:mem:"+puname+";DB_CLOSE_DELAY=-1");//IMPL differenrt DB for each PU to stop interactions
+        props.put("jakarta.persistence.jdbc.driver", "org.h2.Driver");
         props.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
         //        props.put(PersistenceUnitProperties.TARGET_DATABASE, "org.eclipse.persistence.platform.database.H2Platform");
         //
@@ -148,23 +148,23 @@ public abstract class AbstractBaseValidation {
 
 
         // props.put(PersistenceUnitProperties.DDL_GENERATION_MODE, PersistenceUnitProperties.DDL_BOTH_GENERATION);
-        props.put("javax.persistence.schema-generation.scripts.create-target", "test.sql");
-        props.put("javax.persistence.schema-generation.scripts.drop-target", "test-drop.sql");
+        props.put("jakarta.persistence.schema-generation.scripts.create-target", "test.sql");
+        props.put("jakarta.persistence.schema-generation.scripts.drop-target", "test-drop.sql");
         props.put("hibernate.hbm2ddl.schema-generation.script.append", "false");
 
-        props.put("javax.persistence.schema-generation.create-source", "metadata");
-        props.put("javax.persistence.schema-generation.database.action", "drop-and-create");
-        props.put("javax.persistence.schema-generation.scripts.action", "drop-and-create");
-        props.put("javax.persistence.jdbc.user", "");
+        props.put("jakarta.persistence.schema-generation.create-source", "metadata");
+        props.put("jakarta.persistence.schema-generation.database.action", "drop-and-create");
+        props.put("jakarta.persistence.schema-generation.scripts.action", "drop-and-create");
+        props.put("jakarta.persistence.jdbc.user", "");
         //        props.put(PersistenceUnitProperties.CACHE_SHARED_, "false");
 
         // Configure logging. FINE ensures all SQL is shown
         //props.put(PersistenceUnitProperties.LOGGING_LEVEL, "FINEST");
 
 
-        javax.persistence.EntityManagerFactory emf = javax.persistence.Persistence.createEntityManagerFactory(puname, props);
+        jakarta.persistence.EntityManagerFactory emf = jakarta.persistence.Persistence.createEntityManagerFactory(puname, props);
 
-        javax.persistence.EntityManager em = emf.createEntityManager();
+        jakarta.persistence.EntityManager em = emf.createEntityManager();
         return em;
 
     }
@@ -183,7 +183,7 @@ public abstract class AbstractBaseValidation {
      * @param em the entity manager for the database.
      * @param filename The name of the file to write the DDL to.
      */
-    protected void dumpDbData(javax.persistence.EntityManager em, String filename) {
+    protected void dumpDbData(jakarta.persistence.EntityManager em, String filename) {
         //IMPL hibernate specific way of getting connection... generally dirty, see  https://stackoverflow.com/questions/3493495/getting-database-connection-in-pure-jpa-setup
             Session sess = em.unwrap(Session.class);
             sess.doWork(conn -> {

@@ -14,7 +14,7 @@ import org.ivoa.vodml.VodmlModel;
 import org.ivoa.vodml.validation.AbstractBaseValidation;
 import org.junit.jupiter.api.Test;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;

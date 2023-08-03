@@ -45,36 +45,36 @@
       </xsl:choose>
     </xsl:variable>
 
-  @javax.persistence.Entity
-  @javax.persistence.Table( name = "<xsl:apply-templates select="." mode="tableName"/>" )
+  @jakarta.persistence.Entity
+  @jakarta.persistence.Table( name = "<xsl:apply-templates select="." mode="tableName"/>" )
   <xsl:if test="@abstract or $hasChild" >
       <xsl:choose>
           <xsl:when test="$isRdbSingleInheritance">
-  @javax.persistence.Inheritance( strategy = javax.persistence.InheritanceType.SINGLE_TABLE )
+  @jakarta.persistence.Inheritance( strategy = jakarta.persistence.InheritanceType.SINGLE_TABLE )
           </xsl:when>
           <xsl:otherwise>
-  @javax.persistence.Inheritance( strategy = javax.persistence.InheritanceType.JOINED )
+  @jakarta.persistence.Inheritance( strategy = jakarta.persistence.InheritanceType.JOINED )
           </xsl:otherwise>
       </xsl:choose>
   </xsl:if>
     <xsl:if test="count(vf:baseTypes($vodml-ref) )= 0 and(@abstract or $hasChild)">
-    @javax.persistence.DiscriminatorColumn( name = "<xsl:value-of select="$discriminatorColumnName"/>", discriminatorType = javax.persistence.DiscriminatorType.STRING, length = <xsl:value-of select="$discriminatorColumnLength"/>)
+    @jakarta.persistence.DiscriminatorColumn( name = "<xsl:value-of select="$discriminatorColumnName"/>", discriminatorType = jakarta.persistence.DiscriminatorType.STRING, length = <xsl:value-of select="$discriminatorColumnLength"/>)
     </xsl:if>
     <xsl:if test="$extMod or $hasChild and not(@abstract)">
-  @javax.persistence.DiscriminatorValue( "<xsl:value-of select="vf:utype(vf:asvodmlref(.))"/>" )
+  @jakarta.persistence.DiscriminatorValue( "<xsl:value-of select="vf:utype(vf:asvodmlref(.))"/>" )
   </xsl:if>
-  @javax.persistence.NamedQueries( {
-    @javax.persistence.NamedQuery( name = "<xsl:value-of select="$className"/>.findById", query = "SELECT o FROM <xsl:value-of select="$className"/> o WHERE o.<xsl:value-of select="$idname"/> = :id")
+  @jakarta.persistence.NamedQueries( {
+    @jakarta.persistence.NamedQuery( name = "<xsl:value-of select="$className"/>.findById", query = "SELECT o FROM <xsl:value-of select="$className"/> o WHERE o.<xsl:value-of select="$idname"/> = :id")
   <xsl:if test="$hasName">
-,     @javax.persistence.NamedQuery( name = "<xsl:value-of select="$className"/>.findByName", query = "SELECT o FROM <xsl:value-of select="$className"/> o WHERE o.name = :name")
+,     @jakarta.persistence.NamedQuery( name = "<xsl:value-of select="$className"/>.findByName", query = "SELECT o FROM <xsl:value-of select="$className"/> o WHERE o.name = :name")
   </xsl:if>
   } )
       <xsl:if test="reference[multiplicity/maxOccurs != 1]|composition[multiplicity/maxOccurs != 1]">
-          @javax.persistence.NamedEntityGraph(
+          @jakarta.persistence.NamedEntityGraph(
              name="<xsl:value-of select="concat($className,'_loadAll')"/>",
              attributeNodes = {
                <xsl:for-each select="reference[multiplicity/maxOccurs != 1]|composition[multiplicity/maxOccurs != 1]">
-                   @javax.persistence.NamedAttributeNode(value="<xsl:value-of select='name'/>")<xsl:if test="position() != last()">,</xsl:if>
+                   @jakarta.persistence.NamedAttributeNode(value="<xsl:value-of select='name'/>")<xsl:if test="position() != last()">,</xsl:if>
                </xsl:for-each>
             }
           <!-- TODO need to think about subgraphs -->
@@ -86,15 +86,15 @@
 
 
   <xsl:template match="primitiveType" mode="JPAAnnotation">
-    <xsl:text>@javax.persistence.Embeddable</xsl:text>&cr;
+    <xsl:text>@jakarta.persistence.Embeddable</xsl:text>&cr;
   </xsl:template>
 
 
   <xsl:template match="dataType" mode="JPAAnnotation">
-    <xsl:text>@javax.persistence.Embeddable</xsl:text>&cr;
+    <xsl:text>@jakarta.persistence.Embeddable</xsl:text>&cr;
     <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
     <xsl:if test="vf:hasSubTypes($vodml-ref) and count(vf:baseTypes($vodml-ref)) = 0"  >
-        <xsl:text>@javax.persistence.MappedSuperclass</xsl:text>&cr;<!-- this works for hibernate -->
+        <xsl:text>@jakarta.persistence.MappedSuperclass</xsl:text>&cr;<!-- this works for hibernate -->
     </xsl:if>
 <!--    <xsl:if test="vf:hasSubTypes($vodml-ref) or count(vf:baseTypes($vodml-ref))>0">-->
 <!--      @org.eclipse.persistence.annotations.Customizer(<xsl:value-of select="vf:upperFirst(name)"/>.DescConv.class)-->
@@ -138,7 +138,7 @@
   For dataType attributes we (attempt to) use embedded types. -->
     <xsl:template match="attribute" mode="JPAAnnotation">
         <xsl:if test="constraint[ends-with(@xsi:type,':NaturalKey')]"><!-- TODO deal with compound keys -->
-            @javax.persistence.Id
+            @jakarta.persistence.Id
         </xsl:if>
         <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
         <xsl:variable name="name" select="name"/>
@@ -152,9 +152,9 @@
                         <xsl:variable name="tableName">
                             <xsl:apply-templates select=".." mode="tableName"/><xsl:text>_</xsl:text><xsl:value-of select="$name"/>
                         </xsl:variable>
-        @javax.persistence.ElementCollection
-        @javax.persistence.CollectionTable(name = "<xsl:value-of select="$tableName"/>", joinColumns = @javax.persistence.JoinColumn(name="containerId") )
-        @javax.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
+        @jakarta.persistence.ElementCollection
+        @jakarta.persistence.CollectionTable(name = "<xsl:value-of select="$tableName"/>", joinColumns = @jakarta.persistence.JoinColumn(name="containerId") )
+        @jakarta.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
                     </xsl:when>
                     <xsl:when test="xsd:int(multiplicity/maxOccurs) gt 1">
         //FIXME - how to do arrays for JPA.
@@ -162,17 +162,17 @@
                     <xsl:otherwise>
                         <xsl:choose>
                             <xsl:when test="$type/name = 'datetime'">
-        @javax.persistence.Basic( optional = <xsl:apply-templates select="." mode="nullable"/> )
-        @javax.persistence.Temporal( javax.persistence.TemporalType.TIMESTAMP )
-        @javax.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
+        @jakarta.persistence.Basic( optional = <xsl:apply-templates select="." mode="nullable"/> )
+        @jakarta.persistence.Temporal( jakarta.persistence.TemporalType.TIMESTAMP )
+        @jakarta.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
                             </xsl:when>
                             <xsl:when test="vf:findmapping(datatype/vodml-ref,'java')/@jpa-atomic">
-        @javax.persistence.Basic( optional = <xsl:apply-templates select="." mode="nullable"/> )
-        @javax.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
+        @jakarta.persistence.Basic( optional = <xsl:apply-templates select="." mode="nullable"/> )
+        @jakarta.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
                             </xsl:when>
                             <xsl:otherwise>
-        @javax.persistence.Embedded
-        @javax.persistence.AttributeOverrides ({@javax.persistence.AttributeOverride(name = "value", column =@javax.persistence.Column(name="<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/>))})
+        @jakarta.persistence.Embedded
+        @jakarta.persistence.AttributeOverrides ({@jakarta.persistence.AttributeOverride(name = "value", column =@jakarta.persistence.Column(name="<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/>))})
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:otherwise>
@@ -190,9 +190,9 @@
                   <xsl:variable name="tableName">
                       <xsl:apply-templates select=".." mode="tableName"/><xsl:text>_</xsl:text><xsl:value-of select="$name"/>
                   </xsl:variable>
-      @javax.persistence.ElementCollection
-      @javax.persistence.CollectionTable(name = "<xsl:value-of select="$tableName"/>", joinColumns = @javax.persistence.JoinColumn(name="containerId") )
-      @javax.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
+      @jakarta.persistence.ElementCollection
+      @jakarta.persistence.CollectionTable(name = "<xsl:value-of select="$tableName"/>", joinColumns = @jakarta.persistence.JoinColumn(name="containerId") )
+      @jakarta.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
               </xsl:when>
               <xsl:otherwise>
                       <xsl:call-template name="doEmbeddedJPA">
@@ -221,7 +221,7 @@
         <xsl:param name="name"/>
         <xsl:param name="type"/>
         <xsl:param name="nillable"/>
-        @javax.persistence.Embedded
+        @jakarta.persistence.Embedded
         <xsl:variable name="attovers" as="xsd:string*">
             <xsl:for-each select="($type/attribute, vf:baseTypes(vf:asvodmlref($type))/attribute)">
                 <xsl:variable name="attr" select="."/>
@@ -235,13 +235,13 @@
                             <xsl:value-of select="string-join(tokenize(.,'_')[position() != 1],'.')"/>
                         </xsl:variable>
                         <xsl:variable name="colsubs" select="."/>
-                        @javax.persistence.AttributeOverride(name="<xsl:value-of select='$attsubst'/>", column = @javax.persistence.Column(name="<xsl:value-of select='$colsubs'/>",  nullable = <xsl:value-of select='$nillable'/> ))
+                        @jakarta.persistence.AttributeOverride(name="<xsl:value-of select='$attsubst'/>", column = @jakarta.persistence.Column(name="<xsl:value-of select='$colsubs'/>",  nullable = <xsl:value-of select='$nillable'/> ))
                     </xsl:variable>
                     <xsl:value-of select="$tmp"/>
                 </xsl:for-each>
             </xsl:for-each>
         </xsl:variable>
-        @javax.persistence.AttributeOverrides( {
+        @jakarta.persistence.AttributeOverrides( {
         <xsl:value-of select="string-join($attovers,concat(',',$cr))"/>
         })
 
@@ -343,8 +343,8 @@
       </xsl:when>
       <xsl:otherwise>
     <!-- require manual management of references - do not remove referenced entity : do not cascade delete -->
-    @javax.persistence.ManyToOne( cascade = {  javax.persistence.CascadeType.REFRESH } )
-    @javax.persistence.JoinColumn( nullable = <xsl:apply-templates select="." mode="nullable"/> )
+    @jakarta.persistence.ManyToOne( cascade = {  jakarta.persistence.CascadeType.REFRESH } )
+    @jakarta.persistence.JoinColumn( nullable = <xsl:apply-templates select="." mode="nullable"/> )
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -363,9 +363,9 @@
         <xsl:apply-templates select="." mode="columns"/>
       </xsl:variable> 
      <xsl:for-each select="$columns/column">
-    @javax.persistence.ElementCollection
-    @javax.persistence.CollectionTable( name = "<xsl:value-of select="$tableName"/>", joinColumns = @javax.persistence.JoinColumn(name="containerId") )
-    @javax.persistence.Column( name = "<xsl:value-of select="name"/>" )
+    @jakarta.persistence.ElementCollection
+    @jakarta.persistence.CollectionTable( name = "<xsl:value-of select="$tableName"/>", joinColumns = @jakarta.persistence.JoinColumn(name="containerId") )
+    @jakarta.persistence.Column( name = "<xsl:value-of select="name"/>" )
      </xsl:for-each>   
       </xsl:when>
       <xsl:when test="name($type) = 'enumeration' or name($type) = 'dataType'">
@@ -374,17 +374,17 @@
       <xsl:otherwise>
 
         <xsl:if test="isOrdered">
-@javax.persistence.OrderBy( value = "rank" )
+@jakarta.persistence.OrderBy( value = "rank" )
         </xsl:if>
-@javax.persistence.OneToMany(  cascade = javax.persistence.CascadeType.ALL, fetch = javax.persistence.FetchType.LAZY, targetEntity=<xsl:value-of select="concat(vf:JavaType(datatype/vodml-ref),'.class')" />)
-@javax.persistence.JoinColumn( name="<xsl:value-of select="concat(upper-case(current()/parent::*/name),'_ID')"/>")
+@jakarta.persistence.OneToMany(  cascade = jakarta.persistence.CascadeType.ALL, fetch = jakarta.persistence.FetchType.LAZY, targetEntity=<xsl:value-of select="concat(vf:JavaType(datatype/vodml-ref),'.class')" />)
+@jakarta.persistence.JoinColumn( name="<xsl:value-of select="concat(upper-case(current()/parent::*/name),'_ID')"/>")
 @org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
 
     <xsl:template match="composition[multiplicity/maxOccurs =1]" mode="JPAAnnotation">
-     @javax.persistence.OneToOne(cascade = javax.persistence.CascadeType.ALL)
+     @jakarta.persistence.OneToOne(cascade = jakarta.persistence.CascadeType.ALL)
   </xsl:template>
 
 
@@ -394,9 +394,9 @@
     <xsl:template name="enumPattern">
     <xsl:param name="columnName"/>
 
-    @javax.persistence.Basic( optional=<xsl:apply-templates select="." mode="nullable"/> )
-    @javax.persistence.Enumerated( javax.persistence.EnumType.STRING )
-    @javax.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
+    @jakarta.persistence.Basic( optional=<xsl:apply-templates select="." mode="nullable"/> )
+    @jakarta.persistence.Enumerated( jakarta.persistence.EnumType.STRING )
+    @jakarta.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
   </xsl:template>
 
 

@@ -1,5 +1,5 @@
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.3.24"
+    id("net.ivoa.vo-dml.vodmltools") version "0.4.0"
 //    id ("com.diffplug.spotless") version "5.17.1"
     `maven-publish`
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
@@ -7,11 +7,6 @@ plugins {
 
 }
 
-
-repositories {
-    mavenLocal() // TODO remove this when releasing - just here to pick up local vodml-runtime
-    mavenCentral()
-}
 
 group = "org.javastro.ivoa.vo-dml"
 version = "1.0-SNAPSHOT"
@@ -28,14 +23,14 @@ tasks.test {
 }
 
 dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
 
     implementation("org.slf4j:slf4j-api:1.7.36")
-    testRuntimeOnly("ch.qos.logback:logback-classic:1.2.3")
+    testRuntimeOnly("ch.qos.logback:logback-classic:1.4.7")
 
-    testImplementation("org.apache.derby:derby:10.14.2.0")
-    compileOnly("com.google.googlejavaformat:google-java-format:1.12.0")
+    testImplementation("org.apache.derby:derby:10.15.2.0")
+    compileOnly("com.google.googlejavaformat:google-java-format:1.16.0")
 
 }
 

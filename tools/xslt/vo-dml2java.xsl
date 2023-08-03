@@ -541,12 +541,12 @@
           * inserted database key
           */
           <xsl:if test="not(vf:referredTo($vodml-ref))"><!--TODO do we really want to ignore - is this just making everythig more complicated -->
-          @javax.xml.bind.annotation.XmlTransient
+          @jakarta.xml.bind.annotation.XmlTransient
           @com.fasterxml.jackson.annotation.JsonIgnore
           </xsl:if>
-          @javax.persistence.Id
-          @javax.persistence.GeneratedValue
-          @javax.persistence.Column(name = "ID")
+          @jakarta.persistence.Id
+          @jakarta.persistence.GeneratedValue
+          @jakarta.persistence.Column(name = "ID")
           @com.fasterxml.jackson.annotation.JsonProperty("_id") // This is an attempt to get the schema generator to create an entry - TODO JSON schema generation should really just understand the @JsonIdentityInfo
           protected Long _id = (long) 0;
 
@@ -564,8 +564,8 @@
               * getter for XMLID
               */
 
-              @javax.xml.bind.annotation.XmlAttribute(name = "id" )
-              @javax.xml.bind.annotation.XmlID
+              @jakarta.xml.bind.annotation.XmlAttribute(name = "id" )
+              @jakarta.xml.bind.annotation.XmlID
               @Override
               public String getXmlId(){
               return org.ivoa.vodml.jaxb.XmlIdManagement.createXMLId(_id);
@@ -753,7 +753,7 @@ package <xsl:value-of select="$path"/>;
         private static final long serialVersionUID = 1L;
 
         /**  representation */
-        @javax.xml.bind.annotation.XmlValue
+        @jakarta.xml.bind.annotation.XmlValue
         private <xsl:value-of select="$valuetype"/> value;
 
         /**
@@ -1091,7 +1091,7 @@ package <xsl:value-of select="$path"/>;
 <!-- jparefs-->
     <xsl:template match="objectType|dataType" mode="jparefs">
         @Override
-        public void persistRefs(javax.persistence.EntityManager _em) {
+        public void persistRefs(jakarta.persistence.EntityManager _em) {
           <xsl:variable name="localdefs" select="vf:javaLocalDefines(vf:asvodmlref(current()))"/>
           <xsl:apply-templates select="composition[vf:asvodmlref(.) = $localdefs]
                           |reference[vf:asvodmlref(.) = $localdefs]
@@ -1124,7 +1124,7 @@ package <xsl:value-of select="$path"/>;
     <xsl:template match="objectType" mode="cloner">
 
         @Override
-        public void jpaClone(javax.persistence.EntityManager em) {
+        public void jpaClone(jakarta.persistence.EntityManager em) {
 
         <xsl:choose>
             <xsl:when test="extends">
@@ -1160,7 +1160,7 @@ package <xsl:value-of select="$path"/>;
     </xsl:template>
     <xsl:template match="dataType" mode="cloner">
         @Override
-        public void jpaClone(javax.persistence.EntityManager em) {
+        public void jpaClone(jakarta.persistence.EntityManager em) {
         <!-- do nothing for datatypes ??? -->
         }
     </xsl:template>
@@ -1386,11 +1386,11 @@ package <xsl:value-of select="$path"/>;
       <xsl:message >Writing package info file <xsl:value-of select="$file"/></xsl:message>
       <xsl:variable name="ns" select="$mapping/bnd:mappedModels/model[name=current()/ancestor-or-self::vo-dml:model/name]/xml-targetnamespace"/>
       <xsl:result-document href="{$file}" >
-@javax.xml.bind.annotation.XmlSchema(namespace = "<xsl:value-of select="normalize-space($ns)"/>",elementFormDefault=XmlNsForm.UNQUALIFIED, xmlns = {
-@javax.xml.bind.annotation.XmlNs(namespaceURI = "<xsl:value-of select="normalize-space($ns)"/>", prefix = "<xsl:value-of select="$ns/@prefix"/>")
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "<xsl:value-of select="normalize-space($ns)"/>",elementFormDefault=XmlNsForm.UNQUALIFIED, xmlns = {
+@jakarta.xml.bind.annotation.XmlNs(namespaceURI = "<xsl:value-of select="normalize-space($ns)"/>", prefix = "<xsl:value-of select="$ns/@prefix"/>")
   })
 package <xsl:value-of select="$path"/>;
-import javax.xml.bind.annotation.XmlNsForm;
+import jakarta.xml.bind.annotation.XmlNsForm;
       </xsl:result-document>
 
   </xsl:template>

@@ -27,3 +27,4 @@
 * 0.3.22 add site documentation including mermaid diagrams
 * 0.3.23 improved navigation in the generated site.
 * 0.3.24 improved python generation - removed join tables.
+* 0.4.0 move to jakarta namespace
