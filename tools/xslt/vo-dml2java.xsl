@@ -540,19 +540,21 @@
           /**
           * inserted database key
           */
-          <xsl:if test="not(vf:referredTo($vodml-ref))">
+          <xsl:if test="not(vf:referredTo($vodml-ref))"><!--TODO do we really want to ignore - is this just making everythig more complicated -->
           @javax.xml.bind.annotation.XmlTransient
           @com.fasterxml.jackson.annotation.JsonIgnore
           </xsl:if>
           @javax.persistence.Id
           @javax.persistence.GeneratedValue
           @javax.persistence.Column(name = "ID")
+          @com.fasterxml.jackson.annotation.JsonProperty("_id") // This is an attempt to get the schema generator to create an entry - TODO JSON schema generation should really just understand the @JsonIdentityInfo
           protected Long _id = (long) 0;
 
           /**
           * @return the id
           */
           @Override
+          @com.fasterxml.jackson.annotation.JsonProperty("_id") // This is an attempt to get the schema generator to create an entry - TODO JSON schema generation should really just understand the @JsonIdentityInfo
           public Long getId() {
           return _id;
           }
