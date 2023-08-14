@@ -10,3 +10,4 @@ tools/gradletooling/gradle-plugin/bin/
 /models/sample/test/src-gen/
 /venv/
 /tools/gradletooling/sample/.pytest_cache/
+__pycache__/
