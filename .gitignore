@@ -10,4 +10,9 @@ tools/gradletooling/gradle-plugin/bin/
 /models/sample/test/src-gen/
 /venv/
 /tools/gradletooling/sample/.pytest_cache/
+/doc/site/
+/tools/gradletooling/sample/docs/
+/tools/gradletooling/sample/allnav.yml
+/tools/gradletooling/sample/pythontest/generated/
+/tools/gradletooling/sample/mkdocs.yml
 __pycache__/

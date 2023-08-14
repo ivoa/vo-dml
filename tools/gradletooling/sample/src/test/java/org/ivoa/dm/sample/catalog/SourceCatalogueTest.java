@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
@@ -43,7 +43,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
 
     @org.junit.jupiter.api.Test
     void sourceCatJPATest() {
-       javax.persistence.EntityManager em = setupH2Db(SampleModel.pu_name());
+       jakarta.persistence.EntityManager em = setupH2Db(SampleModel.pu_name());
         em.getTransaction().begin();
         sc.persistRefs(em);
         em.persist(sc);
@@ -70,7 +70,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
 
 
         em.getTransaction().commit();
-       dumpDbData(em);
+       dumpDbData(em, "test_dump.sql");
         
 
     }
@@ -98,7 +98,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
    @org.junit.jupiter.api.Test
    void sourceCatJPACloneTest() throws JsonProcessingException {
        SampleModel model = new SampleModel();
-       javax.persistence.EntityManager em = setupH2Db(SampleModel.pu_name());
+       jakarta.persistence.EntityManager em = setupH2Db(SampleModel.pu_name());
        em.getTransaction().begin();
        sc.persistRefs(em);
        em.persist(sc);

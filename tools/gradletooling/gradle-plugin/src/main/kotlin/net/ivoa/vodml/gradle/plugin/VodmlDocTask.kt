@@ -40,10 +40,8 @@ import javax.inject.Inject
 
              val proc = ProcessBuilder(listOf(
                  "dot",
-                 "-Tcmapx",
-                 "-o${shortname +".map"}",
-                 "-Tpng",
-                 "-o${shortname +".png"}",
+                 "-Tsvg",
+                 "-o${shortname +".svg"}",
                  outfile.get().asFile.absolutePath
              ))
                  .directory(docDir.get().asFile)
@@ -58,9 +56,10 @@ import javax.inject.Inject
                  logger.error(proc.errorStream.bufferedReader().readText())
 
              outfile = docDir.file("$shortname.html")
-             Vodml2Html.doTransform(it.absoluteFile, mapOf("graphviz_png" to "$shortname.png",
-                                                            "graphviz_map" to docDir.file("$shortname.map").get().asFile.absolutePath),
+             Vodml2Html.doTransform(it.absoluteFile, mapOf("graphviz_png" to  docDir.file("$shortname.svg").get().asFile.absolutePath
+                                                            ),
                        actualCatalog, outfile.get().asFile)
+
              outfile = docDir.file("$shortname.graphml")
              Vodml2Gml.doTransform(it.absoluteFile, emptyMap(), actualCatalog, outfile.get().asFile)
              outfile = docDir.file(shortname +"_desc.tex" )

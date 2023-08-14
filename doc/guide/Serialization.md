@@ -6,11 +6,17 @@ of the various libraries/standards that are applicable to the Java generated cod
 will follow the choices that were made in order to be interoperable.
 
 For the serializations (other than the relational database), the general idea is that a "natural" serialization for the model
-has been chosen, in contrast to the approach of MiVOT
+has been chosen, in contrast to the approach of [MIVOT](https://www.ivoa.net/documents/MIVOT/)
 where the idea is that the model is coerced into a table based model - which of course is similar to the relational 
 database serialization below. This "natural" serialization means that objects are enclosed within their parents to whatever depth 
 is necessary. The only exception to this is that referenced objects are separated out into their own section early in the 
 serialization so that they can easily be referenced.
+
+```mermaid
+classDiagram
+    Model <-- References
+    Model <-- Content
+```
 
 The aim of the top level container object is to contain all the referred to objects as well as the general content within
 a single document. It should be noted that this is a different methodology to the way that the 
@@ -19,7 +25,7 @@ XML was produced in the previous (ant based) versions of this tooling, and as su
 
 ## XML
 
-For the [small example model](./models/sample/test/serializationExample.vodsl), the overall model object will produce xml like
+For the [small example model](https://github.com/ivoa/vo-dml/tree/master/models/sample/test/serializationExample.vodsl), the overall model object will produce xml like
 
 ```xml
 <ser:myModelModel xmlns:ser="http://ivoa.net/vodml/sample/serialization" >

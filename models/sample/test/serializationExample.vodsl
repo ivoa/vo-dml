@@ -20,8 +20,22 @@ otype Refb  ""
 	
 }
 
+abstract otype BaseC {
+	bname: ivoa:string "";
+}
+
+otype Dcont -> BaseC {
+	dval: ivoa:string "";
+}
+
+otype Econt -> BaseC {
+	evalue: ivoa:string ""; 
+}
 otype SomeContent "" {
 	ref1 references Refa "";
 	ref2 references Refb "";
 	zval : ivoa:string "";
+	con: BaseC @+ as composition ""; 
 }
+
+primitive ivorn -> ivoa:anyURI "a specialization for IVORNs"

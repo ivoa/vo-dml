@@ -356,7 +356,7 @@ FIXME - this is still not a complete representation of the JSON produced
           </xsl:when>
           <xsl:otherwise>
 
-            <xsl:variable name="type" select="vf:element4vodmlref($vodml-ref)"/>
+            <xsl:variable name="type" select="vf:el4vodmlref($vodml-ref)"/>
 
 
             <xsl:value-of select="$type/name"/>

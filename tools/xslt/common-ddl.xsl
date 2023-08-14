@@ -85,7 +85,7 @@
   </xsl:template>
 
   <!-- for now no special camelcase 2 '_' transformation -->
-  <xsl:template match="objectType|collection" mode="tableName">
+  <xsl:template match="objectType|collection|dataType" mode="tableName">
     <xsl:param name="backup" select="'false'"/>
 
     <xsl:variable name="tablename">
@@ -101,7 +101,7 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="objectType|collection" mode="tableName_noschema">
+  <xsl:template match="objectType|collection|dataType" mode="tableName_noschema">
     <xsl:value-of select="name"/>
   </xsl:template>
 

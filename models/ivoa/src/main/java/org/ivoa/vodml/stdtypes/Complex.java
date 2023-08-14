@@ -1,7 +1,7 @@
 
 package org.ivoa.vodml.stdtypes;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import org.ivoa.vodml.annotation.VoDml;
 import org.ivoa.vodml.annotation.VodmlRole;

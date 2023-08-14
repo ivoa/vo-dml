@@ -15,8 +15,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -84,7 +84,7 @@ class JPATestModelTest extends AbstractTest {
     }
     @Test
     void jpaInitialCreateTest() {
-        javax.persistence.EntityManager em = setupH2Db(SampleModel.pu_name());//the persistence unit is all under the one file....
+        jakarta.persistence.EntityManager em = setupH2Db(SampleModel.pu_name());//the persistence unit is all under the one file....
         em.getTransaction().begin();
         atest.persistRefs(em); //IMPL need to save references explicitly as they are new.
         em.persist(atest);

@@ -23,3 +23,8 @@
 * 0.3.18 Restore the old xml schema generation for legacy applications.
 * 0.3.19 Better model validation/testing support. Note also that makeRefIDsUnique() has been renamed to processReferences() to reflect the expanded functionality of the method.
 * 0.3.20 updates to model documentation generation
+* 0.3.21 General improvements/bug fixes as a result of processing a wider variety of models
+* 0.3.22 add site documentation including mermaid diagrams
+* 0.3.23 improved navigation in the generated site.
+* 0.3.24 improved python generation - removed join tables.
+* 0.4.0 move to jakarta namespace

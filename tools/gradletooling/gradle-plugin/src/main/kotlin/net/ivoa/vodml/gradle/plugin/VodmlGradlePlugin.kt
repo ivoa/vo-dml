@@ -1,6 +1,5 @@
 package net.ivoa.vodml.gradle.plugin
 
-import net.ivoa.vodml.gradle.plugin.VodmlToVodslTask
 import net.ivoa.vodml.gradle.plugin.internal.MIN_REQUIRED_GRADLE_VERSION
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
@@ -26,6 +25,7 @@ class VodmlGradlePlugin: Plugin<Project> {
         const val VODML_PLUGIN_ID = "net.ivoa.vo-dml.vodmltools"
         const val VODML_CONFIG_NAME = "vodml"
         const val VODML_DOC_TASK_NAME = "vodmlDoc"
+        const val VODML_SITE_DOC_TASK_NAME = "vodmlSite"
         const val VODML_VAL_TASK_NAME = "vodmlValidate"
         const val VODML_JAVA_TASK_NAME_OLD = "vodmlGenerateJava"
         const val VODML_JAVA_TASK_NAME = "vodmlJavaGenerate"
@@ -49,6 +49,13 @@ class VodmlGradlePlugin: Plugin<Project> {
             it.description = "create documentation for VO-DML models"
             setVodmlFiles(it,extension,project)
             it.docDir.set(extension.outputDocDir)
+            it.modelsToDocument.set(extension.modelsToDocument)
+        }
+        // register the site doc task
+        project.tasks.register(VODML_SITE_DOC_TASK_NAME,VodmlSiteTask::class.java) {
+            it.description = "create mkdocs site for VO-DML models"
+            setVodmlFiles(it,extension,project)
+            it.docDir.set(extension.outputSiteDir)
             it.modelsToDocument.set(extension.modelsToDocument)
         }
         // register the schame task
@@ -138,14 +145,14 @@ class VodmlGradlePlugin: Plugin<Project> {
 
 
         //add the dependencies for JAXB and JPA - using the hibernate implementation
-       listOf("org.javastro.ivoa.vo-dml:vodml-runtime:0.4.1",
-            "javax.xml.bind:jaxb-api:2.3.1",
-            "org.glassfish.jaxb:jaxb-runtime:2.3.6",
+       listOf("org.javastro.ivoa.vo-dml:vodml-runtime:0.5.0",
+            "jakarta.xml.bind:jakarta.xml.bind-api:4.0.0",
+            "org.glassfish.jaxb:jaxb-runtime:4.0.2",
 //             "org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.10",  // supports JPA 2.2
 //            "org.eclipse.persistence:org.eclipse.persistence.moxy:3.0.2", //alternative Jaxb runtime...
-             "org.hibernate:hibernate-core:5.6.5.Final"
+             "org.hibernate.orm:hibernate-core:6.2.7.Final"
 //             ,"jakarta.persistence:jakarta.persistence-api:3.0.0" // dont use until go to hibernate 6
-             ,"com.fasterxml.jackson.core:jackson-databind:2.14.2"
+             ,"com.fasterxml.jackson.core:jackson-databind:2.15.1"
              ,"org.eclipse.microprofile.openapi:microprofile-openapi-api:2.0.1"
 
        ).forEach {

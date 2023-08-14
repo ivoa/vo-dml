@@ -1,0 +1,35 @@
+site_name: VO-DML Tools Guide
+docs_dir: guide
+repo_url: 'https://github.com/ivoa/vo-dml'
+edit_uri: 'edit/master/doc/guide/'
+theme:
+  name: material
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - content.action.edit
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Installation: Installation.md
+      - Configuration: QuickStart.md
+  - Transformers:
+      - Introduction: Transformers.md
+      - Documentation: Documentation.md
+      - Java Generation: JavaCodeGeneration.md
+      - Python Generation: PythonCodeGeneration.md
+      - Serialization: Serialization.md
+  - Writing Models:
+      - Introduction: modelling/modellingIntro.md
+      - VODSL : modelling/VODSL.md
+      - Eclipse Editor: modelling/EclipseVODSL.md
+      - UML : modelling/UML.md
+  - Model Design:
+      - Introduction : modelling/designIntro.md
+
+markdown_extensions:
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format

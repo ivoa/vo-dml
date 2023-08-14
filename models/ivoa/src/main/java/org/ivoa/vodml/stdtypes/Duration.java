@@ -7,7 +7,7 @@ import org.ivoa.vodml.annotation.VoDml;
 import org.ivoa.vodml.annotation.VodmlRole;
 import org.ivoa.vodml.jpa.JPAManipulations;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * UML PrimitiveType duration : Represents an interval of time from beginning to

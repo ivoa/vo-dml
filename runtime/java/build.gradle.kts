@@ -6,26 +6,26 @@ plugins {
     signing
 }
 group = "org.javastro.ivoa.vo-dml"
-version = "0.4.1"
+version = "0.5.0"
 
 
 dependencies {
 //    xjcPlugins("net.codesup.util:jaxb2-rich-contract-plugin:2.1.0")
  //   implementation("jakarta.persistence:jakarta.persistence-api:3.0.0") // more modern, but perhaps not quite ready
-    implementation("javax.xml.bind:jaxb-api:2.3.1")
+    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.0")
 //    implementation("org.glassfish.jaxb:jaxb-runtime:2.3.6")
-    implementation("javax.persistence:javax.persistence-api:2.2")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
-    implementation("org.hibernate:hibernate-core:5.6.5.Final")
+    implementation("jakarta.persistence:jakarta.persistence-api:3.1.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.15.1")
+    implementation("org.hibernate.orm:hibernate-core:6.2.7.Final")
     
     implementation("org.slf4j:slf4j-api:1.7.36")
-    api("org.javastro:jaxbjpa-utils:0.1.2")
-    compileOnly("org.junit.jupiter:junit-jupiter-api:5.7.1")// have put the base test classes in the runtime main - naughty, but easier to make everything work without changing dependencies
+    api("org.javastro:jaxbjpa-utils:0.2.0")
+    compileOnly("org.junit.jupiter:junit-jupiter-api:5.9.2")// have put the base test classes in the runtime main - naughty, but easier to make everything work without changing dependencies
 
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.1")
-    testRuntimeOnly("ch.qos.logback:logback-classic:1.2.3")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
+    testRuntimeOnly("ch.qos.logback:logback-classic:1.4.7")
 }
 
 
@@ -41,8 +41,9 @@ dependencies {
 
 java {
 //    modularity.inferModulePath.set(false) // still can only build on java 1.8
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
     withJavadocJar()
     withSourcesJar()
 }
@@ -109,9 +110,7 @@ publishing.publications.withType(MavenPublication::class.java).forEach { publica
     }
 }
 println ("java property skipSigning= " + project.hasProperty("skipSigning"))
-repositories {
-    mavenCentral()
-}
+
 
 signing {
     setRequired { !project.version.toString().endsWith("-SNAPSHOT") && !project.hasProperty("skipSigning") }

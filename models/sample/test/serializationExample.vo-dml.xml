@@ -8,12 +8,17 @@
       <uri/>
       <title>TBD</title>
       <version>1.0</version>
-      <lastModified>2023-05-16T18:01:58Z</lastModified>
+      <lastModified>2023-06-16T12:46:40Z</lastModified>
       <import>
         <name>null</name><!--should not be needed in modern vo-dml -->
         <url>IVOA-v1.0.vo-dml.xml</url>
         <documentationURL>not known</documentationURL>
       </import>
+      <primitiveType>
+        <vodml-id>ivorn</vodml-id>
+        <name>ivorn</name>
+        <description>a specialization for IVORNs</description>	    
+      </primitiveType>
             <objectType>
                <vodml-id>Refa</vodml-id>
                <name>Refa</name>
@@ -63,6 +68,63 @@
                  </multiplicity>
                </attribute>
             </objectType>
+            <objectType abstract='true'>
+               <vodml-id>BaseC</vodml-id>
+               <name>BaseC</name>
+               <description></description>	    
+               <attribute>
+                 <vodml-id>BaseC.bname</vodml-id>
+                 <name>bname</name>
+                 <description></description>	    
+                 <datatype>
+                    <vodml-ref>ivoa:string</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </attribute>
+            </objectType>
+            <objectType>
+               <vodml-id>Dcont</vodml-id>
+               <name>Dcont</name>
+               <description></description>	    
+               <extends>
+                  <vodml-ref>MyModel:BaseC</vodml-ref>
+               </extends>
+               <attribute>
+                 <vodml-id>Dcont.dval</vodml-id>
+                 <name>dval</name>
+                 <description></description>	    
+                 <datatype>
+                    <vodml-ref>ivoa:string</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </attribute>
+            </objectType>
+            <objectType>
+               <vodml-id>Econt</vodml-id>
+               <name>Econt</name>
+               <description></description>	    
+               <extends>
+                  <vodml-ref>MyModel:BaseC</vodml-ref>
+               </extends>
+               <attribute>
+                 <vodml-id>Econt.evalue</vodml-id>
+                 <name>evalue</name>
+                 <description></description>	    
+                 <datatype>
+                    <vodml-ref>ivoa:string</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </attribute>
+            </objectType>
             <objectType>
                <vodml-id>SomeContent</vodml-id>
                <name>SomeContent</name>
@@ -79,6 +141,18 @@
                    <maxOccurs>1</maxOccurs>
                  </multiplicity>
                </attribute>
+               <composition>
+                 <vodml-id>SomeContent.con</vodml-id>
+                 <name>con</name>
+                 <description></description>	    
+                 <datatype>
+                    <vodml-ref>MyModel:BaseC</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>-1</maxOccurs>
+                 </multiplicity>
+               </composition>
                <reference>
                  <vodml-id>SomeContent.ref1</vodml-id>
                  <name>ref1</name>

@@ -11,7 +11,7 @@ package org.ivoa.vodml.testing;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.ivoa.vodml.VodmlModel;
 import org.ivoa.vodml.validation.ModelValidator.ValidationResult;

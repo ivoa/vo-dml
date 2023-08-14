@@ -2,11 +2,6 @@
 targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefault="unqualified"
   elementFormDefault="unqualified">
 
-<xsd:annotation>
-  <xsd:documentation>
-  TODO: decide whether we want a syntax for the utype attributes.
-  </xsd:documentation>
-</xsd:annotation>
 
 <xsd:complexType name="MappedModels">
   <xsd:sequence>

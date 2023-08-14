@@ -238,7 +238,7 @@
           <vodml-ref>ivoa:string</vodml-ref>
         </datatype>
         <semanticconcept>
-          <topConcept>http://purl.org/astronomy/vocab/DataObjectTypes/Source</topConcept>
+          <vocabularyURI>http://www.ivoa.net/rdf/object-type</vocabularyURI>
         </semanticconcept>
       </constraint>
                            <attribute>
