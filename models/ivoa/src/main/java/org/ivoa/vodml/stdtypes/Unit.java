@@ -15,16 +15,16 @@ package org.ivoa.vodml.stdtypes;
           
 
         @org.eclipse.microprofile.openapi.annotations.media.Schema(description="Must conform to definition of unit in VOUnit spec.")
-    @javax.persistence.Embeddable
+    @jakarta.persistence.Embeddable
 
-    @javax.xml.bind.annotation.XmlType( name = "Unit")
+    @jakarta.xml.bind.annotation.XmlType( name = "Unit")
   
       public class Unit implements java.io.Serializable {
 
         private static final long serialVersionUID = 1L;
 
         /**  representation */
-        @javax.xml.bind.annotation.XmlValue
+        @jakarta.xml.bind.annotation.XmlValue
         private String value;
 
         /**
