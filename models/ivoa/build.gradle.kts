@@ -2,7 +2,7 @@ plugins {
     id("net.ivoa.vo-dml.vodmltools") version "0.4.0"
 //    id ("com.diffplug.spotless") version "5.17.1"
     `maven-publish`
-    id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
+    id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
     signing
 
 }

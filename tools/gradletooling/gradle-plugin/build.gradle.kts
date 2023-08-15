@@ -8,9 +8,9 @@ plugins {
     `java-gradle-plugin`
 
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    id("org.jetbrains.kotlin.jvm") version "1.6.21"
+    id("org.jetbrains.kotlin.jvm") version "1.8.20"
     `maven-publish`
-    id("com.gradle.plugin-publish") version "0.16.0"
+    id("com.gradle.plugin-publish") version "1.1.0"
 }
 
 group = "net.ivoa.vo-dml"
@@ -36,11 +36,6 @@ dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
 
 
-    // Align versions of all Kotlin components
-    compileOnly(platform("org.jetbrains.kotlin:kotlin-bom"))
-
-    // Use the Kotlin JDK 8 standard library.
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")
@@ -52,17 +47,14 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.2")
 
 
-
 }
 
-pluginBundle {
-    website = "https://www.ivoa.net/documents/VODML/"
-    vcsUrl = "https://github.com/ivoa/vo-dml"
-    tags = listOf("vodml", "ivoa")
- }
 
 
 gradlePlugin {
+    website.set("https://www.ivoa.net/documents/VODML/")
+    vcsUrl.set("https://github.com/ivoa/vo-dml")
+
     // Define the plugin
     plugins{
         create("vodmltools") {
@@ -70,7 +62,7 @@ gradlePlugin {
             displayName = "VO-DML gradle plugin "
             implementationClass = "net.ivoa.vodml.gradle.plugin.VodmlGradlePlugin"
             description = "machinery for generating code and documentation from VO-DML models"
-
+            tags.set(listOf("vodml", "ivoa"))
         }
 
     }
@@ -82,12 +74,6 @@ java {
     targetCompatibility =  JavaVersion.VERSION_11
 }
 
-//seem to need this hack if compiling on > jdk8 platform
-val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
-compileKotlin.kotlinOptions {
-    jvmTarget = JavaVersion.VERSION_11.toString()
-}
-// end of hack
 
 // Add a source set for the functional test suite
 val functionalTestSourceSet = sourceSets.create("functionalTest") {
