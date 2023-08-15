@@ -62,10 +62,10 @@
       <xsl:if test="vf:referredTo(vf:asvodmlref(.)) and not(extends)">
           <xsl:choose>
               <xsl:when test="attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
-  @com.fasterxml.jackson.annotation.JsonIdentityInfo(property = "<xsl:value-of select="attribute/constraint[ends-with(@xsi:type,':NaturalKey')]/preceding-sibling::name"/>", generator = com.fasterxml.jackson.annotation.ObjectIdGenerators.PropertyGenerator.class)
+  @com.fasterxml.jackson.annotation.JsonIdentityInfo(property = "<xsl:value-of select="attribute/constraint[ends-with(@xsi:type,':NaturalKey')]/preceding-sibling::name"/>", generator = com.fasterxml.jackson.annotation.ObjectIdGenerators.PropertyGenerator.class, scope=<xsl:value-of select="vf:QualifiedJavaType($vodml-ref)"/>.class )
               </xsl:when>
               <xsl:otherwise>
-  @com.fasterxml.jackson.annotation.JsonIdentityInfo(property = "_id", generator = com.fasterxml.jackson.annotation.ObjectIdGenerators.PropertyGenerator.class)
+  @com.fasterxml.jackson.annotation.JsonIdentityInfo(property = "_id", generator = com.fasterxml.jackson.annotation.ObjectIdGenerators.PropertyGenerator.class, scope=<xsl:value-of select="vf:QualifiedJavaType($vodml-ref)"/>.class )
               </xsl:otherwise>
           </xsl:choose>
       </xsl:if>
@@ -127,7 +127,9 @@
   <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="JAXBAnnotation">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
   @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
-      <xsl:value-of select="$jsontypinfo"/>
+      <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref)">
+       <xsl:value-of select="$jsontypinfo"/>
+      </xsl:if>
   </xsl:template>
 
   <xsl:template match="literal" mode="JAXBAnnotation">
