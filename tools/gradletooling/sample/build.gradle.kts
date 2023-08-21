@@ -1,5 +1,4 @@
 import net.ivoa.vodml.gradle.plugin.VodmlToVodslTask
-import org.gradle.kotlin.dsl.support.classFilePathCandidatesFor
 import ru.vyarus.gradle.plugin.python.PythonExtension
 import ru.vyarus.gradle.plugin.python.task.PythonTask
 

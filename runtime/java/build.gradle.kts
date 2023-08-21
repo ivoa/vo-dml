@@ -2,7 +2,7 @@ plugins {
     `java-library`
     `maven-publish`
 //    id("com.github.bjornvester.xjc") version "1.6.0"
-    id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
+    id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
     signing
 }
 group = "org.javastro.ivoa.vo-dml"
