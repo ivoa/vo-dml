@@ -44,13 +44,14 @@ class ExternalModelHelper constructor (private val project: Project, private val
         val js = JarInputStream(f.inputStream())
         (js.manifest.mainAttributes.getValue("VODML-binding")) != null //IMPL because of weird map of maps no contains
     }
+    private val buildDir = project.layout.buildDirectory.asFile.get()
+
     init {
         logger.info("external models=${externalModelJars.joinToString { f -> f.name }}")
-
     }
     fun makeCatalog(vodmlFiles:ConfigurableFileCollection, catalogFile:RegularFileProperty): File {
 
-        val tmpdir = project.mkdir(Paths.get(project.buildDir.absolutePath, "tmp"))
+        val tmpdir = project.mkdir(Paths.get(buildDir.absolutePath, "tmp"))
         val actualCatalog = if (catalogFile.isPresent) catalogFile.get().asFile
         else createCatalog(project.file(Paths.get(tmpdir.absolutePath, "catalog.xml")),
             vodmlFiles.files.plus(
@@ -63,7 +64,7 @@ class ExternalModelHelper constructor (private val project: Project, private val
     }
 
     fun convertExternalToVODSL()  {
-        val tmpdir = project.mkdir(Paths.get(project.buildDir.absolutePath, "tmp"))
+        val tmpdir = project.mkdir(Paths.get(buildDir.absolutePath, "tmp"))
         val toConvert =  externalModelJars.flatMap { f ->
             ao.zipTree(f).matching(org.gradle.api.tasks.util.PatternSet().include(vodmlFileName(f))).files
         }
