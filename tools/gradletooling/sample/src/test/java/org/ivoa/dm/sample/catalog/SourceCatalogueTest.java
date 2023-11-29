@@ -146,4 +146,44 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
        assertNotNull(modelin);
    }
 
+    @org.junit.jupiter.api.Test
+   void listManipulationTest()
+   {
+       jakarta.persistence.EntityManager em = setupH2Db(SampleModel.pu_name());
+       em.getTransaction().begin();
+       sc.persistRefs(em);
+       em.persist(sc);
+       em.getTransaction().commit();
+       List<AbstractSource> ls = sc.getEntry();
+       List<LuminosityMeasurement> lms = ls.get(0).getLuminosity();
+       //copy constructor creates an object not
+       LuminosityMeasurement lumnew = new LuminosityMeasurement(lms.get(0));
+       lumnew.setDescription("this is new");
+       // merge in changes to the existing db 
+       lms.get(0).updateUsing(lumnew);
+       em.getTransaction().begin();
+       em.merge(lms.get(0));
+       em.getTransaction().commit();
+       em.clear();
+       
+       // read back from db
+        List<SourceCatalogue> cats = em.createQuery("select s from SourceCatalogue s", SourceCatalogue.class).getResultList();
+       assertEquals("this is new", cats.get(0).getEntry().get(0).getLuminosity().get(0).getDescription());
+
+       lumnew.setDescription("another way to update");
+       lumnew._id = lms.get(0)._id; //NB this setting of IDs directly not available in end DM API - only possible because of shared package
+       
+       ls.get(0).replaceInLuminosity(lumnew);
+       
+       em.getTransaction().begin();
+       em.merge(lms.get(0));
+       em.getTransaction().commit();
+       em.clear();
+
+       List<SourceCatalogue> cats2 = em.createQuery("select s from SourceCatalogue s", SourceCatalogue.class).getResultList();
+       assertEquals("another way to update", cats2.get(0).getEntry().get(0).getLuminosity().get(0).getDescription());
+
+       
+   }
+
 }

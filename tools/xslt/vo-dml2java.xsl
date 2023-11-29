@@ -396,6 +396,23 @@
         }
         </xsl:if>
 
+        /**
+        * Update this object with the content of the given object. Note that references will remain as is rather than be copied.
+        * @param other the object to be copied.
+        */
+        public void updateUsing ( final <xsl:value-of select="vf:capitalize(name)"/> other)
+        {
+
+        <xsl:for-each select="$members">
+            <xsl:variable name="m" select="$models/key('ellookup',current())"/>
+            <xsl:call-template name="copymember">
+                <xsl:with-param name="m" select="$m"/>
+                <xsl:with-param name="subsets" select="$subsets"/>
+            </xsl:call-template>
+        </xsl:for-each>
+
+        }
+
         <xsl:if test="not(@abstract) and extends ">
             <xsl:variable name="sparms" select="(concat('final ',vf:JavaType(extends/vodml-ref), ' superinstance'), for $v in $localmembers return map:get($decls, $v))"/>
             /**
@@ -1009,7 +1026,7 @@ package <xsl:value-of select="$path"/>;
     <xsl:variable name="datatype" select="substring-after(datatype/vodml-ref,':')"/>
     
     /**
-    * Returns <xsl:value-of select="name"/> composition as an immutable list.
+    * Returns <xsl:value-of select="name"/> composition as a list.
     * @return <xsl:value-of select="name"/> composition
     */
       <xsl:choose>
@@ -1020,7 +1037,7 @@ package <xsl:value-of select="$path"/>;
       public List&lt;<xsl:value-of select="$type"/>&gt;&bl;get<xsl:value-of select="$name"/>() {
       </xsl:otherwise>
       </xsl:choose>
-    return java.util.Collections.unmodifiableList(this.<xsl:value-of select="vf:javaMemberName(name)"/> != null?this.<xsl:value-of select="vf:javaMemberName(name)"/>: new ArrayList&lt;&gt;());
+    return this.<xsl:value-of select="vf:javaMemberName(name)"/>;
     }
     /**
     * Defines whole <xsl:value-of select="name"/> composition.
@@ -1057,6 +1074,24 @@ package <xsl:value-of select="$path"/>;
         }
 
     }
+        /**
+        * update a <xsl:value-of select="$type"/> in the composition.
+        * @param _p&bl;<xsl:value-of select="$type"/> to update
+        * the match is done via the database key
+        */
+        public void replaceIn<xsl:value-of select="$name"/>(final <xsl:value-of select="$type"/> _p) {
+        if(this.<xsl:value-of select="vf:javaMemberName(name)"/> != null) {
+        for (<xsl:value-of select="$type"/> _l : this.<xsl:value-of select="vf:javaMemberName(name)"/>) {
+        if(_l.getId().equals(_p.getId())) {
+           _l.updateUsing(_p);
+           return;
+        }
+        }
+        throw new IllegalArgumentException("entry not found in composition");
+        }
+        else
+        throw new IllegalStateException("there is no exiting entry in the composition");
+        }
     </xsl:if>
   </xsl:template>
 

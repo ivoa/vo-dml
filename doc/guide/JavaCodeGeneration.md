@@ -142,6 +142,27 @@ which will create a new entity along with any contained compositions, but will m
 
 This extra JPA functionality is described by the [JPAManipulations](https://github.com/ivoa/vo-dml/tree/master/runtime/java/src/main/java/org/ivoa/vodml/jpa/JPAManipulations.java) interface.
 
+### Composition Helpers
+
+Some convenience methods are created on the object that is the parent of compositions to make dealing with JPA updates easier.
+
+```java
+class X {
+   public void replaceInY(final Y _p) {...}
+}
+```
+Where Y is a composition type and the instance _p is not in the current JPA context (e.g has been deserialized from JSON), then
+the assuming that the deserialized object contains a valid database key, the member of the composition will be updated in a way that is suitable for a JPA merge.
+
+Internally this makes use of another convenience function 
+
+```java
+class Y {
+   public void updateUsing ( final Y other){...}
+}
+```
+that will update this with all the values from other.
+
 ### Embeddable dataTypes
 
 The most natural way to represent dataTypes in JPA is as embeddable, this means that they do
