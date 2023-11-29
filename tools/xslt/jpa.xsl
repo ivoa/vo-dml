@@ -374,7 +374,7 @@
       <xsl:otherwise>
 
         <xsl:if test="isOrdered">
-@jakarta.persistence.OrderBy( value = "rank" )
+@jakarta.persistence.OrderColumn
         </xsl:if>
 @jakarta.persistence.OneToMany(  cascade = jakarta.persistence.CascadeType.ALL, fetch = jakarta.persistence.FetchType.LAZY, targetEntity=<xsl:value-of select="concat(vf:JavaType(datatype/vodml-ref),'.class')" />)
 @jakarta.persistence.JoinColumn( name="<xsl:value-of select="concat(upper-case(current()/parent::*/name),'_ID')"/>")
