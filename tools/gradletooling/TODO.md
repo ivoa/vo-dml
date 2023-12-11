@@ -104,8 +104,7 @@ VODML Tooling TODO
 
 
 * JSON
-  * allow refs to be serialized/deserialized as ids always.... - for use in APIs....
-  
+  * allow refs to be serialized/deserialized as ids always.... - for use in APIs.... https://stackoverflow.com/questions/51172496/how-to-dynamically-ignore-a-property-on-jackson-serialization
 
 # Python production
 
