@@ -8,7 +8,7 @@ release
     primitive anyURI -> string "Represents a URI in the same way as the datatype of the same nam in XML Schema is used."
     primitive boolean  "The standard boolean, having values true or false."
     primitive complex  "Represents a complex number, consisting of a real and imaginary component, both of which are reals. Note that in many contexts there is no native mapping for this type and it must be treated with a custom mapping."
-    primitive datetime  "Represents a moment in time using a date+timestamp. "
+    primitive datetime  "Represents a moment in time using a date+timestamp - string serialization to conform to ISO 8601"
     primitive integer  "An integer number (from Z)."
     primitive nonnegativeInteger  "An integer number from N, therefore greater than or equal to 0."
     primitive rational  "A rational number from Q, represented by two integers, a numerator and a denominator. A native mapping to a serialisation context does in general not exists."
