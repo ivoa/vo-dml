@@ -53,7 +53,7 @@ import javax.xml.transform.stream.StreamSource
 
          vodmlFiles.forEach{
              val shortname = it.nameWithoutExtension
-             val outfile = docDir.file(shortname +".validation")
+             //val outfile = docDir.file(shortname +".validation")
              val result = schematron.validate(StreamSource(it.absoluteFile))
              logger.info("$shortname validation=${result.isValid}")
              if (!result.isValid)
