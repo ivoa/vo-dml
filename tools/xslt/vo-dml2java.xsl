@@ -557,9 +557,9 @@
           /**
           * inserted database key
           */
-          <xsl:if test="not(vf:referredTo($vodml-ref))"><!--TODO do we really want to ignore - is this just making everythig more complicated -->
+          <xsl:if test="not(vf:referredTo($vodml-ref))"><!--TODO do we really want to ignore - is this just making everything more complicated - try to do this in conditional way for json depending on use.  see https://github.com/ivoa/vo-dml/issues/30  -->
           @jakarta.xml.bind.annotation.XmlTransient
-          @com.fasterxml.jackson.annotation.JsonIgnore
+         // @com.fasterxml.jackson.annotation.JsonIgnore
           </xsl:if>
           @jakarta.persistence.Id
           @jakarta.persistence.GeneratedValue
@@ -1026,7 +1026,7 @@ package <xsl:value-of select="$path"/>;
     <xsl:variable name="datatype" select="substring-after(datatype/vodml-ref,':')"/>
     
     /**
-    * Returns <xsl:value-of select="name"/> composition as a list.
+    * Returns <xsl:value-of select="name"/> composition as an immutable list.
     * @return <xsl:value-of select="name"/> composition
     */
       <xsl:choose>
@@ -1037,7 +1037,7 @@ package <xsl:value-of select="$path"/>;
       public List&lt;<xsl:value-of select="$type"/>&gt;&bl;get<xsl:value-of select="$name"/>() {
       </xsl:otherwise>
       </xsl:choose>
-    return this.<xsl:value-of select="vf:javaMemberName(name)"/>;
+    return java.util.Collections.unmodifiableList(this.<xsl:value-of select="vf:javaMemberName(name)"/> != null?this.<xsl:value-of select="vf:javaMemberName(name)"/>: new ArrayList&lt;&gt;());
     }
     /**
     * Defines whole <xsl:value-of select="name"/> composition.
