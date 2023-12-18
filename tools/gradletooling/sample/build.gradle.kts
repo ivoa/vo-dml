@@ -80,7 +80,7 @@ dependencies {
     implementation("org.javastro.ivoa.vo-dml:ivoa-base")
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    implementation("org.slf4j:slf4j-api:1.7.32")
+    implementation("org.slf4j:slf4j-api:2.0.9")
     testRuntimeOnly("ch.qos.logback:logback-classic:1.4.7")
     testImplementation("com.h2database:h2:2.1.214") // try out h2
 //    testImplementation("org.apache.derby:derby:10.14.2.0")
