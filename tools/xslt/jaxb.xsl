@@ -101,7 +101,7 @@
   <!-- template attribute : adds JAXB annotations for primitive types, data types & enumerations -->
   <xsl:template match="attribute|composition[multiplicity/maxOccurs = 1]" mode="JAXBAnnotation">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
-      <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref)">
+      <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/name() != 'primitiveType' and ($models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref))">
        <xsl:value-of select="$jsontypinfo"/>
       </xsl:if>
     @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)

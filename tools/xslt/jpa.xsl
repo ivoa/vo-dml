@@ -223,12 +223,11 @@
         <xsl:param name="nillable"/>
         @jakarta.persistence.Embedded
         <xsl:variable name="attovers" as="xsd:string*">
-            <xsl:for-each select="($type/attribute, vf:baseTypes(vf:asvodmlref($type))/attribute)">
-                <xsl:variable name="attr" select="."/>
+
                 <xsl:variable name="atv" as="xsd:string*">
-                    <xsl:apply-templates select="$models/key('ellookup',current()/datatype/vodml-ref)" mode="attrovercols"><xsl:with-param name="prefix" select="concat($name,'_',name)"/></xsl:apply-templates>
+                    <xsl:apply-templates select="$models/key('ellookup',current()/datatype/vodml-ref)" mode="attrovercols"><xsl:with-param name="prefix" select="$name"/></xsl:apply-templates>
                 </xsl:variable>
-                <!--                  <xsl:message><xsl:value-of select="concat($name,'-',$type/name, ' ', name,' overrides -> ',string-join($atv, ' %%%* '))" /></xsl:message>-->
+                <xsl:message><xsl:value-of select="concat('***',$name,'-',$type/name, ' ', name,' overrides --- ',string-join($atv, ' %%%* '))" /></xsl:message>
                 <xsl:for-each select="$atv">
                     <xsl:variable name="tmp"> <!-- just to make formatting easier  (otherwise each bit is a string seqmnent, and a lot of quotes!) -->
                         <xsl:variable name="attsubst">
@@ -239,7 +238,6 @@
                     </xsl:variable>
                     <xsl:value-of select="$tmp"/>
                 </xsl:for-each>
-            </xsl:for-each>
         </xsl:variable>
         @jakarta.persistence.AttributeOverrides( {
         <xsl:value-of select="string-join($attovers,concat(',',$cr))"/>
@@ -249,43 +247,39 @@
 
     <xsl:template match="dataType" mode="attrovercols" as="xsd:string*">
         <xsl:param name="prefix" as="xsd:string"/>
-<!--        <xsl:message>** attrovercols <xsl:value-of select="concat(name(),' ',name,' *** ',$prefix)"/></xsl:message>-->
-        <xsl:for-each select="(attribute, vf:baseTypes(vf:asvodmlref(.))/attribute)">
+        <xsl:message>** attrovercolsD <xsl:value-of select="concat(name(),' ',name,' *** ',$prefix)"/></xsl:message>
+        <xsl:for-each select="(attribute, vf:baseTypes(vf:asvodmlref(current()))/attribute)"> <!-- this takes care of dataType inheritance -->
             <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
-            <xsl:choose>
-                <xsl:when test="$type/extends">
-                    <xsl:apply-templates select="$models/key('ellookup',$type/extends/vodml-ref)" mode="attrovercols">
-                        <xsl:with-param name="prefix" select="concat($prefix,'_',name)"/>
-                    </xsl:apply-templates>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:apply-templates select="$type" mode="attrovercols">
-                        <xsl:with-param name="prefix" select="concat($prefix,'_',name)"/>
-                    </xsl:apply-templates>
-                </xsl:otherwise>
-            </xsl:choose>
+            <xsl:apply-templates select="$type" mode="attrovercols">
+                <xsl:with-param name="prefix" select="concat($prefix,'_',name)"/>
+            </xsl:apply-templates>
         </xsl:for-each>
     </xsl:template>
 
     <xsl:template match="primitiveType" mode="attrovercols" as="xsd:string*">
         <xsl:param name="prefix" as="xsd:string"/>
-<!--        <xsl:message>** attrovercols <xsl:value-of select="concat(name(),' ',name,' *** ',$prefix)"/></xsl:message>-->
+        <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
+        <xsl:message>** attrovercolsP <xsl:value-of select="concat(name(),' ',name,' *** ',$prefix, ' extends=',extends)"/></xsl:message>
             <xsl:choose>
                 <xsl:when test="vf:hasMapping(vf:asvodmlref(current()),'java')">
                     <xsl:variable name="pmap" select="vf:findmapping(vf:asvodmlref(current()),'java')"/>
                     <xsl:choose>
+                        <xsl:when test="$pmap/@jpa-atomic">
+                            <xsl:value-of select="$prefix"/>
+                        </xsl:when>
                         <xsl:when test="$pmap/@primitive-value-field">
-                            <xsl:value-of select="concat($prefix,'_',vf:findmapping(vf:asvodmlref(current()),'java')/@primitive-value-field)"/>
+                            <xsl:value-of select="concat($prefix,'+',$pmap/@primitive-value-field)"/>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:value-of select="$prefix"/> <!--assume for now that it is mapped to java primitive -->
+                            <xsl:value-of select="concat($prefix,'+value')"/>
                         </xsl:otherwise>
                     </xsl:choose>
 
                 </xsl:when>
                 <xsl:when test="extends">
-                    <!-- this might not be the "correct" logic if there is multiple levels of inheritance and mappings -->
-                    <xsl:value-of select="concat($prefix,'_value')"/> <!-- value is the default field name for generated primitives -->
+                    <xsl:apply-templates select="$models/key('ellookup',current()/extends/vodml-ref)" mode="attrovercols">
+                        <xsl:with-param name="prefix" select="concat($prefix,'_value')"/>
+                    </xsl:apply-templates>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:value-of select="$prefix"/> <!--this is the old primitive case -->
