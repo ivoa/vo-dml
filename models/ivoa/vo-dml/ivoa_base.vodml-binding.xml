@@ -72,6 +72,25 @@ This is a sample file for mapping VO-DML models to XSD or Java using the gradle 
     <java-type primitive-value-field="value" >org.ivoa.vodml.stdtypes.Unit</java-type>
     <xsd-type>xsd:string</xsd-type>
   </type-mapping>
+  <type-mapping>
+    <vodml-id>identifier</vodml-id>
+    <java-type >org.ivoa.vodml.stdtypes.Identifier</java-type>
+  </type-mapping>
+  <type-mapping>
+    <vodml-id>intIdentifier</vodml-id>
+    <java-type primitive-value-field="value" >org.ivoa.vodml.stdtypes.IntIdentifier</java-type>
+    <xsd-type>xsd:int</xsd-type>
+  </type-mapping>
+  <type-mapping>
+    <vodml-id>stringIdentifier</vodml-id>
+    <java-type primitive-value-field="value" >org.ivoa.vodml.stdtypes.StringIdentifier</java-type>
+    <xsd-type>xsd:string</xsd-type>
+  </type-mapping>
+  <type-mapping>
+    <vodml-id>ivorn</vodml-id>
+    <java-type primitive-value-field="value" >org.ivoa.vodml.stdtypes.Ivorn</java-type>
+    <xsd-type>xsd:string</xsd-type>
+  </type-mapping>
 </model>
 
 </m:mappedModels>

@@ -9,79 +9,94 @@
       release
       </description> 
       <uri/>
-      <title>TBD</title>
+      <title></title>
       <version>1.1</version>
-      <lastModified>2023-04-02T09:16:58Z</lastModified>
+      <lastModified>2023-12-15T17:15:51Z</lastModified>
       <primitiveType>
-        <vodml-id>Unit</vodml-id>
-        <name>Unit</name>
-        <description>Must conform to definition of unit in VOUnit spec.</description>	    
+      <vodml-id>Unit</vodml-id>
+      <name>Unit</name>
+      <description>Must conform to definition of unit in VOUnit spec.</description>	    
+      <extends>
+         <vodml-ref>ivoa:string</vodml-ref>
+      </extends>
       </primitiveType>
       <primitiveType>
-        <vodml-id>anyURI</vodml-id>
-        <name>anyURI</name>
-        <description>Represents a URI in the same way as the datatype of the same nam in XML Schema is used.</description>	    
+      <vodml-id>anyURI</vodml-id>
+      <name>anyURI</name>
+      <description>Represents a URI in the same way as the datatype of the same nam in XML Schema is used.</description>	    
+      <extends>
+         <vodml-ref>ivoa:string</vodml-ref>
+      </extends>
       </primitiveType>
       <primitiveType>
-        <vodml-id>boolean</vodml-id>
-        <name>boolean</name>
-        <description>The standard boolean, having values true or false.</description>	    
+      <vodml-id>boolean</vodml-id>
+      <name>boolean</name>
+      <description>The standard boolean, having values true or false.</description>	    
       </primitiveType>
       <primitiveType>
-        <vodml-id>complex</vodml-id>
-        <name>complex</name>
-        <description>Represents a complex number, consisting of a real and imaginary component, both of which are reals. Note that in many contexts there is no native mapping for this type and it must be treated with a custom mapping.</description>	    
+      <vodml-id>complex</vodml-id>
+      <name>complex</name>
+      <description>Represents a complex number, consisting of a real and imaginary component, both of which are reals. Note that in many contexts there is no native mapping for this type and it must be treated with a custom mapping.</description>	    
       </primitiveType>
       <primitiveType>
-        <vodml-id>datetime</vodml-id>
-        <name>datetime</name>
-        <description>Represents a moment in time using a date+timestamp. </description>	    
+      <vodml-id>datetime</vodml-id>
+      <name>datetime</name>
+      <description>Represents a moment in time using a date+timestamp - string serialization to conform to ISO 8601</description>	    
       </primitiveType>
       <primitiveType>
-        <vodml-id>integer</vodml-id>
-        <name>integer</name>
-        <description>An integer number (from Z).</description>	    
+      <vodml-id>integer</vodml-id>
+      <name>integer</name>
+      <description>An integer number (from Z).</description>	    
       </primitiveType>
       <primitiveType>
-        <vodml-id>nonnegativeInteger</vodml-id>
-        <name>nonnegativeInteger</name>
-        <description>An integer number from N, therefore greater than or equal to 0.</description>	    
+      <vodml-id>nonnegativeInteger</vodml-id>
+      <name>nonnegativeInteger</name>
+      <description>An integer number from N, therefore greater than or equal to 0.</description>	    
       </primitiveType>
       <primitiveType>
-        <vodml-id>rational</vodml-id>
-        <name>rational</name>
-        <description>A rational number from Q, represented by two integers, a numerator and a denominator. A native mapping to a serialisation context does in general not exists.</description>	    
+      <vodml-id>rational</vodml-id>
+      <name>rational</name>
+      <description>A rational number from Q, represented by two integers, a numerator and a denominator. A native mapping to a serialisation context does in general not exists.</description>	    
       </primitiveType>
       <primitiveType>
-        <vodml-id>real</vodml-id>
-        <name>real</name>
-        <description>A real number (from R).</description>	    
+      <vodml-id>real</vodml-id>
+      <name>real</name>
+      <description>A real number (from R).</description>	    
       </primitiveType>
       <primitiveType>
-        <vodml-id>string</vodml-id>
-        <name>string</name>
-        <description>A string, represented as an array of characters treated as a single, primitive value. Ala Java, a string can not be updated, that is any update leads to a different string. However in contrast to Java we assume that two strings that are identical in all their constitutent characters are the same.
-        I.e. string has value type semantics.</description>	    
+      <vodml-id>string</vodml-id>
+      <name>string</name>
+      <description>A string, represented as an array of characters treated as a single, primitive value. Ala Java, a string can not be updated, that is any update leads to a different string. However in contrast to Java we assume that two strings that are identical in all their constitutent characters are the same.
+      I.e. string has value type semantics.</description>	    
       </primitiveType>
       <primitiveType>
-        <vodml-id>identifier</vodml-id>
-        <name>identifier</name>
-        <description>something that an identifier that can be used as a key for lookup of an entity that is *outside this datamodel*</description>	    
+      <vodml-id>identifier</vodml-id>
+      <name>identifier</name>
+      <description>something that an identifier that can be used as a key for lookup of an entity that is *outside this datamodel*</description>	    
       </primitiveType>
       <primitiveType>
-        <vodml-id>intIdentifier</vodml-id>
-        <name>intIdentifier</name>
-        <description>an integer identifier</description>	    
+      <vodml-id>intIdentifier</vodml-id>
+      <name>intIdentifier</name>
+      <description>an integer identifier</description>	    
+      <extends>
+         <vodml-ref>ivoa:identifier</vodml-ref>
+      </extends>
       </primitiveType>
       <primitiveType>
-        <vodml-id>stringIdentifier</vodml-id>
-        <name>stringIdentifier</name>
-        <description>a string identifier</description>	    
+      <vodml-id>stringIdentifier</vodml-id>
+      <name>stringIdentifier</name>
+      <description>a string identifier</description>	    
+      <extends>
+         <vodml-ref>ivoa:identifier</vodml-ref>
+      </extends>
       </primitiveType>
       <primitiveType>
-        <vodml-id>ivorn</vodml-id>
-        <name>ivorn</name>
-        <description>an identifier that can be used as a key to look up in an IVOA registry - see https://www.ivoa.net/documents/IVOAIdentifiers/</description>	    
+      <vodml-id>ivorn</vodml-id>
+      <name>ivorn</name>
+      <description>an identifier that can be used as a key to look up in an IVOA registry - see https://www.ivoa.net/documents/IVOAIdentifiers/</description>	    
+      <extends>
+         <vodml-ref>ivoa:identifier</vodml-ref>
+      </extends>
       </primitiveType>
             <dataType>
               <vodml-id>IntegerQuantity</vodml-id>
@@ -103,7 +118,7 @@
               </multiplicity>
             </attribute>
             </dataType>
-            <dataType abstract='true'>
+            <dataType abstract="true">
               <vodml-id>Quantity</vodml-id>
               <name>Quantity</name>
               <description>Meant to represent the value of a numerical physical quantity.  

@@ -19,6 +19,10 @@ vodml {
 
 }
 
+tasks.named("vodmlJavaGenerate") {
+    dependsOn("vodslToVodml")
+}
+
 tasks.test {
     useJUnitPlatform()
 }
@@ -39,6 +43,15 @@ dependencies {
 tasks.named<Jar>("jar") {
     exclude("**/persistence.xml")
 }
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11)) // moved to Java 11
+    }
+    withJavadocJar()
+//    withSourcesJar()
+}
+
+
 //publishing - IMPL would be nice to factor this out in some way....
 nexusPublishing {
     repositories {
