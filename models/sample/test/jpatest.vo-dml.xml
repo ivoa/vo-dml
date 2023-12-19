@@ -6,9 +6,9 @@
       <name>jpatest</name>
       <description>This is a small model to test some jpa features</description> 
       <uri/>
-      <title>TBD</title>
+      <title></title>
       <version>1.0</version>
-      <lastModified>2023-04-14T16:44:26Z</lastModified>
+      <lastModified>2023-12-19T14:14:15Z</lastModified>
       <import>
         <name>null</name><!--should not be needed in modern vo-dml -->
         <url>IVOA-v1.0.vo-dml.xml</url>
@@ -139,6 +139,35 @@
                </reference>
             </objectType>
             <objectType>
+               <vodml-id>LChild</vodml-id>
+               <name>LChild</name>
+               <description></description>	    
+               <attribute>
+                 <vodml-id>LChild.sval</vodml-id>
+                 <name>sval</name>
+                 <description></description>	    
+                 <datatype>
+                    <vodml-ref>ivoa:string</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </attribute>
+               <attribute>
+                 <vodml-id>LChild.ival</vodml-id>
+                 <name>ival</name>
+                 <description></description>	    
+                 <datatype>
+                    <vodml-ref>ivoa:integer</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </attribute>
+            </objectType>
+            <objectType>
                <vodml-id>Parent</vodml-id>
                <name>Parent</name>
                <description>top level type</description>	    
@@ -165,6 +194,19 @@
                    <minOccurs>1</minOccurs>
                    <maxOccurs>1</maxOccurs>
                  </multiplicity>
+               </composition>
+               <composition>
+                 <vodml-id>Parent.lval</vodml-id>
+                 <name>lval</name>
+                 <description></description>	    
+                 <datatype>
+                    <vodml-ref>jpatest:LChild</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>-1</maxOccurs>
+                 </multiplicity>
+                 <isOrdered>true</isOrdered>
                </composition>
                <reference>
                  <vodml-id>Parent.rval</vodml-id>

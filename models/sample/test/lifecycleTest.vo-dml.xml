@@ -6,10 +6,10 @@
       <name>lifecycleTest</name>
       <description>shows how lifecycles/aggregation could work</description> 
       <uri/>
-      <title>TBD</title>
+      <title></title>
       <author>pharriso</author>
       <version>0.1</version>
-      <lastModified>2023-04-14T15:30:34Z</lastModified>
+      <lastModified>2023-06-08T07:49:03Z</lastModified>
       <import>
         <name>null</name><!--should not be needed in modern vo-dml -->
         <url>IVOA-v1.0.vo-dml.xml</url>
