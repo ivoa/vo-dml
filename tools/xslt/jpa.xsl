@@ -231,9 +231,19 @@
                 <xsl:for-each select="$atv">
                     <xsl:variable name="tmp"> <!-- just to make formatting easier  (otherwise each bit is a string seqmnent, and a lot of quotes!) -->
                         <xsl:variable name="attsubst">
-                            <xsl:value-of select="string-join(tokenize(.,'_')[position() != 1],'.')"/>
+                            <xsl:value-of select="string-join(tokenize(.,'_|\+')[position() != 1],'.')"/>
                         </xsl:variable>
-                        <xsl:variable name="colsubs" select="."/>
+                        <xsl:variable name="colsubs">
+                            <xsl:choose>
+                                <xsl:when test="contains(.,'+')">
+                                    <xsl:value-of select="substring-before(.,'+')"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="."/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+
+                        </xsl:variable>
                         @jakarta.persistence.AttributeOverride(name="<xsl:value-of select='$attsubst'/>", column = @jakarta.persistence.Column(name="<xsl:value-of select='$colsubs'/>",  nullable = <xsl:value-of select='$nillable'/> ))
                     </xsl:variable>
                     <xsl:value-of select="$tmp"/>
@@ -256,6 +266,10 @@
         </xsl:for-each>
     </xsl:template>
 
+    <!--produces _ separated string with possible last + separated
+    for the type access all _ and + should be changed to .
+    for the column name just drop the + separated if present.
+     -->
     <xsl:template match="primitiveType" mode="attrovercols" as="xsd:string*">
         <xsl:param name="prefix" as="xsd:string"/>
         <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
