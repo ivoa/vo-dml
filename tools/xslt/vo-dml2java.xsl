@@ -764,35 +764,39 @@ package <xsl:value-of select="$path"/>;
       <xsl:apply-templates select="." mode="openapiAnnotation"/>
       <xsl:apply-templates select="." mode="JPAAnnotation"/>
       <xsl:apply-templates select="." mode="JAXBAnnotation"/>
-      public class <xsl:value-of select="vf:capitalize(name)"/>&bl; implements java.io.Serializable {
+      public class&bl;<xsl:if test="@abstract='true'">abstract</xsl:if>&bl;<xsl:value-of select="vf:capitalize(name)"/>&bl;
+      implements java.io.Serializable {
 
         private static final long serialVersionUID = 1L;
 
-        /**  representation */
-        @jakarta.xml.bind.annotation.XmlValue
-        private <xsl:value-of select="$valuetype"/> value;
 
-        /**
-         * Creates a new <xsl:value-of select="name"/> Primitive Type instance, wrapping a base type.
-         *
-         * @param v 
-         */
-        public <xsl:value-of select="vf:capitalize(name)"/>(final <xsl:value-of select="$valuetype"/> v) {
-            this.value = v;
-        }
       /**
       * no arg constructor.
       */
       protected <xsl:value-of select="vf:capitalize(name)"/>() {}
 
+      <xsl:if test="not(@abstract)">
       /**
       * copy constructor.
+      * @param c the object to be copied.
       */
       public <xsl:value-of select="vf:capitalize(name)"/>(<xsl:value-of select="vf:capitalize(name)"/> c)
       {
          this(c.value);
       }
 
+      /**  representation */
+      @jakarta.xml.bind.annotation.XmlValue
+      private <xsl:value-of select="$valuetype"/> value;
+
+      /**
+      * Creates a new <xsl:value-of select="name"/> Primitive Type instance, wrapping a base type.
+      *
+      * @param v the base type.
+      */
+      public <xsl:value-of select="vf:capitalize(name)"/>(final <xsl:value-of select="$valuetype"/> v) {
+      this.value = v;
+      }
       /**
          * Return the representation of this primitive (value)
          * @return string representation of this primitive( value)
@@ -810,7 +814,7 @@ package <xsl:value-of select="$path"/>;
         public final String toString() {
             return value().toString();
         }
-              
+      </xsl:if>
 
       }
   </xsl:template>

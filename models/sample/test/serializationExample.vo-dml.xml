@@ -6,18 +6,21 @@
       <name>MyModel</name>
       <description>Small Model for serialization</description> 
       <uri/>
-      <title>TBD</title>
+      <title></title>
       <version>1.0</version>
-      <lastModified>2023-06-16T12:46:40Z</lastModified>
+      <lastModified>2023-08-14T10:57:47Z</lastModified>
       <import>
         <name>null</name><!--should not be needed in modern vo-dml -->
         <url>IVOA-v1.0.vo-dml.xml</url>
         <documentationURL>not known</documentationURL>
       </import>
       <primitiveType>
-        <vodml-id>ivorn</vodml-id>
-        <name>ivorn</name>
-        <description>a specialization for IVORNs</description>	    
+      <vodml-id>ivorn</vodml-id>
+      <name>ivorn</name>
+      <description>a specialization for IVORNs</description>	    
+      <extends>
+         <vodml-ref>ivoa:anyURI</vodml-ref>
+      </extends>
       </primitiveType>
             <objectType>
                <vodml-id>Refa</vodml-id>
@@ -68,7 +71,7 @@
                  </multiplicity>
                </attribute>
             </objectType>
-            <objectType abstract='true'>
+            <objectType abstract="true">
                <vodml-id>BaseC</vodml-id>
                <name>BaseC</name>
                <description></description>	    

@@ -7,19 +7,19 @@
       <description>This model defines objects which describe the coordinate space, coordinates within that space, and frames, which provide additional metadata regarding the origin, orientation, etc, of the coordinate space. The model also defines a coordinate system, bundling frames into associated groups.
       </description> 
       <uri/>
-      <title>TBD</title>
+      <title></title>
       <author>Arnold Rots, Mark Cresitello-Dittmar, Omar Laurino</author>
       <version>1.0</version>
-      <lastModified>2023-04-26T17:44:21Z</lastModified>
+      <lastModified>2023-06-08T07:49:03Z</lastModified>
       <import>
         <name>null</name><!--should not be needed in modern vo-dml -->
         <url>IVOA-v1.0.vo-dml.xml</url>
         <documentationURL>not known</documentationURL>
       </import>
       <primitiveType>
-        <vodml-id>Epoch</vodml-id>
-        <name>Epoch</name>
-        <description>We define epoch as a primitive data type with the expected form '{type}{year}' where type = 'J' or 'B' for Julian or Besselian respectively, and year is expressed as a decimal year.  e.g.: 'B1950', 'J2000.0'</description>	    
+      <vodml-id>Epoch</vodml-id>
+      <name>Epoch</name>
+      <description>We define epoch as a primitive data type with the expected form '{type}{year}' where type = 'J' or 'B' for Julian or Besselian respectively, and year is expressed as a decimal year.  e.g.: 'B1950', 'J2000.0'</description>	    
       </primitiveType>
             <enumeration>
                <vodml-id>Handedness</vodml-id>
@@ -117,7 +117,7 @@
                     <description></description>	    
                   </literal>	
             </enumeration>
-            <dataType abstract='true'>
+            <dataType abstract="true">
               <vodml-id>Coordinate</vodml-id>
               <name>Coordinate</name>
               <description>Abstract base class for the Coordinate data types which represent an absolute location within a coordinate space. Coordinates MUST refer to a coordinate system, providing additional metadata relevant to interpreting the coordinate value, and its representation.
@@ -187,7 +187,7 @@
               </multiplicity>
             </attribute>
             </dataType>
-            <dataType abstract='true'>
+            <dataType abstract="true">
               <vodml-id>Point</vodml-id>
               <name>Point</name>
               <description>Multi-dimensional spatial coordinate. The Point MUST refer to a spatial coordinate system (SpaceSys) which associates the point with corresponding coordinate domain space and frame metadata.</description>	    
@@ -337,7 +337,7 @@
               </multiplicity>
             </attribute>
             </dataType>
-            <dataType abstract='true'>
+            <dataType abstract="true">
               <vodml-id>TimeStamp</vodml-id>
               <name>TimeStamp</name>
               <description>This is the abstract basis for a set of simple time domain coordinates which are expected to accommodate the vast majority of use cases. All TimeStamps, by definition, exist in a standard 1-D coordinate space, with domainMin|Max of +/-Infinity.  All TimeStamps MUST refer to an appropriate TimeSys.
@@ -386,7 +386,7 @@
               </multiplicity>
             </attribute>
             </dataType>
-            <dataType abstract='true'>
+            <dataType abstract="true">
               <vodml-id>TimeInstant</vodml-id>
               <name>TimeInstant</name>
               <description>TimeStamps which specify a specific instant in time.  We define three subtypes (ISOTime, JD, MJD), which allow users to explicitly identify the representation and interpretation of the TimeInstant.</description>	    
@@ -455,7 +455,7 @@
               </multiplicity>
             </attribute>
             </dataType>
-            <dataType abstract='true'>
+            <dataType abstract="true">
               <vodml-id>PolCoordinate</vodml-id>
               <name>PolCoordinate</name>
               <description>Abstract head of the polarization coordinate types. Current use cases only require support for discrete polarization states, however, we include this head class to facilitate extension for other types (eg: polarization fraction and angle).</description>	    
@@ -485,7 +485,7 @@
               </multiplicity>
             </attribute>
             </dataType>
-            <dataType abstract='true'>
+            <dataType abstract="true">
               <vodml-id>RefLocation</vodml-id>
               <name>RefLocation</name>
               <description>RefLocation defines the origin of the spatial coordinate space.  This location is represented either by a standard reference position (for which the absolute location in phase space is known by definition), or a specified point in another Spatial frame.  This object is used as the origin of the SpaceFrame here, but also to specify the Spatial Reference Position (refPosition) associated with other domain Frames.  For example, in the Time domain, the Spatial Reference Position indicates that the 'time' values are the time that the 'event' occured at that location, which might be different from the detector location.  
@@ -559,7 +559,7 @@
               </multiplicity>
             </attribute>
             </dataType>
-            <objectType abstract='true'>
+            <objectType abstract="true">
                <vodml-id>CoordSpace</vodml-id>
                <name>CoordSpace</name>
                <description>This object defines a domain space.  i.e.: it describes the set of possible coordinate values.</description>	    
@@ -576,7 +576,7 @@
                  </multiplicity>
                </composition>
             </objectType>
-            <objectType abstract='true'>
+            <objectType abstract="true">
                <vodml-id>Axis</vodml-id>
                <name>Axis</name>
                <description>The abstract parent class for all coordinate axis types.  We provide concrete classes for the most common types of data, Continuous, Binned, and Discrete, but allow extension for other types as needed.</description>	    
@@ -665,7 +665,7 @@
                   <vodml-ref>coords:Axis</vodml-ref>
                </extends>
             </objectType>
-            <objectType abstract='true'>
+            <objectType abstract="true">
                <vodml-id>CoordFrame</vodml-id>
                <name>CoordFrame</name>
                <description>This is the abstract, empty, base class for all coordinate frames.  Coordinate frames provide metadata associated with the coordinate domain space.  Typically, this will be related to the origin and orientation of the axes, but might include any metadata which pertains to the definition of the domain.</description>	    
@@ -881,12 +881,12 @@
                  </multiplicity>
                </attribute>
             </objectType>
-            <objectType abstract='true'>
+            <objectType abstract="true">
                <vodml-id>CoordSys</vodml-id>
                <name>CoordSys</name>
                <description>Abstract head of the coordinate system object tree.</description>	    
             </objectType>
-            <objectType abstract='true'>
+            <objectType abstract="true">
                <vodml-id>PhysicalCoordSys</vodml-id>
                <name>PhysicalCoordSys</name>
                <description>Coordinate system description for any physical domain, such as Time, Space, Redshift, Temperature, Flux, etc.</description>	    
@@ -974,7 +974,7 @@
                   </datatype>
                </constraint>
             </objectType>
-            <objectType abstract='true'>
+            <objectType abstract="true">
                <vodml-id>PhysicalCoordSpace</vodml-id>
                <name>PhysicalCoordSpace</name>
                <description>Abstract head of coordinate spaces related to physical properties.</description>	    

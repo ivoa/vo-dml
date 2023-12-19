@@ -22,6 +22,8 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import org.ivoa.dm.sample.SampleModel;
 import org.ivoa.vodml.testing.AbstractTest;
 import org.junit.jupiter.api.AfterEach;
@@ -53,12 +55,14 @@ class JPATestModelTest extends AbstractTest {
         final ReferredTo1 referredTo = new ReferredTo1("top level ref");
         final ReferredTo2 referredToin = new ReferredTo2("lower ref");
         Child refcont = new Child(referredToin);
+        List<LChild> ll = List.of(new LChild("First",1), new LChild("Second", 2), new LChild("Third",3));
+        
         atest = Parent.createParent(a -> {
             ReferredTo3 ref3 = new ReferredTo3("ref in dtype");
             a.dval = new ADtype(1.1, "astring", ref3 );
             a.rval = referredTo;
             a.cval = refcont;
-            
+            a.lval = ll;         
         });
        
     }
@@ -104,6 +108,52 @@ class JPATestModelTest extends AbstractTest {
         assertEquals("top level ref",par.get(0).rval.sval);
         assertEquals("lower ref",par.get(0).cval.rval.sval);
         assertEquals("ref in dtype",par.get(0).dval.dref.sval);
+        
+       
+
+    }
+   @Test
+    void jpaUpdateOrderedTest() throws JsonProcessingException {
+        jakarta.persistence.EntityManager em = setupH2Db(SampleModel.pu_name());//the persistence unit is all under the one file....
+        em.getTransaction().begin();
+        atest.persistRefs(em); //IMPL need to save references explicitly as they are new.
+        em.persist(atest);
+        em.getTransaction().commit();
+        Long id = atest.getId();
+
+        //flush any existing entities
+        em.clear();
+        em.getEntityManagerFactory().getCache().evictAll();
+
+        // now read back        
+        Parent par = em.createNamedQuery("Parent.findById", Parent.class)
+                .setParameter("id", id).getResultList().get(0);
+        List<LChild> ll = par.getLval();
+        assertEquals(3, ll.size());
+        LChild a = ll.get(1);
+        assertEquals(2, a.getIval());
+        
+        // create an update object
+        String injson = "{\"sval\":\"Seconded\",\"ival\":2000,\"_id\":2}"; // assumes the id is 2
+        LChild arepl = SampleModel.jsonMapper().readValue(injson, LChild.class);
+        
+        em.getTransaction().begin();
+        
+        par.replaceInLval(arepl);
+        em.merge(par);
+        em.getTransaction().commit();
+          //flush any existing entities
+        em.clear();
+        em.getEntityManagerFactory().getCache().evictAll();
+
+        
+        Parent par2= em.createNamedQuery("Parent.findById", Parent.class)
+                .setParameter("id", id).getResultList().get(0);
+        List<LChild> ll2 = par2.getLval();
+        assertEquals(3, ll2.size());
+        LChild ain = ll2.get(1);
+        assertEquals(2000, a.getIval());
+        
         
        
 
