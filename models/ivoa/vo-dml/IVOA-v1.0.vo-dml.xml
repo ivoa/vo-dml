@@ -11,7 +11,7 @@
       <uri/>
       <title></title>
       <version>1.1</version>
-      <lastModified>2023-12-15T17:15:51Z</lastModified>
+      <lastModified>2023-12-19T08:38:01Z</lastModified>
       <primitiveType>
       <vodml-id>Unit</vodml-id>
       <name>Unit</name>
@@ -70,24 +70,19 @@
       I.e. string has value type semantics.</description>	    
       </primitiveType>
       <primitiveType>
-      <vodml-id>identifier</vodml-id>
-      <name>identifier</name>
-      <description>something that an identifier that can be used as a key for lookup of an entity that is *outside this datamodel*</description>	    
-      </primitiveType>
-      <primitiveType>
       <vodml-id>intIdentifier</vodml-id>
       <name>intIdentifier</name>
-      <description>an integer identifier</description>	    
+      <description>an integer identifier that can be used as a key for lookup of an entity that is *outside this datamodel*</description>	    
       <extends>
-         <vodml-ref>ivoa:identifier</vodml-ref>
+         <vodml-ref>ivoa:integer</vodml-ref>
       </extends>
       </primitiveType>
       <primitiveType>
       <vodml-id>stringIdentifier</vodml-id>
       <name>stringIdentifier</name>
-      <description>a string identifier</description>	    
+      <description>a string identifier that can be used as a key for lookup of an entity that is *outside this datamodel*</description>	    
       <extends>
-         <vodml-ref>ivoa:identifier</vodml-ref>
+         <vodml-ref>ivoa:string</vodml-ref>
       </extends>
       </primitiveType>
       <primitiveType>
@@ -95,7 +90,7 @@
       <name>ivorn</name>
       <description>an identifier that can be used as a key to look up in an IVOA registry - see https://www.ivoa.net/documents/IVOAIdentifiers/</description>	    
       <extends>
-         <vodml-ref>ivoa:identifier</vodml-ref>
+         <vodml-ref>ivoa:anyURI</vodml-ref>
       </extends>
       </primitiveType>
             <dataType>
