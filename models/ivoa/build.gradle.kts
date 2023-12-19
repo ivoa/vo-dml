@@ -18,10 +18,11 @@ vodml {
     outputPythonDir.set(layout.projectDirectory.dir("../../tools/gradletooling/sample/pythontest/generated"))
 
 }
-
+/*
 tasks.named("vodmlJavaGenerate") {
     dependsOn("vodslToVodml")
 }
+*/
 
 tasks.test {
     useJUnitPlatform()
