@@ -29,4 +29,4 @@
 * 0.3.24 improved python generation - removed join tables.
 * 0.4.0 move to jakarta namespace
 * 0.4.1 Improved list API
-* 0.4.2 
+* 0.4.2 Update the vodsl support to 0.4.6
