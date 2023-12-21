@@ -742,7 +742,7 @@ package <xsl:value-of select="$path"/>;
     <xsl:variable name="valuetype">
       <xsl:choose>
         <xsl:when test="extends">
-          <xsl:value-of select="vf:JavaType(extends/vodml-ref)"/>
+          <xsl:value-of select="vf:JavaType(vf:baseTypeIds(vf:asvodmlref(current()))[last()])"/>
         </xsl:when>
         <xsl:otherwise>
             <xsl:message>Primitive type <xsl:value-of select="name"/> is being represented as a String - in general it is probably best to specialize primitive types with the binding mechanism to get desired representation/behavious</xsl:message>
@@ -790,7 +790,7 @@ package <xsl:value-of select="$path"/>;
       private <xsl:value-of select="$valuetype"/> value;
 
       /**
-      * Creates a new <xsl:value-of select="name"/> Primitive Type instance, wrapping a base type.
+      * Creates a new <xsl:value-of select="name"/> Primitive Type instance, using the base type.
       *
       * @param v the base type.
       */
