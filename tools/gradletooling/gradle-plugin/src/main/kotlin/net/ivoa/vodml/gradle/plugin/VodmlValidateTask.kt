@@ -46,7 +46,7 @@ import javax.xml.transform.stream.StreamSource
          val transformerFactory = net.sf.saxon.TransformerFactoryImpl()
          transformerFactory.uriResolver = org.xmlresolver.Resolver(catalogResolver)
 
-         val schematron = Schematron(StreamSource(this::class.java.getResourceAsStream("/xsd/vo-dml-v1.0.sch.xml")), null,
+         val schematron = Schematron(StreamSource(this::class.java.getResourceAsStream("/xslt/vo-dml-v1.0.sch.xml")), null,
              transformerFactory, HashMap())
 
 
