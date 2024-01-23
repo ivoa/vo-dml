@@ -26,26 +26,6 @@
   <xsl:variable name='lt'><xsl:text disable-output-escaping="yes">&lt;</xsl:text></xsl:variable>
   <xsl:variable name='gt'><xsl:text disable-output-escaping="yes">&gt;</xsl:text></xsl:variable>
 
-  <!-- this function does not rely on vodml-id being present -->
-  <xsl:function name="vf:asvodmlref" as="xsd:string">
-    <xsl:param name="el" as="element()"/>
-    <xsl:value-of select="concat($el/ancestor::vo-dml:model/name,':',string-join($el/ancestor-or-self::*/name[not(../name() = 'vo-dml:model')], '.'))"/>
-  </xsl:function>
-
-  <xsl:function name="vf:nameFromVodmlref" as="xsd:string">
-    <xsl:param name="vodml-ref" as="xsd:string"/>
-    <xsl:value-of select="tokenize($vodml-ref,'[\.:]')[last()]"/>
-  </xsl:function>
-
-
-  <xsl:function name="vf:isOptional" as="xsd:boolean">
-    <xsl:param name="el" as="element()"/>
-    <xsl:sequence select="number($el/multiplicity/minOccurs) = 0 and number($el/multiplicity/maxOccurs) = 1" />
-  </xsl:function>
-  <xsl:function name="vf:isArrayLike" as="xsd:boolean">
-    <xsl:param name="el" as="element()"/>
-    <xsl:sequence select="number($el/multiplicity/minOccurs) >  1 and number($el/multiplicity/maxOccurs) > 1" />
-  </xsl:function>
 
   <xsl:function name="vf:upperFirst" as="xsd:string">
     <xsl:param name="s" as="xsd:string"/>
