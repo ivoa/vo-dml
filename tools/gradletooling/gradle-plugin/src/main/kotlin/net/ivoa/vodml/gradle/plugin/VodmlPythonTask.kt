@@ -40,7 +40,7 @@ import javax.inject.Inject
              Vodml2Python.doTransform(
                  v.absoluteFile, mapOf(
                      "binding" to allBinding.joinToString(separator = ",") { it.toURI().toURL().toString() },
-                     "output_root" to pythonGenDir.get().asFile.absolutePath,
+                     "output_root" to pythonGenDir.get().asFile.toURI().toURL().toString(),
                      "isMain" to (if (index++ == 0) "True" else "False") // first is the Main
                  ),
                  actualCatalog, outfile.get().asFile
