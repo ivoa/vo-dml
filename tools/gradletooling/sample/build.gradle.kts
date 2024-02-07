@@ -6,7 +6,7 @@ import ru.vyarus.gradle.plugin.python.task.PythonTask
  * 
  */
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.4.2"
+    id("net.ivoa.vo-dml.vodmltools") version "0.4.3"
 //    id ("com.diffplug.spotless") version "5.17.1"
     id("ru.vyarus.use-python") version "3.0.0"
 
@@ -98,8 +98,8 @@ python {
     )
 
    pip("pytest:7.3.1")
-   pip("SQLAlchemy:2.0.16")
-    pip("xsdata[lxml,cli]:23.5")
+   pip("SQLAlchemy:2.0.25")
+    pip("xsdata[lxml,cli]:24.1")
     pip("pydantic:1.10.9")
 }
 

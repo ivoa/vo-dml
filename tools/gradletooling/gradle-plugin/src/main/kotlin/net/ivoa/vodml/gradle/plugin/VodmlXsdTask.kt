@@ -39,7 +39,7 @@ open class VodmlXsdTask  @Inject constructor(ao1: ArchiveOperations) : VodmlBase
             val outfile = schemaDir.file("$shortname.xsd")
             logger.info("Generating XML schema from  ${it.name} to ${outfile.get().asFile.absolutePath}")
             Vodml2xsd.doTransform(it.absoluteFile, mapOf(
-                "binding" to allBinding.joinToString(separator = ",") { it.absolutePath }
+                "binding" to allBinding.joinToString(separator = ",") { it.toURI().toURL().toString() }
             ),
                 actualCatalog, outfile.get().asFile)
         }
