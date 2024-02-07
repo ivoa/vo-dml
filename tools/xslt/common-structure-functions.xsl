@@ -24,7 +24,7 @@ note - only define functions in here as it is included in the schematron rules
     <!-- does the vodml-ref exist? -->
     <xsl:function name="vf:vo-dml-ref-exists" as="xsd:boolean">
         <xsl:param name="vodml-ref" />
-        <xsl:value-of select="count($models/key('ellookup',$vodml-ref)) =1 " />
+        <xsl:sequence select="count($models/key('ellookup',$vodml-ref)) =1 " />
     </xsl:function>
 
     <!-- return the base types for current type - note that this does not return the types in strict hierarchy order (not sure why!) -->
@@ -328,6 +328,43 @@ note - only define functions in here as it is included in the schematron rules
         </xsl:choose>
 
     </xsl:function>
+
+    <!-- returns all the contained type ids -->
+    <xsl:function name="vf:containedTypeIds" as="xsd:string*">
+        <xsl:param name="vodml-ref"/>
+        <xsl:choose>
+            <xsl:when test="$models/key('ellookup',$vodml-ref)">
+                <xsl:variable name="el" as="element()">
+                    <xsl:copy-of select="$models/key('ellookup',$vodml-ref)" />
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="$el/composition">
+                        <xsl:sequence select="($el/composition/datatype/vodml-ref, for $v in $el/composition/datatype/vodml-ref return  vf:containedTypeIds($v))"/>
+                    </xsl:when>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">type <xsl:value-of select="$vodml-ref"/> not in considered models for base types</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
+    <xsl:function name="vf:isTypeContained" as="xsd:boolean">
+        <xsl:param name="type-vodml-ref"  as="xsd:string" />
+        <xsl:param name="root-vodml-ref" as="xsd:string"/>
+        <xsl:variable name="root" select="$models/key('ellookup',$root-vodml-ref)"/>
+        <xsl:choose>
+            <xsl:when test="$root/composition">
+                <xsl:sequence  select="$type-vodml-ref = vf:containedTypeIds($root-vodml-ref)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="false()"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
+
+
     <xsl:function name="vf:attributeIsDtype" as="xsd:boolean">
         <xsl:param name="attr" as="element()"/>
         <xsl:sequence select="$models/key('ellookup',$attr/datatype/vodml-ref)/name() = 'dataType'"/>

@@ -141,6 +141,7 @@ type <sch:value-of select="datatype/vodml-ref"/> of <sch:value-of select="$owner
 
   <sch:rule context="reference">
     <sch:let name="owner" value="vf:asvodmlref(current())"/>
+      <sch:let name="parent" value="vf:asvodmlref(current()/ancestor-or-self::objectType)"/>
       <sch:assert test="vf:vo-dml-ref-exists(datatype/vodml-ref)" flag="error">
       vodml-ref  <sch:value-of select="datatype/vodml-ref"/> for type of  <sch:value-of select="$owner"/> does not exist
   </sch:assert>
@@ -150,9 +151,9 @@ type <sch:value-of select="datatype/vodml-ref"/> of <sch:value-of select="$owner
 type <sch:value-of select="datatype/vodml-ref"/> of reference <sch:value-of select="$owner"/> is not an object type but a '<sch:value-of select="$target"/>'
     </sch:assert>
       <!--rules implementing a reference should not be used in composition - this does not work well with the current tooling, however, if references allowed unlimited multiplicities then...     -->
-      <sch:report test="$composition" flag="warning">
-Reference <sch:value-of select="./datatype/vodml-ref"/> used in <sch:value-of select="./vodml-id"/> is already in composition <sch:value-of select="$composition/vodml-id"/> which has lifecycle implications.
-      </sch:report>
+      <sch:assert test="$composition and not(vf:isTypeContained($target,$parent)) " flag="error">
+Reference <sch:value-of select="./datatype/vodml-ref"/> used in <sch:value-of select="./vodml-id"/> is already in composition <sch:value-of select="$composition/vodml-id"/> which has lifecycle implications
+      </sch:assert>
    </sch:rule>
 
   <sch:rule context="objectType/composition">

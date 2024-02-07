@@ -9,7 +9,7 @@
       <title></title>
       <author>pharriso</author>
       <version>0.1</version>
-      <lastModified>2023-06-08T07:49:03Z</lastModified>
+      <lastModified>2024-01-23T08:37:51Z</lastModified>
       <import>
         <name>null</name><!--should not be needed in modern vo-dml -->
         <url>IVOA-v1.0.vo-dml.xml</url>
@@ -111,6 +111,18 @@
                <vodml-id>ATest2</vodml-id>
                <name>ATest2</name>
                <description></description>	    
+               <composition>
+                 <vodml-id>ATest2.atest</vodml-id>
+                 <name>atest</name>
+                 <description></description>	    
+                 <datatype>
+                    <vodml-ref>lifecycleTest:ATest</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </composition>
                <reference>
                  <vodml-id>ATest2.refagg</vodml-id>
                  <name>refagg</name>
@@ -120,7 +132,7 @@
                  </datatype>
                  <multiplicity>
                    <minOccurs>1</minOccurs>
-                   <maxOccurs>1</maxOccurs><!-- FIXME would like to support unbounded here -->
+                   <maxOccurs>1</maxOccurs>
                  </multiplicity>
                </reference>
                <reference>
@@ -152,5 +164,17 @@
                    <maxOccurs>-1</maxOccurs>
                  </multiplicity>
                </composition>
+               <reference>
+                 <vodml-id>ATest3.refBad</vodml-id>
+                 <name>refBad</name>
+                 <description></description>	    
+                 <datatype>
+                   <vodml-ref>lifecycleTest:ReferredLifeCycle</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </reference>
             </objectType>
 </vo-dml:model>
