@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sch:schema xmlns:sch="http://purl.oclc.org/dsdl/schematron" queryBinding="xslt3"
+<sch:schema xmlns:sch="http://purl.oclc.org/dsdl/schematron" queryBinding="xslt2"
 	        xmlns:fct="localFunctions"
             xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
             xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -19,7 +19,7 @@
     <xsl:include href="classpath:xslt/common-structure-functions.xsl"/>
 
 
-<xsl:function name="fct:vo-dml_element" as="xs:string">
+<xsl:function name="fct:vo-dml_element_kind" as="xs:string">
     <!--  returns name of element containing the vodml-id identified by the vodml-ref -->
         <xsl:param name="vodml-ref" />
 		<xsl:variable name="prefix" select="substring-before($vodml-ref,':')" />
@@ -133,7 +133,7 @@ objecttype <sch:value-of select="."/> is used more than once, as target of compo
 vodml-ref  <sch:value-of select="datatype/vodml-ref"/> for type of  <sch:value-of select="$owner"/> does not exist
     </sch:assert>
 
-    <sch:let name="target" value="fct:vo-dml_element(datatype/vodml-ref)"/>
+    <sch:let name="target" value="fct:vo-dml_element_kind(datatype/vodml-ref)"/>
     <sch:assert test="$target = 'primitiveType' or $target = 'dataType' or $target='enumeration'" flag="error">
 type <sch:value-of select="datatype/vodml-ref"/> of <sch:value-of select="$owner"/> is not a value type but a '<sch:value-of select="$target"/>'
     </sch:assert>
@@ -141,24 +141,25 @@ type <sch:value-of select="datatype/vodml-ref"/> of <sch:value-of select="$owner
 
   <sch:rule context="reference">
     <sch:let name="owner" value="vf:asvodmlref(current())"/>
-      <sch:let name="parent" value="vf:asvodmlref(current()/ancestor-or-self::objectType)"/>
-      <sch:assert test="vf:vo-dml-ref-exists(datatype/vodml-ref)" flag="error">
-      vodml-ref  <sch:value-of select="datatype/vodml-ref"/> for type of  <sch:value-of select="$owner"/> does not exist
+    <sch:let name="reftype-vodml-ref" value="current()/datatype/vodml-ref"/>
+      <sch:let name="parent" value="vf:asvodmlref(current()/(ancestor::objectType|ancestor::dataType))"/>
+      <sch:assert test="vf:vo-dml-ref-exists($reftype-vodml-ref)" flag="error">
+      vodml-ref  <sch:value-of select="$reftype-vodml-ref"/> for type of  <sch:value-of select="$owner"/> does not exist
   </sch:assert>
-    <sch:let name="target" value="fct:vo-dml_element(datatype/vodml-ref)"/>
-    <sch:let name="composition" value="//objectType[composition/datatype/vodml-ref = current()/datatype/vodml-ref]"/>
+    <sch:let name="target" value="fct:vo-dml_element_kind($reftype-vodml-ref)"/>
+    <sch:let name="incomposition" value="count(//objectType[composition/datatype/vodml-ref = $reftype-vodml-ref]) != 0" />
     <sch:assert test="$target = 'objectType'" flag="error">
 type <sch:value-of select="datatype/vodml-ref"/> of reference <sch:value-of select="$owner"/> is not an object type but a '<sch:value-of select="$target"/>'
     </sch:assert>
       <!--rules implementing a reference should not be used in composition - this does not work well with the current tooling, however, if references allowed unlimited multiplicities then...     -->
-      <sch:assert test="$composition and not(vf:isTypeContained($target,$parent)) " flag="error">
-Reference <sch:value-of select="./datatype/vodml-ref"/> used in <sch:value-of select="./vodml-id"/> is already in composition <sch:value-of select="$composition/vodml-id"/> which has lifecycle implications
+      <sch:assert test="not ($incomposition) or ( $incomposition and vf:isTypeContained($reftype-vodml-ref,$parent)) " flag="error">
+Reference <sch:value-of select="$reftype-vodml-ref"/> used in <sch:value-of select="./vodml-id"/> is already use in unrelated composition <sch:value-of select="//objectType[composition/datatype/vodml-ref = $reftype-vodml-ref]/vodml-id"/> which has lifecycle implications (i.e. the reference could disappear)
       </sch:assert>
    </sch:rule>
 
   <sch:rule context="objectType/composition">
     <sch:let name="owner" value="vf:asvodmlref(current())"/>
-    <sch:let name="target" value="fct:vo-dml_element(datatype/vodml-ref)"/>
+    <sch:let name="target" value="fct:vo-dml_element_kind(datatype/vodml-ref)"/>
     <sch:assert test="$target = 'objectType'" flag="error">
 datatype <sch:value-of select="datatype/vodml-ref"/> of composition <sch:value-of select="$owner"/> is not an object type but a '<sch:value-of select="$target"/>'
     </sch:assert>
@@ -166,7 +167,7 @@ datatype <sch:value-of select="datatype/vodml-ref"/> of composition <sch:value-o
 
   <sch:rule context="objectType/extends">
     <sch:let name="owner" value="vf:asvodmlref(current()/parent::*)"/>
-    <sch:let name="target" value="fct:vo-dml_element(vodml-ref)"/>
+    <sch:let name="target" value="fct:vo-dml_element_kind(vodml-ref)"/>
     <sch:assert test="$target = 'objectType'" flag="error">
 Super type <sch:value-of select="vodml-ref"/> of objectType <sch:value-of select="$owner"/> is not an object type but a '<sch:value-of select="$target"/>'
     </sch:assert>
@@ -174,7 +175,7 @@ Super type <sch:value-of select="vodml-ref"/> of objectType <sch:value-of select
 
   <sch:rule context="dataType/extends">
     <sch:let name="owner" value="vf:asvodmlref(current()/parent::*)"/>
-    <sch:let name="target" value="fct:vo-dml_element(vodml-ref)"/>
+    <sch:let name="target" value="fct:vo-dml_element_kind(vodml-ref)"/>
     <sch:assert test="$target = 'dataType'" flag="error">
 Super type <sch:value-of select="vodml-ref"/> of dataType/extends <sch:value-of select="$owner"/> is not a data type but a '<sch:value-of select="$target"/>'
     </sch:assert>
@@ -206,8 +207,8 @@ Attribute <sch:value-of select="./../vodml-id"/> has multiplicity <sch:value-of 
     -->
   <sch:rule context="constraint[@xsi:type='vo-dml:SubsettedRole']">
     <sch:let name="owner" value="../name()"/>
-    <sch:let name="target" value="fct:vo-dml_element(./role/vodml-ref)"/>
-    <sch:let name="dtype" value="fct:vo-dml_element(./datatype/vodml-ref)"/>
+    <sch:let name="target" value="fct:vo-dml_element_kind(./role/vodml-ref)"/>
+    <sch:let name="dtype" value="fct:vo-dml_element_kind(./datatype/vodml-ref)"/>
     <sch:assert test="$target" flag="error">
 Target role of subsets constraint on '<sch:value-of select="../vodml-id"/>' with vodml-ref <sch:value-of select="./role/vodml-ref"/> can not be found
     </sch:assert>
