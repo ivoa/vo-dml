@@ -11,6 +11,7 @@
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1">
 
+<!-- this stylesheet requires that binding files have been read in -->
 <xsl:include href="common.xsl"/>
 <xsl:include href="common-structure-functions.xsl"/>
 

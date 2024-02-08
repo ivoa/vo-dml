@@ -19,6 +19,7 @@ intermediate representation to a GraphViz dot file.
                 extension-element-prefixes="exsl">
   
   <xsl:import href="common.xsl"/>
+  <xsl:import href="common_functions.xsl"/>
   
   <xsl:output method="text" encoding="UTF-8" indent="no" />
   

@@ -10,16 +10,7 @@ note - only define functions in here as it is included in the schematron rules
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1">
     <xsl:key name="ellookup" match="//*[vodml-id]" use="concat(ancestor::vo-dml:model/name,':',vodml-id)"/>
 
-    <!-- this function does not rely on vodml-id being present -->
-    <xsl:function name="vf:asvodmlref" as="xsd:string">
-        <xsl:param name="el" as="element()"/>
-        <xsl:value-of select="concat($el/ancestor::vo-dml:model/name,':',string-join($el/ancestor-or-self::*/name[not(../name() = 'vo-dml:model')], '.'))"/>
-    </xsl:function>
-
-    <xsl:function name="vf:nameFromVodmlref" as="xsd:string">
-        <xsl:param name="vodml-ref" as="xsd:string"/>
-        <xsl:value-of select="tokenize($vodml-ref,'[\.:]')[last()]"/>
-    </xsl:function>
+    <xsl:include href="common_functions.xsl"/>
 
     <!-- does the vodml-ref exist? -->
     <xsl:function name="vf:vo-dml-ref-exists" as="xsd:boolean">
