@@ -227,7 +227,7 @@
                 <xsl:variable name="atv" as="xsd:string*">
                     <xsl:apply-templates select="$models/key('ellookup',current()/datatype/vodml-ref)" mode="attrovercols"><xsl:with-param name="prefix" select="$name"/></xsl:apply-templates>
                 </xsl:variable>
-                <xsl:message><xsl:value-of select="concat('***',$name,'-',$type/name, ' ', name,' overrides --- ',string-join($atv, ' %%%* '))" /></xsl:message>
+<!--                <xsl:message><xsl:value-of select="concat('***',$name,'-',$type/name, ' ', name,' overrides -&#45;&#45; ',string-join($atv, ' %%%* '))" /></xsl:message>-->
                 <xsl:for-each select="$atv">
                     <xsl:variable name="tmp"> <!-- just to make formatting easier  (otherwise each bit is a string seqmnent, and a lot of quotes!) -->
                         <xsl:variable name="attsubst">
@@ -257,7 +257,7 @@
 
     <xsl:template match="dataType" mode="attrovercols" as="xsd:string*">
         <xsl:param name="prefix" as="xsd:string"/>
-        <xsl:message>** attrovercolsD <xsl:value-of select="concat(name(),' ',name,' *** ',$prefix)"/></xsl:message>
+<!--        <xsl:message>** attrovercolsD <xsl:value-of select="concat(name(),' ',name,' *** ',$prefix)"/></xsl:message>-->
         <xsl:for-each select="(attribute, vf:baseTypes(vf:asvodmlref(current()))/attribute)"> <!-- this takes care of dataType inheritance -->
             <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
             <xsl:apply-templates select="$type" mode="attrovercols">
@@ -273,7 +273,7 @@
     <xsl:template match="primitiveType" mode="attrovercols" as="xsd:string*">
         <xsl:param name="prefix" as="xsd:string"/>
         <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
-        <xsl:message>** attrovercolsP <xsl:value-of select="concat(name(),' ',name,' *** ',$prefix, ' extends=',extends)"/></xsl:message>
+<!--        <xsl:message>** attrovercolsP <xsl:value-of select="concat(name(),' ',name,' *** ',$prefix, ' extends=',extends)"/></xsl:message>-->
             <xsl:choose>
                 <xsl:when test="vf:hasMapping(vf:asvodmlref(current()),'java')">
                     <xsl:variable name="pmap" select="vf:findmapping(vf:asvodmlref(current()),'java')"/>

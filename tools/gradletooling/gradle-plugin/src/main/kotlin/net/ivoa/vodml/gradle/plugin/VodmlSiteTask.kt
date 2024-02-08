@@ -62,7 +62,7 @@ import javax.inject.Inject
              outfile = docDir.file("$shortname.md")
              val params = mutableMapOf(
                  "graphviz_png" to docDir.file("$shortname.svg").get().asFile.absolutePath,
-                 "binding" to allBinding.joinToString(separator = ",") { it.absolutePath },
+                 "binding" to allBinding.joinToString(separator = ",") { it.toURI().toURL().toString() },
              )
              if (modelsToDocument.isPresent) params["modelsToDocument"] = modelsToDocument.get()
              Vodml2md.doTransform(it.absoluteFile, params,

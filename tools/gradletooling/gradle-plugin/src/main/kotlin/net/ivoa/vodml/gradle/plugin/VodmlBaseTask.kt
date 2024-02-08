@@ -105,7 +105,7 @@ class ExternalModelHelper constructor (private val project: Project, private val
                  """.trimIndent()
             )
             v.forEach {
-                out.write("   <uri name=\"${it.name}\" uri=\"${it.absolutePath}\"/>\n")
+                out.write("   <uri name=\"${it.name}\" uri=\"${it.toURI().toURL()}\"/>\n")
             }
             out.write(
                 """

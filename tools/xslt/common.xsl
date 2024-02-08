@@ -12,7 +12,7 @@
 >
 
 <!-- 
-  This XSLT script contains common xsl:templates used by other XSLT scripts.
+  This XSLT script contains common  templates that depend only on a single instance of a VO-DML file being in scope.
 -->
 
   <xsl:variable name="cr">
@@ -25,41 +25,6 @@
 </xsl:text></xsl:variable>
   <xsl:variable name='lt'><xsl:text disable-output-escaping="yes">&lt;</xsl:text></xsl:variable>
   <xsl:variable name='gt'><xsl:text disable-output-escaping="yes">&gt;</xsl:text></xsl:variable>
-
-  <!-- this function does not rely on vodml-id being present -->
-  <xsl:function name="vf:asvodmlref" as="xsd:string">
-    <xsl:param name="el" as="element()"/>
-    <xsl:value-of select="concat($el/ancestor::vo-dml:model/name,':',string-join($el/ancestor-or-self::*/name[not(../name() = 'vo-dml:model')], '.'))"/>
-  </xsl:function>
-
-  <xsl:function name="vf:nameFromVodmlref" as="xsd:string">
-    <xsl:param name="vodml-ref" as="xsd:string"/>
-    <xsl:value-of select="tokenize($vodml-ref,'[\.:]')[last()]"/>
-  </xsl:function>
-
-
-  <xsl:function name="vf:isOptional" as="xsd:boolean">
-    <xsl:param name="el" as="element()"/>
-    <xsl:sequence select="number($el/multiplicity/minOccurs) = 0 and number($el/multiplicity/maxOccurs) = 1" />
-  </xsl:function>
-  <xsl:function name="vf:isArrayLike" as="xsd:boolean">
-    <xsl:param name="el" as="element()"/>
-    <xsl:sequence select="number($el/multiplicity/minOccurs) >  1 and number($el/multiplicity/maxOccurs) > 1" />
-  </xsl:function>
-
-  <xsl:function name="vf:upperFirst" as="xsd:string">
-    <xsl:param name="s" as="xsd:string"/>
-    <xsl:value-of select="concat(upper-case(substring($s,1,1)),substring($s,2))"/>
-  </xsl:function>
-  <xsl:function name="vf:lowerFirst" as="xsd:string">
-    <xsl:param name="s" as="xsd:string"/>
-    <xsl:value-of select="concat(lower-case(substring($s,1,1)),substring($s,2))"/>
-  </xsl:function>
-
-  <xsl:function name="vf:capitalize">
-    <xsl:param name="name"/>
-    <xsl:value-of select="concat(upper-case(substring($name,1,1)),substring($name,2))"/>
-  </xsl:function>
 
   <!-- templates -->
   <xsl:template name="upperFirst">
@@ -240,17 +205,5 @@
     </xsl:call-template>
   </xsl:template>
 
-  <xsl:function name="vf:multiplicityAsSymbol">
-    <xsl:param name="m" as="element()"/>
-    <xsl:choose>
-      <xsl:when test="not($m/@minOccurs) and not($m/@maxOccurs)"><!-- do nothing --></xsl:when>
-      <xsl:when test="number($m/@minOccurs) eq 1 and number($m/@maxOccurs) eq 1"><!-- do nothing --></xsl:when>
-      <xsl:when test="number($m/@minOccurs) eq 0 and (number($m/@maxOccurs) eq 1 or not($m/@maxOccurs))">0..1</xsl:when>
-      <xsl:when test="number($m/@minOccurs) eq 0 and $m/@maxOccurs='unbounded'">0..*</xsl:when>
-      <xsl:when test="(not($m/@minOccurs) or number($m/@minOccurs) eq 1) and $m/@maxOccurs='unbounded'">1..*</xsl:when>
-      <xsl:when test="not($m/@minOccurs) and $m/@maxOccurs"><xsl:value-of select="concat('1..', $m/@maxOccurs)"/></xsl:when>
-      <xsl:when test="not($m/@maxOccurs) and $m/@minOccurs"><xsl:value-of select="concat($m/@maxOccurs,'..', $m/@maxOccurs)"/></xsl:when> <!-- this is probably illegal xsd, but just in case -->
-      <xsl:otherwise><xsl:value-of select="concat($m/@minOccurs,'..', $m/@maxOccurs)"/></xsl:otherwise>
-    </xsl:choose>
-  </xsl:function>
+
 </xsl:stylesheet>

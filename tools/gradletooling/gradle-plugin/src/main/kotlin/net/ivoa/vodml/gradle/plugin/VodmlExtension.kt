@@ -16,19 +16,19 @@ import javax.inject.Inject
 
 open class VodmlExtension @Inject constructor(objects: ObjectFactory, layout: ProjectLayout): VodmlExtensionGroup {
     override val name = "Defaults"
-    override val vodmlDir = objects.directoryProperty().convention(layout.projectDirectory.dir("src/main/vo-dml"))
+    override val vodmlDir = objects.directoryProperty()
     override val vodmlFiles = objects.fileCollection()
-    override val outputJavaDir = objects.directoryProperty().convention(layout.buildDirectory.dir("generated/sources/vodml/java/"))
-    override val outputPythonDir = objects.directoryProperty().convention(layout.buildDirectory.dir("generated/sources/vodml/python/"))
-    override val outputDocDir = objects.directoryProperty().convention(layout.buildDirectory.dir("generated/docs/vodml/"))
-    override val outputSiteDir = objects.directoryProperty().convention(layout.buildDirectory.dir("generated/docs/vodml-site/"))
-    override val outputResourcesDir = objects.directoryProperty().convention(layout.buildDirectory.dir("generated/sources/vodml/resources/"))
-    override val defaultPackage = objects.property(String::class.java).convention("vodml.generated")
-    override val generateEpisode = objects.property(Boolean::class.java).convention(false)
+    override val outputJavaDir = objects.directoryProperty()
+    override val outputPythonDir = objects.directoryProperty()
+    override val outputDocDir = objects.directoryProperty()
+    override val outputSiteDir = objects.directoryProperty()
+    override val outputResourcesDir = objects.directoryProperty()
+    override val defaultPackage = objects.property(String::class.java)
+    override val generateEpisode = objects.property(Boolean::class.java)
     override val bindingFiles = objects.fileCollection()
     override val catalogFile = objects.fileProperty()
     override val modelsToDocument: Property<String> = objects.property(String::class.java)
-    override val vodslDir: DirectoryProperty = objects.directoryProperty().convention(layout.projectDirectory.dir("src/main/vodsl"))
+    override val vodslDir: DirectoryProperty = objects.directoryProperty()
     override val vodslFiles = objects.fileCollection()
 
 
@@ -39,18 +39,29 @@ open class VodmlExtension @Inject constructor(objects: ObjectFactory, layout: Pr
    val groups: NamedDomainObjectContainer<VodmlExtensionGroup> = objects.domainObjectContainer(VodmlExtensionGroup::class.java)
 
         init {
+
+            vodmlDir.set(layout.projectDirectory.dir("src/main/vo-dml"))
+            outputJavaDir.set(layout.buildDirectory.dir("generated/sources/vodml/java/"))
+            outputPythonDir.set(layout.buildDirectory.dir("generated/sources/vodml/python/"))
+            outputDocDir.set(layout.buildDirectory.dir("generated/docs/vodml/"))
+            outputSiteDir.set(layout.buildDirectory.dir("generated/docs/vodml-site/"))
+            outputResourcesDir.set(layout.buildDirectory.dir("generated/sources/vodml/resources/"))
+            defaultPackage.set("vodml.generated")
+            generateEpisode.set(false)
+            vodslDir.set(layout.projectDirectory.dir("src/main/vodsl"))
+
             groups.configureEach {
-                vodmlDir.convention(this@VodmlExtension.vodmlDir) // note that files not explicitly set
-                outputJavaDir.convention(layout.buildDirectory.dir("generated/sources/vodml-$name/java"))
-                outputPythonDir.convention(layout.buildDirectory.dir("generated/sources/vodml-$name/python"))
-                outputResourcesDir.convention(layout.buildDirectory.dir("generated/sources/vodml-$name/resources"))
-                outputDocDir.convention(layout.buildDirectory.dir("generated/docs/vodml-$name/"))
-                outputSiteDir.convention(layout.buildDirectory.dir("generated/docs/vodml-site-$name/"))
-                defaultPackage.convention(this@VodmlExtension.defaultPackage)
-                generateEpisode.convention(this@VodmlExtension.generateEpisode)
-                catalogFile.convention(this@VodmlExtension.catalogFile)
-                modelsToDocument.convention("")
-                vodslDir.convention(this@VodmlExtension.vodslDir)
+                vodmlDir.set(this@VodmlExtension.vodmlDir) // note that files not explicitly set
+                outputJavaDir.set(layout.buildDirectory.dir("generated/sources/vodml-$name/java"))
+                outputPythonDir.set(layout.buildDirectory.dir("generated/sources/vodml-$name/python"))
+                outputResourcesDir.set(layout.buildDirectory.dir("generated/sources/vodml-$name/resources"))
+                outputDocDir.set(layout.buildDirectory.dir("generated/docs/vodml-$name/"))
+                outputSiteDir.set(layout.buildDirectory.dir("generated/docs/vodml-site-$name/"))
+                defaultPackage.set(this@VodmlExtension.defaultPackage)
+                generateEpisode.set(this@VodmlExtension.generateEpisode)
+                catalogFile.set(this@VodmlExtension.catalogFile)
+                modelsToDocument.set("")
+                vodslDir.set(this@VodmlExtension.vodslDir)
             }
         }
 

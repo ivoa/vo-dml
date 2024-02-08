@@ -38,8 +38,8 @@ import javax.inject.Inject
              val outfile = javaGenDir.file("$shortname.javatrans.txt")
              Vodml2Java.doTransform(
                  v.absoluteFile, mapOf(
-                     "binding" to allBinding.joinToString(separator = ",") { it.absolutePath },
-                     "output_root" to javaGenDir.get().asFile.absolutePath,
+                     "binding" to allBinding.joinToString(separator = ",") { it.toURI().toURL().toString() },
+                     "output_root" to javaGenDir.get().asFile.toURI().toURL().toString(),
                      "isMain" to (if (index++ == 0) "True" else "False") // first is the Main
                  ),
                  actualCatalog, outfile.get().asFile

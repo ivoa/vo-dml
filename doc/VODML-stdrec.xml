@@ -71,7 +71,7 @@ models allows these to be used in a homogeneous manner and allows a
 consistent definition of reuse of one model by another. The particular language
 defined here includes a consistent identification mechanism for model which
 allows these to be referenced in an explicit and uniform manner also from other
-contexts, in particular from othe IVOA standard formats such as VOTable.
+contexts, in particular from other IVOA standard formats such as VOTable.
 
 The language defined in this specification is named VO-DML (VO Data Modeling
 Language). VO-DML is a conceptual modeling language that is agnostic of

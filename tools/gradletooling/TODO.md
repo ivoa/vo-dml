@@ -31,6 +31,7 @@ VODML Tooling TODO
   * different serializations of VO-DML itself (json top of list)
   * allow attributes to be 
 * Anything that might help in mapping to OPENAPI
+  * idea of a "view" - eg. jobsummary in uws
 
 * STC
   * epoch - not really defined as something that is used properly
@@ -44,7 +45,7 @@ VODML Tooling TODO
 # gradle plugin
 
 * ~~get binding files from dependent jars~~
-* write a usage note
+* ~~write a usage note~~
 * ~~publish in gradle repository~~
 * ~~can remove all the ant stuff - including the libs and schematron dirs~~
 * generate python

@@ -8,7 +8,7 @@
       <uri/>
       <title></title>
       <version>1.0</version>
-      <lastModified>2023-12-19T14:14:15Z</lastModified>
+      <lastModified>2023-12-19T15:16:26Z</lastModified>
       <import>
         <name>null</name><!--should not be needed in modern vo-dml -->
         <url>IVOA-v1.0.vo-dml.xml</url>

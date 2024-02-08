@@ -26,15 +26,20 @@ otype ATest { //this does things as per current rules
 
 otype ATest2 {
 	
-	refagg @+ references ReferredTo  ""; /*  not liked because of "aggregation pattern", but really ok - 
-	                                     it is more a lifecycle matter really - as long as there is nothing that can 
+	/*  would like to make the multiplicity of below one-or-more - however this is not liked because 
+	 *  of "aggregation pattern", but really ok for references - 
+     it is more a lifecycle matter really - as long as there is nothing that can 
 	                                     * delete the referredTo otype */
 	                                     
-	refcont references ReferredLifeCycle ""; // potentially not OK (perhaps should be an error) - here the referred otype is also contained, so the 
+	refagg references ReferredTo  "";                                      
+	atest : ATest as composition "";
+	                                     
+	refcont references ReferredLifeCycle ""; // potentially not OK (should be an error if referenced by something outside the object tree) - here the referred otype is also contained, so the 
 	}
 
 otype ATest3 { /*  fails the "unique composition rule" in schematron if the one of the Contained instances is also contained in ATest,
  *  but this should be unlikely if a contained type instance is created at the same time as its container instance.
 	*/
 	contained : Contained @+ as composition ""; //vodsl tooling does not flag this- but the vodml schematron does.
+	refBad references ReferredLifeCycle ""; //this should be an error
 }

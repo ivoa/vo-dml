@@ -9,7 +9,7 @@
 
 package org.ivoa.dm.lifecycle;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -54,8 +54,8 @@ public class LifeCycleDetailedTest extends AbstractTest {
             a.refandcontained = refcont;
             
         });
-        atest2 = new ATest2(referredTo, refcont.get(0));
-        atest3 = new ATest3(contained);
+        atest2 = new ATest2(atest, referredTo, refcont.get(0));
+        atest3 = new ATest3(contained, refcont.get(0));//TODO this will create contradictions.... how best to test
         
         model = new LifecycleTestModel();
         model.addContent(atest);
@@ -93,6 +93,18 @@ public class LifeCycleDetailedTest extends AbstractTest {
                 .setParameter("id", id).getResultList();
          em.getTransaction().commit();
          dumpDbData(em, "lifecycle_dump.sql");
+    }
+    
+    @Test
+    void copyTest() {
+        ATest atestprime = new ATest(atest);
+        atest.ref1.test1 = 4;
+        assertEquals(4, atestprime.ref1.test1); //the reference should have changed
+        atest.contained.get(0).test2 = "changed";
+        assertEquals("firstcontained",atestprime.contained.get(0).test2); // new objects created for the contained so changing original should not affect the prime
+        
+        ATest2 atest2prime = new ATest2(atest2);
+         
     }
    
 

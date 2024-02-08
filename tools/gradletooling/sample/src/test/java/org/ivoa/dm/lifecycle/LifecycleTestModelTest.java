@@ -71,7 +71,7 @@ class LifecycleTestModelTest extends AutoRoundTripTest<LifecycleTestModel> {
             a.refandcontained = refcont;
             
         });
-        atest2 = new ATest2(referredTo, refcont.get(0));
+        atest2 = new ATest2(atest,referredTo, refcont.get(0));
         
         LifecycleTestModel model = new LifecycleTestModel();
         model.addContent(atest);

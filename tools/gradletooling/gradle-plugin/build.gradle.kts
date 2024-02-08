@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "net.ivoa.vo-dml"
-version = "0.4.2"
+version = "0.4.3"
 
 repositories {
     mavenLocal() // FIXME remove this when releasing - just here to pick up local vodsl updates
@@ -31,7 +31,8 @@ dependencies {
 
     implementation("net.sf.saxon:Saxon-HE:10.8") // for xslt 3.0
     implementation("name.dmaus.schxslt:java:3.1.1") // for modern schematron
-    implementation("org.xmlresolver:xmlresolver:4.5.2") // for xml catalogues - note that the apache xml-commons resolver is out of date
+    implementation("name.dmaus.schxslt:schxslt:1.9.5") // force to use more updated schematron than the java wrapper naturally uses -
+    implementation("org.xmlresolver:xmlresolver:6.0.4") // for xml catalogues - note that the apache xml-commons resolver is out of date
     implementation("org.javastro.vodsl:vodslparser:0.4.6") //standalone vodsl parser
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
 
@@ -71,9 +72,20 @@ gradlePlugin {
 }
 
 java {
-    targetCompatibility =  JavaVersion.VERSION_11
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
 }
 
+sourceSets {
+    main {
+        // slightly complex way of adding the xslt and xsd directories to resources (they are at different levels)
+        resources {
+            setSrcDirs(listOf(layout.projectDirectory.dir("../../"),layout.projectDirectory.dir("../../..")))
+            setIncludes(listOf("xslt/**","xsd/**"))
+        }
+    }
+}
 
 // Add a source set for the functional test suite
 val functionalTestSourceSet = sourceSets.create("functionalTest") {
@@ -91,7 +103,7 @@ val functionalTest by tasks.registering(Test::class) {
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
     systemProperty("GRADLE_ROOT_FOLDER", projectDir.absolutePath)
-    systemProperty("GRADLE_BUILD_FOLDER", buildDir)
+    systemProperty("GRADLE_BUILD_FOLDER", layout.buildDirectory.asFile.get().absolutePath)
     systemProperty("GRADLE_PLUGIN_VERSION", version)
     testLogging {
         showStandardStreams = true
@@ -105,10 +117,9 @@ tasks.check {
     //dependsOn(functionalTest)
 }
 
+
 tasks.test {
     useJUnitPlatform()
    // exclude("**")
 }
-
-
 

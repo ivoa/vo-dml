@@ -7,7 +7,7 @@ import net.sf.saxon.s9api.Serializer
 import net.sf.saxon.s9api.XdmAtomicValue
 import org.gradle.api.GradleException
 import org.slf4j.LoggerFactory
-import org.xmlresolver.CatalogResolver
+import org.xmlresolver.XMLResolver
 import org.xmlresolver.ResolverFeature
 import org.xmlresolver.XMLResolverConfiguration
 import java.io.File
@@ -73,8 +73,8 @@ import javax.xml.transform.stream.StreamSource
             config.setFeature(ResolverFeature.CATALOG_FILES, listOf(catalog.absolutePath ))
         }
         config.setFeature(ResolverFeature.URI_FOR_SYSTEM, false) // don't automatically use URI as system to prevent surprises
-        val catalogResolver = CatalogResolver(config)
-        trans.uriResolver = org.xmlresolver.Resolver(catalogResolver)
+        val resolver = XMLResolver(config)
+        trans.uriResolver = resolver.getURIResolver()
         trans.transform(StreamSource(vodmlFile), out)
     }
 
