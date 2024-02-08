@@ -1,13 +1,10 @@
 package net.ivoa.vodml.gradle.plugin
 
 import name.dmaus.schxslt.Schematron
-import org.gradle.api.DefaultTask
 import org.gradle.api.file.ArchiveOperations
-import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
-import org.xmlresolver.CatalogResolver
+import org.xmlresolver.XMLResolver
 import org.xmlresolver.ResolverFeature
 import org.xmlresolver.XMLResolverConfiguration
 import javax.inject.Inject
@@ -41,10 +38,10 @@ import javax.xml.transform.stream.StreamSource
          config.setFeature(ResolverFeature.PREFER_PUBLIC, false)
 
          config.setFeature(ResolverFeature.URI_FOR_SYSTEM, true) // fall through to URI
-         val catalogResolver = CatalogResolver(config)
+         val resolver = XMLResolver(config)
 
          val transformerFactory = net.sf.saxon.TransformerFactoryImpl()
-         transformerFactory.uriResolver = org.xmlresolver.Resolver(catalogResolver)
+         transformerFactory.uriResolver = resolver.getURIResolver()
 
          val schematron = Schematron(StreamSource(this::class.java.getResourceAsStream("/xslt/vo-dml-v1.0.sch.xml")), null,
              transformerFactory, HashMap())

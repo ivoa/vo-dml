@@ -31,7 +31,8 @@ dependencies {
 
     implementation("net.sf.saxon:Saxon-HE:10.8") // for xslt 3.0
     implementation("name.dmaus.schxslt:java:3.1.1") // for modern schematron
-    implementation("org.xmlresolver:xmlresolver:5.2.3") // for xml catalogues - note that the apache xml-commons resolver is out of date
+    implementation("name.dmaus.schxslt:schxslt:1.9.5") // force to use more updated schematron than the java wrapper naturally uses -
+    implementation("org.xmlresolver:xmlresolver:6.0.4") // for xml catalogues - note that the apache xml-commons resolver is out of date
     implementation("org.javastro.vodsl:vodslparser:0.4.6") //standalone vodsl parser
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
 
@@ -102,7 +103,7 @@ val functionalTest by tasks.registering(Test::class) {
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
     systemProperty("GRADLE_ROOT_FOLDER", projectDir.absolutePath)
-    systemProperty("GRADLE_BUILD_FOLDER", layout.buildDirectory)
+    systemProperty("GRADLE_BUILD_FOLDER", layout.buildDirectory.asFile.get().absolutePath)
     systemProperty("GRADLE_PLUGIN_VERSION", version)
     testLogging {
         showStandardStreams = true
