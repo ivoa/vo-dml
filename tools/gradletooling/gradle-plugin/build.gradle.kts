@@ -76,6 +76,16 @@ java {
     }
 }
 
+sourceSets {
+    main {
+        // slightly complex way of adding the xslt and xsd directories to resources (they are at different levels)
+        resources {
+            setSrcDirs(listOf(layout.projectDirectory.dir("../../"),layout.projectDirectory.dir("../../..")))
+            setIncludes(listOf("xslt/**","xsd/**"))
+        }
+    }
+}
+
 // Add a source set for the functional test suite
 val functionalTestSourceSet = sourceSets.create("functionalTest") {
 }
@@ -92,7 +102,7 @@ val functionalTest by tasks.registering(Test::class) {
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
     systemProperty("GRADLE_ROOT_FOLDER", projectDir.absolutePath)
-    systemProperty("GRADLE_BUILD_FOLDER", buildDir)
+    systemProperty("GRADLE_BUILD_FOLDER", layout.buildDirectory)
     systemProperty("GRADLE_PLUGIN_VERSION", version)
     testLogging {
         showStandardStreams = true
@@ -106,10 +116,9 @@ tasks.check {
     //dependsOn(functionalTest)
 }
 
+
 tasks.test {
     useJUnitPlatform()
    // exclude("**")
 }
-
-
 
