@@ -98,6 +98,11 @@ At this point the overall model object is suitable to be serialized.
 On reading in a model instance, it is possible to extract any top level ObjectTypes
 with the `public <T> List<T> getContent(Class<T> c)` method.
 
+!!! Note "contained references"
+
+    There is some provisional support for "contained references" when cloning an object - the API for this 
+    is subject to change, but an example is used in [copyTest](https://github.com/ivoa/vo-dml/blob/519f213830c0a946a0d63be65552067bfc707f1d/tools/gradletooling/sample/src/test/java/org/ivoa/dm/lifecycle/LifeCycleDetailedTest.java#L99C10-L99C18) using the `createContext()` and `updateClonedReferences()` methods either side of an object clone with a copy constructor.
+
 Finally, there is a static `public static boolean hasReferences()` method which
 can be used to check if the model has any references - if it does not then much of the
 machinery above (apart from the JAXBContext) is necessary, and individual ObjectTypes may be

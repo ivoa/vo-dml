@@ -376,6 +376,22 @@
 
         </xsl:if>
         <xsl:if test="not(@abstract)">
+        <xsl:if test="vf:hasReferencesInContainmentHierarchy(vf:asvodmlref($this))" >
+            public void updateClonedReferences() {
+            <xsl:for-each select="$localmembers">
+                <xsl:variable name="m" select="$models/key('ellookup',current())"/>
+                <xsl:choose>
+                    <xsl:when test="$m/name()='reference' and vf:isTypeContained($m/datatype/vodml-ref,vf:asvodmlref($this))">
+                        this.<xsl:value-of select="concat(vf:javaMemberName($m/name),' = org.ivoa.vodml.ModelContext.current().cache(',vf:JavaType($m/datatype/vodml-ref),'.class).get(this.',vf:javaMemberName($m/name),');')"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        // this.<xsl:value-of select="concat(vf:javaMemberName($m/name),' ', vf:hasReferencesInContainmentHierarchy($m/datatype/vodml-ref), ' ', vf:hasContainedReferencesInContainmentHierarchy($m/datatype/vodml-ref))"/>;
+                    </xsl:otherwise>
+                </xsl:choose>
+
+            </xsl:for-each>
+            }
+        </xsl:if>
 
         /**
         * Copy Constructor. Note that references will remain as is rather than be copied.
@@ -449,13 +465,25 @@
             </xsl:choose>
         </xsl:variable>
         <xsl:variable name="t" select="$models/key('ellookup',$m/datatype/vodml-ref)"/>
-
+        <xsl:if test="vf:isContained($m/datatype/vodml-ref) and vf:referredTo($m/datatype/vodml-ref)" >
+            // contained reference
+        </xsl:if>
         <xsl:choose>
             <xsl:when test="vf:isArrayLike($m)">
                 this.<xsl:value-of select="concat($m/name,'=(',$jt,'[])other.',$m/name)"/>;
             </xsl:when>
-            <xsl:when test="$m/multiplicity/maxOccurs != 1"> <!-- TODO consider multiple references -->
-                if<xsl:value-of select="concat(' (other.',vf:javaMemberName($m/name),' != null ) this.',vf:javaMemberName($m/name), ' = other.',vf:javaMemberName($m/name),'.stream().map(s -',$gt)"/>
+            <xsl:when test="$m/multiplicity/maxOccurs != 1">
+                <xsl:if test="vf:isContained($m/datatype/vodml-ref) and vf:referredTo($m/datatype/vodml-ref)">
+                 //       org.ivoa.vodml.nav.ReferenceCache&lt;ReferredLifeCycle&gt; cache = ModelContext.current().cache(org.ivoa.dm.lifecycle.ReferredLifeCycle.class);
+                // List&lt;ReferredLifeCycle&gt; cloned = other.refandcontained.stream().map(s -> new org.ivoa.dm.lifecycle.ReferredLifeCycle((org.ivoa.dm.lifecycle.ReferredLifeCycle)s )).collect(java.util.stream.Collectors.toList());
+                // cache.setValues(other.refandcontained, cloned);
+                </xsl:if>
+                <!-- TODO consider multiple references -->
+                if<xsl:value-of select="concat(' (other.',vf:javaMemberName($m/name),' != null ) {')"/><xsl:text>
+                </xsl:text>
+
+                <xsl:variable name="assn">
+                <xsl:value-of select="concat('other.',vf:javaMemberName($m/name),'.stream().map(s -',$gt)"/>
                 <xsl:choose>
                     <xsl:when test="name($t) = 'enumeration'">
                         <xsl:text>s</xsl:text> <!-- this is just an identity - probably better to do something different at higher level -->
@@ -470,7 +498,21 @@
                         <xsl:value-of select="concat(' new ',$jt,'((',$jt,')s )')"/>
                     </xsl:otherwise>
                 </xsl:choose>
-                <xsl:value-of select="').collect(java.util.stream.Collectors.toList())'"/>;
+                <xsl:value-of select="').collect(java.util.stream.Collectors.toList())'"/>
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="vf:referredTo($m/datatype/vodml-ref)">
+                        <xsl:value-of select="concat('var cache = org.ivoa.vodml.ModelContext.current().cache(',$jt,'.class)')"/>;
+                        <xsl:value-of select="concat('var cloned = ',$assn)"/>;
+                        <xsl:value-of select="concat('cache.setValues(other.',vf:javaMemberName($m/name),', cloned)')"/>;
+                        <xsl:value-of select="concat('this.',vf:javaMemberName($m/name), ' = cloned')"/>;
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="concat('this.',vf:javaMemberName($m/name), ' = ',$assn)"/>;
+                    </xsl:otherwise>
+                </xsl:choose>
+
+                }
             </xsl:when>
             <xsl:when test="$t/name() = 'primitiveType' or $m/name() = 'reference' or $t/name() = 'enumeration'">
                   this.<xsl:value-of select="concat(vf:javaMemberName($m/name),'= other.',vf:javaMemberName($m/name))"/>;

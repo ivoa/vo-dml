@@ -11,11 +11,16 @@ package org.ivoa.dm.lifecycle;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.AbstractMap;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.ivoa.dm.sample.SampleModel;
 import org.ivoa.dm.sample.catalog.inner.SourceCatalogue;
+import org.ivoa.vodml.ModelContext;
 import org.ivoa.vodml.testing.AbstractTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -97,13 +102,29 @@ public class LifeCycleDetailedTest extends AbstractTest {
     
     @Test
     void copyTest() {
+        model.createContext();
         ATest atestprime = new ATest(atest);
         atest.ref1.test1 = 4;
         assertEquals(4, atestprime.ref1.test1); //the reference should have changed
         atest.contained.get(0).test2 = "changed";
         assertEquals("firstcontained",atestprime.contained.get(0).test2); // new objects created for the contained so changing original should not affect the prime
         
+        
+        
+        
+        
         ATest2 atest2prime = new ATest2(atest2);
+        
+        
+        atest2.atest.refandcontained.get(0).test3 = "changed2";
+        assertEquals("changed2", atest2.refcont.test3); // this is in atest3
+        
+        atest2prime.updateClonedReferences();
+        assertEquals("rc1" ,atest2prime.atest.refandcontained.get(0).test3);// this is what we want the copied atest2 has its "own" contained references
+        assertEquals("rc1", atest2prime.refcont.test3); // should be pointing to above
+        
+       // assertEquals("rc1" ,atest3.refBad.test3);//TODO not sure which way we want these to work.
+        
          
     }
    

@@ -161,6 +161,13 @@ note - only define functions in here as it is included in the schematron rules
 
     </xsl:function>
 
+    <xsl:function name="vf:referencesInModels" as="xsd:string*">
+        <xsl:sequence select="distinct-values($models//reference/datatype/vodml-ref)"/>
+    </xsl:function>
+    <xsl:function name="vf:containedReferencesInModels" as="xsd:string*">
+        <xsl:sequence select="distinct-values($models//reference/datatype/vodml-ref[vf:isContained(.)])"/>
+    </xsl:function>
+
     <xsl:function name="vf:importedModelNames" as="xsd:string*">
         <xsl:param name="thisModel" as="xsd:string"/>
         <xsl:choose>
@@ -211,8 +218,8 @@ note - only define functions in here as it is included in the schematron rules
     </xsl:function>
 
 
-
-    <xsl:function name="vf:referencesInHierarchy" as="xsd:string*">
+<!-- return all the reference types in the containment hierarchy of the argument type -->
+    <xsl:function name="vf:referenceTypesInContainmentHierarchy" as="xsd:string*">
         <xsl:param name="vodml-ref"/>
         <xsl:choose>
             <xsl:when test="$models/key('ellookup',$vodml-ref)">
@@ -222,7 +229,7 @@ note - only define functions in here as it is included in the schematron rules
                 <xsl:sequence select="$el/reference/datatype/vodml-ref"/>
                 <xsl:for-each select="$el/composition/datatype/vodml-ref">
                     <!--                            <xsl:message><xsl:value-of select="concat('subtype of ',$vodml-ref, ' is ', name)" /></xsl:message>-->
-                    <xsl:sequence select="vf:referencesInHierarchy(.)"/>
+                    <xsl:sequence select="vf:referenceTypesInContainmentHierarchy(.)"/>
                 </xsl:for-each>
             </xsl:when>
             <xsl:otherwise>
@@ -231,6 +238,17 @@ note - only define functions in here as it is included in the schematron rules
         </xsl:choose>
 
     </xsl:function>
+
+    <xsl:function name="vf:hasReferencesInContainmentHierarchy" as="xsd:boolean">
+       <xsl:param name="vodml-ref"/>
+        <xsl:sequence select="count(vf:referenceTypesInContainmentHierarchy($vodml-ref)) != 0"/>
+    </xsl:function>
+
+    <xsl:function name="vf:hasContainedReferencesInContainmentHierarchy" as="xsd:boolean">
+        <xsl:param name="vodml-ref"/>
+        <xsl:sequence select="count(vf:referenceTypesInContainmentHierarchy($vodml-ref)[vf:isTypeContained(.,$vodml-ref)]) != 0"/>
+    </xsl:function>
+
 
     <!-- is the member subsetted - for it to be truly subsetted from a type point of view (not just semantic)it needs to be subtyped too-->
     <xsl:function name="vf:isSubSetted" as="xsd:boolean">
