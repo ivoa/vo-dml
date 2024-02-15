@@ -33,6 +33,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
 
         SampleModel model = new SampleModel();
         model.addContent(sc);
+        model.addContent(ps);
         model.processReferences();
 
         SampleModel modelin = modelRoundTripXMLwithTest(model); 
@@ -46,7 +47,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
        jakarta.persistence.EntityManager em = setupH2Db(SampleModel.pu_name());
         em.getTransaction().begin();
         sc.persistRefs(em);
-        em.persist(sc);
+        em.persist(sc); // TODO need to test whether Photometric system is saved....
         em.getTransaction().commit();
         Long id = sc.getId();
 

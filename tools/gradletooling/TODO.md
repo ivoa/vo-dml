@@ -74,7 +74,8 @@ VODML Tooling TODO
   * think again about the subsetting strategy and type safety
 * make semantic constraints work - i.e. look up the RDF....
 * before and after serialization, the references need to be processed - it would be nice to do this automatically.... e.g. https://github.com/FasterXML/jackson-databind/issues/279 for jackson.
-* 
+* references
+  * would be nice if the tooling warned when contained references are created bare.... - e.g. the filters in the original sample.
 * JAXB
   * ~~idrefs referred to objects are not being output - http://stackoverflow.com/questions/12914382/marshalling-unmarshalling-fields-to-tag-with-attributes-using-jaxb~~
   * make the subsets create substitution group xml (i.e. have elements rather than xsi:type) http://blog.bdoughan.com/2010/11/jaxb-and-inheritance-using-substitution.html

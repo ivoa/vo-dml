@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.ivoa.dm.filter.PhotometricSystem;
+import org.ivoa.dm.filter.PhotometryFilter;
 import org.ivoa.dm.ivoa.RealQuantity;
 import org.ivoa.dm.sample.catalog.inner.SourceCatalogue;
 import org.ivoa.vodml.stdtypes.Unit;
@@ -33,6 +35,7 @@ import org.ivoa.vodml.testing.AbstractTest;
 public abstract class BaseSourceCatalogueTest extends AbstractTest {
 
     protected SourceCatalogue sc;
+    protected PhotometricSystem ps;
 
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
@@ -45,7 +48,28 @@ public abstract class BaseSourceCatalogueTest extends AbstractTest {
             SDSSSource sdss = new SDSSSource().withPositionError(ellipseError);// UNUSED, but just checking position error subsetting.
             sdss.setPositionError(ellipseError);
             AlignedEllipse theError = sdss.getPositionError();
+            
+            final List<PhotometryFilter> filters = List.of(
+                    createPhotometryFilter(fl -> {
+                                    fl.bandName ="C-Band";
+                                    fl.spectralLocation = new RealQuantity(5.0,GHz);
+                                    fl.dataValidityFrom = new Date();
+                                    fl.dataValidityTo = new Date();
+                                    fl.description = "radio band";
+                                    fl.name = fl.bandName;
+                                }),
+                    createPhotometryFilter(fl -> {
+                                    fl.bandName ="L-Band";
+                                    fl.spectralLocation = new RealQuantity(1.5,GHz);
+                                    fl.dataValidityFrom = new Date();
+                                    fl.dataValidityTo = new Date();
+                                    fl.description = "radio band";
+                                    fl.name = fl.bandName;
+                                })
+                    );
+                    
     
+            ps = new PhotometricSystem("test photometric system", 1, filters);
             sc = createSourceCatalogue(c -> {
                 c.name = "testCat";
                 c.entry = Arrays.asList(createSDSSSource(s -> {
@@ -64,26 +88,12 @@ public abstract class BaseSourceCatalogueTest extends AbstractTest {
                                 l.type = LuminosityType.FLUX;                         
                                 l.value = new RealQuantity(2.5, jansky );
                                 l.error = new RealQuantity(.25, jansky );
-                                l.filter = createPhotometryFilter(fl -> {
-                                    fl.bandName ="C-Band";
-                                    fl.spectralLocation = new RealQuantity(5.0,GHz);
-                                    fl.dataValidityFrom = new Date();
-                                    fl.dataValidityTo = new Date();
-                                    fl.description = "radio band";
-                                    fl.name = fl.bandName;
-                                });
+                                l.filter = filters.get(0);
                                 
                             })
                             ,createLuminosityMeasurement(l ->{
                                 l.description = "lummeas2";
-                                l.filter = createPhotometryFilter(fl -> {
-                                    fl.bandName ="L-Band";
-                                    fl.spectralLocation = new RealQuantity(1.5,GHz);
-                                    fl.dataValidityFrom = new Date();
-                                    fl.dataValidityTo = new Date();
-                                    fl.description = "radio band";
-                                    fl.name = fl.bandName;
-                                });
+                                l.filter = filters.get(1);
                                 l.type = LuminosityType.FLUX;
                                 l.value = new RealQuantity(3.5, jansky );
                                 l.error = new RealQuantity(.25, jansky );//TODO should be allowed to be null

@@ -170,19 +170,26 @@
       <xsl:variable name="possibleRefs" select="distinct-values($models/vo-dml:model[name = $modelsInScope ]//reference/datatype/vodml-ref)" as="xsd:string*"/>
 
       <xsl:message>models in scope=<xsl:value-of select="concat(string-join($modelsInScope,','), ' hasref=',string-join($possibleRefs,','))"/> </xsl:message>
-    <xsl:variable name="references-vodmlref" as="xsd:string*">
+    <xsl:variable name="references-proc" as="xsd:string*">
         <xsl:for-each select="$possibleRefs">
             <xsl:variable name="contained" select="$models/vo-dml:model[name = $modelsInScope ]//*[composition/datatype/vodml-ref/text()=current()]" as="element()*"/> <!-- could be multiply contained? -->
             <xsl:variable name="okref" select="for $v in $contained return vf:asvodmlref($v) = $possibleRefs" as="xsd:boolean*"/>
             <xsl:message>model references type=<xsl:value-of select="."/> contained=<xsl:value-of select="string-join(for $v in $contained return vf:asvodmlref($v),',')" /> ok=<xsl:value-of
                     select="string-join(string($okref),',')"/></xsl:message>
-
-            <xsl:if test="not($contained) or not(true() = $okref)"> <!-- if the reference is not contained or if it is not contained in another ref -->
-                <xsl:message >OK ref = <xsl:value-of select="."/> </xsl:message>
-               <xsl:sequence select="."/>
-            </xsl:if>
+               <xsl:sequence select="concat(.,'=',count($contained) = 0)"/>
         </xsl:for-each>
     </xsl:variable>
+     <xsl:message>** refs <xsl:value-of select="string-join($references-proc,',')"/></xsl:message>
+      <xsl:variable name="references-vodmlref" as="xsd:string*">
+          <xsl:for-each select="$references-proc">
+          <xsl:variable name="tmp" select="tokenize(current(),'=')" as="xsd:string*"/>
+          <xsl:if test="$tmp[2]='true'">
+              <xsl:sequence select="$tmp[1]"/>
+          </xsl:if>
+          </xsl:for-each>
+      </xsl:variable>
+
+
     <xsl:variable name="hasReferences" select="count($possibleRefs) > 0"/>
     <xsl:message>filtered refs=<xsl:value-of select="string-join($references-vodmlref,',')"/> </xsl:message>
     <xsl:variable name="ModelClass" select="concat(vf:upperFirst(name),'Model')"/>
@@ -221,8 +228,12 @@
     import org.ivoa.vodml.ModelDescription;
     import org.ivoa.vodml.annotation.VoDml;
     import org.ivoa.vodml.annotation.VodmlRole;
+    import org.ivoa.vodml.ModelContext;
+    import org.ivoa.vodml.nav.ReferenceCache;
 
-    @XmlAccessorType(XmlAccessType.NONE)
+
+
+        @XmlAccessorType(XmlAccessType.NONE)
     @XmlRootElement
     @JsonTypeInfo(include=JsonTypeInfo.As.WRAPPER_OBJECT, use=JsonTypeInfo.Id.NAME)
     @JsonIgnoreProperties({"refmap"})
@@ -252,8 +263,9 @@
       ).collect(
       Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     </xsl:if>
+    <xsl:variable name="contentTypes" as="element()*" select="$models/vo-dml:model[name = $modelsInScope ]//objectType[not(@abstract='true') and (not(vf:referredTo(vf:asvodmlref(.))) or (vf:asvodmlref(.) = vf:referenceTypesInContainmentHierarchy(vf:asvodmlref(.)) ))]"/>
     @XmlElements(value = {
-      <xsl:for-each select="//objectType[not(@abstract='true') and (not(vf:referredTo(vf:asvodmlref(.))) or (vf:asvodmlref(.) = vf:referencesInHierarchy(vf:asvodmlref(.)) ))]">
+      <xsl:for-each select="$contentTypes">
         @XmlElement(name="<xsl:value-of select="name"/>",
                type = <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/>.class)
                     <xsl:if test="position() != last()">,</xsl:if>
@@ -261,8 +273,8 @@
     })
         <xsl:value-of select="$jsontypinfo"/>
     private List&lt;Object&gt; content  = new ArrayList&lt;&gt;();
-      <xsl:for-each select="//objectType[not(@abstract='true') and (not(vf:referredTo(vf:asvodmlref(.))) or (vf:asvodmlref(.) = vf:referencesInHierarchy(vf:asvodmlref(.)) )) ]">
-<!--         <xsl:message>ref in hierarchy <xsl:value-of select="vf:asvodmlref(.)"/> refs= <xsl:value-of select="vf:referencesInHierarchy(vf:asvodmlref(.))"/>  </xsl:message>-->
+      <xsl:for-each select="$contentTypes">
+<!--         <xsl:message>ref in hierarchy <xsl:value-of select="vf:asvodmlref(.)"/> refs= <xsl:value-of select="vf:referenceTypesInContainmentHierarchy(vf:asvodmlref(.))"/>  </xsl:message>-->
       public void addContent( final <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/> c)
       {
       content.add(c);
@@ -284,7 +296,7 @@
       }
       </xsl:for-each>
         <xsl:for-each select="$references-vodmlref">
-        <!--         <xsl:message>ref in hierarchy <xsl:value-of select="vf:asvodmlref(.)"/> refs= <xsl:value-of select="vf:referencesInHierarchy(vf:asvodmlref(.))"/>  </xsl:message>-->
+        <!--         <xsl:message>ref in hierarchy <xsl:value-of select="vf:asvodmlref(.)"/> refs= <xsl:value-of select="vf:referenceTypesInContainmentHierarchy(vf:asvodmlref(.))"/>  </xsl:message>-->
         /** directly add reference. N.B. should not be necessary in normal operation adding content should find embedded references.
          * @param c the reference to be added.
          */
@@ -423,6 +435,19 @@
         public ModelDescription descriptor() {
         return description();
 
+        }
+        @SuppressWarnings("rawtypes")
+        public void createContext()
+        {
+
+        final Map&lt;Class, ReferenceCache&gt; collect = Map.ofEntries(
+        <xsl:for-each select="vf:containedReferencesInModels()">
+        <xsl:value-of select="concat('Map.entry(',vf:QualifiedJavaType(current()),'.class, new ReferenceCache',$lt,vf:QualifiedJavaType(current()),$gt,'())')"/>
+            <xsl:if test="position() != last()">,
+            </xsl:if>
+        </xsl:for-each>
+        );
+        ModelContext.create(  collect );
         }
 
         }

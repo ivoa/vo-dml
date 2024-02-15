@@ -31,3 +31,4 @@
 * 0.4.1 Improved list API
 * 0.4.2 Update the vodsl support to 0.4.6
 * 0.4.3 Make work with windows
+* 0.4.4 initial contained references support

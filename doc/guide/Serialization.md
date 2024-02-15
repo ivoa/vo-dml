@@ -9,7 +9,7 @@ For the serializations (other than the relational database), the general idea is
 has been chosen, in contrast to the approach of [MIVOT](https://www.ivoa.net/documents/MIVOT/)
 where the idea is that the model is coerced into a table based model - which of course is similar to the relational 
 database serialization below. This "natural" serialization means that objects are enclosed within their parents to whatever depth 
-is necessary. The only exception to this is that referenced objects are separated out into their own section early in the 
+is necessary. The only exception to this is that referenced objects that are not otherwise contained within another object in the model are separated out into their own section early in the 
 serialization so that they can easily be referenced.
 
 ```mermaid
