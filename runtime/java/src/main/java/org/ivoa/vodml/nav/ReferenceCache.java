@@ -8,11 +8,22 @@ import java.util.List;
 import java.util.Map;
 
 
+/**
+ * A reference cache implementation to help with processing of contained references.
+ * The type parameter is the type of the references contained within the cache instance.
+ * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
+ * @since 15 Feb 2024
+ */
 public class ReferenceCache <T> {
     
    private Map<T, T> valmap = new HashMap<>(); 
    
-  public  void setValues(List<T> inital, List<T> cloned)
+  /**
+   * Store values in the cache.
+ * @param inital - the original reference.
+ * @param cloned - the cloned value of the same reference.
+ */
+public  void setValues(List<T> inital, List<T> cloned)
    {
        for (int i = 0; i < inital.size(); i++) {
        valmap.put(inital.get(i), cloned.get(i)) ;  
@@ -20,8 +31,9 @@ public class ReferenceCache <T> {
    }
 
 /**
- * @param refcont
- * @return
+ * Get the new instance of the reference.
+ * @param initial the original value of the reference.
+ * @return the new instance of the reference. 
  */
    public T get(T initial) {
    return valmap.get(initial);
