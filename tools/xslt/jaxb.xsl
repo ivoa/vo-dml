@@ -190,8 +190,6 @@
       </xsl:variable>
 
 
-
-
     <xsl:variable name="hasReferences" select="count($possibleRefs) > 0"/>
     <xsl:message>filtered refs=<xsl:value-of select="string-join($references-vodmlref,',')"/> </xsl:message>
     <xsl:variable name="ModelClass" select="concat(vf:upperFirst(name),'Model')"/>
@@ -265,8 +263,9 @@
       ).collect(
       Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     </xsl:if>
+    <xsl:variable name="contentTypes" as="element()*" select="$models/vo-dml:model[name = $modelsInScope ]//objectType[not(@abstract='true') and (not(vf:referredTo(vf:asvodmlref(.))) or (vf:asvodmlref(.) = vf:referenceTypesInContainmentHierarchy(vf:asvodmlref(.)) ))]"/>
     @XmlElements(value = {
-      <xsl:for-each select="//objectType[not(@abstract='true') and (not(vf:referredTo(vf:asvodmlref(.))) or (vf:asvodmlref(.) = vf:referenceTypesInContainmentHierarchy(vf:asvodmlref(.)) ))]">
+      <xsl:for-each select="$contentTypes">
         @XmlElement(name="<xsl:value-of select="name"/>",
                type = <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/>.class)
                     <xsl:if test="position() != last()">,</xsl:if>
@@ -274,7 +273,7 @@
     })
         <xsl:value-of select="$jsontypinfo"/>
     private List&lt;Object&gt; content  = new ArrayList&lt;&gt;();
-      <xsl:for-each select="//objectType[not(@abstract='true') and (not(vf:referredTo(vf:asvodmlref(.))) or (vf:asvodmlref(.) = vf:referenceTypesInContainmentHierarchy(vf:asvodmlref(.)) )) ]">
+      <xsl:for-each select="$contentTypes">
 <!--         <xsl:message>ref in hierarchy <xsl:value-of select="vf:asvodmlref(.)"/> refs= <xsl:value-of select="vf:referenceTypesInContainmentHierarchy(vf:asvodmlref(.))"/>  </xsl:message>-->
       public void addContent( final <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/> c)
       {
