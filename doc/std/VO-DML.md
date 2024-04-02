@@ -1,90 +1,79 @@
 ---
 title: 'VO-DML: a consistent modeling language for IVOA data models'
+version: 1.1
+date: unknown
+doctype: WD
+author: 
+  - Gerard Lemson 
+  - Omar Laurino 
+  - Laurent Bourges
+  - Mark Cresitello-Dittmar
+  - Markus Demleitner
+  - Tom Donaldson
+  - Patrick Dowler
+  - Matthew Graham 
+  - Norman Gray
+  - Laurent Michel
+  - Jesus Salgado
+  - Paul Harrison
+editor:
+  - Gerard Lemson
+  - Omar Laurino
+  - Paul Harrison
+
+abstract: |
+  This document defines a standard modelling language, or meta-model, for
+  expressing data models in the IVOA. Adopting such a uniform language for
+  all models allows these to be used in a homogeneous manner and allows a
+  consistent definition of reuse of one model by another. The particular
+  language defined here includes a consistent identification mechanism for
+  models which allow these to be referenced in an explicit and uniform
+  manner also from other contexts, in particular from other IVOA standard
+  formats such as VOTable.
+
+  The language defined in this specification is named **VO-DML** (VO Data
+  Modeling Language). VO-DML is a conceptual modeling language that is
+  agnostic of serializations, or physical representations. This allows it
+  to be designed to fit as many purposes as possible. VO-DML is directly
+  based on UML, and can be seen as a particular representation of a UML2
+  Profile. VO-DML is restricted to describing static data structures and
+  from UML it only uses a subset of the elements defined in its language
+  for describing \"Class Diagrams\". Its concepts can be easily mapped to
+  equivalent data modelling concepts in other representations such as
+  relational databases, XML schemas and object-oriented computer
+  languages.
+
+  VO-DML has a representation as a simple XML dialect named **VO-DML/XML**
+  that must be used to provide the formal representation of a VO-DML data
+  model. VO-DML/XML aims to be concise, explicit and easy to parse and use
+  in code that needs to interpret annotated data sets.
+
+  VO-DML as described in this document is an example of a domain specific
+  modeling language, where the domain here is defined as the set of data
+  and meta-data structures handled in the IVOA and Astronomy at large.
+  VO-DML provides a custom representation of such a language and as a side
+  effect allows the creation and use of standard compliant data models
+  outside of the IVOA standards context.
 ---
 
 
 
 
-+--------------------------------------------------+-------------------+
-| ![](media/image1.jpeg)                           | ***               |
-|                                                  |  I**nternational* |
-|                                                  |                   |
-|                                                  | ***    V**irtual* |
-|                                                  |                   |
-|                                                  | ***               |
-|                                                  |   O**bservatory*  |
-|                                                  |                   |
-|                                                  | ***A**lliance*    |
-+--------------------------------------------------+-------------------+
-
-
-**Version 1.0**
-
-***IVOA Recommendation 2018 Sep 5***
-
-***Approved by IVOA executive committee May 30, 2018***
-
 **Working Groups: Data Model**
 
 **This version:**
 
-<http://ivoa.net/documents/VODML/20180905/index.html>
+
 
 **Latest version:**
 
-<http://ivoa.net/documents/VODML/20180519/index.html>
+<http://ivoa.net/documents/VODML/20180905/index.html>
 
 **Previous version(s):**
 
 <http://ivoa.net/documents/VODML/20180519/index.html>
 
-**Editors**:
 
-Gerard Lemson
-
-Omar Laurino
-
-**Authors**:
-
-Gerard Lemson, Omar Laurino, Laurent Bourges, Mark Cresitello-Dittmar,
-Markus Demleitner, Tom Donaldson, Patrick Dowler, Matthew Graham, Norman
-Gray, Laurent Michel, Jesus Salgado
-
-
-**Abstract**
-
-This document defines a standard modelling language, or meta-model, for
-expressing data models in the IVOA. Adopting such a uniform language for
-all models allows these to be used in a homogeneous manner and allows a
-consistent definition of reuse of one model by another. The particular
-language defined here includes a consistent identification mechanism for
-models which allow these to be referenced in an explicit and uniform
-manner also from other contexts, in particular from other IVOA standard
-formats such as VOTable.
-
-The language defined in this specification is named **VO-DML** (VO Data
-Modeling Language). VO-DML is a conceptual modeling language that is
-agnostic of serializations, or physical representations. This allows it
-to be designed to fit as many purposes as possible. VO-DML is directly
-based on UML, and can be seen as a particular representation of a UML2
-Profile. VO-DML is restricted to describing static data structures and
-from UML it only uses a subset of the elements defined in its language
-for describing \"Class Diagrams\". Its concepts can be easily mapped to
-equivalent data modelling concepts in other representations such as
-relational databases, XML schemas and object-oriented computer
-languages.
-
-VO-DML has a representation as a simple XML dialect named **VO-DML/XML**
-that must be used to provide the formal representation of a VO-DML data
-model. VO-DML/XML aims to be concise, explicit and easy to parse and use
-in code that needs to interpret annotated data sets.
-
-VO-DML as described in this document is an example of a domain specific
-modeling language, where the domain here is defined as the set of data
-and meta-data structures handled in the IVOA and Astronomy at large.
-VO-DML provides a custom representation of such a language and as a side
-effect allows the creation and use of standard compliant data models
-outside of the IVOA standards context.
 
 **Status of This Document**
 

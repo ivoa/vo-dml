@@ -13,3 +13,8 @@ it should be noted that it is easier to create richer HTML from the markdown. Fo
 ```shell
 pandoc VO-DML.md -s --css=https://www.ivoa.net/misc/ivoa_rec.css --toc -N  -o test.html
 ```
+
+Pandoc TODO
+------------
+
+* number appendices separately https://gist.github.com/rauschma/458303094cd87cab077c00c061cce8da

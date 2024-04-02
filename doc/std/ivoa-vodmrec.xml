@@ -55,10 +55,13 @@ standard -->
     <creator>
       <name>Salgado, J.</name>
     </creator>
+    <creator>
+      <name>Harrison, P. A.</name>
+   </creator>
 
 		<!-- this should be the date of the last recommendation -->
     <date role="update">2018-05-19</date>
-    <version>1.0</version>
+    <version>1.1</version>
     <contact>
       <name>IVOA Data Models WG</name>
       <email>dm@ivoa.net</email>

@@ -4,13 +4,13 @@
 DOCNAME = VO-DML
 
 # count up; you probably do not want to bother with versions <1.0
-DOCVERSION = 1.0
+DOCVERSION = 1.1
 
 # Publication date, ISO format; update manually for "releases"
 DOCDATE = 2018-09-05
 
 # What is it you're writing: NOTE, WD, PR, REC, PEN, or EN
-DOCTYPE = REC
+DOCTYPE = WD
 
 # An e-mail address of the person doing the submission to the document
 # repository (can be empty until a make upload is being made)
@@ -18,7 +18,7 @@ AUTHOR_EMAIL=???
 
 # Source files for the TeX document (but the main file must always
 # be called $(DOCNAME).tex
-SOURCES = $(DOCNAME).tex
+SOURCES = $(DOCNAME).md
 
 # List of image files to be included in submitted package (anything that
 # can be rendered directly by common web browsers)
@@ -31,12 +31,8 @@ VECTORFIGURES =
 # Additional files to distribute (e.g., CSS, schema files, examples...)
 AUX_FILES = 
 
--include ivoatex/Makefile
+$(DOCNAME).html: $(DOCNAME).md template.html
+	pandoc VO-DML.md -s --css=https://www.ivoa.net/misc/ivoa_wd.css --template=template.html --toc -N  -o VO-DML.html
 
-ivoatex/Makefile:
-	@echo "*** ivoatex submodule not found.  Initialising submodules."
-	@echo
-	git submodule update --init
-
-test:
-	@echo "No tests defined yet"
+$(DOCNAME).pdf: $(DOCNAME).md template.html
+	pandoc VO-DML.md -s --css=https://www.ivoa.net/misc/ivoa_wd.css --template=template.html --to html --toc -N  -o VO-DML.pdf

@@ -16,3 +16,5 @@ tools/gradletooling/gradle-plugin/bin/
 /tools/gradletooling/sample/pythontest/generated/
 /tools/gradletooling/sample/mkdocs.yml
 /runtime/java/bin/
+/doc/std/VO-DML.pdf
+/doc/std/VO-DML.html
