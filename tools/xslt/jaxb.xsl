@@ -99,16 +99,26 @@
   </xsl:template>
 
   <!-- template attribute : adds JAXB annotations for primitive types, data types & enumerations -->
-  <xsl:template match="attribute|composition[multiplicity/maxOccurs = 1]" mode="JAXBAnnotation">
-    <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
-      <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/name() != 'primitiveType' and ($models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref))">
-       <xsl:value-of select="$jsontypinfo"/>
-      </xsl:if>
-    @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
-    <xsl:if test="constraint[ends-with(@xsi:type,':NaturalKey')]"><!-- TODO deal with compound keys -->
-    @jakarta.xml.bind.annotation.XmlID
-    </xsl:if>
-  </xsl:template>
+    <xsl:template match="attribute|composition[multiplicity/maxOccurs = 1]" mode="JAXBAnnotation">
+        <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
+        <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/name() != 'primitiveType' and ($models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref))">
+            <xsl:value-of select="$jsontypinfo"/>
+        </xsl:if>
+        <xsl:choose>
+            <xsl:when test="current()/name() = 'attribute' and vf:findTypeDetail(vf:asvodmlref(current()))/isAttribute">
+    @jakarta.xml.bind.annotation.XmlAttribute(name = "<xsl:value-of select="name"/>", required =<xsl:apply-templates
+                    select="." mode="required"/>)
+            </xsl:when>
+            <xsl:otherwise>
+    @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required =<xsl:apply-templates
+                    select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+            </xsl:otherwise>
+        </xsl:choose>
+
+        <xsl:if test="constraint[ends-with(@xsi:type,':NaturalKey')]"><!-- TODO deal with compound keys -->
+            @jakarta.xml.bind.annotation.XmlID
+        </xsl:if>
+    </xsl:template>
 
   <!-- reference resolved via JAXB -->
   <xsl:template match="reference" mode="JAXBAnnotation">

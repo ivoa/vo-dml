@@ -302,6 +302,31 @@
         </xsl:choose>
 
     </xsl:function>
+
+    <xsl:function name="vf:hasTypeDetail" as="xsd:boolean">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="modelname" select="substring-before($vodml-ref,':')" />
+        <xsl:value-of select="count($mapping/bnd:mappedModels/model[name=$modelname]/type-detail[@vodml-id=substring-after($vodml-ref,':')]) > 0"/>
+    </xsl:function>
+
+    <xsl:function name="vf:findTypeDetail" as="element()">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="modelname" select="substring-before($vodml-ref,':')" />
+        <xsl:choose>
+            <xsl:when test="$mapping/bnd:mappedModels/model[name=$modelname]/type-detail[@vodml-id=substring-after($vodml-ref,':')]">
+                <xsl:copy-of select="$mapping/bnd:mappedModels/model[name=$modelname]/type-detail[@vodml-id=substring-after($vodml-ref,':')]"/>
+            </xsl:when>
+            <xsl:otherwise> <!-- just return empty element -->
+                <xsl:element name="type-detail">
+                    <xsl:attribute name="vodml-id" select="substring-after($vodml-ref,':')"/>
+                </xsl:element>
+            </xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:function>
+
+
+
     <xsl:function name="vf:isPythonBuiltin" as="xsd:boolean"> <!-- TODO does this really mean python primitive? -->
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:variable name="modelname" select="substring-before($vodml-ref,':')" />

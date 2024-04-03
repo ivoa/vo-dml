@@ -13,6 +13,12 @@
         <xmllegacy-targetnamespace prefix="simp" schemaFilename="Sample.xsd" schemaLocation="Sample.xsd">http://ivoa.net/dm/sample/sample</xmllegacy-targetnamespace>
         <rdb inheritance-strategy="single-table"
         discriminatorColumnLength="64"/>
+        <type-detail vodml-id="catalog.SkyCoordinateFrame.name">
+            <length>32</length>
+            <isAttribute/>
+        </type-detail>
+
     </model>
+
 
 </m:mappedModels>
