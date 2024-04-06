@@ -52,7 +52,7 @@ public abstract class AutoRoundTripTest <M extends VodmlModel<M>> extends Abstra
     void testXmlRoundTrip() throws JAXBException, TransformerConfigurationException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException, IOException {
         
         M model = createModel();
-        RoundTripResult<M> result = roundtripXML(model.management());
+        RoundTripResult<M> result = roundtripXML(model);
         assertTrue(result.isValid, "reading XML back had errors");
         assertNotNull(result.retval,"returned object from XML serialization null");
         testModel(result.retval);
@@ -62,7 +62,7 @@ public abstract class AutoRoundTripTest <M extends VodmlModel<M>> extends Abstra
     void testJSONRoundTrip() throws JsonProcessingException  {
         
         M model = createModel();
-        RoundTripResult<M> result = roundTripJSON(model.management());
+        RoundTripResult<M> result = roundTripJSON(model);
         assertTrue(result.isValid, "reading JSON back had errors");
         assertNotNull(result.retval,"returned object from JSON serialization null");
         testModel(result.retval);

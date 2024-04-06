@@ -40,11 +40,11 @@ import org.ivoa.vodml.jpa.JPAManipulationsForObjectType;
 import org.ivoa.vodml.validation.ModelValidator.ValidationResult;
 
 public abstract class AbstractBaseValidation {
-    protected  <T> RoundTripResult<T> roundTripJSON(ModelManagement<T> m) throws JsonProcessingException {
-        T model = m.theModel();
+    protected  <T> RoundTripResult<T> roundTripJSON(VodmlModel<T> m) throws JsonProcessingException {
+        T model = m.management().theModel();
         @SuppressWarnings("unchecked")
         Class<T> clazz =  (Class<T>) model.getClass();
-        ObjectMapper mapper = m.jsonMapper();
+        ObjectMapper mapper = m.management().jsonMapper();
         String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(model);
         System.out.println("JSON output");
         System.out.println(json);
@@ -62,13 +62,17 @@ public abstract class AbstractBaseValidation {
         }
     }
 
-    protected <T> RoundTripResult<T> roundtripXML(ModelManagement<T> modelManagement) throws ParserConfigurationException, JAXBException,
+    protected <T extends VodmlModel<T>> RoundTripResult<T> roundtripXML(VodmlModel<T> vodmlModel) throws ParserConfigurationException, JAXBException,
     PropertyException, TransformerFactoryConfigurationError,
     TransformerConfigurationException, TransformerException {
-        T model = modelManagement.theModel();
+        T model = vodmlModel.management().theModel();
+        if(vodmlModel.management().hasReferences())
+        {
+           vodmlModel.processReferences();
+        }
         @SuppressWarnings("unchecked")
         Class<T> clazz =  (Class<T>) model.getClass();
-        JAXBContext jc = modelManagement.contextFactory();
+        JAXBContext jc = vodmlModel.management().contextFactory();
         StringWriter sw = new StringWriter();
         Marshaller m = jc.createMarshaller();
 

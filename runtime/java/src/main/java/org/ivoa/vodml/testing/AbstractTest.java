@@ -35,9 +35,9 @@ public abstract class AbstractTest extends AbstractBaseValidation {
 
 //    abstract <T> ModelManagement<T> getModelManagement();
 
-    public <T extends VodmlModel<T>> T modelRoundTripXMLwithTest(T model) throws PropertyException, TransformerConfigurationException, ParserConfigurationException, JAXBException, TransformerFactoryConfigurationError, TransformerException
+    public <T extends VodmlModel<T>> T modelRoundTripXMLwithTest( VodmlModel<T> model) throws PropertyException, TransformerConfigurationException, ParserConfigurationException, JAXBException, TransformerFactoryConfigurationError, TransformerException
     {
-        RoundTripResult<T> result = roundtripXML(model.management());
+        RoundTripResult<T> result = roundtripXML(model);
         assertTrue(result.isValid, "reading xml back had errors");
         assertNotNull(result.retval,"returned object from XML serialization null");
         return result.retval;
@@ -45,7 +45,7 @@ public abstract class AbstractTest extends AbstractBaseValidation {
 
     public <T extends VodmlModel<T>> T modelRoundTripJSONwithTest(T model) throws JsonProcessingException
     {
-        RoundTripResult<T> result = roundTripJSON(model.management());
+        RoundTripResult<T> result = roundTripJSON(model);
         assertTrue(result.isValid, "reading xml back had errors");
         assertNotNull(result.retval,"returned object from JSON serialization null");
         return result.retval;
