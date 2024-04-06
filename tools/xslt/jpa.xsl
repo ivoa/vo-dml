@@ -422,7 +422,6 @@
     <xsl:variable name="file" select="'META-INF/persistence.xml'"/>
 
     <!-- open file for jpa configuration -->
-    <xsl:message >Opening file <xsl:value-of select="$file"/></xsl:message>
     <xsl:result-document href="{$file}" format="persistenceInfo">
     <xsl:element name="persistence" namespace="http://java.sun.com/xml/ns/persistence">
       <xsl:attribute name="version" select="'2.0'"/>

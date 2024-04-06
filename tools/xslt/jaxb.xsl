@@ -29,10 +29,10 @@
   </xsl:variable>
 
   <xsl:template match="objectType|dataType" mode="JAXBAnnotation">
+      <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
 
   @jakarta.xml.bind.annotation.XmlAccessorType( jakarta.xml.bind.annotation.XmlAccessType.NONE )
-  @jakarta.xml.bind.annotation.XmlType( name = "<xsl:value-of select="name"/>")
-  <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
+  @jakarta.xml.bind.annotation.XmlType( name = "<xsl:value-of select="vf:jaxbType($vodml-ref)"/>")
   <xsl:choose>
       <xsl:when test="vf:hasSubTypes($vodml-ref)"> <!-- TODO perhaps only necessary if abstract -->
   @jakarta.xml.bind.annotation.XmlSeeAlso({ <xsl:value-of select="string-join(for $s in vf:subTypes($vodml-ref) return concat(vf:QualifiedJavaType(vf:asvodmlref($s)),'.class'),',')"/>  })
@@ -72,7 +72,7 @@
   </xsl:template>
 
   <xsl:template match="primitiveType" mode="JAXBAnnotation">
-    @jakarta.xml.bind.annotation.XmlType( name = "<xsl:value-of select="name"/>")
+    @jakarta.xml.bind.annotation.XmlType( name = "<xsl:value-of select="vf:jaxbType(vf:asvodmlref(current()))"/>")
   </xsl:template>
 
 <!--
@@ -94,7 +94,7 @@
   </xsl:template>
 
   <xsl:template match="enumeration" mode="JAXBAnnotation">
-    @jakarta.xml.bind.annotation.XmlType( name = "<xsl:value-of select="name"/>")
+    @jakarta.xml.bind.annotation.XmlType( name = "<xsl:value-of select="vf:jaxbType(vf:asvodmlref(current()))"/>")
     @jakarta.xml.bind.annotation.XmlEnum
   </xsl:template>
 
@@ -175,32 +175,11 @@
     <xsl:variable name="file" select="concat($output_root, '/', $root_package_dir, '/',vf:upperFirst(name),'Model.java')"/>
     <xsl:message >Writing to Overall Model file <xsl:value-of select="$file"/></xsl:message>
       <!-- open file for this package -->
-    <!-- imported model names -->
-    <xsl:variable name="modelsInScope" select="(name,vf:importedModelNames(name))"/>
-      <xsl:variable name="possibleRefs" select="distinct-values($models/vo-dml:model[name = $modelsInScope ]//reference/datatype/vodml-ref)" as="xsd:string*"/>
-
-      <xsl:message>models in scope=<xsl:value-of select="concat(string-join($modelsInScope,','), ' hasref=',string-join($possibleRefs,','))"/> </xsl:message>
-    <xsl:variable name="references-proc" as="xsd:string*">
-        <xsl:for-each select="$possibleRefs">
-            <xsl:variable name="contained" select="$models/vo-dml:model[name = $modelsInScope ]//*[composition/datatype/vodml-ref/text()=current()]" as="element()*"/> <!-- could be multiply contained? -->
-            <xsl:variable name="okref" select="for $v in $contained return vf:asvodmlref($v) = $possibleRefs" as="xsd:boolean*"/>
-            <xsl:message>model references type=<xsl:value-of select="."/> contained=<xsl:value-of select="string-join(for $v in $contained return vf:asvodmlref($v),',')" /> ok=<xsl:value-of
-                    select="string-join(string($okref),',')"/></xsl:message>
-               <xsl:sequence select="concat(.,'=',count($contained) = 0)"/>
-        </xsl:for-each>
-    </xsl:variable>
-     <xsl:message>** refs <xsl:value-of select="string-join($references-proc,',')"/></xsl:message>
-      <xsl:variable name="references-vodmlref" as="xsd:string*">
-          <xsl:for-each select="$references-proc">
-          <xsl:variable name="tmp" select="tokenize(current(),'=')" as="xsd:string*"/>
-          <xsl:if test="$tmp[2]='true'">
-              <xsl:sequence select="$tmp[1]"/>
-          </xsl:if>
-          </xsl:for-each>
-      </xsl:variable>
+      <xsl:variable name="modelsInScope" select="(name,vf:importedModelNames(name))"/>
+      <xsl:variable name="references-vodmlref" select="vf:refsToSerialize(name)"/>
 
 
-    <xsl:variable name="hasReferences" select="count($possibleRefs) > 0"/>
+      <xsl:variable name="hasReferences" select="count($references-vodmlref) > 0"/>
     <xsl:message>filtered refs=<xsl:value-of select="string-join($references-vodmlref,',')"/> </xsl:message>
     <xsl:variable name="ModelClass" select="concat(vf:upperFirst(name),'Model')"/>
     <xsl:result-document href="{$file}">
@@ -253,7 +232,7 @@
     @XmlType
     public static class References {
     <xsl:for-each select="$references-vodmlref"> <!-- looking at all possible refs -->
-        @XmlElement
+        @XmlElement(name="<xsl:value-of select='vf:lowerFirst(vf:jaxbType(current()))'/>")
         @JsonProperty("<xsl:value-of select="vf:utype(.)"/>")
         <xsl:if test="$models/key('ellookup',current())/@abstract or vf:hasSubTypes(current())">
             <xsl:value-of select="$jsontypinfo"/>
@@ -273,11 +252,12 @@
       ).collect(
       Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     </xsl:if>
-    <xsl:variable name="contentTypes" as="element()*" select="$models/vo-dml:model[name = $modelsInScope ]//objectType[not(@abstract='true') and (not(vf:referredTo(vf:asvodmlref(.))) or (vf:asvodmlref(.) = vf:referenceTypesInContainmentHierarchy(vf:asvodmlref(.)) ))]"/>
+    <xsl:variable name="contentTypes" as="element()*" select="vf:contentToSerialize(name)"/>
     @XmlElements(value = {
       <xsl:for-each select="$contentTypes">
-        @XmlElement(name="<xsl:value-of select="name"/>",
-               type = <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/>.class)
+          <xsl:variable name="tv" select="vf:asvodmlref(current())"/>
+        @XmlElement(name="<xsl:value-of select="vf:lowerFirst(vf:jaxbType($tv))"/>",
+               type = <xsl:value-of select="vf:QualifiedJavaType($tv)"/>.class)
                     <xsl:if test="position() != last()">,</xsl:if>
       </xsl:for-each>
     })
@@ -418,7 +398,7 @@
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:variable name="ns" select="normalize-space(text())"/>
-                    schemaMap.put("<xsl:value-of select="$ns"/>","<xsl:value-of select="concat(tokenize($ns,'/+')[string-length(.)>0][last()],'.xsd')"/>");
+                    schemaMap.put("<xsl:value-of select="$ns"/>","<xsl:value-of select="concat(tokenize($ns,'/+')[string-length(.)>0 and not(matches(.,'v[0-9](\.[0-9])*'))][last()],'.xsd')"/>");
                 </xsl:otherwise>
             </xsl:choose>
 

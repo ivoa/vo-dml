@@ -17,7 +17,7 @@ FIXME - this is still not a complete representation of the JSON produced
                 xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
                 xmlns:bnd="http://www.ivoa.net/xml/vodml-binding/v0.9.1"
                 xmlns:vodml-base="http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1"
-                exclude-result-prefixes="map"
+                exclude-result-prefixes="bnd"
 >
 
 
@@ -30,18 +30,9 @@ FIXME - this is still not a complete representation of the JSON produced
   <!-- Input parameters -->
   <xsl:param name="lastModifiedText"/>
   <xsl:param name="binding"/>
-  <xsl:param name="schemalocation_root" select="'http://volute.g-vo.org/svn/trunk/projects/dm/vo-dml/xsd/'"/>
-
-
   <xsl:include href="binding_setup.xsl"/>
 
   <xsl:variable name="xsd-ns">http://www.w3.org/2001/XMLSchema</xsl:variable>
-  <xsl:variable name="base-prefix">vodml-base</xsl:variable>
-  <xsl:variable name="base-schemanamespace" select="'http://www.ivoa.net/xml/vo-dml/xsd/base/v0.1'"/>
-
-  <xsl:variable name="baseType" select="'vodml-base:VODMLObject'"/>
-  <xsl:variable name="referenceType" select="'vodml-base:VODMLReference'"/>
-
  <!-- main pattern : processes for root node model -->
   <xsl:template match="/">
     <xsl:message >Generating JSON - considering models <xsl:value-of select="string-join($models/vo-dml:model/name,' and ')" /></xsl:message>

@@ -32,10 +32,7 @@ import org.ivoa.vodml.nav.ModelInstanceTraverser.Visitor;
  */
 public class Util {
     
-    /** ID_0.
-     */
-    private static final String ID_0 = XmlIdManagement.createXMLId(0);
-
+    
     static final AtomicLong NEXT_ID = new AtomicLong(1000);
 
     /** logger for this class */
@@ -114,13 +111,13 @@ public class Util {
       Set<String> currentValues = els.stream().map(p->p.getXmlId()).collect(Collectors.toSet());
       for (XmlIdManagement el : els) {
         final String id = el.getXmlId();
-        if(id == null || id.isEmpty()|| id.trim().equals(ID_0))
+        if(id == null || id.isEmpty()|| id.trim().equals(XmlIdManagement.createXMLId(0,el.getClass())))
         {
             String newval;
             do {
              final 
              long l =  NEXT_ID.getAndIncrement();
-             newval = XmlIdManagement.createXMLId(l);
+             newval = XmlIdManagement.createXMLId(l,el.getClass());
             }
             while(currentValues.contains(newval));
             
@@ -140,7 +137,7 @@ public class Util {
         return retval;
     }
 
-    
+ 
    
 }
 
