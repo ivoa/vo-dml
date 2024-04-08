@@ -145,7 +145,7 @@ note - only define functions in here as it is included in the schematron rules
                         <xsl:sequence select="distinct-values(document(url)/vo-dml:model/name)"/>
                     </xsl:for-each>
                 </xsl:variable>
-                <xsl:message><xsl:value-of select="concat('imports=',$thisModel,' --',string-join($m,','))"/> </xsl:message>
+<!--                <xsl:message><xsl:value-of select="concat('imports=',$thisModel,' &#45;&#45;',string-join($m,','))"/> </xsl:message>-->
                 <xsl:variable name="r" as="xsd:string*">
                     <xsl:sequence select="$m"/>
                     <xsl:for-each select="$m">
