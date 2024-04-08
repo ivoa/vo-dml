@@ -75,7 +75,7 @@ being able to choose a more specific sub-type.
 
  <!-- main pattern : processes for root node model -->
   <xsl:template match="/">
-    <xsl:message >Generating XSD - considering models <xsl:value-of select="string-join($models/vo-dml:model/name,' and ')" /></xsl:message>
+    <xsl:message >Generating XSD - considering models <xsl:value-of select="string-join($models/vo-dml:model/name,', ')" /></xsl:message>
     <xsl:apply-templates/>
   </xsl:template>
 

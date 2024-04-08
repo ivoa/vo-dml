@@ -29,16 +29,16 @@ open class VodmlXsdTask  @Inject constructor(ao1: ArchiveOperations) : VodmlBase
 
     @TaskAction
     fun doXsdGenerate() {
-        logger.info("Generating XML schema for VO-DML files ${vodmlFiles.files.joinToString { it.name }}")
-        logger.info("Looked in ${vodmlDir.get()}")
+        logger.info("Generating XML schema ")
+        logger.debug("Looked in ${vodmlDir.get()}")
         val eh = ExternalModelHelper(project, ao, logger)
         val actualCatalog = eh.makeCatalog(vodmlFiles, catalogFile)
         val allBinding = bindingFiles.files.plus(eh.externalBinding())
         vodmlFiles.forEach {
             val shortname = it.nameWithoutExtension
             val outfile = schemaDir.file("$shortname.xsd")
-            logger.info("Generating XML schema from  ${it.name} to ${outfile.get().asFile.absolutePath}")
-            Vodml2xsd.doTransform(it.absoluteFile, mapOf(
+            logger.debug("Generating XML schema from  ${it.name} to ${outfile.get().asFile.absolutePath}")
+            Vodml2xsdNew.doTransform(it.absoluteFile, mapOf(
                 "binding" to allBinding.joinToString(separator = ",") { it.toURI().toURL().toString() }
             ),
                 actualCatalog, outfile.get().asFile)

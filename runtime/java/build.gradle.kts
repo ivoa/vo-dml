@@ -6,7 +6,7 @@ plugins {
     signing
 }
 group = "org.javastro.ivoa.vo-dml"
-version = "0.6.0"
+version = "0.6.1"
 
 
 dependencies {
@@ -19,7 +19,7 @@ dependencies {
     implementation("org.hibernate.orm:hibernate-core:6.2.7.Final")
     
     implementation("org.slf4j:slf4j-api:1.7.36")
-    api("org.javastro:jaxbjpa-utils:0.2.0")
+    api("org.javastro:jaxbjpa-utils:0.2.1")
     compileOnly("org.junit.jupiter:junit-jupiter-api:5.9.2")// have put the base test classes in the runtime main - naughty, but easier to make everything work without changing dependencies
 
 

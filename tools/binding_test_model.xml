@@ -9,7 +9,7 @@
         <file>jpatest.vo-dml.xml</file>
         <java-package>org.ivoa.dm.jpatest</java-package>
         <python-package>org.ivoa.dm.jpatest</python-package>
-        <xml-targetnamespace prefix="jpat" schemaFilename="jpatest.xsd">http://ivoa.net/vodml/sample/jpatest</xml-targetnamespace>
+        <xml-targetnamespace prefix="jpat" schemaFilename="jpatest.xsd">http://ivoa.net/dm/sample/jpatest</xml-targetnamespace>
         <xmllegacy-targetnamespace prefix="jpat" schemaLocation="jpatest.xsd">http://ivoa.net/dm/sample/jpatest</xmllegacy-targetnamespace>
         <rdb inheritance-strategy="single-table"
         discriminatorColumnLength="64"/>

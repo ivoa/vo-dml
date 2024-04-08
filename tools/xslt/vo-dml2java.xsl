@@ -636,11 +636,11 @@
               * getter for XMLID
               */
 
-              @jakarta.xml.bind.annotation.XmlAttribute(name = "id" )
+              @jakarta.xml.bind.annotation.XmlAttribute(name = "_id" )
               @jakarta.xml.bind.annotation.XmlID
               @Override
               public String getXmlId(){
-              return org.ivoa.vodml.jaxb.XmlIdManagement.createXMLId(_id);
+              return org.ivoa.vodml.jaxb.XmlIdManagement.createXMLId(_id, this.getClass());
               }
               @Override
               public void setXmlId (String id)
@@ -757,6 +757,7 @@ package <xsl:value-of select="$path"/>;
          * Return the string representation of this enum constant (value)
          * @return string representation of this enum constant (value)
          */
+        @com.fasterxml.jackson.annotation.JsonValue
         public final String value() {
             return this.value;
         }
@@ -1335,7 +1336,7 @@ package <xsl:value-of select="$path"/>;
         <xsl:with-param name="text" select="name"/>
       </xsl:call-template>
     </xsl:variable>
-
+    @jakarta.xml.bind.annotation.XmlEnumValue("<xsl:value-of select="name"/>")
     <xsl:value-of select="$up"/>("<xsl:value-of select="name"/>")
     <xsl:choose>
       <xsl:when test="position() != last()"><xsl:text>,</xsl:text></xsl:when>

@@ -32,3 +32,8 @@
 * 0.4.2 Update the vodsl support to 0.4.6
 * 0.4.3 Make work with windows
 * 0.4.4 initial contained references support
+* 0.4.5 
+  * New binding customizations - length and isAttribute
+  * new XML Schema generation
+    * xml id handling includes vodmlid
+    * take into account packages.

@@ -9,10 +9,16 @@
         <file>Sample.vo-dml.xml</file>
         <java-package>org.ivoa.dm.sample</java-package>
         <python-package>org.ivoa.dm.samplemodel</python-package>
-        <xml-targetnamespace prefix="simp">http://ivoa.net/vodml/sample/sample</xml-targetnamespace>
+        <xml-targetnamespace prefix="simp">http://ivoa.net/dm/sample/sample/v1</xml-targetnamespace>
         <xmllegacy-targetnamespace prefix="simp" schemaFilename="Sample.xsd" schemaLocation="Sample.xsd">http://ivoa.net/dm/sample/sample</xmllegacy-targetnamespace>
         <rdb inheritance-strategy="single-table"
         discriminatorColumnLength="64"/>
+        <type-detail vodml-id="catalog.SkyCoordinateFrame.name">
+            <length>32</length>
+            <isAttribute/>
+        </type-detail>
+
     </model>
+
 
 </m:mappedModels>

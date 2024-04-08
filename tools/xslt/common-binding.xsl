@@ -236,7 +236,42 @@
     </xsl:function>
 
 
+    <xsl:function name="vf:xsdType" as="xsd:string">
+        <xsl:param name="vodml-ref" as="xsd:string"/> <!-- assumed to be fully qualified! i.e. also for elements in local model, the prefix is included! -->
+        <xsl:variable name="type">
+            <xsl:variable name="mappedtype" select="vf:findmapping($vodml-ref,'xsd')"/>
+            <xsl:choose>
+                <xsl:when test="$mappedtype != ''">
+                    <xsl:value-of select="$mappedtype"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:variable name="modelname" select="substring-before($vodml-ref,':')"/>
+                    <xsl:variable name="root" select="vf:xsdNsPrefix($modelname)"/>
+                    <xsl:value-of select="concat($root,':',substring-after($vodml-ref,':'))"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:value-of select="$type"/>
+    </xsl:function>
 
+    <xsl:function name="vf:jaxbType" as="xsd:string">
+    <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:value-of select="substring-after($vodml-ref,':')"/>
+    </xsl:function>
+
+
+    <xsl:function name="vf:xsdNsPrefix" as="xsd:string">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/xml-targetnamespace/@prefix"/>
+    </xsl:function>
+    <xsl:function name="vf:xsdNs" as="xsd:string">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/xml-targetnamespace/text()"/>
+    </xsl:function>
+    <xsl:function name="vf:xsdFileName" as="xsd:string">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:value-of select="concat(substring-before($mapping/bnd:mappedModels/model[name=$modelName]/file,'.vo-dml.xml'),'.xsd')"/>
+    </xsl:function>
 
     <xsl:function name="vf:isRdbSingleTable" as="xsd:boolean">
         <xsl:param name="modelName" as="xsd:string"/>
@@ -302,6 +337,31 @@
         </xsl:choose>
 
     </xsl:function>
+
+    <xsl:function name="vf:hasTypeDetail" as="xsd:boolean">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="modelname" select="substring-before($vodml-ref,':')" />
+        <xsl:value-of select="count($mapping/bnd:mappedModels/model[name=$modelname]/type-detail[@vodml-id=substring-after($vodml-ref,':')]) > 0"/>
+    </xsl:function>
+
+    <xsl:function name="vf:findTypeDetail" as="element()">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="modelname" select="substring-before($vodml-ref,':')" />
+        <xsl:choose>
+            <xsl:when test="$mapping/bnd:mappedModels/model[name=$modelname]/type-detail[@vodml-id=substring-after($vodml-ref,':')]">
+                <xsl:copy-of select="$mapping/bnd:mappedModels/model[name=$modelname]/type-detail[@vodml-id=substring-after($vodml-ref,':')]"/>
+            </xsl:when>
+            <xsl:otherwise> <!-- just return empty element -->
+                <xsl:element name="type-detail">
+                    <xsl:attribute name="vodml-id" select="substring-after($vodml-ref,':')"/>
+                </xsl:element>
+            </xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:function>
+
+
+
     <xsl:function name="vf:isPythonBuiltin" as="xsd:boolean"> <!-- TODO does this really mean python primitive? -->
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:variable name="modelname" select="substring-before($vodml-ref,':')" />

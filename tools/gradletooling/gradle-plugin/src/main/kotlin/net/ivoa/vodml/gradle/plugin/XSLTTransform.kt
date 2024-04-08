@@ -24,7 +24,7 @@ import javax.xml.transform.stream.StreamSource
     private val logger = LoggerFactory.getLogger(this.javaClass.name)
 
     init {
-        logger.info("initializing transformer for ${script}")
+        logger.debug("initializing transformer for ${script}")
     }
 
     fun doTransform(vodmlFile: File,  output: File) {
@@ -34,9 +34,9 @@ import javax.xml.transform.stream.StreamSource
         doTransform(vodmlFile, params, null, output)
     }
     fun doTransform(vodmlFile: File, params: Map<String,String>, catalog: File?, output: File) {
-        logger.info("doing $script transform with params")
+        logger.debug("doing $script transform with params")
         params.forEach{
-            logger.info("parameter ${it.key}, val=${it.value}")
+            logger.debug("parameter ${it.key}, val=${it.value}")
         }
         if(!vodmlFile.exists())
         {
@@ -87,6 +87,9 @@ object Vodml2Gvd : XSLTTransformer("vo-dml2gvd.xsl", "text")
 object Vodml2Html : XSLTTransformer("vo-dml2html.xsl", "html")
 object Vodml2rdf : XSLTTransformer("vo-dml2rdf.xsl", "text")
 object Vodml2xsd : XSLTTransformer("vo-dml2xsd.xsl", "xml")
+
+object Vodml2xsdNew : XSLTTransformer("vo-dml2xsdNew.xsl", "xml")
+
 object Vodml2Java : XSLTTransformer("vo-dml2java.xsl", "text")
 object Vodml2Latex : XSLTTransformer("vo-dml2Latex.xsl", "text")
 object Vodml2Vodsl : XSLTTransformer("vo-dml2dsl.xsl", "text")

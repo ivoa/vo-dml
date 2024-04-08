@@ -30,7 +30,7 @@ For the [small example model](https://github.com/ivoa/vo-dml/tree/master/models/
 ```xml
 <ser:myModelModel xmlns:ser="http://ivoa.net/vodml/sample/serialization" >
     <refs>
-        <refa id="id_0">
+        <refa _id="id_0">
             <val>a value</val>
         </refa>
         <refb>
@@ -45,6 +45,8 @@ For the [small example model](https://github.com/ivoa/vo-dml/tree/master/models/
     </SomeContent>
 </ser:myModelModel>
 ```
+Note that because the integer parts of the id might have come from database indices, which 
+typically are only unique per table, then the string part of the id is made up from the part of the vodml-id of the type.
 
 ## JSON
 
