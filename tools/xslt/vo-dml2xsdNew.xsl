@@ -43,7 +43,7 @@ note that this schema is substantially different from the era when this code was
 
  <!-- main pattern : processes for root node model -->
   <xsl:template match="/">
-    <xsl:message >Generating XSD - considering models <xsl:value-of select="string-join($models/vo-dml:model/name,', ')" /></xsl:message>
+    <xsl:message >Generating XSD <xsl:value-of select="document-uri(.) "/> - considering models <xsl:value-of select="string-join($models/vo-dml:model/name,', ')" /></xsl:message>
     <xsl:apply-templates/>
   </xsl:template>
 
@@ -116,7 +116,7 @@ note that this schema is substantially different from the era when this code was
 
   <xsl:template match="import" mode="xmlns" >
     <xsl:variable name="mname" select="vf:modelNameFromFile(url)"/>
-    <xsl:message>import model <xsl:value-of select="string-join(($mname,vf:xsdNsPrefix($mname), vf:xsdNs($mname)),',')"/> </xsl:message>
+<!--    <xsl:message>import model <xsl:value-of select="string-join(($mname,vf:xsdNsPrefix($mname), vf:xsdNs($mname)),',')"/> </xsl:message>-->
     <xsl:namespace name="{vf:xsdNsPrefix($mname)}">
       <xsl:value-of select="vf:xsdNs($mname)"/>
     </xsl:namespace>

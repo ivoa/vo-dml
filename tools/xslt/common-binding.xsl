@@ -310,6 +310,9 @@
             <xsl:when test="$lang eq 'xsd'">
                 <xsl:copy-of select="$mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/xsd-type"/>
             </xsl:when>
+            <xsl:when test="$lang eq 'json'">
+                <xsl:copy-of select="$mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/json-type"/>
+            </xsl:when>
             <xsl:when test="$lang eq 'cpp'">
                 <xsl:copy-of select="$mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/cpp-type"/>
             </xsl:when>
@@ -330,9 +333,52 @@
             <xsl:when test="$lang eq 'cpp'">
                 <xsl:value-of select="count($mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/cpp-type) > 0"/>
             </xsl:when>
+            <xsl:when test="$lang eq 'json'">
+                <xsl:value-of select="count($mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/json-type) > 0"/>
+            </xsl:when>
             <xsl:otherwise>
                 <xsl:message terminate="yes">unknown language <xsl:value-of select="$lang"/> </xsl:message>
                 <xsl:value-of select="false()"/>
+            </xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:function>
+
+    <xsl:function name="vf:jsonType" as="xsd:string">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:choose>
+            <xsl:when test="vf:hasMapping($vodml-ref,'json')">
+                <xsl:variable name="mappedtype" select="vf:findmapping($vodml-ref,'json')"/>
+                <xsl:choose>
+                    <xsl:when test="$mappedtype/@format">
+                        <xsl:value-of select="concat($dq,'format',$dq,': ',$dq,$mappedtype/@format,$dq)"/>
+                    </xsl:when>
+                    <xsl:when test="$mappedtype/@built-in">
+                        <xsl:value-of select="concat($dq,'type',$dq,': ',$dq,$mappedtype/text(),$dq)"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="concat($dq,'$ref',$dq,': ',$dq,$mappedtype/text(),$dq)"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:variable name="modelname" select="substring-before($vodml-ref,':')"/>
+                <xsl:variable name="root" select="vf:jsonBaseURI($modelname)"/>
+                <xsl:value-of select="concat($dq,'$ref',$dq,': ',$dq,$root,'#',substring-after($vodml-ref,':'),$dq)"/>
+            </xsl:otherwise>
+        </xsl:choose>
+
+
+    </xsl:function>
+
+    <xsl:function name="vf:jsonBaseURI" as="xsd:string">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:choose>
+            <xsl:when test="$mapping/bnd:mappedModels/model[name=$modelName]/json-baseURI">
+                <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/json-baseURI/text()"/>
+            </xsl:when>
+            <xsl:otherwise>
+                 <xsl:value-of select="concat('https://ivoa.net/dm/',$modelName,'.json')"/>
             </xsl:otherwise>
         </xsl:choose>
 

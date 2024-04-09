@@ -24,15 +24,17 @@ VODML Tooling TODO
 * idea of a oneOf/Choice
 * idea of an Any type...
 * idea of how unique the natural key is - see provenance model (for whole model or just the type)
-  * could make xmlid depend on type....
+  * ~~could make xmlid depend on type....~~
 * constraints
   * add more simple ones - min, max, regexp..
 * VODML Metamodel
   * different serializations of VO-DML itself (json top of list)
   * allow attributes to be 
+  * perhaps standardize on the binding of the ivoa std primitives so that they do not need to be specified in the files
+  * specialized "hand written" IVOA base schema
 * Anything that might help in mapping to OPENAPI
   * idea of a "view" - eg. jobsummary in uws
-
+ 
 * STC
   * epoch - not really defined as something that is used properly
   * equinox in spaceframe (only used for a few..)
@@ -107,7 +109,12 @@ VODML Tooling TODO
 
 * JSON
   * allow refs to be serialized/deserialized as ids always.... - for use in APIs.... https://stackoverflow.com/questions/51172496/how-to-dynamically-ignore-a-property-on-jackson-serialization
+  * perhaps have custom written ivoa base schema.... express some better rules... e.g. non neg integer...
+
 
 # Python production
 
 * using dataclasses - need python 3.10 for the kw_only field specifier - might do better just generating multiple  `__init__()` rather than relying on the dataclass generation.
+
+# Distribution
+  * need better directory structure on IVOA site....

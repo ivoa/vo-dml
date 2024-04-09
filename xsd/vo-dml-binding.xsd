@@ -40,6 +40,7 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
            </xsd:documentation>
         </xsd:annotation>
      </xsd:element>
+     <xsd:element name="json-baseURI" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
      <xsd:element name="rdb" minOccurs="0" maxOccurs="1">
         <xsd:complexType>
            <xsd:attribute name="inheritance-strategy">
@@ -106,18 +107,19 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
 In general it must be used to map primitive types to various languages, but it can also be used for dataTypes.</xsd:documentation>
         </xsd:annotation>
         <xsd:sequence>
-    <xsd:element name="vodml-id" type="xsd:string" minOccurs="1"/>
-    <xsd:element name="java-type" type="JavaMapping" minOccurs="0"/>
-    <xsd:element name="python-type" type="PythonMapping" minOccurs="0"/>
-    <xsd:element name="xsd-type" type="xsd:string" minOccurs="0">
-      <xsd:annotation>
-        <xsd:documentation>
-        Maps to XSD predefined type such as xsd:string etc.
-        SHould NOT have 'xsd' or 'xs' prefix, this must be supplied by generator.
-        </xsd:documentation>
-      </xsd:annotation>
-    </xsd:element>
-  </xsd:sequence>
+           <xsd:element name="vodml-id" type="xsd:string" minOccurs="1" />
+           <xsd:element name="java-type" type="JavaMapping" minOccurs="0" />
+           <xsd:element name="python-type" type="PythonMapping" minOccurs="0" />
+           <xsd:element name="xsd-type" type="xsd:string" minOccurs="0">
+              <xsd:annotation>
+                 <xsd:documentation>
+                    Maps to XSD predefined type such as xsd:string etc. SHould NOT have 'xsd' or 'xs' prefix, this must be
+                    supplied by generator.
+                 </xsd:documentation>
+              </xsd:annotation>
+           </xsd:element>
+           <xsd:element name="json-type" type="JsonMapping" maxOccurs="1" minOccurs="0"></xsd:element>
+        </xsd:sequence>
 </xsd:complexType>
 
 <xsd:simpleType name="JavaName">
@@ -209,5 +211,19 @@ In general it must be used to map primitive types to various languages, but it c
            </xsd:element></xsd:all>
     
      <xsd:attribute name="vodml-id" type="xsd:string"></xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:complexType name="JsonMapping">
+     <xsd:simpleContent>
+        <xsd:extension base="xsd:string">
+           <xsd:attribute name="format" type="xsd:string" use="optional"></xsd:attribute>
+           <xsd:attribute name="built-in" type="xsd:boolean" use="optional" default="false">
+              <xsd:annotation>
+                 <xsd:documentation>whether the type is a JSON built-in type
+
+IMPL - this could be put into the code - especially as the number of JSON built-in types is small</xsd:documentation>
+              </xsd:annotation></xsd:attribute>
+        </xsd:extension>
+     </xsd:simpleContent>
   </xsd:complexType>
 </xsd:schema>

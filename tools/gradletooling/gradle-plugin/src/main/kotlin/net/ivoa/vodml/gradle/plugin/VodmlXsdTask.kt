@@ -43,5 +43,16 @@ open class VodmlXsdTask  @Inject constructor(ao1: ArchiveOperations) : VodmlBase
             ),
                 actualCatalog, outfile.get().asFile)
         }
+        logger.info("Generating JSON schema")
+        vodmlFiles.forEach {
+            val shortname = it.nameWithoutExtension
+            val outfile = schemaDir.file("$shortname.json")
+            logger.debug("Generating JSON schema from  ${it.name} to ${outfile.get().asFile.absolutePath}")
+            Vodml2json.doTransform(it.absoluteFile, mapOf(
+                "binding" to allBinding.joinToString(separator = ",") { it.toURI().toURL().toString() }
+            ),
+                actualCatalog, outfile.get().asFile)
+        }
+
     }
 }
