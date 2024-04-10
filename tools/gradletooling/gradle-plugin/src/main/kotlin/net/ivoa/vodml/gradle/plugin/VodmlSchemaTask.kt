@@ -1,10 +1,7 @@
 package net.ivoa.vodml.gradle.plugin
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.file.ArchiveOperations
-import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import javax.inject.Inject
@@ -17,7 +14,7 @@ import javax.inject.Inject
 /**
  * Task to generate XML schema files from vodsl.
  */
-open class VodmlXsdTask  @Inject constructor(ao1: ArchiveOperations) : VodmlBaseTask(ao1)
+open class VodmlSchemaTask  @Inject constructor(ao1: ArchiveOperations) : VodmlBaseTask(ao1)
 {
 
     @get:OutputDirectory
@@ -43,6 +40,7 @@ open class VodmlXsdTask  @Inject constructor(ao1: ArchiveOperations) : VodmlBase
             ),
                 actualCatalog, outfile.get().asFile)
         }
+        
         logger.info("Generating JSON schema")
         vodmlFiles.forEach {
             val shortname = it.nameWithoutExtension

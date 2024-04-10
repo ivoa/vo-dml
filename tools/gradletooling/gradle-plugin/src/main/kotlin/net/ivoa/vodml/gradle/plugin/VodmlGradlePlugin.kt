@@ -59,10 +59,10 @@ class VodmlGradlePlugin: Plugin<Project> {
             it.modelsToDocument.set(extension.modelsToDocument)
         }
         // register the schame task
-        project.tasks.register(VODML_SCHEMA_TASK_NAME,VodmlXsdTask::class.java) {
+        val schematask: TaskProvider<VodmlSchemaTask> = project.tasks.register(VODML_SCHEMA_TASK_NAME,VodmlSchemaTask::class.java) {
             it.description = "create schema for VO-DML models"
             setVodmlFiles(it,extension,project)
-            it.schemaDir.set(extension.outputDocDir)
+            it.schemaDir.set(extension.outputSchemaDir)
             it.modelsToGenerate.set(extension.modelsToDocument)
         }
         // register the validate task
@@ -106,6 +106,7 @@ class VodmlGradlePlugin: Plugin<Project> {
             }
             // add the vo-dml and binding files to the jar setup
             val jartask = project.tasks.named(JavaPlugin.JAR_TASK_NAME).get() as Jar
+            jartask.from(schematask.get().schemaDir)
             jartask.from(task.vodmlFiles)
             jartask.from(task.bindingFiles)
             jartask.manifest {
@@ -115,10 +116,11 @@ class VodmlGradlePlugin: Plugin<Project> {
                 ))
             }
 
+
         }
         //using java 11 minimum
         val toolchain = project.extensions.getByType(JavaPluginExtension::class.java).toolchain
-        toolchain.languageVersion.set(JavaLanguageVersion.of(11))
+        toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 
         // force java compile to depend on this task
         project.tasks.named(JavaPlugin.COMPILE_JAVA_TASK_NAME) {
@@ -127,6 +129,9 @@ class VodmlGradlePlugin: Plugin<Project> {
         project.tasks.named(JavaPlugin.PROCESS_RESOURCES_TASK_NAME)
         {
             it.dependsOn.add(vodmlJavaTask)
+        }
+        project.tasks.named(JavaPlugin.JAR_TASK_NAME) {
+            it.dependsOn.add(schematask)
         }
 
         //register a task with the old task name as an alias
@@ -172,6 +177,7 @@ class VodmlGradlePlugin: Plugin<Project> {
                 JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, // don't want exported
                 project.objects.property(Dependency::class.java).convention(
                     project.dependencies.create(it)
+
                 )
             )
         }
