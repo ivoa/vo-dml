@@ -260,23 +260,6 @@
     </xsl:function>
 
 
-    <xsl:function name="vf:xsdNsPrefix" as="xsd:string">
-        <xsl:param name="modelName" as="xsd:string"/>
-        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/xml-targetnamespace/@prefix"/>
-    </xsl:function>
-    <xsl:function name="vf:xsdNs" as="xsd:string">
-        <xsl:param name="modelName" as="xsd:string"/>
-        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/xml-targetnamespace/text()"/>
-    </xsl:function>
-    <xsl:function name="vf:xsdFileName" as="xsd:string">
-        <xsl:param name="modelName" as="xsd:string"/>
-        <xsl:value-of select="concat(substring-before($mapping/bnd:mappedModels/model[name=$modelName]/file,'.vo-dml.xml'),'.xsd')"/>
-    </xsl:function>
-
-    <xsl:function name="vf:isRdbSingleTable" as="xsd:boolean">
-        <xsl:param name="modelName" as="xsd:string"/>
-        <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelName]/rdb[@inheritance-strategy='single-table'] )= 1"/>
-    </xsl:function>
 
 
     <!-- this function should be avoided as it only returns a copy of the asked for element - i.e. the element is not in context of model -->
@@ -382,6 +365,10 @@
             </xsl:otherwise>
         </xsl:choose>
 
+    </xsl:function>
+    <xsl:function name="vf:jsonFileName" as="xsd:string">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:value-of select="concat(substring-before($mapping/bnd:mappedModels/model[name=$modelName]/file,'.vo-dml.xml'),'.json')"/>
     </xsl:function>
 
     <xsl:function name="vf:hasTypeDetail" as="xsd:boolean">
@@ -496,16 +483,25 @@
     </xsl:function>
 
 
+    <xsl:function name="vf:xsdNsPrefix" as="xsd:string">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/xml-targetnamespace/@prefix"/>
+    </xsl:function>
+    <xsl:function name="vf:xsdNs" as="xsd:string">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/xml-targetnamespace/text()"/>
+    </xsl:function>
+    <xsl:function name="vf:xsdFileName" as="xsd:string">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:value-of select="concat(substring-before($mapping/bnd:mappedModels/model[name=$modelName]/file,'.vo-dml.xml'),'.xsd')"/>
+    </xsl:function>
+
+    <xsl:function name="vf:isRdbSingleTable" as="xsd:boolean">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelName]/rdb[@inheritance-strategy='single-table'] )= 1"/>
+    </xsl:function>
 
 
-    <xsl:function name="vf:ns4model" as="xsd:string">
-        <xsl:param name="s" as="xsd:string"/>
-        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$s]/xml-targetnamespace"/>
-    </xsl:function>
-    <xsl:function name="vf:nsprefix4model" as="xsd:string">
-        <xsl:param name="s" as="xsd:string"/>
-        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$s]/xml-targetnamespace/@prefix"/>
-    </xsl:function>
     <xsl:function name="vf:schema-location4model" as="xsd:string">
         <xsl:param name="s" as="xsd:string"/>
         <xsl:value-of select="concat($s, 'xsd')"/>

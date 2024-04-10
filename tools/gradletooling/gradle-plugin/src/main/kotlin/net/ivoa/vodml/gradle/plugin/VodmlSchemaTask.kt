@@ -4,6 +4,7 @@ import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import java.io.File
 import javax.inject.Inject
 
 
@@ -51,6 +52,15 @@ open class VodmlSchemaTask  @Inject constructor(ao1: ArchiveOperations) : VodmlB
             ),
                 actualCatalog, outfile.get().asFile)
         }
+
+        logger.info("generating Catalogues")
+        Vodml2Catalogues.doTransform(mapOf(
+            "binding" to bindingFiles.joinToString(separator = ",") { it.toURI().toURL().toString() },
+            "xml-catalogue" to schemaDir.file("xmlcat.xml").get().asFile.absolutePath,
+            "json-catalogue" to schemaDir.file("jsoncat.txt").get().asFile.absolutePath
+
+        )
+            )
 
     }
 }
