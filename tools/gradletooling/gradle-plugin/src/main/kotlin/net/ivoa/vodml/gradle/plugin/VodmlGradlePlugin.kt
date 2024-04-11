@@ -106,8 +106,11 @@ class VodmlGradlePlugin: Plugin<Project> {
             sourceSets.named(SourceSet.MAIN_SOURCE_SET_NAME) {
                 it.java.srcDir(task.javaGenDir)
                 it.resources.srcDir(task.javaGenDir)
-//                it.resources.srcDir(schematask.get().schemaDir)
 
+            }
+            //IMPL this seems hacky as the tests should just pick up the normal resources above, but they do not seem to
+            sourceSets.named(SourceSet.TEST_SOURCE_SET_NAME){
+                it.resources.srcDir(schematask)
             }
             // add the vo-dml and binding files to the jar setup
             val jartask = project.tasks.named(JavaPlugin.JAR_TASK_NAME).get() as Jar
@@ -122,6 +125,11 @@ class VodmlGradlePlugin: Plugin<Project> {
 
 
         }
+        //IMPL this is part of the hack to try to get the generated schema on the classpath - have been copied all over the place!!
+        val processResources = project.tasks.named(JavaPlugin.PROCESS_RESOURCES_TASK_NAME).get() as Copy
+        processResources.from(schematask)
+        processResources.dependsOn.add(schematask)
+
         //using java 11 minimum
         val toolchain = project.extensions.getByType(JavaPluginExtension::class.java).toolchain
         toolchain.languageVersion.set(JavaLanguageVersion.of(17))
@@ -131,9 +139,7 @@ class VodmlGradlePlugin: Plugin<Project> {
             it.dependsOn.add(vodmlJavaTask)
             it.dependsOn.add(schematask)
         }
-        val processResources = project.tasks.named(JavaPlugin.PROCESS_RESOURCES_TASK_NAME).get() as Copy
-        processResources.from(schematask)
-        processResources.dependsOn.add(schematask)
+
 
 
         //register a task with the old task name as an alias
