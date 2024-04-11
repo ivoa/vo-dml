@@ -391,24 +391,15 @@
         @Override
         public Map&lt;String, String&gt; schemaMap() {
         final  Map&lt;String,String&gt; schemaMap = new HashMap&lt;&gt;();
-        <xsl:for-each select="$mapping/bnd:mappedModels/model/xml-targetnamespace">
-            <xsl:choose>
-                <xsl:when test="@schemaFilename">
-                    schemaMap.put("<xsl:value-of select="normalize-space(text())"/>","<xsl:value-of select="@schemaFilename"/>");
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:variable name="ns" select="normalize-space(text())"/>
-                    schemaMap.put("<xsl:value-of select="$ns"/>","<xsl:value-of select="concat(tokenize($ns,'/+')[string-length(.)>0 and not(matches(.,'v[0-9](\.[0-9])*'))][last()],'.xsd')"/>");
-                </xsl:otherwise>
-            </xsl:choose>
-
+        <xsl:for-each select="$mapping/bnd:mappedModels/model/name">
+            schemaMap.put(<xsl:value-of select="concat($dq,vf:xsdNs(current()),$dq,',',$dq,vf:xsdFileName(current()),$dq)"/>);
         </xsl:for-each>
         return schemaMap;
         }
 
         @Override
         public String xmlNamespace() {
-        return "<xsl:value-of select="$mapping/bnd:mappedModels/model[name=current()/name]/xml-targetnamespace"/>";
+        return "<xsl:value-of select="vf:xsdNs(current()/name)"/>";
 
         }
 

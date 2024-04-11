@@ -368,7 +368,7 @@
     </xsl:function>
     <xsl:function name="vf:jsonFileName" as="xsd:string">
         <xsl:param name="modelName" as="xsd:string"/>
-        <xsl:value-of select="concat(substring-before($mapping/bnd:mappedModels/model[name=$modelName]/file,'.vo-dml.xml'),'.json')"/>
+        <xsl:value-of select="concat(substring-before($mapping/bnd:mappedModels/model[name=$modelName]/file,'.xml'),'.json')"/>
     </xsl:function>
 
     <xsl:function name="vf:hasTypeDetail" as="xsd:boolean">
@@ -493,7 +493,7 @@
     </xsl:function>
     <xsl:function name="vf:xsdFileName" as="xsd:string">
         <xsl:param name="modelName" as="xsd:string"/>
-        <xsl:value-of select="concat(substring-before($mapping/bnd:mappedModels/model[name=$modelName]/file,'.vo-dml.xml'),'.xsd')"/>
+        <xsl:value-of select="concat(substring-before($mapping/bnd:mappedModels/model[name=$modelName]/file,'.xml'),'.xsd')"/>
     </xsl:function>
 
     <xsl:function name="vf:isRdbSingleTable" as="xsd:boolean">

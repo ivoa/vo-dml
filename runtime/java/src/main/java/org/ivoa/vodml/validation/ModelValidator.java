@@ -53,8 +53,19 @@ public class ModelValidator {
         schemaFiles = new Source[] {new StreamSource(schemaFile)};
         this.jc = jc;
     }
-
     
+   
+    /**
+     * @param schemaSources
+     * @param contextFactory
+     */
+    public ModelValidator(List<StreamSource> schemaSources,
+            JAXBContext contextFactory) {
+        this.jc = contextFactory;
+        this.schemaFiles = schemaSources.toArray(Source[]::new);
+    }
+
+
     public enum ErrorKind {
         Unknown,
         Warning,
@@ -176,23 +187,35 @@ public class ModelValidator {
     }
 
     
-    <T> ValidationResult validate (T p) {
+   public  <T> ValidationResult validate (T p) {
+         try {
+            JAXBSource source = new JAXBSource(jc, p);
+            validate(source);
+        } catch (JAXBException e) {
+            ErrorDescription d = new ErrorDescription(new RuntimeException(e));
+            put(errorMap, d.kind, d);;
+        } 
+         return new ValidationResult(errorMap.isEmpty(), errorMap);
+    }
 
+    ValidationResult validate (JAXBSource source) {
         try {
+            
             errorMap = new HashMap<>();
             SchemaFactory schemaFactory = SchemaFactory
                     .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             Schema schema = schemaFactory.newSchema(schemaFiles);
             Validator validator = schema.newValidator();
             validator.setErrorHandler(new SimpleErrorHandler());
-            JAXBSource source = new JAXBSource(jc, p);   validator.validate(source);;
+            
+            validator.validate(source);
 
 
         } catch (SAXException e) {
             ErrorDescription d = new ErrorDescription(e);
             put(errorMap, d.kind, d);
 
-        } catch (IOException | JAXBException e) {
+        } catch (IOException e) {
             ErrorDescription d = new ErrorDescription(new RuntimeException(e));
             put(errorMap, d.kind, d);;
         }
@@ -200,6 +223,8 @@ public class ModelValidator {
         return new ValidationResult(errorMap.isEmpty(), errorMap);
     }
 
+    
+    
     private static  <KEY, VALUE > void put (Map<KEY, List<VALUE>> map, KEY key, VALUE value) {
         map.computeIfAbsent(key, k -> new ArrayList<>()).add(value);
     }

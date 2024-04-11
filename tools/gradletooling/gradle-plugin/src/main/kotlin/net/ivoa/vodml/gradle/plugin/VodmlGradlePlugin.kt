@@ -11,6 +11,7 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.util.PatternSet
 import org.gradle.jvm.tasks.Jar
 import org.gradle.jvm.toolchain.JavaLanguageVersion
@@ -97,16 +98,19 @@ class VodmlGradlePlugin: Plugin<Project> {
             setVodmlFiles(task,extension,project)
             task.javaGenDir.set(extension.outputJavaDir)
 
-            //add the generated source directory to the list of sources to compile IMPL - this feels a bit hacky
+            //add the generated source directory to the list of sources to compile
+            // IMPL - recommendation of https://docs.gradle.org/current/dsl/org.gradle.api.tasks.SourceSetOutput.html#org.gradle.api.tasks.SourceSetOutput does not seem to work
+            //
             val sourceSets = project.properties["sourceSets"] as SourceSetContainer
 
             sourceSets.named(SourceSet.MAIN_SOURCE_SET_NAME) {
                 it.java.srcDir(task.javaGenDir)
                 it.resources.srcDir(task.javaGenDir)
+//                it.resources.srcDir(schematask.get().schemaDir)
+
             }
             // add the vo-dml and binding files to the jar setup
             val jartask = project.tasks.named(JavaPlugin.JAR_TASK_NAME).get() as Jar
-            jartask.from(schematask.get().schemaDir)
             jartask.from(task.vodmlFiles)
             jartask.from(task.bindingFiles)
             jartask.manifest {
@@ -125,14 +129,12 @@ class VodmlGradlePlugin: Plugin<Project> {
         // force java compile to depend on this task
         project.tasks.named(JavaPlugin.COMPILE_JAVA_TASK_NAME) {
             it.dependsOn.add(vodmlJavaTask)
-        }
-        project.tasks.named(JavaPlugin.PROCESS_RESOURCES_TASK_NAME)
-        {
-            it.dependsOn.add(vodmlJavaTask)
-        }
-        project.tasks.named(JavaPlugin.JAR_TASK_NAME) {
             it.dependsOn.add(schematask)
         }
+        val processResources = project.tasks.named(JavaPlugin.PROCESS_RESOURCES_TASK_NAME).get() as Copy
+        processResources.from(schematask)
+        processResources.dependsOn.add(schematask)
+
 
         //register a task with the old task name as an alias
         project.tasks.register(VODML_JAVA_TASK_NAME_OLD,DefaultTask::class.java) {
@@ -150,7 +152,7 @@ class VodmlGradlePlugin: Plugin<Project> {
 
 
         //add the dependencies for JAXB and JPA - using the hibernate implementation
-       listOf("org.javastro.ivoa.vo-dml:vodml-runtime:0.6.1",
+       listOf("org.javastro.ivoa.vo-dml:vodml-runtime:0.7.0",
             "jakarta.xml.bind:jakarta.xml.bind-api:4.0.0",
             "org.glassfish.jaxb:jaxb-runtime:4.0.2",
 //             "org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.10",  // supports JPA 2.2

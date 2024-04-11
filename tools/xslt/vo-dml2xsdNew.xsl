@@ -34,7 +34,6 @@ note that this schema is substantially different from the era when this code was
   <xsl:param name="lastModifiedText"/>
   <xsl:param name="binding"/>
 
-
   <xsl:include href="binding_setup.xsl"/>
 
   <xsl:variable name="xsd-ns">http://www.w3.org/2001/XMLSchema</xsl:variable>
@@ -43,7 +42,6 @@ note that this schema is substantially different from the era when this code was
 
  <!-- main pattern : processes for root node model -->
   <xsl:template match="/">
-    <xsl:message >Generating XSD <xsl:value-of select="document-uri(.) "/> - considering models <xsl:value-of select="string-join($models/vo-dml:model/name,', ')" /></xsl:message>
     <xsl:apply-templates/>
   </xsl:template>
 
@@ -59,6 +57,7 @@ note that this schema is substantially different from the era when this code was
     <xsl:variable name="modelns">
       <xsl:value-of select="vf:xsdNsPrefix($modelname)"/>
     </xsl:variable>
+    <xsl:message >Generating XSD <xsl:value-of select="document-uri(.) "/> - considering models <xsl:value-of select="string-join($models/vo-dml:model/name,', ')" /></xsl:message>
 
 
 

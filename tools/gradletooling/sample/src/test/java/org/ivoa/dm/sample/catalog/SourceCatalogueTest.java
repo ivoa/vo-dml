@@ -1,20 +1,28 @@
 package org.ivoa.dm.sample.catalog;
 import static org.junit.jupiter.api.Assertions.*;
 
-
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.stream.StreamSource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.ivoa.dm.sample.SampleModel;
 import org.ivoa.dm.sample.catalog.inner.SourceCatalogue;
 import org.ivoa.vodml.VodmlModel;
+import org.ivoa.vodml.validation.ModelValidator;
+import org.ivoa.vodml.validation.ModelValidator.ValidationResult;
 
 /*
  * Created on 20/08/2021 by Paul Harrison (paul.harrison@manchester.ac.uk).
@@ -186,5 +194,31 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
 
        
    }
+    @org.junit.jupiter.api.Test
+    void externalXMLSchemaTest() throws JAXBException {
+        
+       
+        SampleModel model = new SampleModel();
+        model.addContent(sc);
+        model.addContent(ps);
+        model.processReferences();
+        
+        String topschema = model.descriptor().schemaMap().get(model.descriptor().xmlNamespace());
+        System.out.println(topschema);
+        assertNotNull(topschema);
+        InputStream schemastream = this.getClass().getResourceAsStream("/"+topschema);
+        assertNotNull(schemastream);
+        
+        List<StreamSource> schemaSources = model.descriptor().schemaMap().values()
+                .stream().map(s ->new StreamSource( this.getClass().getResourceAsStream("/"+s))).collect(Collectors.toList());
+        ModelValidator validator = new ModelValidator(schemaSources, model.management().contextFactory());
+        ValidationResult result = validator.validate(model);
+        if(!result.isOk)
+        {
+            result.printValidationErrors(System.err);
+        }
+        assertTrue(result.isOk, "validation with external schema");
+
+    }
 
 }
