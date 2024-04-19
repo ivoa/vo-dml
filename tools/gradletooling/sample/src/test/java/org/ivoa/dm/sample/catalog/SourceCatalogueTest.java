@@ -211,7 +211,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
         
         List<StreamSource> schemaSources = model.descriptor().schemaMap().values()
                 .stream().map(s ->new StreamSource( this.getClass().getResourceAsStream("/"+s))).collect(Collectors.toList());
-        ModelValidator validator = new ModelValidator(schemaSources, model.management().contextFactory());
+        ModelValidator validator = new ModelValidator(model);
         ValidationResult result = validator.validate(model);
         if(!result.isOk)
         {

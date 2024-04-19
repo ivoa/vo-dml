@@ -83,8 +83,6 @@ class JPATestModelTest extends AbstractTest {
         model.processReferences();
         assertTrue(atest.cval.rval._id != 0, "id setting did not work");
         JpatestModel modelin = modelRoundTripXMLwithTest(model);
-        System.out.println("generating schema");
-        JpatestModel.writeXMLSchema();
     }
     @Test
     void jpaInitialCreateTest() {

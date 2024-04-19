@@ -126,6 +126,7 @@ class VodmlGradlePlugin: Plugin<Project> {
 
         }
         //IMPL this is part of the hack to try to get the generated schema on the classpath - have been copied all over the place!!
+        // some of the behaviour might be because the default place to generate the schema is into the build directory??
         val processResources = project.tasks.named(JavaPlugin.PROCESS_RESOURCES_TASK_NAME).get() as Copy
         processResources.from(schematask)
         processResources.dependsOn.add(schematask)

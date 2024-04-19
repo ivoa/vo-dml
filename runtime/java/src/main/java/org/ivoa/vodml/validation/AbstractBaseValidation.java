@@ -177,7 +177,7 @@ public abstract class AbstractBaseValidation {
         
         final ModelDescription desc = m.descriptor();
         File schemaFile = new File(desc.schemaMap().get(desc.xmlNamespace()));
-        ModelValidator v = new ModelValidator(schemaFile, m.management().contextFactory());
+        ModelValidator v = new ModelValidator(m);
         return v.validate(m);
         
     }

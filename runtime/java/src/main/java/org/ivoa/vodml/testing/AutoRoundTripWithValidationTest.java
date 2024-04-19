@@ -26,7 +26,7 @@ public abstract class AutoRoundTripWithValidationTest<M extends VodmlModel<M>> e
  @Test
     void validationTest() throws JAXBException {
         final M model = createModel(); 
-        model.management().writeXMLSchema();
+        //model.management().writeXMLSchema();
         
         ValidationResult vr = validateModel(model);
         if(!vr.isOk)
