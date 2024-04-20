@@ -243,7 +243,11 @@ public  <T> ValidationResult validate (T p) {
 public ValidationResult validate(File file) {
       return validateInternal(new StreamSource(file));
    }
-   
+
+public ValidationResult validate(String s) {
+    return validateInternal(new StreamSource(new StringReader(s)));
+}
+
     ValidationResult validateInternal(Source source) {
            try {
             

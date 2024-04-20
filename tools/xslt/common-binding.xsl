@@ -482,6 +482,10 @@
         </xsl:choose>
     </xsl:function>
 
+    <xsl:function name="vf:memberOrderXML" as="xsd:string*">
+    <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:sequence select="for $m in vf:allInheritedMembers($vodml-ref) return $models/key('ellookup',$m)/name"/>
+    </xsl:function>
 
     <xsl:function name="vf:xsdNsPrefix" as="xsd:string">
         <xsl:param name="modelName" as="xsd:string"/>

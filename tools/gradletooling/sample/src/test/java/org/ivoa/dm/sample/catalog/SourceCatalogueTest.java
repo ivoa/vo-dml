@@ -2,8 +2,10 @@ package org.ivoa.dm.sample.catalog;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
@@ -11,6 +13,8 @@ import java.util.stream.Collectors;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
@@ -195,7 +199,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
        
    }
     @org.junit.jupiter.api.Test
-    void externalXMLSchemaTest() throws JAXBException {
+    void externalXMLSchemaTest() throws JAXBException, IOException {
         
        
         SampleModel model = new SampleModel();
@@ -209,12 +213,16 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
         InputStream schemastream = this.getClass().getResourceAsStream("/"+topschema);
         assertNotNull(schemastream);
         
-        List<StreamSource> schemaSources = model.descriptor().schemaMap().values()
-                .stream().map(s ->new StreamSource( this.getClass().getResourceAsStream("/"+s))).collect(Collectors.toList());
         ModelValidator validator = new ModelValidator(model);
-        ValidationResult result = validator.validate(model);
+        Marshaller jaxbMarshaller = model.management().contextFactory().createMarshaller();
+        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        File fout = File.createTempFile("samplemod", ".tmp"); 
+        FileWriter fw = new FileWriter(fout);
+        jaxbMarshaller.marshal(model, fw);
+        ValidationResult result = validator.validate(fout);
         if(!result.isOk)
         {
+            System.err.println("File "+ fout.getAbsolutePath());
             result.printValidationErrors(System.err);
         }
         assertTrue(result.isOk, "validation with external schema");

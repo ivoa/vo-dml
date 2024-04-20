@@ -32,7 +32,10 @@
       <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
 
   @jakarta.xml.bind.annotation.XmlAccessorType( jakarta.xml.bind.annotation.XmlAccessType.NONE )
-  @jakarta.xml.bind.annotation.XmlType( name = "<xsl:value-of select="vf:jaxbType($vodml-ref)"/>")
+  @jakarta.xml.bind.annotation.XmlType( name = "<xsl:value-of select="vf:jaxbType($vodml-ref)"/>"
+      <!-- proporder is troublesome with subSetting TODO rethink subsetting -->
+<!--      ,propOrder={<xsl:value-of select="string-join(for $v in vf:memberOrderXML($vodml-ref) return concat($dq,$v,$dq),',')"/>}-->
+      )
   <xsl:choose>
       <xsl:when test="vf:hasSubTypes($vodml-ref)"> <!-- TODO perhaps only necessary if abstract -->
   @jakarta.xml.bind.annotation.XmlSeeAlso({ <xsl:value-of select="string-join(for $s in vf:subTypes($vodml-ref) return concat(vf:QualifiedJavaType(vf:asvodmlref($s)),'.class'),',')"/>  })
