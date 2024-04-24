@@ -19,6 +19,9 @@ public class VodmlToVodslTask extends DefaultTask {
    }
 
    @Option(option = "dsl", description = "The VODSL output file")
+   /**
+    * @param dsl the output dsl file name.
+    */
    public void setDsl(String dsl){
       this.dsl =  new File(getProject().getProjectDir(), dsl);
    }

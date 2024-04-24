@@ -9,7 +9,12 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.networknt.schema.*;
+import com.networknt.schema.output.OutputUnit;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
@@ -198,35 +203,74 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
 
        
    }
-    @org.junit.jupiter.api.Test
-    void externalXMLSchemaTest() throws JAXBException, IOException {
-        
-       
-        SampleModel model = new SampleModel();
-        model.addContent(sc);
-        model.addContent(ps);
-        model.processReferences();
-        
-        String topschema = model.descriptor().schemaMap().get(model.descriptor().xmlNamespace());
-        System.out.println(topschema);
-        assertNotNull(topschema);
-        InputStream schemastream = this.getClass().getResourceAsStream("/"+topschema);
-        assertNotNull(schemastream);
-        
-        ModelValidator validator = new ModelValidator(model);
-        Marshaller jaxbMarshaller = model.management().contextFactory().createMarshaller();
-        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        File fout = File.createTempFile("samplemod", ".tmp"); 
-        FileWriter fw = new FileWriter(fout);
-        jaxbMarshaller.marshal(model, fw);
-        ValidationResult result = validator.validate(fout);
-        if(!result.isOk)
-        {
-            System.err.println("File "+ fout.getAbsolutePath());
-            result.printValidationErrors(System.err);
-        }
-        assertTrue(result.isOk, "validation with external schema");
+   @org.junit.jupiter.api.Test
+   void externalXMLSchemaTest() throws JAXBException, IOException {
 
-    }
 
-}
+      SampleModel model = new SampleModel();
+      model.addContent(sc);
+      model.addContent(ps);
+      model.processReferences();
+
+      String topschema = model.descriptor().schemaMap().get(model.descriptor().xmlNamespace());
+      System.out.println(topschema);
+      assertNotNull(topschema);
+      InputStream schemastream = this.getClass().getResourceAsStream("/"+topschema);
+      assertNotNull(schemastream);
+
+      ModelValidator validator = new ModelValidator(model);
+      Marshaller jaxbMarshaller = model.management().contextFactory().createMarshaller();
+      jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+      File fout = File.createTempFile("samplemod", ".tmp");
+      FileWriter fw = new FileWriter(fout);
+      jaxbMarshaller.marshal(model, fw);
+      ValidationResult result = validator.validate(fout);
+      if(!result.isOk)
+      {
+         System.err.println("File "+ fout.getAbsolutePath());
+         result.printValidationErrors(System.err);
+      }
+      assertTrue(result.isOk, "validation with external schema");
+
+   }
+   @org.junit.jupiter.api.Test
+   void externalJSONSchemaTest() throws JAXBException, IOException {
+
+
+      SampleModel model = new SampleModel();
+      model.addContent(sc);
+      model.addContent(ps);
+      model.processReferences();
+
+
+
+      
+      ObjectMapper mapper = model.management().jsonMapper();
+      StringWriter fw = new StringWriter();
+      mapper.writerWithDefaultPrettyPrinter().writeValue(fw,model);
+      System.out.println(fw.toString());
+      JsonSchemaFactory jsonSchemaFactory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012, builder ->
+            // This creates a mapping from $id which starts with https://www.example.org/ to the retrieval URI classpath:schema/
+            builder.schemaMappers(schemaMappers -> schemaMappers.mapPrefix("https://ivoa.net/dm/", "classpath:/"))
+      );
+      SchemaValidatorsConfig config = new SchemaValidatorsConfig();
+// By default JSON Path is used for reporting the instance location and evaluation path
+      config.setPathType(PathType.JSON_POINTER);
+
+// Due to the mapping the schema will be retrieved from the classpath at classpath:schema/example-main.json.
+// If the schema data does not specify an $id the absolute IRI of the schema location will be used as the $id.
+      JsonSchema schema = jsonSchemaFactory.getSchema(SchemaLocation.of("https://ivoa.net/dm/Sample.vo-dml.json"), config);
+      OutputUnit outputUnit = schema.validate(fw.toString(), InputFormat.JSON, OutputFormat.HIERARCHICAL, executionContext -> {
+         // By default since Draft 2019-09 the format keyword only generates annotations and not assertions
+         executionContext.getExecutionConfig().setFormatAssertionsEnabled(true);
+      });
+      
+      if(!outputUnit.isValid()) {
+          System.err.println(outputUnit.toString());
+      }
+     
+      assertTrue(outputUnit.isValid());
+   }
+
+
+   }

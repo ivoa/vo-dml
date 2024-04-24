@@ -27,6 +27,7 @@ FIXME - this is still not a complete representation of the JSON produced
   <!-- Input parameters -->
   <xsl:param name="lastModifiedText"/>
   <xsl:param name="binding"/>
+  <xsl:param name="strict" select="true()"/>
   <xsl:include href="binding_setup.xsl"/>
 
  <!-- main pattern : processes for root node model -->
@@ -37,12 +38,26 @@ FIXME - this is still not a complete representation of the JSON produced
 
   <xsl:template match="vo-dml:model">
 
-    <xsl:variable name="modelname" select="name"/>
+    <xsl:variable name="modelname" select="vf:upperFirst(name)"/>
       {
       "$schema": "https://json-schema.org/draft/2020-12/schema"
       <xsl:call-template name="id"/>
        ,"title" : "<xsl:value-of select="title"/>"
         ,<xsl:apply-templates select="description"/>
+        ,"type": "object"
+        ,"properties":  {
+            "<xsl:value-of select="concat($modelname,'Model')"/>": {
+                "type": "object"
+             ,"properties" :
+             {
+                <xsl:apply-templates select="current()" mode="refs"/>
+                <xsl:apply-templates select="current()" mode="content"/>
+             }
+             <xsl:call-template name="makeStrict"/>
+            }
+
+         }
+
         ,"$defs" : {
         "$comment": "local definitions are here"
         <xsl:apply-templates select="objectType" />
@@ -51,9 +66,40 @@ FIXME - this is still not a complete representation of the JSON produced
         <xsl:apply-templates select="enumeration"/>
         <xsl:apply-templates select="package"/>
         }
+
       }
 
   </xsl:template>
+    <xsl:template match="vo-dml:model" mode="refs">
+        <xsl:variable name="references-vodmlref" select="vf:refsToSerialize(name)"/>
+        <xsl:if test="count($references-vodmlref) > 0">
+            "refs" : {
+               "type" : "object"
+               ,"properties" : {
+            <xsl:for-each select="$references-vodmlref">
+                "<xsl:value-of select="current()"/>" : {
+                   "type": "array"
+                   ,"items" : {
+                         <xsl:value-of select="vf:jsonType(current())"/>
+                   }
+                }
+            </xsl:for-each>
+            }
+            <xsl:call-template name="makeStrict"/>
+            }
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template match="vo-dml:model" mode="content">
+        <xsl:if test="count(vf:refsToSerialize(name))>0">,</xsl:if> "content" : {
+           "type" : "array"
+            ,"items" : {
+                "type": "object"
+            }
+           <xsl:call-template name="makeStrict"/>
+        }
+    </xsl:template>
+
   <xsl:template match="description">
     "description" : "<xsl:value-of select="normalize-space(translate(description,$dq,$sq))"/>"
   </xsl:template>
@@ -76,6 +122,11 @@ FIXME - this is still not a complete representation of the JSON produced
   </xsl:template>
 
 
+  <xsl:template name="makeStrict">
+    <xsl:if test="$strict">
+      ,"additionalProperties": false
+    </xsl:if>
+  </xsl:template>
 
   <xsl:template match="objectType">
     , <xsl:call-template name="defnName"/> : {
@@ -88,6 +139,7 @@ FIXME - this is still not a complete representation of the JSON produced
     <xsl:apply-templates select="composition[not(subsets)]"/>
     <xsl:apply-templates select="reference[not(subsets)]"/>
     }
+    <xsl:call-template name="makeStrict"/>
     }
    &cr;&cr;
   </xsl:template>
@@ -107,6 +159,7 @@ FIXME - this is still not a complete representation of the JSON produced
     <xsl:apply-templates select="attribute"/>
     <xsl:apply-templates select="reference[not(subsets)]"/>
     }
+    <xsl:call-template name="makeStrict"/>
     }
     &cr;&cr;
 

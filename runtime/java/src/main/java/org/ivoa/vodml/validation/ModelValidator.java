@@ -61,7 +61,7 @@ public class ModelValidator {
     
     /**
      * Create modelValidator from XML Schema.
-     * @param the model description.
+     * @param model the model description.
      */
     public  ModelValidator(VodmlModel<?> model) {
         schemaFiles = model.descriptor().schemaMap().entrySet().stream()
@@ -238,7 +238,7 @@ public  <T> ValidationResult validate (T p) {
    /**
     * Validate the file content against the model
  * @param file containing xml instance of the model.
- * @return
+ * @return the validation
  */
 public ValidationResult validate(File file) {
       return validateInternal(new StreamSource(file));

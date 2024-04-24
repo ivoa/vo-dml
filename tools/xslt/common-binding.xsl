@@ -347,7 +347,7 @@
             <xsl:otherwise>
                 <xsl:variable name="modelname" select="substring-before($vodml-ref,':')"/>
                 <xsl:variable name="root" select="vf:jsonBaseURI($modelname)"/>
-                <xsl:value-of select="concat($dq,'$ref',$dq,': ',$dq,$root,'#',substring-after($vodml-ref,':'),$dq)"/>
+                <xsl:value-of select="concat($dq,'$ref',$dq,': ',$dq,$root,'#/$defs/',substring-after($vodml-ref,':'),$dq)"/>
             </xsl:otherwise>
         </xsl:choose>
 
@@ -357,11 +357,11 @@
     <xsl:function name="vf:jsonBaseURI" as="xsd:string">
         <xsl:param name="modelName" as="xsd:string"/>
         <xsl:choose>
-            <xsl:when test="$mapping/bnd:mappedModels/model[name=$modelName]/json-baseURI">
+            <xsl:when test="$mapping/bnd:mappedModels/model[name=$modelName]/json-baseURI"> <!-- TODO can we allow customization really? -->
                 <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/json-baseURI/text()"/>
             </xsl:when>
             <xsl:otherwise>
-                 <xsl:value-of select="concat('https://ivoa.net/dm/',$modelName,'.json')"/>
+                 <xsl:value-of select="concat('https://ivoa.net/dm/',$mapping/bnd:mappedModels/model[name=$modelName]/file,'.json')"/>
             </xsl:otherwise>
         </xsl:choose>
 
