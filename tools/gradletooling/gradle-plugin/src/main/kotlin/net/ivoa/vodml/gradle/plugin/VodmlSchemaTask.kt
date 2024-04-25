@@ -6,6 +6,10 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import java.io.File
 import javax.inject.Inject
+import com.fasterxml.jackson.databind.ObjectMapper
+
+
+
 
 
 /*
@@ -47,10 +51,14 @@ open class VodmlSchemaTask  @Inject constructor(ao1: ArchiveOperations) : VodmlB
             val shortname = it.nameWithoutExtension
             val outfile = schemaDir.file("$shortname.json")
             logger.debug("Generating JSON schema from  ${it.name} to ${outfile.get().asFile.absolutePath}")
-            Vodml2json.doTransform(it.absoluteFile, mapOf(
+            val s = Vodml2json.doTransformToString(it.absoluteFile, mapOf(
                 "binding" to allBinding.joinToString(separator = ",") { it.toURI().toURL().toString() }
             ),
-                actualCatalog, outfile.get().asFile)
+                actualCatalog)
+            //prettyprint the generated JSON - i.e. going via jackson
+            val mapper = ObjectMapper()
+            val pretty = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapper.readTree(s));
+            outfile.get().asFile.writeText(pretty)
         }
 
         logger.info("generating Catalogues")

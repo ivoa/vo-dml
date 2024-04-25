@@ -12,6 +12,7 @@ import org.xmlresolver.XMLResolver
 import org.xmlresolver.ResolverFeature
 import org.xmlresolver.XMLResolverConfiguration
 import java.io.File
+import java.io.StringWriter
 import javax.xml.transform.URIResolver
 import javax.xml.transform.stream.StreamSource
 
@@ -52,7 +53,22 @@ abstract class BaseTransformer( val script: String ) {
     fun doTransform(vodmlFile: File,  params: Map<String,String> ,output: File) {
         doTransform(vodmlFile, params, null, output)
     }
-    fun doTransform(vodmlFile: File, params: Map<String,String>, catalog: File?, output: File) {
+
+     fun doTransform(vodmlFile: File, params: Map<String,String>, catalog: File?, output: File)
+     {
+         val out = processor.newSerializer(output)
+         doTransformInternal(vodmlFile,params,catalog,out)
+
+     }
+     fun doTransformToString(vodmlFile: File, params: Map<String,String>, catalog: File?) : String
+     {
+         val sw = java.io.StringWriter()
+         val out = processor.newSerializer(sw)
+         doTransformInternal(vodmlFile,params,catalog,out)
+         return sw.toString()
+     }
+
+    private fun doTransformInternal(vodmlFile: File, params: Map<String,String>, catalog: File?, out: Serializer) {
         logger.debug("doing $script transform with params")
         params.forEach{
             logger.debug("parameter ${it.key}, val=${it.value}")
@@ -61,9 +77,6 @@ abstract class BaseTransformer( val script: String ) {
         {
             throw GradleException("input file "+vodmlFile+ " does not exist")
         }
-
-
-        val out = processor.newSerializer(output)
         out.setOutputProperty(Serializer.Property.METHOD, method)
         out.setOutputProperty(Serializer.Property.INDENT, "yes")
         val trans = stylesheet.load30()
