@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
+import com.fasterxml.jackson.databind.util.StdDateFormat;
 
 import org.ivoa.vodml.ModelDescription;
 
@@ -55,7 +56,8 @@ public class JsonManagement {
                       .configure(SerializationFeature.WRAP_ROOT_VALUE, false)
                       .configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, false)  
                       .handlerInstantiator(new VodmlHandlerInstantiator(md))
-                      .build().setSerializationInclusion(Include.NON_NULL);
+                      .build().setSerializationInclusion(Include.NON_NULL)
+                      .setDateFormat(new StdDateFormat().withColonInTimeZone(true));
 
     }
 
