@@ -73,7 +73,7 @@ gradlePlugin {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(11))//NB needs to stay at 11 for gradle plugin ATM
     }
 }
 
