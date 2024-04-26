@@ -32,6 +32,7 @@ VODML Tooling TODO
   * allow attributes to be 
   * perhaps standardize on the binding of the ivoa std primitives so that they do not need to be specified in the files
   * specialized "hand written" IVOA base schema
+  * allow "schema fragments" in binding to cope with specialist overriding of primitives and some base dataTypes...
 * Anything that might help in mapping to OPENAPI
   * idea of a "view" - eg. jobsummary in uws
  
