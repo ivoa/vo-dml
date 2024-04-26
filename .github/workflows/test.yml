@@ -44,5 +44,5 @@ jobs:
         with:
           cache-disabled: false
           arguments: |
-            :gradletooling:vodml-sample:test
+            :sample:test
             -PskipSigning=True
