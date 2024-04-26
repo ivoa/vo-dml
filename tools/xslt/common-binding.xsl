@@ -260,23 +260,6 @@
     </xsl:function>
 
 
-    <xsl:function name="vf:xsdNsPrefix" as="xsd:string">
-        <xsl:param name="modelName" as="xsd:string"/>
-        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/xml-targetnamespace/@prefix"/>
-    </xsl:function>
-    <xsl:function name="vf:xsdNs" as="xsd:string">
-        <xsl:param name="modelName" as="xsd:string"/>
-        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/xml-targetnamespace/text()"/>
-    </xsl:function>
-    <xsl:function name="vf:xsdFileName" as="xsd:string">
-        <xsl:param name="modelName" as="xsd:string"/>
-        <xsl:value-of select="concat(substring-before($mapping/bnd:mappedModels/model[name=$modelName]/file,'.vo-dml.xml'),'.xsd')"/>
-    </xsl:function>
-
-    <xsl:function name="vf:isRdbSingleTable" as="xsd:boolean">
-        <xsl:param name="modelName" as="xsd:string"/>
-        <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelName]/rdb[@inheritance-strategy='single-table'] )= 1"/>
-    </xsl:function>
 
 
     <!-- this function should be avoided as it only returns a copy of the asked for element - i.e. the element is not in context of model -->
@@ -310,6 +293,9 @@
             <xsl:when test="$lang eq 'xsd'">
                 <xsl:copy-of select="$mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/xsd-type"/>
             </xsl:when>
+            <xsl:when test="$lang eq 'json'">
+                <xsl:copy-of select="$mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/json-type"/>
+            </xsl:when>
             <xsl:when test="$lang eq 'cpp'">
                 <xsl:copy-of select="$mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/cpp-type"/>
             </xsl:when>
@@ -330,12 +316,72 @@
             <xsl:when test="$lang eq 'cpp'">
                 <xsl:value-of select="count($mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/cpp-type) > 0"/>
             </xsl:when>
+            <xsl:when test="$lang eq 'json'">
+                <xsl:value-of select="count($mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/json-type) > 0"/>
+            </xsl:when>
             <xsl:otherwise>
                 <xsl:message terminate="yes">unknown language <xsl:value-of select="$lang"/> </xsl:message>
                 <xsl:value-of select="false()"/>
             </xsl:otherwise>
         </xsl:choose>
 
+    </xsl:function>
+
+    <xsl:function name="vf:jsonType" as="xsd:string">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:choose>
+            <xsl:when test="vf:hasMapping($vodml-ref,'json')">
+                <xsl:variable name="mappedtype" select="vf:findmapping($vodml-ref,'json')"/>
+                <xsl:choose>
+                    <xsl:when test="$mappedtype/@format">
+                        <xsl:value-of select="concat($dq,'format',$dq,': ',$dq,$mappedtype/@format,$dq)"/>
+                    </xsl:when>
+                    <xsl:when test="$mappedtype/@built-in">
+                        <xsl:value-of select="concat($dq,'type',$dq,': ',$dq,$mappedtype/text(),$dq)"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="concat($dq,'$ref',$dq,': ',$dq,$mappedtype/text(),$dq)"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:variable name="modelname" select="substring-before($vodml-ref,':')"/>
+                <xsl:variable name="root" select="vf:jsonBaseURI($modelname)"/>
+                <xsl:value-of select="concat($dq,'$ref',$dq,': ',$dq,$root,'#/$defs/',substring-after($vodml-ref,':'),$dq)"/>
+            </xsl:otherwise>
+        </xsl:choose>
+
+
+    </xsl:function>
+
+    <xsl:function name="vf:jsonReferenceType" as="xsd:string">
+    <xsl:param name="vodml-ref" as="xsd:string"/>
+    <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
+        <xsl:choose>
+            <xsl:when test="$el/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
+                <xsl:sequence select="vf:jsonType($el/attribute[constraint[ends-with(@xsi:type,':NaturalKey')]]/datatype/vodml-ref)"/>
+            </xsl:when>
+                <xsl:otherwise>
+                    <xsl:sequence select="concat($dq,'type',$dq,':',$dq,'number',$dq)"/>
+                </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
+    <xsl:function name="vf:jsonBaseURI" as="xsd:string">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:choose>
+            <xsl:when test="$mapping/bnd:mappedModels/model[name=$modelName]/json-baseURI"> <!-- TODO can we allow customization really? -->
+                <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/json-baseURI/text()"/>
+            </xsl:when>
+            <xsl:otherwise>
+                 <xsl:value-of select="concat('https://ivoa.net/dm/',vf:jsonFileName($modelName))"/>
+            </xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:function>
+    <xsl:function name="vf:jsonFileName" as="xsd:string">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:value-of select="concat(substring-before($mapping/bnd:mappedModels/model[name=$modelName]/file,'.xml'),'.json')"/>
     </xsl:function>
 
     <xsl:function name="vf:hasTypeDetail" as="xsd:boolean">
@@ -449,17 +495,30 @@
         </xsl:choose>
     </xsl:function>
 
-
-
-
-    <xsl:function name="vf:ns4model" as="xsd:string">
-        <xsl:param name="s" as="xsd:string"/>
-        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$s]/xml-targetnamespace"/>
+    <xsl:function name="vf:memberOrderXML" as="xsd:string*">
+    <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:sequence select="for $m in vf:allInheritedMembers($vodml-ref) return $models/key('ellookup',$m)/name"/>
     </xsl:function>
-    <xsl:function name="vf:nsprefix4model" as="xsd:string">
-        <xsl:param name="s" as="xsd:string"/>
-        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$s]/xml-targetnamespace/@prefix"/>
+
+    <xsl:function name="vf:xsdNsPrefix" as="xsd:string">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/xml-targetnamespace/@prefix"/>
     </xsl:function>
+    <xsl:function name="vf:xsdNs" as="xsd:string">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/xml-targetnamespace/text()"/>
+    </xsl:function>
+    <xsl:function name="vf:xsdFileName" as="xsd:string">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:value-of select="concat(substring-before($mapping/bnd:mappedModels/model[name=$modelName]/file,'.xml'),'.xsd')"/>
+    </xsl:function>
+
+    <xsl:function name="vf:isRdbSingleTable" as="xsd:boolean">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelName]/rdb[@inheritance-strategy='single-table'] )= 1"/>
+    </xsl:function>
+
+
     <xsl:function name="vf:schema-location4model" as="xsd:string">
         <xsl:param name="s" as="xsd:string"/>
         <xsl:value-of select="concat($s, 'xsd')"/>

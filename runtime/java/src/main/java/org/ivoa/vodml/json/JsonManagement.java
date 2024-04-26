@@ -14,12 +14,14 @@ import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectMapper.DefaultTyping;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
+import com.fasterxml.jackson.databind.util.StdDateFormat;
 
 import org.ivoa.vodml.ModelDescription;
 
@@ -46,6 +48,7 @@ public class JsonManagement {
             return  JsonMapper.builder()
                       .visibility(PropertyAccessor.FIELD, Visibility.ANY)
                       .visibility(PropertyAccessor.GETTER, Visibility.NONE)
+                      
                       .defaultTimeZone(utc)
                       .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
                       .configure(SerializationFeature.WRITE_DATES_WITH_ZONE_ID, true)
@@ -53,7 +56,8 @@ public class JsonManagement {
                       .configure(SerializationFeature.WRAP_ROOT_VALUE, false)
                       .configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, false)  
                       .handlerInstantiator(new VodmlHandlerInstantiator(md))
-                      .build();
+                      .build().setSerializationInclusion(Include.NON_NULL)
+                      .setDateFormat(new StdDateFormat().withColonInTimeZone(true));
 
     }
 

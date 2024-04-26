@@ -37,3 +37,4 @@
   * new XML Schema generation
     * xml id handling includes vodmlid
     * take into account packages.
+* 0.5.0 Json Schema Generation (+ new style XSD schema generation)

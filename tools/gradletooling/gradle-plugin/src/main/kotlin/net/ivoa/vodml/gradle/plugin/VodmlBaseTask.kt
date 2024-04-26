@@ -49,6 +49,7 @@ class ExternalModelHelper constructor (private val project: Project, private val
     init {
         logger.debug("external models=${externalModelJars.joinToString { f -> f.name }}")
     }
+
     fun makeCatalog(vodmlFiles:ConfigurableFileCollection, catalogFile:RegularFileProperty): File {
 
         val tmpdir = project.mkdir(Paths.get(buildDir.absolutePath, "tmp"))
@@ -60,6 +61,7 @@ class ExternalModelHelper constructor (private val project: Project, private val
                 }
             )
         )
+
         return  actualCatalog
     }
 
@@ -72,6 +74,7 @@ class ExternalModelHelper constructor (private val project: Project, private val
             val outvodsl = project.file(Paths.get(tmpdir.absolutePath, it.name.replace(".vo-dml.xml", ".vodsl")))
             logger.debug("writing VODSL for external model to ${outvodsl}")
             Vodml2Vodsl.doTransform(it, outvodsl)
+
         }
     }
 

@@ -26,6 +26,10 @@ The models are also transformed into schema that describe the various serializat
 VO-DML tooling is to be able to exchange instances of the models between different computer languages, with 
 all the source code and schema automatically generated.
 
-The gradle plugin does not currently have a task directly to generate XML and RDB schema from the models, however, this can be done
-indirectly from the generated Java code as can be seen from the [Small java example](https://github.com/ivoa/vo-dml/tree/master/gradletooling/sample/src/main/java/WriteSampleSchema.java).
+The gradle task
+
+```shell
+gradle vodmlSchema
+```
+will generate XML and JSON schema for the model. These schema files will automatically be included withing the jar file for the model.
 

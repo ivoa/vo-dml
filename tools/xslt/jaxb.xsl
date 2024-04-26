@@ -32,7 +32,10 @@
       <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
 
   @jakarta.xml.bind.annotation.XmlAccessorType( jakarta.xml.bind.annotation.XmlAccessType.NONE )
-  @jakarta.xml.bind.annotation.XmlType( name = "<xsl:value-of select="vf:jaxbType($vodml-ref)"/>")
+  @jakarta.xml.bind.annotation.XmlType( name = "<xsl:value-of select="vf:jaxbType($vodml-ref)"/>"
+      <!-- proporder is troublesome with subSetting TODO rethink subsetting -->
+<!--      ,propOrder={<xsl:value-of select="string-join(for $v in vf:memberOrderXML($vodml-ref) return concat($dq,$v,$dq),',')"/>}-->
+      )
   <xsl:choose>
       <xsl:when test="vf:hasSubTypes($vodml-ref)"> <!-- TODO perhaps only necessary if abstract -->
   @jakarta.xml.bind.annotation.XmlSeeAlso({ <xsl:value-of select="string-join(for $s in vf:subTypes($vodml-ref) return concat(vf:QualifiedJavaType(vf:asvodmlref($s)),'.class'),',')"/>  })
@@ -391,24 +394,15 @@
         @Override
         public Map&lt;String, String&gt; schemaMap() {
         final  Map&lt;String,String&gt; schemaMap = new HashMap&lt;&gt;();
-        <xsl:for-each select="$mapping/bnd:mappedModels/model/xml-targetnamespace">
-            <xsl:choose>
-                <xsl:when test="@schemaFilename">
-                    schemaMap.put("<xsl:value-of select="normalize-space(text())"/>","<xsl:value-of select="@schemaFilename"/>");
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:variable name="ns" select="normalize-space(text())"/>
-                    schemaMap.put("<xsl:value-of select="$ns"/>","<xsl:value-of select="concat(tokenize($ns,'/+')[string-length(.)>0 and not(matches(.,'v[0-9](\.[0-9])*'))][last()],'.xsd')"/>");
-                </xsl:otherwise>
-            </xsl:choose>
-
+        <xsl:for-each select="$mapping/bnd:mappedModels/model/name">
+            schemaMap.put(<xsl:value-of select="concat($dq,vf:xsdNs(current()),$dq,',',$dq,vf:xsdFileName(current()),$dq)"/>);
         </xsl:for-each>
         return schemaMap;
         }
 
         @Override
         public String xmlNamespace() {
-        return "<xsl:value-of select="$mapping/bnd:mappedModels/model[name=current()/name]/xml-targetnamespace"/>";
+        return "<xsl:value-of select="vf:xsdNs(current()/name)"/>";
 
         }
 

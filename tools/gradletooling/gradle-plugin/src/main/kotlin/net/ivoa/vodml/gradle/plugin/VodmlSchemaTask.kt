@@ -1,13 +1,15 @@
 package net.ivoa.vodml.gradle.plugin
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.file.ArchiveOperations
-import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import java.io.File
 import javax.inject.Inject
+import com.fasterxml.jackson.databind.ObjectMapper
+
+
+
 
 
 /*
@@ -17,7 +19,7 @@ import javax.inject.Inject
 /**
  * Task to generate XML schema files from vodsl.
  */
-open class VodmlXsdTask  @Inject constructor(ao1: ArchiveOperations) : VodmlBaseTask(ao1)
+open class VodmlSchemaTask  @Inject constructor(ao1: ArchiveOperations) : VodmlBaseTask(ao1)
 {
 
     @get:OutputDirectory
@@ -43,5 +45,30 @@ open class VodmlXsdTask  @Inject constructor(ao1: ArchiveOperations) : VodmlBase
             ),
                 actualCatalog, outfile.get().asFile)
         }
+        
+        logger.info("Generating JSON schema")
+        vodmlFiles.forEach {
+            val shortname = it.nameWithoutExtension
+            val outfile = schemaDir.file("$shortname.json")
+            logger.debug("Generating JSON schema from  ${it.name} to ${outfile.get().asFile.absolutePath}")
+            val s = Vodml2json.doTransformToString(it.absoluteFile, mapOf(
+                "binding" to allBinding.joinToString(separator = ",") { it.toURI().toURL().toString() }
+            ),
+                actualCatalog)
+            //prettyprint the generated JSON - i.e. going via jackson
+            val mapper = ObjectMapper()
+            val pretty = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapper.readTree(s));
+            outfile.get().asFile.writeText(pretty)
+        }
+
+        logger.info("generating Catalogues")
+        Vodml2Catalogues.doTransform(mapOf(
+            "binding" to bindingFiles.joinToString(separator = ",") { it.toURI().toURL().toString() },
+            "xml-catalogue" to schemaDir.file("xmlcat.xml").get().asFile.absolutePath,
+            "json-catalogue" to schemaDir.file("jsoncat.txt").get().asFile.absolutePath
+
+        )
+            )
+
     }
 }
