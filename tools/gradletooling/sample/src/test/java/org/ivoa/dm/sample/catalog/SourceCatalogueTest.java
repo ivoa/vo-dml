@@ -49,8 +49,9 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
         JAXBContext jc = SampleModel.contextFactory();
 
         SampleModel model = new SampleModel();
-        model.addContent(sc);
         model.addContent(ps);
+        model.addContent(sc);
+        
         model.processReferences();
 
         SampleModel modelin = modelRoundTripXMLwithTest(model); 
@@ -238,8 +239,8 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
 
 
       SampleModel model = new SampleModel();
+      model.addContent(ps);//IMPL N.B add the photometric system first, as it has sc used it in contained references - it does work the other way round, but looks strange....
       model.addContent(sc);
-      model.addContent(ps);
       model.processReferences();
 
 

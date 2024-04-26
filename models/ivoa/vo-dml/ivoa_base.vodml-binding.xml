@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <m:mappedModels xmlns:m="http://www.ivoa.net/xml/vodml-binding/v0.9.1">
-<!-- ========================================
-This is a sample file for mapping VO-DML models to XSD or Java using the gradle tooling
- -->
-
 <model>
 <name>ivoa</name>
   <file>IVOA-v1.0.vo-dml.xml</file>
@@ -11,7 +7,6 @@ This is a sample file for mapping VO-DML models to XSD or Java using the gradle 
   <python-package>org.ivoa.dm</python-package>
   <xml-targetnamespace prefix="ivoa" >http://ivoa.net/vodml/ivoa</xml-targetnamespace>
   <xmllegacy-targetnamespace prefix="ivoa" schemaFilename="ivoa-legacy.xsd" schemaLocation="https://ivoa.net/xml/IVOA-v1.xsd">http://ivoa.net/dm/models/vo-dml/xsd/ivoa</xmllegacy-targetnamespace>
-  <json-baseURI>http://ivoa.net/vodml/ivoa</json-baseURI>
   <type-mapping>
   <vodml-id>real</vodml-id>
   <java-type jpa-atomic="true">Double</java-type>
@@ -38,14 +33,14 @@ This is a sample file for mapping VO-DML models to XSD or Java using the gradle 
   <java-type jpa-atomic="true">Integer</java-type>
   <python-type built-in="true">int</python-type>
   <xsd-type>xsd:int</xsd-type>
-  <json-type built-in="true">integer</json-type>
+  <json-type built-in="true">number</json-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>nonnegativeInteger</vodml-id>
   <java-type jpa-atomic="true">Integer</java-type>
   <python-type built-in="true">int</python-type>
   <xsd-type>xsd:nonNegativeInteger</xsd-type>
-  <json-type built-in="true">integer</json-type> <!-- TODO want to express non-negative -->
+  <json-type built-in="true">number</json-type> <!-- TODO want to express non-negative -->
 </type-mapping>
 <type-mapping>
   <vodml-id>anyURI</vodml-id>
@@ -75,8 +70,8 @@ This is a sample file for mapping VO-DML models to XSD or Java using the gradle 
 <type-mapping>
   <vodml-id>complex</vodml-id>
   <java-type>org.ivoa.vodml.stdtypes.Complex</java-type>
-  <xsd-type>xsd:float</xsd-type>
-  <!-- TODO - this really needs base JSON schema -->
+  <xsd-type>xsd:float</xsd-type> <!--FIXME this is not ok for XML! -->
+  <!-- FIXME - this really needs base JSON schema -->
 </type-mapping>
 </model>
 

@@ -354,6 +354,19 @@
 
     </xsl:function>
 
+    <xsl:function name="vf:jsonReferenceType" as="xsd:string">
+    <xsl:param name="vodml-ref" as="xsd:string"/>
+    <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
+        <xsl:choose>
+            <xsl:when test="$el/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
+                <xsl:sequence select="vf:jsonType($el/attribute[constraint[ends-with(@xsi:type,':NaturalKey')]]/datatype/vodml-ref)"/>
+            </xsl:when>
+                <xsl:otherwise>
+                    <xsl:sequence select="concat($dq,'type',$dq,':',$dq,'number',$dq)"/>
+                </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
     <xsl:function name="vf:jsonBaseURI" as="xsd:string">
         <xsl:param name="modelName" as="xsd:string"/>
         <xsl:choose>
@@ -361,7 +374,7 @@
                 <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/json-baseURI/text()"/>
             </xsl:when>
             <xsl:otherwise>
-                 <xsl:value-of select="concat('https://ivoa.net/dm/',$mapping/bnd:mappedModels/model[name=$modelName]/file,'.json')"/>
+                 <xsl:value-of select="concat('https://ivoa.net/dm/',vf:jsonFileName($modelName))"/>
             </xsl:otherwise>
         </xsl:choose>
 
