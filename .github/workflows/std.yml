@@ -11,7 +11,7 @@ jobs:
 
      steps:
        - name: Checkout
-         uses: actions/checkout@v2
+         uses: actions/checkout@v3
        - name: Setup dependencies
          run: |
            sudo apt -y update
@@ -24,3 +24,9 @@ jobs:
          with:
            name: VO-DML-WD
            path: doc/std/VO-DML.pdf
+       - name: Creates a release in GitHub and uploads attachments
+         env:
+           GITHUB_TOKEN: ${{ github.TOKEN }}
+           shell: bash
+         run: | 
+           gh release -n "latest working draft" create WD-1.1 doc/std/VO-DML.pdf 
