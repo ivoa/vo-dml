@@ -1,0 +1,25 @@
+name: Standard Document PDF Preview generation
+
+on:
+  push:
+  pull_request:
+
+jobs:
+   build:
+     runs-on: ubuntu_latest
+
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v2
+       - name: Setup dependencies
+         run: |
+           sudo apt update
+           sudo apt install pandoc
+       - name: make the document
+         run: |
+           make -C doc/std VO-DML.pdf
+       - name: upload the std doc
+         uses: actions/upload-artifact@v4
+         with:
+           name: VO-DML-WD
+           path: doc/std/VO-DML.pdf
