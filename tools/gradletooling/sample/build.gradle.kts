@@ -6,7 +6,7 @@ import ru.vyarus.gradle.plugin.python.task.PythonTask
  * 
  */
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.5.0"
+    id("net.ivoa.vo-dml.vodmltools") version "0.5.1"
     id("com.diffplug.spotless") version "6.25.0"
     id("ru.vyarus.use-python") version "3.0.0"
 

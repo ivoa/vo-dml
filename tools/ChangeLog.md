@@ -38,3 +38,4 @@
     * xml id handling includes vodmlid
     * take into account packages.
 * 0.5.0 Json Schema Generation (+ new style XSD schema generation)
+* 0.5.1 Fix validation regression

@@ -46,3 +46,10 @@ jobs:
           arguments: |
             :sample:test
             -PskipSigning=True
+      - name: Validate sample model with Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-disabled: false
+          arguments: |
+            :sample:vodmlValidate
+            -PskipSigning=True
