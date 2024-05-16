@@ -33,3 +33,6 @@ gradle vodmlSchema
 ```
 will generate XML and JSON schema for the model. These schema files will automatically be included withing the jar file for the model.
 
+# Transformation to VO-DML
+
+The transformation of other data model representations to VO-DML is discussed elsewhere. 
