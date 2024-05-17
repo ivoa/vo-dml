@@ -29,6 +29,5 @@ jobs:
            GITHUB_TOKEN: ${{ github.TOKEN }}
            shell: bash
          run: |
-# should probably do better with tags, but for now delete and redo
            gh release delete WD-1.1  --cleanup-tag -y
            gh release -n "latest working draft" create WD-1.1 doc/std/VO-DML.pdf 
