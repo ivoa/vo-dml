@@ -38,11 +38,13 @@ public interface XmlIdManagement {
     /**
      * Create and XMLID.
      * @param i the key value;
+     * @param clazz the class for which the ID is to be generated.
      * @return the XMLID as NCName.
+     * The idea is to create a globally unique id
      */
-    static String createXMLId(long i)
+    static String createXMLId(long i, Class<?> clazz)
     {
-        return  new StringBuffer("id_").append(i).toString(); // XML ids must be NCNames.
+        return clazz.getDeclaredAnnotation(org.ivoa.vodml.annotation.VoDml.class).id().replace(":","-") + "_" + i; // XML ids must be NCNames.
 
     }
     /**

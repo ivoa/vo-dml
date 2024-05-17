@@ -29,10 +29,13 @@
   </xsl:variable>
 
   <xsl:template match="objectType|dataType" mode="JAXBAnnotation">
+      <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
 
   @jakarta.xml.bind.annotation.XmlAccessorType( jakarta.xml.bind.annotation.XmlAccessType.NONE )
-  @jakarta.xml.bind.annotation.XmlType( name = "<xsl:value-of select="name"/>")
-  <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
+  @jakarta.xml.bind.annotation.XmlType( name = "<xsl:value-of select="vf:jaxbType($vodml-ref)"/>"
+      <!-- proporder is troublesome with subSetting TODO rethink subsetting -->
+<!--      ,propOrder={<xsl:value-of select="string-join(for $v in vf:memberOrderXML($vodml-ref) return concat($dq,$v,$dq),',')"/>}-->
+      )
   <xsl:choose>
       <xsl:when test="vf:hasSubTypes($vodml-ref)"> <!-- TODO perhaps only necessary if abstract -->
   @jakarta.xml.bind.annotation.XmlSeeAlso({ <xsl:value-of select="string-join(for $s in vf:subTypes($vodml-ref) return concat(vf:QualifiedJavaType(vf:asvodmlref($s)),'.class'),',')"/>  })
@@ -72,7 +75,7 @@
   </xsl:template>
 
   <xsl:template match="primitiveType" mode="JAXBAnnotation">
-    @jakarta.xml.bind.annotation.XmlType( name = "<xsl:value-of select="name"/>")
+    @jakarta.xml.bind.annotation.XmlType( name = "<xsl:value-of select="vf:jaxbType(vf:asvodmlref(current()))"/>")
   </xsl:template>
 
 <!--
@@ -94,21 +97,31 @@
   </xsl:template>
 
   <xsl:template match="enumeration" mode="JAXBAnnotation">
-    @jakarta.xml.bind.annotation.XmlType( name = "<xsl:value-of select="name"/>")
+    @jakarta.xml.bind.annotation.XmlType( name = "<xsl:value-of select="vf:jaxbType(vf:asvodmlref(current()))"/>")
     @jakarta.xml.bind.annotation.XmlEnum
   </xsl:template>
 
   <!-- template attribute : adds JAXB annotations for primitive types, data types & enumerations -->
-  <xsl:template match="attribute|composition[multiplicity/maxOccurs = 1]" mode="JAXBAnnotation">
-    <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
-      <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/name() != 'primitiveType' and ($models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref))">
-       <xsl:value-of select="$jsontypinfo"/>
-      </xsl:if>
-    @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
-    <xsl:if test="constraint[ends-with(@xsi:type,':NaturalKey')]"><!-- TODO deal with compound keys -->
-    @jakarta.xml.bind.annotation.XmlID
-    </xsl:if>
-  </xsl:template>
+    <xsl:template match="attribute|composition[multiplicity/maxOccurs = 1]" mode="JAXBAnnotation">
+        <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
+        <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/name() != 'primitiveType' and ($models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref))">
+            <xsl:value-of select="$jsontypinfo"/>
+        </xsl:if>
+        <xsl:choose>
+            <xsl:when test="current()/name() = 'attribute' and vf:findTypeDetail(vf:asvodmlref(current()))/isAttribute">
+    @jakarta.xml.bind.annotation.XmlAttribute(name = "<xsl:value-of select="name"/>", required =<xsl:apply-templates
+                    select="." mode="required"/>)
+            </xsl:when>
+            <xsl:otherwise>
+    @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required =<xsl:apply-templates
+                    select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+            </xsl:otherwise>
+        </xsl:choose>
+
+        <xsl:if test="constraint[ends-with(@xsi:type,':NaturalKey')]"><!-- TODO deal with compound keys -->
+            @jakarta.xml.bind.annotation.XmlID
+        </xsl:if>
+    </xsl:template>
 
   <!-- reference resolved via JAXB -->
   <xsl:template match="reference" mode="JAXBAnnotation">
@@ -165,32 +178,11 @@
     <xsl:variable name="file" select="concat($output_root, '/', $root_package_dir, '/',vf:upperFirst(name),'Model.java')"/>
     <xsl:message >Writing to Overall Model file <xsl:value-of select="$file"/></xsl:message>
       <!-- open file for this package -->
-    <!-- imported model names -->
-    <xsl:variable name="modelsInScope" select="(name,vf:importedModelNames(name))"/>
-      <xsl:variable name="possibleRefs" select="distinct-values($models/vo-dml:model[name = $modelsInScope ]//reference/datatype/vodml-ref)" as="xsd:string*"/>
-
-      <xsl:message>models in scope=<xsl:value-of select="concat(string-join($modelsInScope,','), ' hasref=',string-join($possibleRefs,','))"/> </xsl:message>
-    <xsl:variable name="references-proc" as="xsd:string*">
-        <xsl:for-each select="$possibleRefs">
-            <xsl:variable name="contained" select="$models/vo-dml:model[name = $modelsInScope ]//*[composition/datatype/vodml-ref/text()=current()]" as="element()*"/> <!-- could be multiply contained? -->
-            <xsl:variable name="okref" select="for $v in $contained return vf:asvodmlref($v) = $possibleRefs" as="xsd:boolean*"/>
-            <xsl:message>model references type=<xsl:value-of select="."/> contained=<xsl:value-of select="string-join(for $v in $contained return vf:asvodmlref($v),',')" /> ok=<xsl:value-of
-                    select="string-join(string($okref),',')"/></xsl:message>
-               <xsl:sequence select="concat(.,'=',count($contained) = 0)"/>
-        </xsl:for-each>
-    </xsl:variable>
-     <xsl:message>** refs <xsl:value-of select="string-join($references-proc,',')"/></xsl:message>
-      <xsl:variable name="references-vodmlref" as="xsd:string*">
-          <xsl:for-each select="$references-proc">
-          <xsl:variable name="tmp" select="tokenize(current(),'=')" as="xsd:string*"/>
-          <xsl:if test="$tmp[2]='true'">
-              <xsl:sequence select="$tmp[1]"/>
-          </xsl:if>
-          </xsl:for-each>
-      </xsl:variable>
+      <xsl:variable name="modelsInScope" select="(name,vf:importedModelNames(name))"/>
+      <xsl:variable name="references-vodmlref" select="vf:refsToSerialize(name)"/>
 
 
-    <xsl:variable name="hasReferences" select="count($possibleRefs) > 0"/>
+      <xsl:variable name="hasReferences" select="count($references-vodmlref) > 0"/>
     <xsl:message>filtered refs=<xsl:value-of select="string-join($references-vodmlref,',')"/> </xsl:message>
     <xsl:variable name="ModelClass" select="concat(vf:upperFirst(name),'Model')"/>
     <xsl:result-document href="{$file}">
@@ -243,7 +235,7 @@
     @XmlType
     public static class References {
     <xsl:for-each select="$references-vodmlref"> <!-- looking at all possible refs -->
-        @XmlElement
+        @XmlElement(name="<xsl:value-of select='vf:lowerFirst(vf:jaxbType(current()))'/>")
         @JsonProperty("<xsl:value-of select="vf:utype(.)"/>")
         <xsl:if test="$models/key('ellookup',current())/@abstract or vf:hasSubTypes(current())">
             <xsl:value-of select="$jsontypinfo"/>
@@ -263,11 +255,12 @@
       ).collect(
       Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     </xsl:if>
-    <xsl:variable name="contentTypes" as="element()*" select="$models/vo-dml:model[name = $modelsInScope ]//objectType[not(@abstract='true') and (not(vf:referredTo(vf:asvodmlref(.))) or (vf:asvodmlref(.) = vf:referenceTypesInContainmentHierarchy(vf:asvodmlref(.)) ))]"/>
+    <xsl:variable name="contentTypes" as="element()*" select="vf:contentToSerialize(name)"/>
     @XmlElements(value = {
       <xsl:for-each select="$contentTypes">
-        @XmlElement(name="<xsl:value-of select="name"/>",
-               type = <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/>.class)
+          <xsl:variable name="tv" select="vf:asvodmlref(current())"/>
+        @XmlElement(name="<xsl:value-of select="vf:lowerFirst(vf:jaxbType($tv))"/>",
+               type = <xsl:value-of select="vf:QualifiedJavaType($tv)"/>.class)
                     <xsl:if test="position() != last()">,</xsl:if>
       </xsl:for-each>
     })
@@ -401,24 +394,15 @@
         @Override
         public Map&lt;String, String&gt; schemaMap() {
         final  Map&lt;String,String&gt; schemaMap = new HashMap&lt;&gt;();
-        <xsl:for-each select="$mapping/bnd:mappedModels/model/xml-targetnamespace">
-            <xsl:choose>
-                <xsl:when test="@schemaFilename">
-                    schemaMap.put("<xsl:value-of select="normalize-space(text())"/>","<xsl:value-of select="@schemaFilename"/>");
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:variable name="ns" select="normalize-space(text())"/>
-                    schemaMap.put("<xsl:value-of select="$ns"/>","<xsl:value-of select="concat(tokenize($ns,'/+')[string-length(.)>0][last()],'.xsd')"/>");
-                </xsl:otherwise>
-            </xsl:choose>
-
+        <xsl:for-each select="$mapping/bnd:mappedModels/model/name">
+            schemaMap.put(<xsl:value-of select="concat($dq,vf:xsdNs(current()),$dq,',',$dq,vf:xsdFileName(current()),$dq)"/>);
         </xsl:for-each>
         return schemaMap;
         }
 
         @Override
         public String xmlNamespace() {
-        return "<xsl:value-of select="$mapping/bnd:mappedModels/model[name=current()/name]/xml-targetnamespace"/>";
+        return "<xsl:value-of select="vf:xsdNs(current()/name)"/>";
 
         }
 

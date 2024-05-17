@@ -10,14 +10,12 @@ If starting a completely new data model then the [Template DM Project](https://g
 If adapting an existing data model repository then
 
 1. Edit a `build.gradle.kts` file with reference to the plugin (note substitute ![latest published version](https://img.shields.io/gradle-plugin-portal/v/net.ivoa.vo-dml.vodmltools?label=latest%20published%20version) below)
-
 ```kotlin
 plugins {
     id("net.ivoa.vo-dml.vodmltools") version "0.x.x"
 }
 ```
 2. create a `settings.gradle.kts` - it is possible just to copy the [template version](https://github.com/ivoa/DataModelTemplate/blob/master/settings.gradle.kts) and just edit the `rootProject.name`.
-
 3. create the binding file for the model (see [below](#binding-files)) for more detail 
 
 There is nothing else that needs to be done if the VO-DML files in the default place 
@@ -32,10 +30,8 @@ gradle vodmlValidate
 ```
 will attempt to validate the model and print any errors.
 
-* vodmlValidate - runs validation on the models.
-*
-* vodmlJavaGenerate - generate java classes. See [generated code guide](JavaCodeGeneration.md) for details of how to use the generated java code to serialize instances to XML and RDB.
- Note that it is also possible to test models using the generated code.
+If the validation is successful you can produce [various derived products](Transformers.md). Developing your VO-DML model further is discussed [here](modelling/modellingIntro.md). 
+
 
 ## Detailed configuration
 
@@ -46,6 +42,8 @@ vodml {
 }
 ```
 section in the `build.gradle.kts` file.
+
+The various sub-properties that can be set are
 
 * _vodmlDir_ - the default is `src/main/vo-dml`
   ```kotlin
@@ -59,6 +57,7 @@ section in the `build.gradle.kts` file.
 * _outputSiteDir_ - where the [mkdocs](https://www.mkdocs.org) suitable model description is created by the `gradle vodmlSite` command - default `build/generated/docs/vodml-site`.
 * _outputJavaDir_ - where the generated Java is created - the default is `build/generated/sources/vodml/java/` and it should not 
   be necessary to ever alter this as gradle will integrate this automatically into the various source paths.
+* _outputSchemaDir_ - where the XML and JSON schema are generated to - the default is `build/generated/sources/vodml/schema/` - this is automatically included in the classpath and the output jar.
 * _catalogFile_ - in general it is not necessary to set this, as the plugin will create a catalogue file automatically from the vodmlDir and vodmlFiles properties (as well as including files in any dependencies that also contain VO-DML models)
   A catalogue file is necessary as the rest of the tooling is designed to use only the filename (no path) for inclusions and references.
   If it is desired to create a file manually for a special purpose, then the file should have the format as below - it should be noted that all references to model files will have to be specified if this is done.

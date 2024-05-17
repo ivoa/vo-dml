@@ -145,7 +145,7 @@ note - only define functions in here as it is included in the schematron rules
                         <xsl:sequence select="distinct-values(document(url)/vo-dml:model/name)"/>
                     </xsl:for-each>
                 </xsl:variable>
-                <xsl:message><xsl:value-of select="concat('imports=',$thisModel,' --',string-join($m,','))"/> </xsl:message>
+<!--                <xsl:message><xsl:value-of select="concat('imports=',$thisModel,' &#45;&#45;',string-join($m,','))"/> </xsl:message>-->
                 <xsl:variable name="r" as="xsd:string*">
                     <xsl:sequence select="$m"/>
                     <xsl:for-each select="$m">
@@ -165,6 +165,60 @@ note - only define functions in here as it is included in the schematron rules
     <xsl:function name="vf:containedReferencesInModels" as="xsd:string*">
         <xsl:sequence select="distinct-values($models//reference/datatype/vodml-ref[vf:isContained(.)])"/>
     </xsl:function>
+
+    <xsl:function name="vf:refsToSerialize" as="xsd:string*">
+    <xsl:param name="name" as="xsd:string"/>
+    <!-- imported model names -->
+    <xsl:variable name="modelsInScope" select="($name,vf:importedModelNames($name))"/>
+    <xsl:variable name="possibleRefs" select="distinct-values($models/vo-dml:model[name = $modelsInScope ]//reference/datatype/vodml-ref)" as="xsd:string*"/>
+       <xsl:sequence>
+          <xsl:for-each select="distinct-values($models/vo-dml:model[name = $modelsInScope ]//reference/datatype/vodml-ref)">
+              <xsl:if test="not($models/vo-dml:model[name = $modelsInScope ]//*[composition/datatype/vodml-ref/text()=current()])">
+                  <xsl:sequence select="current()"/>
+              </xsl:if>
+          </xsl:for-each>
+       </xsl:sequence>
+    </xsl:function>
+
+    <xsl:function name="vf:contentToSerialize" as="element()*">
+        <xsl:param name="name" as="xsd:string"/>
+        <!-- imported model names -->
+        <xsl:variable name="modelsInScope" select="($name,vf:importedModelNames($name))"/>
+        <xsl:sequence select="$models/vo-dml:model[name = $modelsInScope ]//objectType[not(@abstract='true') and (not(vf:referredTo(vf:asvodmlref(.))) or (vf:asvodmlref(.) = vf:referenceTypesInContainmentHierarchy(vf:asvodmlref(.)) ))]"/>
+    </xsl:function>
+
+
+
+    <!-- TODO delete as deprecated -->
+    <xsl:function name="vf:refsToSerializeOld" as="xsd:string*">
+        <xsl:param name="name" as="xsd:string"/>
+        <!-- imported model names -->
+        <xsl:variable name="modelsInScope" select="($name,vf:importedModelNames($name))"/>
+        <xsl:variable name="possibleRefs" select="distinct-values($models/vo-dml:model[name = $modelsInScope ]//reference/datatype/vodml-ref)" as="xsd:string*"/>
+
+        <xsl:message>models in scope=<xsl:value-of select="concat(string-join($modelsInScope,','), ' hasref=',string-join($possibleRefs,','))"/> </xsl:message>
+        <xsl:variable name="references-proc" as="xsd:string*">
+            <xsl:for-each select="$possibleRefs">
+                <xsl:variable name="contained" select="$models/vo-dml:model[name = $modelsInScope ]//*[composition/datatype/vodml-ref/text()=current()]" as="element()*"/> <!-- could be multiply contained? -->
+                <xsl:variable name="okref" select="for $v in $contained return vf:asvodmlref($v) = $possibleRefs" as="xsd:boolean*"/>
+                <xsl:message>model references type=<xsl:value-of select="."/> contained=<xsl:value-of select="string-join(for $v in $contained return vf:asvodmlref($v),',')" /> ok=<xsl:value-of
+                        select="string-join(string($okref),',')"/></xsl:message>
+                <xsl:sequence select="concat(.,'=',count($contained) = 0)"/>
+            </xsl:for-each>
+        </xsl:variable>
+        <xsl:message>** refs <xsl:value-of select="string-join($references-proc,',')"/></xsl:message>
+        <xsl:variable name="references-vodmlref" as="xsd:string*">
+            <xsl:for-each select="$references-proc">
+                <xsl:variable name="tmp" select="tokenize(current(),'=')" as="xsd:string*"/>
+                <xsl:if test="$tmp[2]='true'">
+                    <xsl:sequence select="$tmp[1]"/>
+                </xsl:if>
+            </xsl:for-each>
+        </xsl:variable>
+        <xsl:value-of select="$references-vodmlref"/>
+    </xsl:function>
+
+
     <!-- is the type (sub or base) used as a reference -->
 
     <xsl:function name="vf:referredTo" as="xsd:boolean">

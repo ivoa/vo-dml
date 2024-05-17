@@ -3,8 +3,8 @@ UML
 
 ## Configuring the UML tool
 
-In general it is necessary to configure a UML tool with the IVOA "profile" to restrict the metamodel to that
-used by VO-DML.
+In general it is necessary to configure a UML tool with the IVOA "profile" to restrict
+the metamodel to that used by VO-DML.
 
 TBC
 

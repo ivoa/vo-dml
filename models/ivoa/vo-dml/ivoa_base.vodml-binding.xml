@@ -1,71 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <m:mappedModels xmlns:m="http://www.ivoa.net/xml/vodml-binding/v0.9.1">
-<!-- ========================================
-This is a sample file for mapping VO-DML models to XSD or Java using the gradle tooling
- -->
-
 <model>
 <name>ivoa</name>
-<file>IVOA-v1.0.vo-dml.xml</file>
+  <file>IVOA-v1.0.vo-dml.xml</file>
   <java-package>org.ivoa.dm.ivoa</java-package>
   <python-package>org.ivoa.dm</python-package>
   <xml-targetnamespace prefix="ivoa" >http://ivoa.net/vodml/ivoa</xml-targetnamespace>
   <xmllegacy-targetnamespace prefix="ivoa" schemaFilename="ivoa-legacy.xsd" schemaLocation="https://ivoa.net/xml/IVOA-v1.xsd">http://ivoa.net/dm/models/vo-dml/xsd/ivoa</xmllegacy-targetnamespace>
-<type-mapping>
+  <type-mapping>
   <vodml-id>real</vodml-id>
   <java-type jpa-atomic="true">Double</java-type>
   <python-type built-in="true">float</python-type>
   <xsd-type>xsd:float</xsd-type>
+  <json-type built-in="true">number</json-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>string</vodml-id>
   <java-type jpa-atomic="true">String</java-type>
   <python-type built-in="true">str</python-type>
   <xsd-type>xsd:string</xsd-type>
+  <json-type built-in="true">string</json-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>boolean</vodml-id>
   <java-type jpa-atomic="true">Boolean</java-type>
   <python-type built-in="true">boolean</python-type>
   <xsd-type>xsd:boolean</xsd-type>
+  <json-type built-in="true">boolean</json-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>integer</vodml-id>
   <java-type jpa-atomic="true">Integer</java-type>
   <python-type built-in="true">int</python-type>
   <xsd-type>xsd:int</xsd-type>
+  <json-type built-in="true">number</json-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>nonnegativeInteger</vodml-id>
   <java-type jpa-atomic="true">Integer</java-type>
   <python-type built-in="true">int</python-type>
   <xsd-type>xsd:nonNegativeInteger</xsd-type>
+  <json-type built-in="true">number</json-type> <!-- TODO want to express non-negative -->
 </type-mapping>
 <type-mapping>
   <vodml-id>anyURI</vodml-id>
   <java-type jpa-atomic="true">String</java-type>
   <xsd-type>xsd:anyURI</xsd-type>
+  <json-type format="uri">string</json-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>datetime</vodml-id>
   <java-type jpa-atomic="true">java.util.Date</java-type>
   <python-type>datetime.datetime</python-type>
   <xsd-type>xsd:dateTime</xsd-type>
+  <json-type format="date-time">string</json-type> <!-- format defines it really -->
 </type-mapping>
 <type-mapping>
   <vodml-id>decimal</vodml-id>
   <java-type>java.math.BigDecimal</java-type>
   <xsd-type>xsd:decimal</xsd-type>
+  <json-type built-in="true">number</json-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>rational</vodml-id>
   <java-type>org.ivoa.vodml.stdtypes.Rational</java-type>
   <xsd-type>xsd:string</xsd-type>
+  <json-type built-in="true">number</json-type><!-- FIXME -->
 </type-mapping>
 <type-mapping>
   <vodml-id>complex</vodml-id>
   <java-type>org.ivoa.vodml.stdtypes.Complex</java-type>
-  <xsd-type>xsd:float</xsd-type>
+  <xsd-type>xsd:float</xsd-type> <!--FIXME this is not ok for XML! -->
+  <!-- FIXME - this really needs base JSON schema -->
 </type-mapping>
 </model>
 

@@ -6,8 +6,8 @@ import ru.vyarus.gradle.plugin.python.task.PythonTask
  * 
  */
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.4.4"
-//    id ("com.diffplug.spotless") version "5.17.1"
+    id("net.ivoa.vo-dml.vodmltools") version "0.5.1"
+    id("com.diffplug.spotless") version "6.25.0"
     id("ru.vyarus.use-python") version "3.0.0"
 
 }
@@ -43,6 +43,7 @@ vodml {
     )
     outputDocDir.set(layout.projectDirectory.dir("docs"))
     outputSiteDir.set(outputDocDir.dir("generated"))
+    outputSchemaDir.set(outputDocDir.dir("schema"))
     vodslDir.set(vodmlDir) // same place for source models
     modelsToDocument.set("sample,filter,coords,jpatest,lifecycleTest")
     outputPythonDir.set(layout.projectDirectory.dir("pythontest/generated"))
@@ -79,12 +80,13 @@ tasks.test {
 dependencies {
     implementation("org.javastro.ivoa.vo-dml:ivoa-base")
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+    testImplementation("com.networknt:json-schema-validator:1.4.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation("org.slf4j:slf4j-api:2.0.9")
     testRuntimeOnly("ch.qos.logback:logback-classic:1.4.7")
     testImplementation("com.h2database:h2:2.1.214") // try out h2
 //    testImplementation("org.apache.derby:derby:10.14.2.0")
-    compileOnly("com.google.googlejavaformat:google-java-format:1.16.0")
+    compileOnly("com.google.googlejavaformat:google-java-format:1.22.0")
 
 }
 
@@ -103,6 +105,44 @@ python {
     pip("pydantic:1.10.9")
 }
 
+
+
+tasks.register("tpath") {
+    group = "Other"
+    description = "looking at various paths"
+
+dependsOn("vodmlJavaGenerate")
+    doLast{
+
+        println(sourceSets.main.get().java.sourceDirectories.asPath)
+        println(sourceSets.main.get().resources.sourceDirectories.asPath)
+        println(sourceSets.main.get().output.classesDirs.asPath)
+        println(sourceSets.test.get().resources.sourceDirectories.asPath)
+
+        sourceSets.test.get().compileClasspath.files.forEach{
+            println(it.path)
+        }
+        SourceSet.TEST_SOURCE_SET_NAME
+
+    }
+}
+
+//TODO
+configure<com.diffplug.gradle.spotless.SpotlessExtension> {
+    // optional: limit format enforcement to just the files changed by this feature branch
+   // ratchetFrom 'origin/main'
+
+
+    java {
+        // don't need to set target, it is inferred from java
+        target("build/generated/sources/vodml/java/**/*.java")
+        // apply a specific flavor of google-java-format
+        googleJavaFormat("1.22.0").reflowLongStrings().skipJavadocFormatting()
+        // fix formatting of type annotations
+        formatAnnotations()
+
+    }
+}
 
 tasks.register("pytest", PythonTask::class.java) {
     command = "pythontest/src/SourceCatalogueTest.py"

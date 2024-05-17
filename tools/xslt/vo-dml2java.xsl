@@ -636,11 +636,11 @@
               * getter for XMLID
               */
 
-              @jakarta.xml.bind.annotation.XmlAttribute(name = "id" )
+              @jakarta.xml.bind.annotation.XmlAttribute(name = "_id" )
               @jakarta.xml.bind.annotation.XmlID
               @Override
               public String getXmlId(){
-              return org.ivoa.vodml.jaxb.XmlIdManagement.createXMLId(_id);
+              return org.ivoa.vodml.jaxb.XmlIdManagement.createXMLId(_id, this.getClass());
               }
               @Override
               public void setXmlId (String id)
@@ -757,6 +757,7 @@ package <xsl:value-of select="$path"/>;
          * Return the string representation of this enum constant (value)
          * @return string representation of this enum constant (value)
          */
+        @com.fasterxml.jackson.annotation.JsonValue
         public final String value() {
             return this.value;
         }
@@ -880,16 +881,24 @@ package <xsl:value-of select="$path"/>;
   <xsl:template match="attribute" mode="declare">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
       <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
-      <xsl:if test="not(vf:isSubSetted($vodml-ref))">
-    /** 
+
+    /**
     * <xsl:apply-templates select="." mode="desc" /> : Attribute <xsl:value-of select="vf:javaMemberName(name)"/> : multiplicity <xsl:apply-templates select="multiplicity" mode="tostring"/>
     *
     */
     <xsl:call-template name="vodmlAnnotation"/>
     <xsl:apply-templates select="." mode="openapiAnnotation"/>
-    <xsl:apply-templates select="." mode="JPAAnnotation"/>
+
     <xsl:apply-templates select="." mode="JAXBAnnotation"/>
-    <xsl:choose>
+          <xsl:choose>
+              <xsl:when test="vf:isSubSetted($vodml-ref)">
+    @jakarta.persistence.Transient
+              </xsl:when>
+              <xsl:otherwise>
+                  <xsl:apply-templates select="." mode="JPAAnnotation"/>
+              </xsl:otherwise>
+          </xsl:choose>
+          <xsl:choose>
         <xsl:when test="xsd:int(multiplicity/maxOccurs) gt 1">
     protected <xsl:value-of select="concat($type,'[] ',vf:javaMemberName(name))"/>;
         </xsl:when>
@@ -900,7 +909,7 @@ package <xsl:value-of select="$path"/>;
     protected <xsl:value-of select="concat($type,' ',vf:javaMemberName(name))"/>;
         </xsl:otherwise>
     </xsl:choose>
-      </xsl:if>
+
   </xsl:template>
 
 
@@ -912,26 +921,26 @@ package <xsl:value-of select="$path"/>;
       <xsl:if test="name($subsetted)='attribute' and datatype/vodml-ref != $subsetted/datatype/vodml-ref"> <!-- only do this if types are different (subsetting can change just the semantic stuff)-->
         <xsl:variable name="javatype" select="vf:JavaType(datatype/vodml-ref)"/>
         <xsl:variable name="name" select="tokenize(role/vodml-ref/text(),'[.]')[last()]"/>
-          /**
+          /*
           * <xsl:apply-templates select="$subsetted" mode="desc" />. Attribute <xsl:value-of select="$subsetted/name"/> : subsetted
-          *
+          * IMPL - done with getter and setter.
           */
-          <!--TODO is this an appropriate vodml annotation? -->
-          @org.ivoa.vodml.annotation.VoDml(id="<xsl:value-of select='concat(ancestor::vo-dml:model/name,":",preceding-sibling::vodml-id,".",$name)'/>", role=org.ivoa.vodml.annotation.VodmlRole.attribute)
-          <xsl:call-template name="doEmbeddedJPA">
-              <xsl:with-param name="name" select="$name"/>
-              <xsl:with-param name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
-              <xsl:with-param name="nillable" >true</xsl:with-param><!--TODO think if it is possible to do better with nillable value-->
-          </xsl:call-template>
-          <xsl:apply-templates select="$subsetted" mode="JAXBAnnotation"/>
-          protected <xsl:value-of select="concat($javatype,' ',$name)"/>;
       </xsl:if>
     </xsl:template>
 
 
     <xsl:template match="constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="getset">
+        <xsl:variable name="subsetted" select="$models/key('ellookup',current()/role/vodml-ref)"/>
+        <xsl:variable name="name" select="tokenize(role/vodml-ref/text(),'[.]')[last()]"/>
+        <xsl:if test="name($subsetted)='attribute' and datatype/vodml-ref != $subsetted/datatype/vodml-ref"> <!-- only do this if types are different (subsetting can change just the semantic stuff)-->
 
-      <xsl:variable name="name" select="tokenize(role/vodml-ref/text(),'[.]')[last()]"/>
+        <xsl:call-template name="doEmbeddedJPA">
+            <xsl:with-param name="name" select="$name"/>
+            <xsl:with-param name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
+            <xsl:with-param name="nillable" >true</xsl:with-param><!--TODO think if it is possible to do better with nillable value-->
+        </xsl:call-template>
+        @jakarta.persistence.Access(jakarta.persistence.AccessType.PROPERTY)
+        </xsl:if>
       <xsl:call-template name="doGetSet">
           <xsl:with-param name="name" select="$name"/>
           <xsl:with-param name="mult" select="$models/key('ellookup',current()/role/vodml-ref)/multiplicity"/>
@@ -1335,7 +1344,7 @@ package <xsl:value-of select="$path"/>;
         <xsl:with-param name="text" select="name"/>
       </xsl:call-template>
     </xsl:variable>
-
+    @jakarta.xml.bind.annotation.XmlEnumValue("<xsl:value-of select="name"/>")
     <xsl:value-of select="$up"/>("<xsl:value-of select="name"/>")
     <xsl:choose>
       <xsl:when test="position() != last()"><xsl:text>,</xsl:text></xsl:when>

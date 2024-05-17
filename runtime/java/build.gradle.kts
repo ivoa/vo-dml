@@ -6,12 +6,12 @@ plugins {
     signing
 }
 group = "org.javastro.ivoa.vo-dml"
-version = "0.6.0"
+version = "0.7.0"
 
 
 dependencies {
 //    xjcPlugins("net.codesup.util:jaxb2-rich-contract-plugin:2.1.0")
- //   implementation("jakarta.persistence:jakarta.persistence-api:3.0.0") // more modern, but perhaps not quite ready
+    implementation("org.xmlresolver:xmlresolver:6.0.4") // for xml catalogues - note that the apache xml-commons resolver is out of date
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.0")
 //    implementation("org.glassfish.jaxb:jaxb-runtime:2.3.6")
     implementation("jakarta.persistence:jakarta.persistence-api:3.1.0")
@@ -19,7 +19,7 @@ dependencies {
     implementation("org.hibernate.orm:hibernate-core:6.2.7.Final")
     
     implementation("org.slf4j:slf4j-api:1.7.36")
-    api("org.javastro:jaxbjpa-utils:0.2.0")
+    api("org.javastro:jaxbjpa-utils:0.2.1")
     compileOnly("org.junit.jupiter:junit-jupiter-api:5.9.2")// have put the base test classes in the runtime main - naughty, but easier to make everything work without changing dependencies
 
 

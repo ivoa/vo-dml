@@ -168,7 +168,10 @@
                             </xsl:when>
                             <xsl:when test="vf:findmapping(datatype/vodml-ref,'java')/@jpa-atomic">
         @jakarta.persistence.Basic( optional = <xsl:apply-templates select="." mode="nullable"/> )
-        @jakarta.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
+        @jakarta.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/>
+                                <xsl:if test="vf:findTypeDetail($vodml-ref)/length">
+                                    , length=<xsl:value-of select="vf:findTypeDetail($vodml-ref)/length"/>
+                                </xsl:if>)
                             </xsl:when>
                             <xsl:otherwise>
         @jakarta.persistence.Embedded
@@ -419,7 +422,6 @@
     <xsl:variable name="file" select="'META-INF/persistence.xml'"/>
 
     <!-- open file for jpa configuration -->
-    <xsl:message >Opening file <xsl:value-of select="$file"/></xsl:message>
     <xsl:result-document href="{$file}" format="persistenceInfo">
     <xsl:element name="persistence" namespace="http://java.sun.com/xml/ns/persistence">
       <xsl:attribute name="version" select="'2.0'"/>

@@ -19,7 +19,7 @@ interface VodmlExtensionGroup {
     val outputPythonDir: DirectoryProperty
     val outputDocDir: DirectoryProperty
     val outputSiteDir: DirectoryProperty
-    val outputResourcesDir: DirectoryProperty
+    val outputSchemaDir: DirectoryProperty
     val defaultPackage: Property<String>
     val generateEpisode: Property<Boolean>
     val bindingFiles: ConfigurableFileCollection

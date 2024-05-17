@@ -12,10 +12,8 @@
 
     <!--read the mapping from the bindings -->
     <xsl:variable name="mapping">
-        <xsl:message>setting mapping</xsl:message>
         <bnd:mappedModels>
             <xsl:for-each select="tokenize($binding,',')">
-                <xsl:message><xsl:value-of select="."/></xsl:message>
                 <xsl:copy-of
                         select="document(normalize-space(.))/bnd:mappedModels/model" />
             </xsl:for-each>
@@ -24,13 +22,11 @@
 
     <!-- load all models at start -->
     <xsl:variable name="models">
-        <xsl:message>setting models</xsl:message>
         <xsl:for-each select="$mapping/bnd:mappedModels/model">
             <xsl:choose>
                 <xsl:when test="file"> <!-- prefer local file for reading defn -->
                     <xsl:choose>
                         <xsl:when test="doc-available(file)">
-                            <xsl:message>opening file <xsl:value-of select="file"/></xsl:message>
                             <xsl:copy-of
                                     select="document(file)/vo-dml:model" />
                         </xsl:when>

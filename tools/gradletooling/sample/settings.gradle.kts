@@ -5,7 +5,7 @@ pluginManagement {
         gradlePluginPortal()
         mavenCentral()
     }
-    includeBuild("gradle-plugin") //get the gradle plugin
+    includeBuild("../gradle-plugin") //get the gradle plugin
 }
 
 // == Define locations for components ==
@@ -16,8 +16,5 @@ dependencyResolutionManagement {
     }
 
 }
-includeBuild("../../models/ivoa")
-rootProject.name="gradletooling"
-include("sample")
-
-project(":sample").name = "vodml-sample"
+includeBuild("../../../models/ivoa")
+rootProject.name="vodml-sample"

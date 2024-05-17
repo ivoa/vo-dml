@@ -13,7 +13,7 @@ nav:
   - Getting Started:
       - Installation: Installation.md
       - Configuration: QuickStart.md
-  - Transformers:
+  - Derived Products:
       - Introduction: Transformers.md
       - Documentation: Documentation.md
       - Java Generation: JavaCodeGeneration.md
@@ -24,10 +24,13 @@ nav:
       - VODSL : modelling/VODSL.md
       - Eclipse Editor: modelling/EclipseVODSL.md
       - UML : modelling/UML.md
+      - Generation from other sources : modelling/TransformingToVODML.md
   - Model Design:
       - Introduction : modelling/designIntro.md
 
 markdown_extensions:
+  - admonition
+  - pymdownx.details
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid

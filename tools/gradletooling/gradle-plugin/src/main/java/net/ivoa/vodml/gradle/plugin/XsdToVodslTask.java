@@ -15,7 +15,10 @@ import java.io.File;
 public class XsdToVodslTask extends DefaultTask {
    private File xsd, dsl;
 
-
+   /**
+    * Set the input XSD file.
+    * @param xsd the input xsd file.
+    */
    @Option(option = "xsd", description = "The XML schema file to be converted (path to)")
    public void setXsd(String xsd) {
       this.xsd = new File(xsd);
@@ -23,7 +26,11 @@ public class XsdToVodslTask extends DefaultTask {
       );
    }
 
-   @Option(option = "dsl", description = "The VODSL output filey")
+   /**
+    * Set the output VODSL file
+    * @param dsl the output filename.
+    */
+   @Option(option = "dsl", description = "The VODSL output file")
    public void setDsl(String dsl){
       this.dsl =  new File( dsl);
    }
