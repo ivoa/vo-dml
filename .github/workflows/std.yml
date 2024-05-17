@@ -15,7 +15,7 @@ jobs:
        - name: Setup dependencies
          run: |
            sudo apt -y update
-           sudo apt -y install pandoc wkhtmltopdf weasyprint
+           sudo apt -y install pandoc wkhtmltopdf
        - name: make the document
          working-directory: doc/std
          run: |
