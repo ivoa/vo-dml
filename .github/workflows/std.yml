@@ -17,8 +17,9 @@ jobs:
            sudo apt -y update
            sudo apt -y install pandoc wkhtmltopdf weasyprint
        - name: make the document
+         working-directory: doc/std
          run: |
-           make -C doc/std VO-DML.pdf
+           make VO-DML.pdf
        - name: upload the std doc
          uses: actions/upload-artifact@v4
          with:
