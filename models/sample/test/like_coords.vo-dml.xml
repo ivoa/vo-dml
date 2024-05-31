@@ -2,7 +2,7 @@
 <vo-dml:model xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1" 
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.ivoa.net/xml/VODML/v1 https://www.ivoa.net/xml/VODML/vo-dml-v1.xsd" 
-              vodmlVersion="1.1">	<!-- file generated from VODSL - needs validatate against v1.1 of schema  --> 
+              vodmlVersion="1.1">	<!-- file generated from VODSL - needs validatation against v1.1 of schema  --> 
       <name>coords</name>
       <description>This model defines objects which describe the coordinate space, coordinates within that space, and frames, which provide additional metadata regarding the origin, orientation, etc, of the coordinate space. The model also defines a coordinate system, bundling frames into associated groups.
       </description> 
@@ -16,7 +16,7 @@
         <url>IVOA-v1.0.vo-dml.xml</url>
         <documentationURL>not known</documentationURL>
       </import>
-      <primitiveType>
+      <primitiveType >
       <vodml-id>Epoch</vodml-id>
       <name>Epoch</name>
       <description>We define epoch as a primitive data type with the expected form '{type}{year}' where type = 'J' or 'B' for Julian or Besselian respectively, and year is expressed as a decimal year.  e.g.: 'B1950', 'J2000.0'</description>	    
@@ -122,19 +122,19 @@
               <name>Coordinate</name>
               <description>Abstract base class for the Coordinate data types which represent an absolute location within a coordinate space. Coordinates MUST refer to a coordinate system, providing additional metadata relevant to interpreting the coordinate value, and its representation.
               </description>	    
-               <reference>
-                 <vodml-id>Coordinate.coordSys</vodml-id>
-                 <name>coordSys</name>
-                 <description>Provided additional metadata relevant to interpreting the coordinate value; for example, the spatial reference position, or time scale, axis descriptions.
-                 </description>	    
-                 <datatype>
-                   <vodml-ref>coords:CoordSys</vodml-ref>
-                 </datatype>
-                 <multiplicity>
-                   <minOccurs>1</minOccurs>
-                   <maxOccurs>1</maxOccurs>
-                 </multiplicity>
-               </reference>
+            <reference>
+              <vodml-id>Coordinate.coordSys</vodml-id>
+              <name>coordSys</name>
+              <description>Provided additional metadata relevant to interpreting the coordinate value; for example, the spatial reference position, or time scale, axis descriptions.
+              </description>	    
+              <datatype>
+                <vodml-ref>coords:CoordSys</vodml-ref>
+              </datatype>
+              <multiplicity>
+                <minOccurs>1</minOccurs>
+                <maxOccurs>1</maxOccurs>
+              </multiplicity>
+            </reference>
             </dataType>
             <dataType>
               <vodml-id>BinnedCoordinate</vodml-id>
@@ -509,10 +509,10 @@
                 <minOccurs>1</minOccurs>
                 <maxOccurs>1</maxOccurs>
               </multiplicity>
-              <semanticconcept>
-                <topConcept>ReferencePosition</topConcept>
-                <vocabularyURI>http://www.ivoa.net/rdf/refposition</vocabularyURI>
-              </semanticconcept>
+            <semanticconcept>
+              <topConcept>ReferencePosition</topConcept>
+              <vocabularyURI>http://www.ivoa.net/rdf/refposition</vocabularyURI>
+            </semanticconcept>
             </attribute>
             </dataType>
             <dataType>
@@ -735,10 +735,10 @@
                    <minOccurs>1</minOccurs>
                    <maxOccurs>1</maxOccurs>
                  </multiplicity>
-                 <semanticconcept>
-                   <topConcept>SpaceRefFrame</topConcept>
-                   <vocabularyURI>http://www.ivoa.net/rdf/refframe</vocabularyURI>
-                 </semanticconcept>
+               <semanticconcept>
+                 <topConcept>SpaceRefFrame</topConcept>
+                 <vocabularyURI>http://www.ivoa.net/rdf/refframe</vocabularyURI>
+               </semanticconcept>
                </attribute>
                <attribute>
                  <vodml-id>SpaceFrame.equinox</vodml-id>
@@ -795,10 +795,10 @@
                    <minOccurs>1</minOccurs>
                    <maxOccurs>1</maxOccurs>
                  </multiplicity>
-                 <semanticconcept>
-                   <topConcept>TimeScale</topConcept>
-                   <vocabularyURI>http://www.ivoa.net/rdf/timescale</vocabularyURI>
-                 </semanticconcept>
+               <semanticconcept>
+                 <topConcept>TimeScale</topConcept>
+                 <vocabularyURI>http://www.ivoa.net/rdf/timescale</vocabularyURI>
+               </semanticconcept>
                </attribute>
                <attribute>
                  <vodml-id>TimeFrame.refDirection</vodml-id>

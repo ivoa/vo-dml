@@ -21,7 +21,7 @@ otype Refb  ""
 }
 
 abstract otype BaseC {
-	bname: ivoa:string "";
+	bname: ivoa:string "" UCD "instr.calib";
 }
 
 otype Dcont -> BaseC {

@@ -2,19 +2,19 @@
 <vo-dml:model xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1" 
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.ivoa.net/xml/VODML/v1 https://www.ivoa.net/xml/VODML/vo-dml-v1.xsd" 
-              vodmlVersion="1.1">	<!-- file generated from VODSL - needs validatate against v1.1 of schema  --> 
+              vodmlVersion="1.1">	<!-- file generated from VODSL - needs validatation against v1.1 of schema  --> 
       <name>MyModel</name>
       <description>Small Model for serialization</description> 
       <uri/>
       <title></title>
       <version>1.0</version>
-      <lastModified>2023-08-14T10:57:47Z</lastModified>
+      <lastModified>2024-05-31T11:12:57Z</lastModified>
       <import>
         <name>null</name><!--should not be needed in modern vo-dml -->
         <url>IVOA-v1.0.vo-dml.xml</url>
         <documentationURL>not known</documentationURL>
       </import>
-      <primitiveType>
+      <primitiveType >
       <vodml-id>ivorn</vodml-id>
       <name>ivorn</name>
       <description>a specialization for IVORNs</description>	    
@@ -54,9 +54,9 @@
                    <minOccurs>1</minOccurs>
                    <maxOccurs>1</maxOccurs>
                  </multiplicity>
-                 <constraint xsi:type="vo-dml:NaturalKey">
-                 	<position>1</position>
-                 </constraint>
+               <constraint xsi:type="vo-dml:NaturalKey">
+               	<position>1</position>
+               </constraint>
                </attribute>
                <attribute>
                  <vodml-id>Refb.val</vodml-id>
@@ -86,6 +86,7 @@
                    <minOccurs>1</minOccurs>
                    <maxOccurs>1</maxOccurs>
                  </multiplicity>
+                   <UCD>instr.calib</UCD>
                </attribute>
             </objectType>
             <objectType>
@@ -132,30 +133,6 @@
                <vodml-id>SomeContent</vodml-id>
                <name>SomeContent</name>
                <description></description>	    
-               <attribute>
-                 <vodml-id>SomeContent.zval</vodml-id>
-                 <name>zval</name>
-                 <description></description>	    
-                 <datatype>
-                    <vodml-ref>ivoa:string</vodml-ref>
-                 </datatype>
-                 <multiplicity>
-                   <minOccurs>1</minOccurs>
-                   <maxOccurs>1</maxOccurs>
-                 </multiplicity>
-               </attribute>
-               <composition>
-                 <vodml-id>SomeContent.con</vodml-id>
-                 <name>con</name>
-                 <description></description>	    
-                 <datatype>
-                    <vodml-ref>MyModel:BaseC</vodml-ref>
-                 </datatype>
-                 <multiplicity>
-                   <minOccurs>1</minOccurs>
-                   <maxOccurs>-1</maxOccurs>
-                 </multiplicity>
-               </composition>
                <reference>
                  <vodml-id>SomeContent.ref1</vodml-id>
                  <name>ref1</name>
@@ -180,5 +157,29 @@
                    <maxOccurs>1</maxOccurs>
                  </multiplicity>
                </reference>
+               <attribute>
+                 <vodml-id>SomeContent.zval</vodml-id>
+                 <name>zval</name>
+                 <description></description>	    
+                 <datatype>
+                    <vodml-ref>ivoa:string</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </attribute>
+               <composition>
+                 <vodml-id>SomeContent.con</vodml-id>
+                 <name>con</name>
+                 <description></description>	    
+                 <datatype>
+                    <vodml-ref>MyModel:BaseC</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>-1</maxOccurs>
+                 </multiplicity>
+               </composition>
             </objectType>
 </vo-dml:model>

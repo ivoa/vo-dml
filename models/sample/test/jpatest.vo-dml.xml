@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vo-dml:model xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1" 
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://www.ivoa.net/xml/VODML/v1 https://www.ivoa.net/xml/VODML/vo-dml-v1.xsd" 
-              vodmlVersion="1.1">	<!-- file generated from VODSL - needs validatate against v1.1 of schema  --> 
+              vodmlVersion="1.1">	<!-- file generated from VODSL - needs validatation against v1.1 of schema  -->
       <name>jpatest</name>
       <description>This is a small model to test some jpa features</description> 
       <uri/>
@@ -57,18 +56,18 @@
                 <maxOccurs>1</maxOccurs>
               </multiplicity>
             </attribute>
-               <reference>
-                 <vodml-id>ADtype.dref</vodml-id>
-                 <name>dref</name>
-                 <description></description>	    
-                 <datatype>
-                   <vodml-ref>jpatest:ReferredTo3</vodml-ref>
-                 </datatype>
-                 <multiplicity>
-                   <minOccurs>1</minOccurs>
-                   <maxOccurs>1</maxOccurs>
-                 </multiplicity>
-               </reference>
+            <reference>
+              <vodml-id>ADtype.dref</vodml-id>
+              <name>dref</name>
+              <description></description>	    
+              <datatype>
+                <vodml-ref>jpatest:ReferredTo3</vodml-ref>
+              </datatype>
+              <multiplicity>
+                <minOccurs>1</minOccurs>
+                <maxOccurs>1</maxOccurs>
+              </multiplicity>
+            </reference>
             </dataType>
             <objectType>
                <vodml-id>ReferredTo1</vodml-id>
@@ -183,6 +182,18 @@
                    <maxOccurs>1</maxOccurs>
                  </multiplicity>
                </attribute>
+               <reference>
+                 <vodml-id>Parent.rval</vodml-id>
+                 <name>rval</name>
+                 <description></description>	    
+                 <datatype>
+                   <vodml-ref>jpatest:ReferredTo1</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </reference>
                <composition>
                  <vodml-id>Parent.cval</vodml-id>
                  <name>cval</name>
@@ -208,17 +219,5 @@
                  </multiplicity>
                  <isOrdered>true</isOrdered>
                </composition>
-               <reference>
-                 <vodml-id>Parent.rval</vodml-id>
-                 <name>rval</name>
-                 <description></description>	    
-                 <datatype>
-                   <vodml-ref>jpatest:ReferredTo1</vodml-ref>
-                 </datatype>
-                 <multiplicity>
-                   <minOccurs>1</minOccurs>
-                   <maxOccurs>1</maxOccurs>
-                 </multiplicity>
-               </reference>
             </objectType>
 </vo-dml:model>

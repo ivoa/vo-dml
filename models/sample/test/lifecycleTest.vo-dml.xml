@@ -2,14 +2,14 @@
 <vo-dml:model xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1" 
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.ivoa.net/xml/VODML/v1 https://www.ivoa.net/xml/VODML/vo-dml-v1.xsd" 
-              vodmlVersion="1.1">	<!-- file generated from VODSL - needs validatate against v1.1 of schema  --> 
+              vodmlVersion="1.1">	<!-- file generated from VODSL - needs validatation against v1.1 of schema  --> 
       <name>lifecycleTest</name>
       <description>shows how lifecycles/aggregation could work</description> 
       <uri/>
       <title></title>
       <author>pharriso</author>
       <version>0.1</version>
-      <lastModified>2024-01-23T08:37:51Z</lastModified>
+      <lastModified>2024-05-16T19:27:45Z</lastModified>
       <import>
         <name>null</name><!--should not be needed in modern vo-dml -->
         <url>IVOA-v1.0.vo-dml.xml</url>
@@ -70,6 +70,18 @@
                <vodml-id>ATest</vodml-id>
                <name>ATest</name>
                <description></description>	    
+               <reference>
+                 <vodml-id>ATest.ref1</vodml-id>
+                 <name>ref1</name>
+                 <description></description>	    
+                 <datatype>
+                   <vodml-ref>lifecycleTest:ReferredTo</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </reference>
                <composition>
                  <vodml-id>ATest.contained</vodml-id>
                  <name>contained</name>
@@ -94,35 +106,11 @@
                    <maxOccurs>-1</maxOccurs>
                  </multiplicity>
                </composition>
-               <reference>
-                 <vodml-id>ATest.ref1</vodml-id>
-                 <name>ref1</name>
-                 <description></description>	    
-                 <datatype>
-                   <vodml-ref>lifecycleTest:ReferredTo</vodml-ref>
-                 </datatype>
-                 <multiplicity>
-                   <minOccurs>1</minOccurs>
-                   <maxOccurs>1</maxOccurs>
-                 </multiplicity>
-               </reference>
             </objectType>
             <objectType>
                <vodml-id>ATest2</vodml-id>
                <name>ATest2</name>
                <description></description>	    
-               <composition>
-                 <vodml-id>ATest2.atest</vodml-id>
-                 <name>atest</name>
-                 <description></description>	    
-                 <datatype>
-                    <vodml-ref>lifecycleTest:ATest</vodml-ref>
-                 </datatype>
-                 <multiplicity>
-                   <minOccurs>1</minOccurs>
-                   <maxOccurs>1</maxOccurs>
-                 </multiplicity>
-               </composition>
                <reference>
                  <vodml-id>ATest2.refagg</vodml-id>
                  <name>refagg</name>
@@ -135,6 +123,18 @@
                    <maxOccurs>1</maxOccurs>
                  </multiplicity>
                </reference>
+               <composition>
+                 <vodml-id>ATest2.atest</vodml-id>
+                 <name>atest</name>
+                 <description></description>	    
+                 <datatype>
+                    <vodml-ref>lifecycleTest:ATest</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </composition>
                <reference>
                  <vodml-id>ATest2.refcont</vodml-id>
                  <name>refcont</name>
