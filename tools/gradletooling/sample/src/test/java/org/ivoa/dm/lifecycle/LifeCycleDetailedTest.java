@@ -54,7 +54,7 @@ public class LifeCycleDetailedTest extends AbstractTest {
               a.contained = contained;
               a.refandcontained = refcont;
             });
-    atest2 = new ATest2(atest, referredTo, refcont.get(0));
+    atest2 = new ATest2(referredTo, atest, refcont.get(0));
     atest3 =
         new ATest3(
             contained, refcont.get(0)); // TODO this will create contradictions.... how best to test
