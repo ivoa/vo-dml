@@ -53,7 +53,7 @@ C/Java-like syntax with the following characteristics;
 
         model,author,include,package,abstract,primitive,dtype,
         otype,as,ordered,composition,enum,references,semantic,
-        subset,iskey,ofRank
+        subset,title,iskey,ofRank
 
 - attibute names precede their types
 
