@@ -247,6 +247,32 @@ note - only define functions in here as it is included in the schematron rules
         </xsl:choose>
     </xsl:function>
 
+    <xsl:function name="vf:referredBy" as="xsd:string*">
+    <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:sequence select="vf:referredByInModels($vodml-ref,$models/vo-dml:model/name/text())"/>
+    </xsl:function>
+
+    <xsl:function name="vf:referredByInModels" as="xsd:string*">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:param name="modelsToSearch" as="xsd:string*"/>
+        <xsl:choose>
+            <xsl:when test="$models/key('ellookup',$vodml-ref)">
+                <xsl:variable name="hier" as="xsd:string *">
+                    <xsl:sequence>
+                        <xsl:for-each  select="(vf:baseTypes($vodml-ref),$models/key('ellookup',$vodml-ref),vf:subTypes($vodml-ref))">
+                            <xsl:value-of select="vf:asvodmlref(.)"/>
+                        </xsl:for-each>
+                    </xsl:sequence>
+                </xsl:variable>
+                <!--                <xsl:message>refs <xsl:value-of select="concat ($vodml-ref,' ',count($models//reference/datatype[vodml-ref = $hier])> 0,' h=',string-join($hier,','))"/></xsl:message>-->
+                <xsl:sequence select="for $i in $models/vo-dml:model[name = $modelsToSearch]//(objectType|dataType)[reference/datatype/vodml-ref = $hier] return vf:asvodmlref($i)"/> <!-- FIXME do datypes too - and proper vodml ids -->
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">type '<xsl:value-of select="$vodml-ref"/>' not in considered models</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
 
 <!-- return all the reference types in the containment hierarchy of the argument type -->
     <xsl:function name="vf:referenceTypesInContainmentHierarchy" as="xsd:string*">
@@ -274,10 +300,16 @@ note - only define functions in here as it is included in the schematron rules
         <xsl:sequence select="count(vf:referenceTypesInContainmentHierarchy($vodml-ref)) != 0"/>
     </xsl:function>
 
+    <!--TODO do we really want this? -->
     <xsl:function name="vf:hasContainedReferencesInContainmentHierarchy" as="xsd:boolean">
         <xsl:param name="vodml-ref"/>
         <xsl:param name="root-vodml-ref"/>
         <xsl:sequence select="count(vf:referenceTypesInContainmentHierarchy($vodml-ref)[vf:isTypeContainedBelow(.,$root-vodml-ref)]) != 0"/>
+    </xsl:function>
+
+    <xsl:function name="vf:containedReferencesInContainmentHierarchy" as="xsd:string*">
+        <xsl:param name="vodml-ref"/>
+        <xsl:sequence select="vf:referenceTypesInContainmentHierarchy($vodml-ref)[vf:isTypeContainedBelow(.,$vodml-ref)]"/>
     </xsl:function>
 
     <xsl:function name="vf:hasContainedReferenceInTypeHierarchy" as="xsd:boolean">
