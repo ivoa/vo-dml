@@ -353,9 +353,19 @@
 // TODO    [NOT_SUPPORTED_REFERENCE]
       </xsl:when>
       <xsl:otherwise>
-    <!-- require manual management of references - do not remove referenced entity : do not cascade delete -->
-    @jakarta.persistence.ManyToOne( cascade = {  jakarta.persistence.CascadeType.REFRESH } )
-    @jakarta.persistence.JoinColumn( nullable = <xsl:apply-templates select="." mode="nullable"/> )
+          <xsl:choose>
+              <xsl:when test="xsd:int(multiplicity/maxOccurs) != 1">
+                  <!-- TODO should not really leave join table naming to JPA - should be explicit-->
+                  <!-- require manual management of references - do not remove referenced entity : do not cascade delete -->
+@jakarta.persistence.ManyToMany( cascade = {  jakarta.persistence.CascadeType.REFRESH } )
+              </xsl:when>
+              <xsl:otherwise>
+<!-- require manual management of references - do not remove referenced entity : do not cascade delete -->
+@jakarta.persistence.ManyToOne( cascade = {  jakarta.persistence.CascadeType.REFRESH } )
+@jakarta.persistence.JoinColumn( nullable = <xsl:apply-templates select="." mode="nullable"/> )
+
+              </xsl:otherwise>
+          </xsl:choose>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>

@@ -9,7 +9,7 @@
       <title></title>
       <author>pharriso</author>
       <version>0.1</version>
-      <lastModified>2024-05-16T19:27:45Z</lastModified>
+      <lastModified>2024-06-13T14:50:55Z</lastModified>
       <import>
         <name>null</name><!--should not be needed in modern vo-dml -->
         <url>IVOA-v1.0.vo-dml.xml</url>
@@ -120,7 +120,7 @@
                  </datatype>
                  <multiplicity>
                    <minOccurs>1</minOccurs>
-                   <maxOccurs>1</maxOccurs>
+                   <maxOccurs>-1</maxOccurs>
                  </multiplicity>
                </reference>
                <composition>

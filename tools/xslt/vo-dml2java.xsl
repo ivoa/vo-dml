@@ -514,8 +514,10 @@
                 </xsl:choose>
                 <xsl:value-of select="').collect(java.util.stream.Collectors.toList())'"/>
                 </xsl:variable>
+
                 <xsl:choose>
-                    <xsl:when test="vf:referredTo($m/datatype/vodml-ref)">
+                    <xsl:when test="vf:isContainedReference($m/datatype/vodml-ref)">
+                        <!-- FIXME this is probably not the right place to do this - better to do it in the clone of the type itself -->
                         <xsl:value-of select="concat('var cache = org.ivoa.vodml.ModelContext.current().cache(',$jt,'.class)')"/>;
                         <xsl:value-of select="concat('var cloned = ',$assn)"/>;
                         <xsl:value-of select="concat('cache.setValues(other.',vf:javaMemberName($m/name),', cloned)')"/>;
@@ -902,7 +904,7 @@ package <xsl:value-of select="$path"/>;
         <xsl:when test="xsd:int(multiplicity/maxOccurs) gt 1">
     protected <xsl:value-of select="concat($type,'[] ',vf:javaMemberName(name))"/>;
         </xsl:when>
-        <xsl:when test="xsd:int(multiplicity/maxOccurs) lt 0">
+        <xsl:when test="xsd:int(multiplicity/maxOccurs) lt 0"> <!-- IMPL - this probably should not be allowed -->
     protected <xsl:value-of select="concat('java.util.List',$lt,$type,$gt,' ',vf:javaMemberName(name))"/>;
         </xsl:when>
         <xsl:otherwise>
@@ -1175,7 +1177,7 @@ package <xsl:value-of select="$path"/>;
     }
     </xsl:template>
 
-    <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="jpawalker">
+    <xsl:template match="(composition[multiplicity/maxOccurs != 1]|reference[multiplicity/maxOccurs != 1])" mode="jpawalker">
         for( <xsl:value-of select="vf:FullJavaType(datatype/vodml-ref, true())"/> c : <xsl:value-of select="vf:javaMemberName(name)"/> ) {
            c.forceLoad();
         }
@@ -1271,7 +1273,7 @@ package <xsl:value-of select="$path"/>;
 
 
 
-  <xsl:template match="reference" mode="declare"><!-- IMPL could be the same as attribute - actually more usefully so if reference allowed to have >1 multiplicity -->
+  <xsl:template match="reference" mode="declare">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
     /** 
     * ReferenceObject <xsl:value-of select="name"/> :
@@ -1284,13 +1286,21 @@ package <xsl:value-of select="$path"/>;
     <xsl:apply-templates select="." mode="JAXBAnnotation"/>
     <xsl:call-template name="vodmlAnnotation"/>
       <xsl:apply-templates select="." mode="openapiAnnotation"/>
-    protected <xsl:value-of select="$type"/>&bl;<xsl:value-of select="vf:javaMemberName(name)"/> = null;
+      <xsl:choose>
+          <xsl:when test="xsd:int(multiplicity/maxOccurs) lt 0"> <!-- IMPL are allowing for multiplicity > 1 i.e. aggregation-->
+              protected <xsl:value-of select="concat('java.util.List',$lt,$type,$gt,' ',vf:javaMemberName(name))"/>;
+          </xsl:when>
+          <xsl:otherwise>
+              protected <xsl:value-of select="$type"/>&bl;<xsl:value-of select="vf:javaMemberName(name)"/> = null;
+          </xsl:otherwise>
+      </xsl:choose>
+
   </xsl:template>
 
 
 
 
-  <xsl:template match="reference" mode="getset">
+  <xsl:template match="reference[multiplicity/maxOccurs = 1]" mode="getset">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
     <xsl:variable name="name">
       <xsl:call-template name="upperFirst">
@@ -1313,10 +1323,33 @@ package <xsl:value-of select="$path"/>;
     }
   </xsl:template>
 
+    <xsl:template match="reference[multiplicity/maxOccurs != 1]" mode="getset"> <!-- IMPL could use the same rule as composition? -->
+        <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
+        <xsl:variable name="name">
+            <xsl:call-template name="upperFirst">
+                <xsl:with-param name="val" select="name"/>
+            </xsl:call-template>
+        </xsl:variable>
+        /**
+        * Returns <xsl:value-of select="name"/> Reference<br/>
+        * @return <xsl:value-of select="name"/> Reference
+        */
+        public List&lt;<xsl:value-of select="$type"/>&gt;&bl;get<xsl:value-of select="$name"/>() {
+        return this.<xsl:value-of select="vf:javaMemberName(name)"/>;
+        }
+        /**
+        * Defines <xsl:value-of select="name"/> Reference
+        * @param p<xsl:value-of select="$name"/> references to set
+        */
+        public void set<xsl:value-of select="$name"/>(final List&lt;<xsl:value-of select="$type"/>&gt; p<xsl:value-of select="$name"/>) {
+        this.<xsl:value-of select="vf:javaMemberName(name)"/> = p<xsl:value-of select="$name"/>;
+        }
+    </xsl:template>
 
 
 
-  <xsl:template match="reference" mode="setProperty">
+ <!-- deprecated - references work differently now
+ <xsl:template match="reference[multiplicity/maxOccurs != 1]" mode="setProperty">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
     <xsl:variable name="name">
       <xsl:call-template name="upperFirst">
@@ -1331,7 +1364,7 @@ package <xsl:value-of select="$path"/>;
         set<xsl:value-of select="$name"/>((<xsl:value-of select="$type"/>)pValue);
       return true;
     }
-  </xsl:template>
+  </xsl:template> -->
 
   <xsl:template match="literal" >
     /** 

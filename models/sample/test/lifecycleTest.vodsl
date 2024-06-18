@@ -31,7 +31,7 @@ otype ATest2 {
      it is more a lifecycle matter really - as long as there is nothing that can 
 	                                     * delete the referredTo otype */
 	                                     
-	refagg references ReferredTo  "";                                      
+	refagg @+ references ReferredTo  "";                                      
 	atest : ATest as composition "";
 	                                     
 	refcont references ReferredLifeCycle ""; // potentially not OK (should be an error if referenced by something outside the object tree) - here the referred otype is also contained, so the 
