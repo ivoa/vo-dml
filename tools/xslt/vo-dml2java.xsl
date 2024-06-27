@@ -45,11 +45,11 @@
   <xsl:param name="output_root" />
   <xsl:param name="vo-dml_package" select="'org.ivoa.vodml.model'"/>
   <xsl:param name="binding"/>
+    <xsl:param name="do_jpa" select="true()"/>
+  <xsl:param name="write_persistence_xml" select="false()"/>
+
     <xsl:param name="isMain"/>
-
-
-
-    <xsl:include href="binding_setup.xsl"/>
+  <xsl:include href="binding_setup.xsl"/>
 
   <!-- main pattern : processes for root node model -->
   <xsl:template match="/">
@@ -98,7 +98,9 @@
       <xsl:with-param name="path" select="$root_package"/>
     </xsl:apply-templates>
       <xsl:if test="$isMain eq 'True'">
+          <xsl:if test="$do_jpa">
          <xsl:apply-templates select="." mode="jpaConfig" />
+          </xsl:if>
       </xsl:if>
   </xsl:template>  
 
@@ -599,7 +601,7 @@
 *
 * <xsl:value-of select="$vodmlauthor"/>
 */
-    <xsl:apply-templates select="." mode="JPAAnnotation"/>
+      <xsl:if test="$do_jpa"><xsl:apply-templates select="." mode="JPAAnnotation"/></xsl:if>
     <xsl:apply-templates select="." mode="JAXBAnnotation"/>
     <xsl:call-template name="vodmlAnnotation"/>
       <xsl:apply-templates select="." mode="openapiAnnotation"/>
@@ -821,7 +823,7 @@ package <xsl:value-of select="$path"/>;
       */
       <xsl:call-template name="vodmlAnnotation"/>
       <xsl:apply-templates select="." mode="openapiAnnotation"/>
-      <xsl:apply-templates select="." mode="JPAAnnotation"/>
+      <xsl:if test="$do_jpa"><xsl:apply-templates select="." mode="JPAAnnotation"/></xsl:if>
       <xsl:apply-templates select="." mode="JAXBAnnotation"/>
       public class&bl;<xsl:if test="@abstract='true'">abstract</xsl:if>&bl;<xsl:value-of select="vf:capitalize(name)"/>&bl;
       implements java.io.Serializable {
@@ -897,7 +899,7 @@ package <xsl:value-of select="$path"/>;
     @jakarta.persistence.Transient
               </xsl:when>
               <xsl:otherwise>
-                  <xsl:apply-templates select="." mode="JPAAnnotation"/>
+                  <xsl:if test="$do_jpa"><xsl:apply-templates select="." mode="JPAAnnotation"/></xsl:if>
               </xsl:otherwise>
           </xsl:choose>
           <xsl:choose>
@@ -936,12 +938,15 @@ package <xsl:value-of select="$path"/>;
         <xsl:variable name="name" select="tokenize(role/vodml-ref/text(),'[.]')[last()]"/>
         <xsl:if test="name($subsetted)='attribute' and datatype/vodml-ref != $subsetted/datatype/vodml-ref"> <!-- only do this if types are different (subsetting can change just the semantic stuff)-->
 
+        <xsl:if test="$do_jpa">
         <xsl:call-template name="doEmbeddedJPA">
             <xsl:with-param name="name" select="$name"/>
             <xsl:with-param name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
             <xsl:with-param name="nillable" >true</xsl:with-param><!--TODO think if it is possible to do better with nillable value-->
         </xsl:call-template>
+
         @jakarta.persistence.Access(jakarta.persistence.AccessType.PROPERTY)
+        </xsl:if>
         </xsl:if>
       <xsl:call-template name="doGetSet">
           <xsl:with-param name="name" select="$name"/>
@@ -1053,7 +1058,7 @@ package <xsl:value-of select="$path"/>;
     * )
     */
     <xsl:apply-templates select="." mode="JAXBAnnotation"/>
-    <xsl:apply-templates select="." mode="JPAAnnotation"/>
+      <xsl:if test="$do_jpa"><xsl:apply-templates select="." mode="JPAAnnotation"/></xsl:if>
     <xsl:call-template name="vodmlAnnotation"/>
       <xsl:apply-templates select="." mode="openapiAnnotation"/>
       <xsl:choose>
@@ -1077,7 +1082,7 @@ package <xsl:value-of select="$path"/>;
         * )
         */
         <xsl:apply-templates select="." mode="JAXBAnnotation"/>
-        <xsl:apply-templates select="." mode="JPAAnnotation"/>
+        <xsl:if test="$do_jpa"><xsl:apply-templates select="." mode="JPAAnnotation"/></xsl:if>
         <xsl:call-template name="vodmlAnnotation"/>
         <xsl:apply-templates select="." mode="openapiAnnotation"/>
         protected <xsl:value-of select="$type"/>&bl;<xsl:value-of select="vf:javaMemberName(name)"/> = null;
@@ -1282,7 +1287,7 @@ package <xsl:value-of select="$path"/>;
     * Multiplicity : <xsl:apply-templates select="multiplicity" mode="tostring"/>
     * )
     */
-    <xsl:apply-templates select="." mode="JPAAnnotation"/>
+      <xsl:if test="$do_jpa"><xsl:apply-templates select="." mode="JPAAnnotation"/></xsl:if>
     <xsl:apply-templates select="." mode="JAXBAnnotation"/>
     <xsl:call-template name="vodmlAnnotation"/>
       <xsl:apply-templates select="." mode="openapiAnnotation"/>
@@ -1420,7 +1425,7 @@ package <xsl:value-of select="$path"/>;
 
   <!-- specific documents --> 
 
-  <!-- ModelVersion.java -->
+  <!-- ModelVersion.java - deprecated -->
   <xsl:template match="vo-dml:model" mode="modelFactory">
     <xsl:param name="root_package"/>
     <xsl:param name="root_package_dir"/>
