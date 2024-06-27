@@ -57,7 +57,7 @@ note that this schema is substantially different from the era when this code was
     <xsl:variable name="modelns">
       <xsl:value-of select="vf:xsdNsPrefix($modelname)"/>
     </xsl:variable>
-    <xsl:message >Generating XSD <xsl:value-of select="document-uri(.) "/> - considering models <xsl:value-of select="string-join($models/vo-dml:model/name,', ')" /></xsl:message>
+    <xsl:message >Generating XSD for  <xsl:value-of select="$modelname "/> - considering models <xsl:value-of select="string-join($models/vo-dml:model/name,', ')" /></xsl:message>
 
 
 

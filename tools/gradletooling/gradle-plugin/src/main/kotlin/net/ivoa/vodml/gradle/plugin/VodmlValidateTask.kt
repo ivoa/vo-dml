@@ -52,7 +52,7 @@ import javax.xml.transform.stream.StreamSource
              val shortname = it.nameWithoutExtension
              //val outfile = docDir.file(shortname +".validation")
              val result = schematron.validate(StreamSource(it.absoluteFile))
-             logger.info("$shortname validation=${result.isValid}")
+             logger.info("Validating $shortname, result valid=${result.isValid}")
              if (!result.isValid)
              {
                  //TODO should probably signal error to the task output...
