@@ -81,6 +81,15 @@ The whole model is represented in a model diagram below
 
     </xsl:if>
 
+<xsl:if test="//package">
+## Packages
+
+    <xsl:for-each select="//package"> <!-- FIXME does not do nested packages nicely -->
+        <xsl:sort select="name"/>
+* <xsl:value-of select="concat('*',name,'*')"/> <xsl:apply-templates select="description"/>
+    </xsl:for-each>
+</xsl:if>
+
 <xsl:if test="//primitiveType">
 ## Primitives
 
@@ -161,7 +170,7 @@ The whole model is represented in a model diagram below
                 "ObjectTypes": [
 
                 <xsl:for-each select="//objectType">
-                    <xsl:sort select="name"/>
+                    <xsl:sort select="vf:asvodmlref(current())"/>
                     <xsl:call-template name="jsonNav"/>
                     <xsl:if test="position() != last()">,</xsl:if>
                 </xsl:for-each>
@@ -172,7 +181,7 @@ The whole model is represented in a model diagram below
                 ,{
                 "DataTypes": [
                 <xsl:for-each select="//dataType">
-                    <xsl:sort select="name"/>
+                    <xsl:sort select="vf:asvodmlref(current())"/>
                     <xsl:call-template name="jsonNav"/>
                     <xsl:if test="position() != last()">,</xsl:if>
                 </xsl:for-each>
@@ -183,7 +192,7 @@ The whole model is represented in a model diagram below
                 ,{
                 "PrimitiveTypes": [
                 <xsl:for-each select="//primitiveType">
-                    <xsl:sort select="name"/>
+                    <xsl:sort select="vf:asvodmlref(current())"/>
                     <xsl:call-template name="jsonNav"/>
                     <xsl:if test="position() != last()">,</xsl:if>
                 </xsl:for-each>
@@ -194,7 +203,7 @@ The whole model is represented in a model diagram below
                 ,{
                 "Enumerations": [
                 <xsl:for-each select="//enumeration">
-                    <xsl:sort select="name"/>
+                    <xsl:sort select="vf:asvodmlref(current())"/>
                     <xsl:if test="position() != 1">,</xsl:if>
                     <xsl:call-template name="jsonNav"/>
                 </xsl:for-each>
@@ -219,7 +228,7 @@ The whole model is represented in a model diagram below
     <xsl:template match="package">
         <xsl:variable name="vodml-id" select="tokenize(vf:asvodmlref(current()),':')" as="xsd:string*"/>
         <xsl:variable name="hr" select="concat($vodml-id[1],'/',$vodml-id[2],'.md')"/>
-        <xsl:message>writing description to <xsl:value-of select="$hr"/></xsl:message>
+        <xsl:message>writing description to <xsl:value-of select="$hr"/></xsl:message><!-- TODO this package file itself not linked in final docs - is it useful? -->
         <xsl:result-document method="text" encoding="UTF-8" indent="no" href="{$hr}">
             <xsl:apply-templates select="current()" mode="desc"/>
         </xsl:result-document>
@@ -306,7 +315,7 @@ Has contained reference(s) <xsl:value-of select="string-join(for $i in vf:contai
     </xsl:template>
 
     <xsl:template match="description">
-        <xsl:if test="not(matches(text(),'^\s*TODO'))"><xsl:value-of select='.'/></xsl:if><xsl:text></xsl:text>
+        <xsl:if test="not(matches(text(),'^\s*TODO'))"><xsl:value-of select='normalize-space(.)'/></xsl:if><xsl:text></xsl:text>
     </xsl:template>
 
     <xsl:template match="enumeration|dataType|objectType" mode="mermdiag">

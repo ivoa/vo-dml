@@ -82,7 +82,7 @@ import javax.inject.Inject
              allnav.add(json)
          }
          val outmapper = ObjectMapper(YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER))
-         outmapper.writeValue(File("allnav.yml"), allnav)
+         outmapper.writeValue(docDir.file("allnav.yml").get().asFile, allnav)
 
 
      }
