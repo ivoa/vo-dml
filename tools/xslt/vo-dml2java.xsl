@@ -46,7 +46,7 @@
   <xsl:param name="vo-dml_package" select="'org.ivoa.vodml.model'"/>
   <xsl:param name="binding"/>
     <xsl:param name="do_jpa" select="true()"/>
-  <xsl:param name="write_persistence_xml" select="false()"/>
+  <xsl:param name="write_persistence_xml" select="true()"/>
 
     <xsl:param name="isMain"/>
   <xsl:include href="binding_setup.xsl"/>
