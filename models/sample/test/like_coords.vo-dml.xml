@@ -10,7 +10,7 @@
       <title></title>
       <author>Arnold Rots, Mark Cresitello-Dittmar, Omar Laurino</author>
       <version>1.0</version>
-      <lastModified>2023-06-08T07:49:03Z</lastModified>
+      <lastModified>2024-07-02T10:42:56Z</lastModified>
       <import>
         <name>null</name><!--should not be needed in modern vo-dml -->
         <url>IVOA-v1.0.vo-dml.xml</url>
@@ -1021,5 +1021,22 @@
                      <vodml-ref>coords:ContinuousAxis</vodml-ref>
                   </datatype>
                </constraint>
+            </objectType>
+            <objectType>
+               <vodml-id>AnObject</vodml-id>
+               <name>AnObject</name>
+               <description>example content</description>	    
+               <attribute>
+                 <vodml-id>AnObject.position</vodml-id>
+                 <name>position</name>
+                 <description>the position</description>	    
+                 <datatype>
+                    <vodml-ref>coords:LonLatPoint</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </attribute>
             </objectType>
 </vo-dml:model>

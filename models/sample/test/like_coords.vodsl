@@ -257,3 +257,8 @@ otype CartesianCoordSpace  -> PhysicalCoordSpace "Spatial domain, three-dimensio
   {   // constraint  axis[1..3]
      subset coords:CoordSpace.axis as coords:ContinuousAxis;
   }
+
+//just here to make testing easier.
+ otype AnObject "example content" {
+ 	   position:LonLatPoint "the position";
+ } 
