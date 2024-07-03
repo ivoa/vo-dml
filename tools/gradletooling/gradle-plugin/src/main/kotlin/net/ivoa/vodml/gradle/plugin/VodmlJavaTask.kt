@@ -33,6 +33,7 @@ import javax.inject.Inject
          val allBinding = bindingFiles.files.plus(eh.externalBinding())
 
          var index = 0;
+         val pu_name = vodmlFiles.files.first().nameWithoutExtension
          vodmlFiles.forEach { v ->
              val shortname = v.nameWithoutExtension
              val outfile = javaGenDir.file("$shortname.javatrans.txt")
@@ -40,7 +41,8 @@ import javax.inject.Inject
                  v.absoluteFile, mapOf(
                      "binding" to allBinding.joinToString(separator = ",") { it.toURI().toURL().toString() },
                      "output_root" to javaGenDir.get().asFile.toURI().toURL().toString(),
-                     "isMain" to (if (index++ == 0) "True" else "False") // first is the Main
+                     "isMain" to (if (index++ == 0) "True" else "False"), // first is the Main
+                     "pu_name" to pu_name
                  ),
                  actualCatalog, outfile.get().asFile
              )

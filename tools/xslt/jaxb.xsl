@@ -327,7 +327,7 @@
          return JAXBContext.newInstance("<xsl:value-of select="string-join($packages,':')"/>" );
       }
        public static String pu_name(){
-        return "<xsl:value-of select='concat("vodml_",name)'/>";
+        return "<xsl:value-of select='$pu_name'/>";
         }
 
         public static void writeXMLSchema() {

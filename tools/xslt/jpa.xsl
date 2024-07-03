@@ -428,21 +428,21 @@
 
 
   <!-- persistence.xml configuration file -->  
-  <xsl:template match="vo-dml:model" mode="jpaConfig">
+  <xsl:template name="persistence_xml">
+    <xsl:param name="puname"/>
+    <xsl:param name="doit"/>
     <xsl:variable name="file" select="'META-INF/persistence.xml'"/>
 
     <!-- open file for jpa configuration -->
-   <xsl:if test="$write_persistence_xml">
+   <xsl:if test="$doit">
     <xsl:result-document href="{$file}" format="persistenceInfo">
     <xsl:element name="persistence" namespace="http://java.sun.com/xml/ns/persistence">
       <xsl:attribute name="version" select="'2.0'"/>
       <xsl:element name="persistence-unit" namespace="http://java.sun.com/xml/ns/persistence">
-        <xsl:attribute name="name" select="concat('vodml_',name)"/>
+        <xsl:attribute name="name" select="$puname"/>
         <xsl:comment>we rely on hibernate extensions</xsl:comment>
         <xsl:element name="provider" namespace="http://java.sun.com/xml/ns/persistence">org.hibernate.jpa.HibernatePersistenceProvider<!--org.eclipse.persistence.jpa.PersistenceProvider--></xsl:element>
-        <xsl:apply-templates select="*" mode="jpaConfig"/>
-        <!--do the other models -->
-        <xsl:apply-templates select="$models/vo-dml:model[name != current()/name]/*" mode="jpaConfig"/>
+        <xsl:apply-templates select="$models/vo-dml:model/*" mode="jpaConfig"/>
         <xsl:element name="exclude-unlisted-classes" namespace="http://java.sun.com/xml/ns/persistence">true</xsl:element>
       </xsl:element>
     </xsl:element>
