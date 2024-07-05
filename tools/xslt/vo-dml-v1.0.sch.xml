@@ -5,10 +5,7 @@
             xmlns:xs="http://www.w3.org/2001/XMLSchema"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-<!-- Change log:
-2017-09-23:
-- changed namespace uri to vo-dml schema t use major version only.
- -->
+
 <sch:ns uri="http://www.ivoa.net/xml/VODML/v1" prefix="vo-dml"/>
     <sch:ns prefix="fct" uri="localFunctions"/>
     <sch:ns prefix="vf" uri="http://www.ivoa.net/xml/VODML/functions"/>
@@ -97,6 +94,8 @@ vodml-id '<sch:value-of select="."/>' is not unique, there are <sch:value-of sel
     </sch:pattern>
 
 
+
+
     <sch:pattern name="Unique_name">
         <sch:rule context="(attribute|reference|composition|literal)/name">
             <sch:let name="count" value="count(../preceding-sibling::*/name[. = current()])"/>
@@ -107,15 +106,26 @@ vodml-id '<sch:value-of select="."/>' is not unique, there are <sch:value-of sel
     </sch:pattern>
 
     <sch:pattern name="Single_Inheritance">
-  <sch:rule context="objectType|dataType|enumeration|primitiveType">
-    <sch:let name="count" value="count(extends)"/>
-    <sch:assert test="$count &lt; 2" flag="error">
- <sch:value-of select="./vodml-id"/> has more than one extends relation.
-    </sch:assert>
-  </sch:rule>
-</sch:pattern>
+        <sch:rule context="objectType|dataType|enumeration|primitiveType">
+            <sch:let name="count" value="count(extends)"/>
+            <sch:assert test="$count &lt; 2" flag="error">
+                <sch:value-of select="./vodml-id"/> has more than one extends relation.
+            </sch:assert>
+        </sch:rule>
+    </sch:pattern>
 
-<sch:pattern name="Unique_composition">
+    <sch:pattern name="no_abstract_attributes">
+        <sch:rule context="attribute">
+            <sch:let name="atttype" value="$models/key('ellookup',current()/datatype/vodml-ref)"/>
+            <sch:let name="parent" value="current()/parent::*"/>
+
+            <sch:assert test="not($atttype/@abstract) or ($atttype/@abstract and $parent/@abstract)" flag="error">
+               attribute <sch:value-of select="vf:asvodmlref(current())"/> has abstract type even though the parent object is not abstract.
+            </sch:assert>
+        </sch:rule>
+    </sch:pattern>
+
+    <sch:pattern name="Unique_composition">
   <sch:rule context="composition/datatype/vodml-ref">
     <sch:let name="count" value="count(//composition/datatype/vodml-ref[. = current()])"/>
     <sch:let name="container" value="vf:asvodmlref(current()/ancestor::objectType)"/>
