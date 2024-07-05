@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-This is still an experimental implementation - the canonical form of the XSD schema is the schema that can be generated from the generated java code.
-t
-The intention is that this wll eventually be a better documented, but equivalent version to the java generated schema
+
+The intention is that this is a better documented, but equivalent version to the java generated schema - it is this version of the schema that is used in validation tests.
 
 note that this schema is substantially different from the era when this code was stored in volute
 * references are treated differently
-* there are
+* there is a top level model element that everything is under.
  -->
 
 
