@@ -55,7 +55,7 @@ class JPATestModelTest extends AbstractTest {
         Parent.createParent(
             a -> {
               ReferredTo3 ref3 = new ReferredTo3("ref in dtype");
-              a.dval = new ADtype(1.1, "astring", ref3);
+              a.dval = new ADtype(1.1, "astring","intatt", "base", ref3);
               a.rval = referredTo;
               a.cval = refcont;
               a.lval = ll;
@@ -106,6 +106,7 @@ class JPATestModelTest extends AbstractTest {
     assertEquals("top level ref", par.get(0).rval.sval);
     assertEquals("lower ref", par.get(0).cval.rval.sval);
     assertEquals("ref in dtype", par.get(0).dval.dref.sval);
+    assertNotNull(par.get(0).dval.basestr);
   }
 
   @Test

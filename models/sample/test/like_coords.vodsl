@@ -51,9 +51,9 @@ dtype PixelIndex  -> BinnedCoordinate "Specialized BinnedCoordinate for the pixe
   {   
   }
 
-dtype PhysicalCoordinate  -> Coordinate "The most common type of coordinate value.  This type is appropriate for any data whose values can be described by an ivoa:Quantity (numeric, with unit)."
+dtype PhysicalCoordinate  -> Coordinate "The most common type of coordinate value.  This type is appropriate for any data whose values can be described by an ivoa:RealQuantity (numeric, with unit)."
   {   
-        cval: ivoa:Quantity   "This coordinate MUST contain a value expressed as an ivoa:Quantity.";
+        cval: ivoa:RealQuantity   "This coordinate MUST contain a value expressed as an ivoa:RealQuantity.";
   }
 
 abstract dtype Point  -> Coordinate "Multi-dimensional spatial coordinate. The Point MUST refer to a spatial coordinate system (SpaceSys) which associates the point with corresponding coordinate domain space and frame metadata."
@@ -64,24 +64,24 @@ abstract dtype Point  -> Coordinate "Multi-dimensional spatial coordinate. The P
 dtype CartesianPoint  -> Point "A spatial coordinate in a Cartesian coordinate space.  Any associated CoordSpace MUST be a CartesianCoordSpace.  If no CoordSpace is provided, a Standard Cartesian CoordSpace is assumed.  Values for unused/undefined dimensions need not be provided.
 "
   {   
-        x: ivoa:Quantity  @?   "The coordinate value along the 'X' axis.";
-        y: ivoa:Quantity  @?   "The coordinate value along the 'Y' axis.";
-        z: ivoa:Quantity  @?   "The coordinate value along the 'Z' axis.";
+        x: ivoa:RealQuantity  @?   "The coordinate value along the 'X' axis.";
+        y: ivoa:RealQuantity  @?   "The coordinate value along the 'Y' axis.";
+        z: ivoa:RealQuantity  @?   "The coordinate value along the 'Z' axis.";
   }
 
 dtype LonLatPoint  -> Point "A spatial coordinate in a Spherical coordinate space defining a Celestial position in Latitude and Longitude.  Any associated CoordSpace MUST conform to this description.  If no CoordSpace is provided, a Standard Spherical CoordSpace is assumed.  Values for unused/undefined dimensions need not be provided.
 "
   {   
-        lon: ivoa:Quantity  @?   "The longitude of the Point, as a Quantity with angular units.";
-        lat: ivoa:Quantity  @?   "The latitude of the Point, as a Quantity with angular units.";
-        dist: ivoa:Quantity  @?   "The distance to the Point from the origin.";
+        lon: ivoa:RealQuantity  @?   "The longitude of the Point, as a RealQuantity with angular units.";
+        lat: ivoa:RealQuantity  @?   "The latitude of the Point, as a RealQuantity with angular units.";
+        dist: ivoa:RealQuantity  @?   "The distance to the Point from the origin.";
   }
 
 dtype GenericPoint  -> Point "GenericPoint supports the representation of spatial coordinates in a custom coordinate space, or any space which is not covered by the other specializations.   The coordinate values map, in order, to the axes described by the associated CoordSpace.  If no CoordSpace is provided, the behavior is undefined.  Values for unused/undefined dimensions need not be provided."
   {   
-        axis1: ivoa:Quantity  @?   "Coordinate value along the first axis of the associated coordinate space, expressed as an ivoa:Quantity.";
-        axis2: ivoa:Quantity  @?   "Coordinate value along the second axis of the associated coordinate space, expressed as an ivoa:Quantity.";
-        axis3: ivoa:Quantity  @?   "Coordinate value along the third axis of the associated coordinate space, expressed as an ivoa:Quantity.";
+        axis1: ivoa:RealQuantity  @?   "Coordinate value along the first axis of the associated coordinate space, expressed as an ivoa:RealQuantity.";
+        axis2: ivoa:RealQuantity  @?   "Coordinate value along the second axis of the associated coordinate space, expressed as an ivoa:RealQuantity.";
+        axis3: ivoa:RealQuantity  @?   "Coordinate value along the third axis of the associated coordinate space, expressed as an ivoa:RealQuantity.";
   }
 
 abstract dtype TimeStamp  -> Coordinate "This is the abstract basis for a set of simple time domain coordinates which are expected to accommodate the vast majority of use cases. All TimeStamps, by definition, exist in a standard 1-D coordinate space, with domainMin|Max of +/-Infinity.  All TimeStamps MUST refer to an appropriate TimeSys.
@@ -156,8 +156,8 @@ abstract otype Axis  "The abstract parent class for all coordinate axis types.  
 
 otype ContinuousAxis  -> Axis "Axis description for continuous data.  This object describes the domain for a particular axis of the domain space.  It allows for the specification of the legal domain range (min,max), and a flag indicating if the axis is cyclic."
   {   
-        domainMin: ivoa:Quantity  @?   "Minimum extent of the axis domain space.  If not provided, the domain space is considered to have no lower bound (-INFINITY).";
-        domainMax: ivoa:Quantity  @?   "Maximum extent of the axis domain space.  If not provided, the domain space is considered to have no upper bound (+INFINITY).";
+        domainMin: ivoa:RealQuantity  @?   "Minimum extent of the axis domain space.  If not provided, the domain space is considered to have no lower bound (-INFINITY).";
+        domainMax: ivoa:RealQuantity  @?   "Maximum extent of the axis domain space.  If not provided, the domain space is considered to have no upper bound (+INFINITY).";
         cyclic: ivoa:boolean  @?   "Flag indicating if the axis is cyclic in nature.  If not provided, it is assumed to be FALSE.";
   }
 

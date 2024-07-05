@@ -46,7 +46,9 @@
     </xsl:variable>
 
   @jakarta.persistence.Entity
+  <xsl:if test="not($isRdbSingleInheritance) or ($isRdbSingleInheritance and not(extends))">
   @jakarta.persistence.Table( name = "<xsl:apply-templates select="." mode="tableName"/>" )
+  </xsl:if>
   <xsl:if test="@abstract or $hasChild" >
       <xsl:choose>
           <xsl:when test="$isRdbSingleInheritance">
@@ -93,8 +95,8 @@
   <xsl:template match="dataType" mode="JPAAnnotation">
     <xsl:text>@jakarta.persistence.Embeddable</xsl:text>&cr;
     <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
-    <xsl:if test="vf:hasSubTypes($vodml-ref) and count(vf:baseTypes($vodml-ref)) = 0"  >
-        <xsl:text>@jakarta.persistence.MappedSuperclass</xsl:text>&cr;<!-- this works for hibernate -->
+    <xsl:if test="vf:hasSubTypes($vodml-ref)"  >
+        <xsl:text>@jakarta.persistence.MappedSuperclass</xsl:text>&cr;<!-- this works for hibernate but seem to need at every level not just top in multi-level hierarchy-->
     </xsl:if>
 <!--    <xsl:if test="vf:hasSubTypes($vodml-ref) or count(vf:baseTypes($vodml-ref))>0">-->
 <!--      @org.eclipse.persistence.annotations.Customizer(<xsl:value-of select="vf:upperFirst(name)"/>.DescConv.class)-->
@@ -260,12 +262,15 @@
 
     <xsl:template match="dataType" mode="attrovercols" as="xsd:string*">
         <xsl:param name="prefix" as="xsd:string"/>
-<!--        <xsl:message>** attrovercolsD <xsl:value-of select="concat(name(),' ',name,' *** ',$prefix)"/></xsl:message>-->
-        <xsl:for-each select="(attribute, vf:baseTypes(vf:asvodmlref(current()))/attribute)"> <!-- this takes care of dataType inheritance -->
+<!--        <xsl:message>** attrovercolsD <xsl:value-of select="concat(name(),' ',name,' *** ',$prefix, ' refs=', string-join(vf:baseTypes(vf:asvodmlref(current()))/reference/name,','))"/></xsl:message>-->
+        <xsl:for-each select="(attribute, vf:baseTypes(vf:asvodmlref(current()))/attribute)"> <!-- this takes care of dataType inheritance should work https://hibernate.atlassian.net/browse/HHH-12790 -->
             <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
             <xsl:apply-templates select="$type" mode="attrovercols">
                 <xsl:with-param name="prefix" select="concat($prefix,'_',name)"/>
             </xsl:apply-templates>
+        </xsl:for-each>
+        <xsl:for-each select="(reference, vf:baseTypes(vf:asvodmlref(current()))/reference)">
+                <xsl:sequence select="concat($prefix,'_',name)"/>
         </xsl:for-each>
     </xsl:template>
 
@@ -303,6 +308,7 @@
                 </xsl:otherwise>
             </xsl:choose>
     </xsl:template>
+
 
 
   <xsl:template match="attribute|reference|composition" mode="nullable">
@@ -407,8 +413,6 @@
     <xsl:template match="composition[multiplicity/maxOccurs =1]" mode="JPAAnnotation">
      @jakarta.persistence.OneToOne(cascade = jakarta.persistence.CascadeType.ALL)
   </xsl:template>
-
-
 
 
 

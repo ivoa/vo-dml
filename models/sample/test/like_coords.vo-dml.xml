@@ -10,7 +10,7 @@
       <title></title>
       <author>Arnold Rots, Mark Cresitello-Dittmar, Omar Laurino</author>
       <version>1.0</version>
-      <lastModified>2024-07-02T10:42:56Z</lastModified>
+      <lastModified>2024-07-04T20:32:17Z</lastModified>
       <import>
         <name>null</name><!--should not be needed in modern vo-dml -->
         <url>IVOA-v1.0.vo-dml.xml</url>
@@ -170,16 +170,16 @@
             <dataType>
               <vodml-id>PhysicalCoordinate</vodml-id>
               <name>PhysicalCoordinate</name>
-              <description>The most common type of coordinate value.  This type is appropriate for any data whose values can be described by an ivoa:Quantity (numeric, with unit).</description>	    
+              <description>The most common type of coordinate value.  This type is appropriate for any data whose values can be described by an ivoa:RealQuantity (numeric, with unit).</description>	    
                <extends>
                   <vodml-ref>coords:Coordinate</vodml-ref>
                </extends>
             <attribute>
               <vodml-id>PhysicalCoordinate.cval</vodml-id>
               <name>cval</name>
-              <description>This coordinate MUST contain a value expressed as an ivoa:Quantity.</description>	    
+              <description>This coordinate MUST contain a value expressed as an ivoa:RealQuantity.</description>	    
               <datatype>
-                 <vodml-ref>ivoa:Quantity</vodml-ref>
+                 <vodml-ref>ivoa:RealQuantity</vodml-ref>
               </datatype>
               <multiplicity>
                 <minOccurs>1</minOccurs>
@@ -216,7 +216,7 @@
               <name>x</name>
               <description>The coordinate value along the 'X' axis.</description>	    
               <datatype>
-                 <vodml-ref>ivoa:Quantity</vodml-ref>
+                 <vodml-ref>ivoa:RealQuantity</vodml-ref>
               </datatype>
               <multiplicity>
                 <minOccurs>0</minOccurs>
@@ -228,7 +228,7 @@
               <name>y</name>
               <description>The coordinate value along the 'Y' axis.</description>	    
               <datatype>
-                 <vodml-ref>ivoa:Quantity</vodml-ref>
+                 <vodml-ref>ivoa:RealQuantity</vodml-ref>
               </datatype>
               <multiplicity>
                 <minOccurs>0</minOccurs>
@@ -240,7 +240,7 @@
               <name>z</name>
               <description>The coordinate value along the 'Z' axis.</description>	    
               <datatype>
-                 <vodml-ref>ivoa:Quantity</vodml-ref>
+                 <vodml-ref>ivoa:RealQuantity</vodml-ref>
               </datatype>
               <multiplicity>
                 <minOccurs>0</minOccurs>
@@ -259,9 +259,9 @@
             <attribute>
               <vodml-id>LonLatPoint.lon</vodml-id>
               <name>lon</name>
-              <description>The longitude of the Point, as a Quantity with angular units.</description>	    
+              <description>The longitude of the Point, as a RealQuantity with angular units.</description>	    
               <datatype>
-                 <vodml-ref>ivoa:Quantity</vodml-ref>
+                 <vodml-ref>ivoa:RealQuantity</vodml-ref>
               </datatype>
               <multiplicity>
                 <minOccurs>0</minOccurs>
@@ -271,9 +271,9 @@
             <attribute>
               <vodml-id>LonLatPoint.lat</vodml-id>
               <name>lat</name>
-              <description>The latitude of the Point, as a Quantity with angular units.</description>	    
+              <description>The latitude of the Point, as a RealQuantity with angular units.</description>	    
               <datatype>
-                 <vodml-ref>ivoa:Quantity</vodml-ref>
+                 <vodml-ref>ivoa:RealQuantity</vodml-ref>
               </datatype>
               <multiplicity>
                 <minOccurs>0</minOccurs>
@@ -285,7 +285,7 @@
               <name>dist</name>
               <description>The distance to the Point from the origin.</description>	    
               <datatype>
-                 <vodml-ref>ivoa:Quantity</vodml-ref>
+                 <vodml-ref>ivoa:RealQuantity</vodml-ref>
               </datatype>
               <multiplicity>
                 <minOccurs>0</minOccurs>
@@ -303,9 +303,9 @@
             <attribute>
               <vodml-id>GenericPoint.axis1</vodml-id>
               <name>axis1</name>
-              <description>Coordinate value along the first axis of the associated coordinate space, expressed as an ivoa:Quantity.</description>	    
+              <description>Coordinate value along the first axis of the associated coordinate space, expressed as an ivoa:RealQuantity.</description>	    
               <datatype>
-                 <vodml-ref>ivoa:Quantity</vodml-ref>
+                 <vodml-ref>ivoa:RealQuantity</vodml-ref>
               </datatype>
               <multiplicity>
                 <minOccurs>0</minOccurs>
@@ -315,9 +315,9 @@
             <attribute>
               <vodml-id>GenericPoint.axis2</vodml-id>
               <name>axis2</name>
-              <description>Coordinate value along the second axis of the associated coordinate space, expressed as an ivoa:Quantity.</description>	    
+              <description>Coordinate value along the second axis of the associated coordinate space, expressed as an ivoa:RealQuantity.</description>	    
               <datatype>
-                 <vodml-ref>ivoa:Quantity</vodml-ref>
+                 <vodml-ref>ivoa:RealQuantity</vodml-ref>
               </datatype>
               <multiplicity>
                 <minOccurs>0</minOccurs>
@@ -327,9 +327,9 @@
             <attribute>
               <vodml-id>GenericPoint.axis3</vodml-id>
               <name>axis3</name>
-              <description>Coordinate value along the third axis of the associated coordinate space, expressed as an ivoa:Quantity.</description>	    
+              <description>Coordinate value along the third axis of the associated coordinate space, expressed as an ivoa:RealQuantity.</description>	    
               <datatype>
-                 <vodml-ref>ivoa:Quantity</vodml-ref>
+                 <vodml-ref>ivoa:RealQuantity</vodml-ref>
               </datatype>
               <multiplicity>
                 <minOccurs>0</minOccurs>
@@ -605,7 +605,7 @@
                  <name>domainMin</name>
                  <description>Minimum extent of the axis domain space.  If not provided, the domain space is considered to have no lower bound (-INFINITY).</description>	    
                  <datatype>
-                    <vodml-ref>ivoa:Quantity</vodml-ref>
+                    <vodml-ref>ivoa:RealQuantity</vodml-ref>
                  </datatype>
                  <multiplicity>
                    <minOccurs>0</minOccurs>
@@ -617,7 +617,7 @@
                  <name>domainMax</name>
                  <description>Maximum extent of the axis domain space.  If not provided, the domain space is considered to have no upper bound (+INFINITY).</description>	    
                  <datatype>
-                    <vodml-ref>ivoa:Quantity</vodml-ref>
+                    <vodml-ref>ivoa:RealQuantity</vodml-ref>
                  </datatype>
                  <multiplicity>
                    <minOccurs>0</minOccurs>
