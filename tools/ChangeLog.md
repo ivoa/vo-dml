@@ -44,3 +44,7 @@
         * *vodsl breaking change* - model can have a title - title is now a keyword and needs to be escaped with caret if you want to use "title" as an attribute name for instance
         * ability to specify the ucd
         * *java breaking change* generated java code will have constructor arguments in vodsl order - this is a good thing ultimately!
+* 0.5.3 
+  * support aggregation of references - by a join table  
+  * improve mkdocs site generation
+  * fix Java bug where dtype hierarchies not having all members saved as embeddable in database.
