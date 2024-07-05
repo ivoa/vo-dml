@@ -489,7 +489,7 @@
             </xsl:choose>
         </xsl:variable>
         <xsl:variable name="t" select="$models/key('ellookup',$m/datatype/vodml-ref)"/>
-        <xsl:if test="vf:isContained($m/datatype/vodml-ref) and vf:referredTo($m/datatype/vodml-ref)" >
+        <xsl:if test="$m/name() = 'composition' and vf:referredTo($m/datatype/vodml-ref)" >
             // contained reference
         </xsl:if>
         <xsl:choose>
@@ -508,6 +508,9 @@
                     <xsl:when test="name($t) = 'enumeration'">
                         <xsl:text>s</xsl:text> <!-- this is just an identity - probably better to do something different at higher level -->
                     </xsl:when>
+                    <xsl:when test="name($m) = 'reference'">
+                        <xsl:text>s</xsl:text> <!-- just identity -->
+                    </xsl:when>
                     <xsl:when test="count($subsets/role[vodml-ref = current()])>0 ">
                         <xsl:value-of select="concat('((',$jt,')s).copyMe()' )"/>
                     </xsl:when>
@@ -522,7 +525,7 @@
                 </xsl:variable>
 
                 <xsl:choose>
-                    <xsl:when test="vf:isContainedReference($m/datatype/vodml-ref)">
+                    <xsl:when test="$m/name() = 'composition' and vf:referredTo($m/datatype/vodml-ref)">
                         <!-- FIXME this is probably not the right place to do this - better to do it in the clone of the type itself -->
                         <xsl:value-of select="concat('var cache = org.ivoa.vodml.ModelContext.current().cache(',$jt,'.class)')"/>;
                         <xsl:value-of select="concat('var cloned = ',$assn)"/>;
