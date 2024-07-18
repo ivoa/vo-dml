@@ -31,17 +31,27 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             <xsl:otherwise><xsl:value-of select="/vo-dml:model/name"  /></xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
-    <xsl:param name="modelsToDocument" select="$modname"/>
+    <xsl:param name="modelsToDocument"/>
     <xsl:param name="autoGenDirName" select="'generated'"/>
 
-    <xsl:variable name="docmods" as="xsd:string*">
-        <xsl:sequence select="tokenize($modelsToDocument,',')"/>
-    </xsl:variable>
+
 
     <xsl:variable name="thisModelName" select="/vo-dml:model/name"/>
 
 
   <xsl:include href="binding_setup.xsl"/>
+    <xsl:variable name="docmods" as="xsd:string*">
+        <xsl:choose>
+            <xsl:when test="$modelsToDocument">
+                <xsl:sequence select="tokenize($modelsToDocument,',')"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="$mapping/bnd:mappedModels/model/name"/>
+            </xsl:otherwise>
+        </xsl:choose>
+
+
+    </xsl:variable>
   
 
   <xsl:template match="/">
