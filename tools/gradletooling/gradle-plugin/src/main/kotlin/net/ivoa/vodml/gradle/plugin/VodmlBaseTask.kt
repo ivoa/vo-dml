@@ -83,6 +83,12 @@ class ExternalModelHelper constructor (private val project: Project, private val
             ao.zipTree(f).matching(org.gradle.api.tasks.util.PatternSet().include(bindingFileName(f))).files
         }
     }
+    fun externalModelFiles(): List<File> {
+        return externalModelJars.flatMap {f ->
+            ao.zipTree(f).matching(org.gradle.api.tasks.util.PatternSet().include(vodmlFileName(f))).files
+
+        }
+    }
     private val hasVodml = fun (f: File): Boolean {
         val js = JarInputStream(f.inputStream())
         return (js.manifest.mainAttributes.getValue("VODML-binding") ) != null //IMPL because of weird map of maps no contains

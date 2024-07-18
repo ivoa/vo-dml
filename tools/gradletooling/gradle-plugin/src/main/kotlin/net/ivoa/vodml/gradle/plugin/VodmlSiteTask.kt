@@ -1,6 +1,8 @@
 package net.ivoa.vodml.gradle.plugin
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
@@ -34,8 +36,9 @@ import javax.inject.Inject
          val eh = ExternalModelHelper(project, ao, logger)
          val actualCatalog = eh.makeCatalog(vodmlFiles,catalogFile)
          val allBinding = bindingFiles.files.plus(eh.externalBinding())
+         val allVodml = vodmlFiles.files.plus(eh.externalModelFiles())
 
-         vodmlFiles.forEach{
+         allVodml.forEach{
              val shortname = it.nameWithoutExtension
              logger.info("doing graphviz generation")
              var outfile = docDir.file(shortname +".gvd")
@@ -81,6 +84,18 @@ import javax.inject.Inject
              val json = mapper.readTree(infile)
              allnav.add(json)
          }
+         val importnode:ObjectNode = mapper.createObjectNode()
+         allnav.add(importnode)
+         var imported = importnode.putArray("Imported Models")
+
+
+         eh.externalModelFiles().forEach {
+             val shortname = it.nameWithoutExtension
+             val infile =  docDir.file("${shortname}_nav.json").get().asFile
+             val json = mapper.readTree(infile)
+             imported.add(json)
+         }
+
          val outmapper = ObjectMapper(YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER))
          outmapper.writeValue(docDir.file("allnav.yml").get().asFile, allnav)
 
