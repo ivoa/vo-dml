@@ -538,14 +538,31 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
         <xsl:value-of select="concat('{',$dq,$vodml-id[2],$dq,' : ',$dq,$autoGenDirName,'/',$vodml-id[1],'/',$vodml-id[2],'.md',$dq,'}')"/>
     </xsl:template>
 
+    <xsl:template name="tooltip">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="type" select="$models/key('ellookup',$vodml-ref)"/>
+        <xsl:choose>
+            <xsl:when test="name($type) = 'primitiveType'">
+                <xsl:value-of select="concat(name($type),' ',$type/name,' - ',$type/description)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="name($type)"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
 
     <xsl:function name="vf:doLink" >
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:choose>
             <xsl:when test="substring-before($vodml-ref,':') = $docmods">
+                <xsl:variable name="tooltip">
+                    <xsl:call-template name="tooltip">
+                        <xsl:with-param name="vodml-ref" select="$vodml-ref"/>
+                    </xsl:call-template>
+                </xsl:variable>
                 <xsl:choose>
                     <xsl:when test="substring-before($vodml-ref,':')= $thisModelName">
-                        <xsl:value-of select="concat('[',substring-after($vodml-ref,':'),'](',substring-after($vodml-ref,':'),'.md)')"/>
+                        <xsl:value-of select="concat('[',substring-after($vodml-ref,':'),'](',substring-after($vodml-ref,':'),'.md ',$dq,$tooltip,$dq,')')"/>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:value-of select="concat('[',$vodml-ref,'](../',substring-before($vodml-ref,':'),'/',substring-after($vodml-ref,':'),'.md)')"/>
