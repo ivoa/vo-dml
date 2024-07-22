@@ -8,13 +8,13 @@ plugins {
     `java-gradle-plugin`
 
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    id("org.jetbrains.kotlin.jvm") version "1.8.22"
+    id("org.jetbrains.kotlin.jvm") version "1.9.23"
     `maven-publish`
     id("com.gradle.plugin-publish") version "1.1.0"
 }
 
 group = "net.ivoa.vo-dml"
-version = "0.5.3"
+version = "0.5.4"
 
 repositories {
     mavenLocal() // FIXME remove this when releasing - just here to pick up local vodsl updates

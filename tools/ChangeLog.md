@@ -48,3 +48,7 @@
   * support aggregation of references - by a join table  
   * improve mkdocs site generation
   * fix Java bug where dtype hierarchies not having all members saved as embeddable in database.
+* 0.5.4
+  * add imported models to the generated site documentation
+  * add link hover tips to the site docs
+  * add multiplicities to site diagrams (but not working in Safari on MacOS - see https://github.com/ivoa/vo-dml/issues/52)
