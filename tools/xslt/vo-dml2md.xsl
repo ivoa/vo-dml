@@ -447,7 +447,6 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
         <xsl:text>constraint  </xsl:text><xsl:apply-templates select="description"/>
     </xsl:template>
 
-
     <xsl:template match="multiplicity">
         <xsl:choose>
             <xsl:when test="number(minOccurs) eq 1 and number(maxOccurs) eq 1"><!-- do nothing --></xsl:when>
@@ -503,7 +502,7 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
         <xsl:variable name="thisClass" select="current()/name"/>
         <xsl:if test="reference">
             <xsl:for-each select="reference">
-                <xsl:value-of select="concat($thisClass,' --',$gt,' ',vf:nameFromVodmlref(current()/datatype/vodml-ref),' : ',current()/name,$nl)"/>
+                <xsl:value-of select="concat($thisClass,' --',$gt,' ',vf:multiplicityForDiagram(current()/multiplicity),' ',vf:nameFromVodmlref(current()/datatype/vodml-ref),' : ',current()/name,$nl)"/>
             </xsl:for-each>
         </xsl:if>
     </xsl:template>
@@ -511,7 +510,8 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
         <xsl:variable name="thisClass" select="current()/name"/>
         <xsl:if test="composition">
             <xsl:for-each select="composition">
-                <xsl:value-of select="concat($thisClass,' *-- ',vf:nameFromVodmlref(current()/datatype/vodml-ref),' : ',current()/name,$nl)"/>
+
+                <xsl:value-of select="concat($thisClass,' *-- ',vf:multiplicityForDiagram(current()/multiplicity),' ',vf:nameFromVodmlref(current()/datatype/vodml-ref),' : ',current()/name,$nl)"/>
             </xsl:for-each>
         </xsl:if>
     </xsl:template>
@@ -565,7 +565,7 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
                         <xsl:value-of select="concat('[',substring-after($vodml-ref,':'),'](',substring-after($vodml-ref,':'),'.md ',$dq,$tooltip,$dq,')')"/>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="concat('[',$vodml-ref,'](../',substring-before($vodml-ref,':'),'/',substring-after($vodml-ref,':'),'.md)')"/>
+                        <xsl:value-of select="concat('[',$vodml-ref,'](../',substring-before($vodml-ref,':'),'/',substring-after($vodml-ref,':'),'.md ',$dq,$tooltip,$dq,')')"/>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
@@ -593,4 +593,21 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
         </xsl:choose>
     </xsl:function>
 
+    <xsl:function name="vf:multiplicityForDiagram" as="xsd:string*">
+        <xsl:param name="m" as="element()"/>
+        <xsl:variable name="r">
+        <xsl:choose>
+            <xsl:when test="not($m/minOccurs) and not($m/maxOccurs)">1</xsl:when>
+            <xsl:when test="number($m/minOccurs) eq 1 and number($m/maxOccurs) eq 1">1</xsl:when>
+            <xsl:when test="number($m/minOccurs) eq 0 and (number($m/maxOccurs) eq 1 or not($m/maxOccurs))">0..1</xsl:when>
+            <xsl:when test="number($m/minOccurs) eq 0 and number($m/maxOccurs) lt 1">0..*</xsl:when>
+            <xsl:when test="(not($m/minOccurs) or number($m/minOccurs) eq 1) and number($m/maxOccurs) lt 1">1..*</xsl:when>
+            <xsl:when test="not($m/minOccurs) and $m/maxOccurs"><xsl:value-of select="concat('1..', $m/maxOccurs)"/></xsl:when>
+            <xsl:when test="not($m/maxOccurs) and $m/minOccurs"><xsl:value-of select="concat($m/maxOccurs,'..', $m/maxOccurs)"/></xsl:when>
+            <xsl:otherwise><xsl:value-of select="concat($m/minOccurs,'..', $m/maxOccurs)"/></xsl:otherwise>
+        </xsl:choose>
+        </xsl:variable>
+        <xsl:sequence select="concat($dq,$r,$dq)"/>
+
+    </xsl:function>
 </xsl:stylesheet>
