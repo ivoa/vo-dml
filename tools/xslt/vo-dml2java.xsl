@@ -1190,10 +1190,11 @@ package <xsl:value-of select="$path"/>;
     </xsl:template>
 
     <xsl:template match="(composition[multiplicity/maxOccurs != 1]|reference[multiplicity/maxOccurs != 1])" mode="jpawalker">
+       if( <xsl:value-of select="vf:javaMemberName(name)"/> != null ) {
         for( <xsl:value-of select="vf:FullJavaType(datatype/vodml-ref, true())"/> c : <xsl:value-of select="vf:javaMemberName(name)"/> ) {
            c.forceLoad();
         }
-
+       }
     </xsl:template>
     <xsl:template match="composition|reference" mode="jpawalker">
         if( <xsl:value-of select="vf:javaMemberName(name)"/> != null ) <xsl:value-of select="vf:javaMemberName(name)"/>.forceLoad();
