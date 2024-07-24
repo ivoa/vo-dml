@@ -59,6 +59,17 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
                  <xsd:documentation>The size of the discrimator column</xsd:documentation>
               </xsd:annotation>
            </xsd:attribute>
+           <xsd:attribute name="fetching" use="optional" default="lazy">
+            <xsd:annotation>
+               <xsd:documentation>whether child objects from the database are fetched at initial query time or only on use</xsd:documentation>
+            </xsd:annotation>
+              <xsd:simpleType>
+                 <xsd:restriction base="xsd:string">
+                   <xsd:enumeration value="lazy"></xsd:enumeration>
+                   <xsd:enumeration value="eager"></xsd:enumeration>
+                 </xsd:restriction>
+              </xsd:simpleType>
+           </xsd:attribute>
         </xsd:complexType>
      </xsd:element>
      <xsd:element name="type-mapping" type="TypeMapping" minOccurs="0" maxOccurs="unbounded">
@@ -226,4 +237,6 @@ IMPL - this could be put into the code - especially as the number of JSON built-
         </xsd:extension>
      </xsd:simpleContent>
   </xsd:complexType>
+
+ 
 </xsd:schema>

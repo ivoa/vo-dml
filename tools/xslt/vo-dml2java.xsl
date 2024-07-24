@@ -30,7 +30,7 @@
 
   <xsl:include href="jaxb.xsl"/>
   <xsl:include href="jpa.xsl"/>
- 
+
  
 
   <xsl:output method="text" encoding="UTF-8" indent="yes" />
@@ -52,6 +52,19 @@
     <xsl:param name="isMain"/>
   <xsl:include href="binding_setup.xsl"/>
 
+  <xsl:variable name="jpafetch">
+      <xsl:choose>
+          <xsl:when test="$mapping/bnd:mappedModels/model[name=$themodelname]/rdb/@fetching = 'eager'">
+              <xsl:message>doing eager fetching</xsl:message>
+              <xsl:sequence select="'jakarta.persistence.FetchType.EAGER'"/>
+          </xsl:when>
+          <xsl:otherwise>
+              <xsl:message>doing lazy fetching</xsl:message>
+            <xsl:sequence select="'jakarta.persistence.FetchType.LAZY'"/>
+          </xsl:otherwise>
+      </xsl:choose>
+  </xsl:variable>
+
   <!-- main pattern : processes for root node model -->
   <xsl:template match="/">
   <xsl:message >Generating Java - considering models <xsl:value-of select="string-join($models/vo-dml:model/name,' and ')" /></xsl:message>
@@ -64,6 +77,7 @@
 -------------------------------------------------------------------------------------------------------
 -- Generating Java code for model <xsl:value-of select="name"/> [<xsl:value-of select="title"/>].
 -- last modification date of the model <xsl:value-of select="lastModified"/>
+        fetch=<xsl:value-of select="$mapping/bnd:mappedModels/model[name=$themodelname]/rdb/@fetching"/>
 -------------------------------------------------------------------------------------------------------
     </xsl:message>
 
@@ -1182,7 +1196,7 @@ package <xsl:value-of select="$path"/>;
 
     @Override
     public void forceLoad() {
-    <xsl:apply-templates select="composition|reference" mode="jpawalker"/>
+    <xsl:apply-templates select="composition|reference" mode="jpawalker"/><!-- IMPL dtypes can have references which might contain compositions - requires looking in all attributes - assume that top level will do that -->
        <xsl:if test="extends">
        super.forceLoad();
        </xsl:if>
@@ -1202,7 +1216,10 @@ package <xsl:value-of select="$path"/>;
     <xsl:template match="dataType" mode="jpawalker">
         @Override
         public void forceLoad() {
-        <!-- do nothing for datatypes - they cannot contain compositions...-->
+        <xsl:apply-templates select="reference" mode="jpawalker"/><!-- IMPL dtypes can have references which might contain compositions  -->
+        <xsl:if test="extends">
+            super.forceLoad();
+        </xsl:if>
         }
     </xsl:template>
 
