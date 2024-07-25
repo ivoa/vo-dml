@@ -230,9 +230,11 @@
     @JsonTypeInfo(include=JsonTypeInfo.As.WRAPPER_OBJECT, use=JsonTypeInfo.Id.NAME)
     @JsonIgnoreProperties({"refmap"})
     @VoDml(id="<xsl:value-of select="name"/>" ,role = VodmlRole.model, type="<xsl:value-of select="name"/>")
-    public class <xsl:value-of select="$ModelClass"/> implements VodmlModel&lt;<xsl:value-of select="$ModelClass"/>&gt; {
+    /** The container class for the <xsl:value-of select="name"/> Model. */
+        public class <xsl:value-of select="$ModelClass"/> implements VodmlModel&lt;<xsl:value-of select="$ModelClass"/>&gt; {
 
     @XmlType
+    /** A container class for the references in the model. */
     public static class References {
     <xsl:for-each select="$references-vodmlref"> <!-- looking at all possible refs -->
         @XmlElement(name="<xsl:value-of select='vf:lowerFirst(vf:jaxbType(current()))'/>")
@@ -268,14 +270,21 @@
     private List&lt;Object&gt; content  = new ArrayList&lt;&gt;();
       <xsl:for-each select="$contentTypes">
 <!--         <xsl:message>ref in hierarchy <xsl:value-of select="vf:asvodmlref(.)"/> refs= <xsl:value-of select="vf:referenceTypesInContainmentHierarchy(vf:asvodmlref(.))"/>  </xsl:message>-->
-      public void addContent( final <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/> c)
+      /**
+      * add <xsl:value-of select="current()/name"/> to model.
+      * @param c  <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/>
+          */
+          public void addContent( final <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/> c)
       {
       content.add(c);
       <xsl:if test="$hasReferences">
           org.ivoa.vodml.nav.Util.findReferences(c, refmap);
       </xsl:if>
       }
-
+          /**
+          * remove <xsl:value-of select="current()/name"/> from model.
+          *  @param c  <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/>
+          */
       public void deleteContent( final <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/> c)
       {
       content.remove(c);
@@ -326,6 +335,7 @@
       </xsl:variable>
          return JAXBContext.newInstance("<xsl:value-of select="string-join($packages,':')"/>" );
       }
+        /** The persistence unit name for the model. */
        public static String pu_name(){
         return "<xsl:value-of select='$pu_name'/>";
         }
@@ -352,24 +362,44 @@
         @Override
         public ModelManagement&lt;<xsl:value-of select="$ModelClass"/>&gt; management() {return new ModelManagement&lt;<xsl:value-of select="$ModelClass"/>&gt;()
         {
+        /**
+        * {@inheritDoc}
+        */
         @Override
         public String pu_name() {return <xsl:value-of select="$ModelClass"/>.pu_name();}
-
+        /**
+        * {@inheritDoc}
+        */
         @Override
         public void writeXMLSchema() { <xsl:value-of select="$ModelClass"/>.writeXMLSchema();}
 
+        /**
+        * {@inheritDoc}
+        */
         @Override
         public JAXBContext contextFactory() throws JAXBException {  return <xsl:value-of select="$ModelClass"/>.contextFactory();}
 
+        /**
+        * {@inheritDoc}
+        */
         @Override
         public boolean hasReferences() { return <xsl:value-of select="$ModelClass"/>.hasReferences();}
 
+        /**
+        * {@inheritDoc}
+        */
         @Override
         public ObjectMapper jsonMapper() { return <xsl:value-of select="$ModelClass"/>.jsonMapper();}
 
+        /**
+        * {@inheritDoc}
+        */
         @Override
         public <xsl:value-of select="$ModelClass"/> theModel() { return <xsl:value-of select="$ModelClass"/>.this;}
 
+        /**
+        * {@inheritDoc}
+        */
         @Override
         public List&lt;Object&gt; getContent() {
         return content;

@@ -386,7 +386,10 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:variable>
-
+            /**
+            * make a clone of the object taking into account current polymorhic type.
+            * @return the cloned object.
+            */
             <xsl:if test="@abstract">abstract </xsl:if><xsl:value-of select="concat( 'public ', $toptype, ' copyMe()')"/><xsl:if test="@abstract">;</xsl:if>
             <xsl:if test="not(@abstract)">
                 {
@@ -1004,7 +1007,7 @@ package <xsl:value-of select="$path"/>;
             </xsl:choose>
         </xsl:variable>
         /**
-        * Returns <xsl:value-of select="$name"/> Attribute
+        * Returns <xsl:value-of select="$name"/> Attribute.
         * @return <xsl:value-of select="$name"/> Attribute
         */
         <xsl:if test="$mult/maxOccurs != 1">@SuppressWarnings("unchecked")</xsl:if><!--the cast should be ok even for the list-->
@@ -1014,14 +1017,18 @@ package <xsl:value-of select="$path"/>;
         <!-- cannot need to rely on most generic set if list of subsetted type, because of type erasure - IMPL might be able to do something clever with type argument on the base class, but gets tricky if there is more than one level of subclassing -->
         <xsl:if test="not(parent::*/extends and current()[ends-with(@xsi:type,':SubsettedRole')] and $mult/maxOccurs != 1)">
         /**
-        * Defines <xsl:value-of select="$name"/> Attribute
+        * Set <xsl:value-of select="$name"/> Attribute.
         * @param p<xsl:value-of select="$upName"/> value to set
         */
         public void set<xsl:value-of select="$upName"/>(final <xsl:value-of select="$fulltype"/> p<xsl:value-of select="$upName"/>) {
         this.<xsl:value-of select="vf:javaMemberName($name)"/> = p<xsl:value-of select="$upName"/>;
         }
         </xsl:if>
-
+        /**
+        * fluent setter for <xsl:value-of select="$name"/> Attribute.
+        * @param p<xsl:value-of select="$upName"/> value to set
+        * @return <xsl:value-of select="current()/parent::*/name"/>
+        */
         public <xsl:value-of select="vf:JavaType(vf:asvodmlref(parent::*))"/>&bl;with<xsl:value-of select="$upName"/>(final <xsl:value-of select="$fulltype"/> p<xsl:value-of select="$upName"/>) {
         this.<xsl:value-of select="vf:javaMemberName($name)"/> = p<xsl:value-of select="$upName"/>;
         return this;
@@ -1555,6 +1562,10 @@ package <xsl:value-of select="$path"/>;
 @jakarta.xml.bind.annotation.XmlSchema(namespace = "<xsl:value-of select="normalize-space($ns)"/>",elementFormDefault=XmlNsForm.UNQUALIFIED, xmlns = {
 @jakarta.xml.bind.annotation.XmlNs(namespaceURI = "<xsl:value-of select="normalize-space($ns)"/>", prefix = "<xsl:value-of select="$ns/@prefix"/>")
   })
+/**
+* package <xsl:value-of select="name"/>.
+*   <xsl:apply-templates select="." mode="desc" />
+*/
 package <xsl:value-of select="$path"/>;
 import jakarta.xml.bind.annotation.XmlNsForm;
       </xsl:result-document>
