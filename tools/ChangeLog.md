@@ -52,3 +52,5 @@
   * add imported models to the generated site documentation
   * add link hover tips to the site docs
   * add multiplicities to site diagrams (but not working in Safari on MacOS - see https://github.com/ivoa/vo-dml/issues/52)
+* 0.5.5
+  *  allow binding to specify eager fetching for JPA
