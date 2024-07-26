@@ -2,13 +2,13 @@
 <vo-dml:model xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1" 
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.ivoa.net/xml/VODML/v1 https://www.ivoa.net/xml/VODML/vo-dml-v1.xsd" 
-              vodmlVersion="1.1">	<!-- file generated from VODSL - needs validatate against v1.1 of schema  --> 
+              vodmlVersion="1.1">	<!-- file generated from VODSL - needs validatation against v1.1 of schema  --> 
       <name>jpatest</name>
       <description>This is a small model to test some jpa features</description> 
       <uri/>
       <title></title>
       <version>1.0</version>
-      <lastModified>2023-12-19T15:16:26Z</lastModified>
+      <lastModified>2024-07-05T10:52:23Z</lastModified>
       <import>
         <name>null</name><!--should not be needed in modern vo-dml -->
         <url>IVOA-v1.0.vo-dml.xml</url>
@@ -29,10 +29,62 @@
                     <description></description>	    
                   </literal>	
             </enumeration>
+            <dataType abstract="true">
+              <vodml-id>Base</vodml-id>
+              <name>Base</name>
+              <description>base</description>	    
+            <attribute>
+              <vodml-id>Base.basestr</vodml-id>
+              <name>basestr</name>
+              <description></description>	    
+              <datatype>
+                 <vodml-ref>ivoa:string</vodml-ref>
+              </datatype>
+              <multiplicity>
+                <minOccurs>1</minOccurs>
+                <maxOccurs>1</maxOccurs>
+              </multiplicity>
+            </attribute>
+            <reference>
+              <vodml-id>Base.dref</vodml-id>
+              <name>dref</name>
+              <description></description>	    
+              <datatype>
+                <vodml-ref>jpatest:ReferredTo3</vodml-ref>
+              </datatype>
+              <multiplicity>
+                <minOccurs>1</minOccurs>
+                <maxOccurs>1</maxOccurs>
+              </multiplicity>
+            </reference>
+            </dataType>
+            <dataType abstract="true">
+              <vodml-id>Intermediate</vodml-id>
+              <name>Intermediate</name>
+              <description></description>	    
+               <extends>
+                  <vodml-ref>jpatest:Base</vodml-ref>
+               </extends>
+            <attribute>
+              <vodml-id>Intermediate.intatt</vodml-id>
+              <name>intatt</name>
+              <description></description>	    
+              <datatype>
+                 <vodml-ref>ivoa:string</vodml-ref>
+              </datatype>
+              <multiplicity>
+                <minOccurs>1</minOccurs>
+                <maxOccurs>1</maxOccurs>
+              </multiplicity>
+            </attribute>
+            </dataType>
             <dataType>
               <vodml-id>ADtype</vodml-id>
               <name>ADtype</name>
               <description>dtype</description>	    
+               <extends>
+                  <vodml-ref>jpatest:Intermediate</vodml-ref>
+               </extends>
             <attribute>
               <vodml-id>ADtype.dvalr</vodml-id>
               <name>dvalr</name>
@@ -57,18 +109,6 @@
                 <maxOccurs>1</maxOccurs>
               </multiplicity>
             </attribute>
-               <reference>
-                 <vodml-id>ADtype.dref</vodml-id>
-                 <name>dref</name>
-                 <description></description>	    
-                 <datatype>
-                   <vodml-ref>jpatest:ReferredTo3</vodml-ref>
-                 </datatype>
-                 <multiplicity>
-                   <minOccurs>1</minOccurs>
-                   <maxOccurs>1</maxOccurs>
-                 </multiplicity>
-               </reference>
             </dataType>
             <objectType>
                <vodml-id>ReferredTo1</vodml-id>
@@ -183,6 +223,18 @@
                    <maxOccurs>1</maxOccurs>
                  </multiplicity>
                </attribute>
+               <reference>
+                 <vodml-id>Parent.rval</vodml-id>
+                 <name>rval</name>
+                 <description></description>	    
+                 <datatype>
+                   <vodml-ref>jpatest:ReferredTo1</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </reference>
                <composition>
                  <vodml-id>Parent.cval</vodml-id>
                  <name>cval</name>
@@ -208,17 +260,5 @@
                  </multiplicity>
                  <isOrdered>true</isOrdered>
                </composition>
-               <reference>
-                 <vodml-id>Parent.rval</vodml-id>
-                 <name>rval</name>
-                 <description></description>	    
-                 <datatype>
-                   <vodml-ref>jpatest:ReferredTo1</vodml-ref>
-                 </datatype>
-                 <multiplicity>
-                   <minOccurs>1</minOccurs>
-                   <maxOccurs>1</maxOccurs>
-                 </multiplicity>
-               </reference>
             </objectType>
 </vo-dml:model>

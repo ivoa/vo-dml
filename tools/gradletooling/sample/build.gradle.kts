@@ -6,9 +6,9 @@ import ru.vyarus.gradle.plugin.python.task.PythonTask
  * 
  */
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.5.0"
+    id("net.ivoa.vo-dml.vodmltools") version "0.5.5"
     id("com.diffplug.spotless") version "6.25.0"
-    id("ru.vyarus.use-python") version "3.0.0"
+    id("ru.vyarus.use-python") version "4.0.0"
 
 }
 
@@ -45,7 +45,6 @@ vodml {
     outputSiteDir.set(outputDocDir.dir("generated"))
     outputSchemaDir.set(outputDocDir.dir("schema"))
     vodslDir.set(vodmlDir) // same place for source models
-    modelsToDocument.set("sample,filter,coords,jpatest,lifecycleTest")
     outputPythonDir.set(layout.projectDirectory.dir("pythontest/generated"))
 }
 
@@ -61,16 +60,26 @@ tasks.register("UmlToVodml", net.ivoa.vodml.gradle.plugin.XmiTask::class.java) {
 }
 
 
-//FIXME spotless not working in composite project build - possibly https://github.com/diffplug/spotless/issues/860
-// use to reformat the generated code nicely.
-//spotless {
-//    java {
-//        target(vodml.outputJavaDir.asFileTree.matching(
-//            PatternSet().include("**/*.java")
-//        ))
-//        googleJavaFormat("1.12.0")
-//    }
-//}
+//TODO integrate this into the main vodml plugin https://github.com/ivoa/vo-dml/issues/53
+// use Spotless to reformat the generated code nicely.
+spotless {
+    java {
+        target(vodml.outputJavaDir.asFileTree.matching(
+            PatternSet().include("**/*.java")
+        ))
+        googleJavaFormat("1.12.0")
+    }
+}
+
+tasks.named("spotlessJava") {
+    dependsOn("vodmlJavaGenerate")
+}
+
+tasks.named(JavaPlugin.COMPILE_JAVA_TASK_NAME) {
+    dependsOn("spotlessApply")
+}
+// end of spotless config
+
 
 tasks.test {
     useJUnitPlatform()
@@ -87,7 +96,6 @@ dependencies {
     testImplementation("com.h2database:h2:2.1.214") // try out h2
 //    testImplementation("org.apache.derby:derby:10.14.2.0")
     compileOnly("com.google.googlejavaformat:google-java-format:1.22.0")
-
 }
 
 python {
@@ -100,9 +108,9 @@ python {
     )
 
    pip("pytest:7.3.1")
-   pip("SQLAlchemy:2.0.25")
-    pip("xsdata[lxml,cli]:24.1")
-    pip("pydantic:1.10.9")
+   pip("SQLAlchemy:2.0.30")
+    pip("xsdata[lxml,cli]:24.5")
+    pip("pydantic:2.7.1")
 }
 
 
@@ -127,22 +135,7 @@ dependsOn("vodmlJavaGenerate")
     }
 }
 
-//TODO
-configure<com.diffplug.gradle.spotless.SpotlessExtension> {
-    // optional: limit format enforcement to just the files changed by this feature branch
-   // ratchetFrom 'origin/main'
 
-
-    java {
-        // don't need to set target, it is inferred from java
-        target("build/generated/sources/vodml/java/**/*.java")
-        // apply a specific flavor of google-java-format
-        googleJavaFormat("1.22.0").reflowLongStrings().skipJavadocFormatting()
-        // fix formatting of type annotations
-        formatAnnotations()
-
-    }
-}
 
 tasks.register("pytest", PythonTask::class.java) {
     command = "pythontest/src/SourceCatalogueTest.py"

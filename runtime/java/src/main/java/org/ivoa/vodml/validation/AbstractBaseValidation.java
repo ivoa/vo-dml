@@ -42,6 +42,10 @@ import org.ivoa.vodml.validation.ModelValidator.ValidationResult;
 public abstract class AbstractBaseValidation {
     protected  <T> RoundTripResult<T> roundTripJSON(VodmlModel<T> m) throws JsonProcessingException {
         T model = m.management().theModel();
+        if(m.management().hasReferences())
+        {
+           m.processReferences();
+        }
         @SuppressWarnings("unchecked")
         Class<T> clazz =  (Class<T>) model.getClass();
         ObjectMapper mapper = m.management().jsonMapper();
@@ -161,9 +165,6 @@ public abstract class AbstractBaseValidation {
         props.put("jakarta.persistence.schema-generation.scripts.action", "drop-and-create");
         props.put("jakarta.persistence.jdbc.user", "");
         //        props.put(PersistenceUnitProperties.CACHE_SHARED_, "false");
-
-        // Configure logging. FINE ensures all SQL is shown
-        //props.put(PersistenceUnitProperties.LOGGING_LEVEL, "FINEST");
 
 
         jakarta.persistence.EntityManagerFactory emf = jakarta.persistence.Persistence.createEntityManagerFactory(puname, props);

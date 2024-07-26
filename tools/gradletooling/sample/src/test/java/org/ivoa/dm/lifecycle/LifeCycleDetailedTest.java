@@ -54,7 +54,7 @@ public class LifeCycleDetailedTest extends AbstractTest {
               a.contained = contained;
               a.refandcontained = refcont;
             });
-    atest2 = new ATest2(atest, referredTo, refcont.get(0));
+    atest2 = new ATest2(Arrays.asList(referredTo), atest, refcont.get(0));
     atest3 =
         new ATest3(
             contained, refcont.get(0)); // TODO this will create contradictions.... how best to test
@@ -98,22 +98,26 @@ public class LifeCycleDetailedTest extends AbstractTest {
 
   @Test
   void copyTest() {
+   
     model.createContext();
     ATest atestprime = new ATest(atest);
-    atest.ref1.test1 = 4;
+    atest.ref1.test1 = 4; //change the original
     assertEquals(4, atestprime.ref1.test1); // the reference should have changed
+    
+    //now just change one of the contained
     atest.contained.get(0).test2 = "changed";
     assertEquals(
         "firstcontained",
         atestprime.contained.get(0)
-            .test2); // new objects created for the contained so changing original
-    // should not affect the prime
+            .test2); // new objects created for the contained so changing original should not affect the prime
 
+    //now clone something with "contained" references
     ATest2 atest2prime = new ATest2(atest2);
 
     atest2.atest.refandcontained.get(0).test3 = "changed2";
     assertEquals("changed2", atest2.refcont.test3); // this is in atest3
-
+    
+    //TODO this API feels unnatural...
     atest2prime.updateClonedReferences();
     assertEquals(
         "rc1",

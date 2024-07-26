@@ -498,29 +498,29 @@ TBD continue based on VO-DML specification document.
     </xsd:annotation>
     <xsd:complexContent>
       <xsd:extension base="Type">
-        <xsd:sequence>
-          <xsd:element name="attribute" type="Attribute" minOccurs="0" maxOccurs="unbounded">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+          <xsd:element name="attribute" type="Attribute" minOccurs="1" maxOccurs="1">
             <xsd:annotation>
               <xsd:documentation>
                 TODO
               </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
-            <xsd:element name="composition" type="Composition" minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="composition" type="Composition" minOccurs="1" maxOccurs="1">
             <xsd:annotation>
               <xsd:documentation>
                 TODO
               </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
-          <xsd:element name="reference" type="Reference" minOccurs="0" maxOccurs="unbounded">
+          <xsd:element name="reference" type="Reference" minOccurs="1" maxOccurs="1">
             <xsd:annotation>
               <xsd:documentation>
                 TODO
               </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
-        </xsd:sequence>
+        </xsd:choice>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -556,22 +556,22 @@ TBD continue based on VO-DML specification document.
   <xsd:complexType name="DataType">
     <xsd:complexContent>
       <xsd:extension base="ValueType">
-        <xsd:sequence>
-          <xsd:element name="attribute" type="Attribute" minOccurs="0" maxOccurs="unbounded">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+          <xsd:element name="attribute" type="Attribute" minOccurs="1" maxOccurs="1">
             <xsd:annotation>
               <xsd:documentation>
                 TODO
               </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
-          <xsd:element name="reference" type="Reference" minOccurs="0" maxOccurs="unbounded">
+          <xsd:element name="reference" type="Reference" minOccurs="1" maxOccurs="1">
             <xsd:annotation>
               <xsd:documentation>
                 TODO
               </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
-        </xsd:sequence>
+        </xsd:choice>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -681,6 +681,7 @@ TBD continue based on VO-DML specification document.
                  </xsd:documentation>
               </xsd:annotation>
            </xsd:element>
+           <xsd:element name="UCD" type="xsd:string" minOccurs="0" maxOccurs="1"></xsd:element>
            <xsd:element name="constraint" type="Constraint" minOccurs="0" maxOccurs="1"></xsd:element><!-- TODO - allow more than one constraint? -->
         </xsd:sequence>
       </xsd:extension>

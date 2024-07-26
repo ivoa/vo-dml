@@ -38,3 +38,19 @@
     * xml id handling includes vodmlid
     * take into account packages.
 * 0.5.0 Json Schema Generation (+ new style XSD schema generation)
+* 0.5.1 Fix validation regression
+* 0.5.2 
+    * update vodsl version 0.4.8
+        * *vodsl breaking change* - model can have a title - title is now a keyword and needs to be escaped with caret if you want to use "title" as an attribute name for instance
+        * ability to specify the ucd
+        * *java breaking change* generated java code will have constructor arguments in vodsl order - this is a good thing ultimately!
+* 0.5.3 
+  * support aggregation of references - by a join table  
+  * improve mkdocs site generation
+  * fix Java bug where dtype hierarchies not having all members saved as embeddable in database.
+* 0.5.4
+  * add imported models to the generated site documentation
+  * add link hover tips to the site docs
+  * add multiplicities to site diagrams (but not working in Safari on MacOS - see https://github.com/ivoa/vo-dml/issues/52)
+* 0.5.5
+  *  allow binding to specify eager fetching for JPA

@@ -33,8 +33,10 @@ VODML Tooling TODO
   * perhaps standardize on the binding of the ivoa std primitives so that they do not need to be specified in the files
   * specialized "hand written" IVOA base schema
   * allow "schema fragments" in binding to cope with specialist overriding of primitives and some base dataTypes...
+* consider what abstract means - perhaps use should be restricted. 
 * Anything that might help in mapping to OPENAPI
   * idea of a "view" - eg. jobsummary in uws
+  * OpenApi descriminators
  
 * STC
   * epoch - not really defined as something that is used properly

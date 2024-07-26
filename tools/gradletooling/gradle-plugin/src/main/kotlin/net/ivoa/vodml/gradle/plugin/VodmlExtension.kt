@@ -25,6 +25,7 @@ open class VodmlExtension @Inject constructor(objects: ObjectFactory, layout: Pr
     override val generateEpisode = objects.property(Boolean::class.java)
     override val bindingFiles = objects.fileCollection()
     override val catalogFile = objects.fileProperty()
+    @Deprecated("imported models should be recognised automatically making this superfluous")
     override val modelsToDocument: Property<String> = objects.property(String::class.java)
     override val vodslDir: DirectoryProperty = objects.directoryProperty()
     override val vodslFiles = objects.fileCollection()

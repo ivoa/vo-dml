@@ -31,17 +31,27 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             <xsl:otherwise><xsl:value-of select="/vo-dml:model/name"  /></xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
-    <xsl:param name="modelsToDocument" select="$modname"/>
+    <xsl:param name="modelsToDocument"/>
     <xsl:param name="autoGenDirName" select="'generated'"/>
 
-    <xsl:variable name="docmods" as="xsd:string*">
-        <xsl:sequence select="tokenize($modelsToDocument,',')"/>
-    </xsl:variable>
+
 
     <xsl:variable name="thisModelName" select="/vo-dml:model/name"/>
 
 
   <xsl:include href="binding_setup.xsl"/>
+    <xsl:variable name="docmods" as="xsd:string*">
+        <xsl:choose>
+            <xsl:when test="$modelsToDocument">
+                <xsl:sequence select="tokenize($modelsToDocument,',')"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="$mapping/bnd:mappedModels/model/name"/>
+            </xsl:otherwise>
+        </xsl:choose>
+
+
+    </xsl:variable>
   
 
   <xsl:template match="/">
@@ -80,6 +90,15 @@ The whole model is represented in a model diagram below
   <xsl:value-of select="unparsed-text('/tmp/test.svg')"/>
 
     </xsl:if>
+
+<xsl:if test="//package">
+## Packages
+
+    <xsl:for-each select="//package"> <!-- FIXME does not do nested packages nicely -->
+        <xsl:sort select="name"/>
+* <xsl:value-of select="concat('*',name,'*')"/> <xsl:apply-templates select="description"/>
+    </xsl:for-each>
+</xsl:if>
 
 <xsl:if test="//primitiveType">
 ## Primitives
@@ -120,6 +139,17 @@ The whole model is represented in a model diagram below
     </xsl:for-each>
       </xsl:if>
 
+      <xsl:if test="//reference/datatype/vodml-ref">
+## References
+
+        <xsl:for-each select="//(dataType|objectType)[vf:asvodmlref(.) = distinct-values(//reference/datatype/vodml-ref)]">
+            <xsl:sort select="name"/>
+* <xsl:call-template name="linkTo"/><xsl:if test="vf:isContained(vf:asvodmlref(current()))"> contained</xsl:if>
+
+        </xsl:for-each>
+
+      </xsl:if>
+
       <xsl:if test="import">
 &cr;
 ## Imports
@@ -150,7 +180,7 @@ The whole model is represented in a model diagram below
                 "ObjectTypes": [
 
                 <xsl:for-each select="//objectType">
-                    <xsl:sort select="name"/>
+                    <xsl:sort select="vf:asvodmlref(current())"/>
                     <xsl:call-template name="jsonNav"/>
                     <xsl:if test="position() != last()">,</xsl:if>
                 </xsl:for-each>
@@ -161,7 +191,7 @@ The whole model is represented in a model diagram below
                 ,{
                 "DataTypes": [
                 <xsl:for-each select="//dataType">
-                    <xsl:sort select="name"/>
+                    <xsl:sort select="vf:asvodmlref(current())"/>
                     <xsl:call-template name="jsonNav"/>
                     <xsl:if test="position() != last()">,</xsl:if>
                 </xsl:for-each>
@@ -172,7 +202,7 @@ The whole model is represented in a model diagram below
                 ,{
                 "PrimitiveTypes": [
                 <xsl:for-each select="//primitiveType">
-                    <xsl:sort select="name"/>
+                    <xsl:sort select="vf:asvodmlref(current())"/>
                     <xsl:call-template name="jsonNav"/>
                     <xsl:if test="position() != last()">,</xsl:if>
                 </xsl:for-each>
@@ -183,7 +213,7 @@ The whole model is represented in a model diagram below
                 ,{
                 "Enumerations": [
                 <xsl:for-each select="//enumeration">
-                    <xsl:sort select="name"/>
+                    <xsl:sort select="vf:asvodmlref(current())"/>
                     <xsl:if test="position() != 1">,</xsl:if>
                     <xsl:call-template name="jsonNav"/>
                 </xsl:for-each>
@@ -208,7 +238,7 @@ The whole model is represented in a model diagram below
     <xsl:template match="package">
         <xsl:variable name="vodml-id" select="tokenize(vf:asvodmlref(current()),':')" as="xsd:string*"/>
         <xsl:variable name="hr" select="concat($vodml-id[1],'/',$vodml-id[2],'.md')"/>
-        <xsl:message>writing description to <xsl:value-of select="$hr"/></xsl:message>
+        <xsl:message>writing description to <xsl:value-of select="$hr"/></xsl:message><!-- TODO this package file itself not linked in final docs - is it useful? -->
         <xsl:result-document method="text" encoding="UTF-8" indent="no" href="{$hr}">
             <xsl:apply-templates select="current()" mode="desc"/>
         </xsl:result-document>
@@ -244,6 +274,23 @@ The whole model is represented in a model diagram below
         <xsl:apply-templates select="constraint[@xsi:type='vo-dml:SubsettedRole']" mode="ssdetail"/>
     </xsl:if>
 </xsl:if>
+    <xsl:if test="vf:referredTo($vodml-ref) or vf:hasReferencesInContainmentHierarchy($vodml-ref)">
+## References Detail
+
+      <xsl:if test="vf:referredTo($vodml-ref)">
+This is referred to by <xsl:value-of select="string-join(for $i in vf:referredBy($vodml-ref) return vf:doLink($i),', ')"/>
+
+    </xsl:if>
+      <xsl:if test="count(vf:containedReferencesInContainmentHierarchy($vodml-ref)) > 0">
+
+Has contained reference(s) <xsl:value-of select="string-join(for $i in vf:containedReferencesInContainmentHierarchy($vodml-ref) return vf:doLink($i),', ')"/> in the containment hierarchy.
+      </xsl:if>
+       <!-- TODO report on the bad contained references - ie those in another containment hierarchy -->
+       <!-- FIXME still not sure that this is really reporting what we want - i.e. knowing when to do special cloning for a particular type
+        in this case it would be good to report where in the containment hierarchy-->
+
+    </xsl:if>
+
 
   </xsl:template>
     <xsl:template match="enumeration" mode="desc">
@@ -278,7 +325,7 @@ The whole model is represented in a model diagram below
     </xsl:template>
 
     <xsl:template match="description">
-        <xsl:if test="not(matches(text(),'^\s*TODO'))"><xsl:value-of select='.'/></xsl:if><xsl:text></xsl:text>
+        <xsl:if test="not(matches(text(),'^\s*TODO'))"><xsl:value-of select='normalize-space(.)'/></xsl:if><xsl:text></xsl:text>
     </xsl:template>
 
     <xsl:template match="enumeration|dataType|objectType" mode="mermdiag">
@@ -400,7 +447,6 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
         <xsl:text>constraint  </xsl:text><xsl:apply-templates select="description"/>
     </xsl:template>
 
-
     <xsl:template match="multiplicity">
         <xsl:choose>
             <xsl:when test="number(minOccurs) eq 1 and number(maxOccurs) eq 1"><!-- do nothing --></xsl:when>
@@ -456,7 +502,7 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
         <xsl:variable name="thisClass" select="current()/name"/>
         <xsl:if test="reference">
             <xsl:for-each select="reference">
-                <xsl:value-of select="concat($thisClass,' --',$gt,' ',vf:nameFromVodmlref(current()/datatype/vodml-ref),' : ',current()/name,$nl)"/>
+                <xsl:value-of select="concat($thisClass,' --',$gt,' ',vf:multiplicityForDiagram(current()/multiplicity),' ',vf:nameFromVodmlref(current()/datatype/vodml-ref),' : ',current()/name,$nl)"/>
             </xsl:for-each>
         </xsl:if>
     </xsl:template>
@@ -464,7 +510,8 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
         <xsl:variable name="thisClass" select="current()/name"/>
         <xsl:if test="composition">
             <xsl:for-each select="composition">
-                <xsl:value-of select="concat($thisClass,' *-- ',vf:nameFromVodmlref(current()/datatype/vodml-ref),' : ',current()/name,$nl)"/>
+
+                <xsl:value-of select="concat($thisClass,' *-- ',vf:multiplicityForDiagram(current()/multiplicity),' ',vf:nameFromVodmlref(current()/datatype/vodml-ref),' : ',current()/name,$nl)"/>
             </xsl:for-each>
         </xsl:if>
     </xsl:template>
@@ -491,17 +538,34 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
         <xsl:value-of select="concat('{',$dq,$vodml-id[2],$dq,' : ',$dq,$autoGenDirName,'/',$vodml-id[1],'/',$vodml-id[2],'.md',$dq,'}')"/>
     </xsl:template>
 
+    <xsl:template name="tooltip">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="type" select="$models/key('ellookup',$vodml-ref)"/>
+        <xsl:choose>
+            <xsl:when test="name($type) = 'primitiveType'">
+                <xsl:value-of select="concat(name($type),' ',$type/name,' - ',$type/description)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="name($type)"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
 
     <xsl:function name="vf:doLink" >
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:choose>
             <xsl:when test="substring-before($vodml-ref,':') = $docmods">
+                <xsl:variable name="tooltip">
+                    <xsl:call-template name="tooltip">
+                        <xsl:with-param name="vodml-ref" select="$vodml-ref"/>
+                    </xsl:call-template>
+                </xsl:variable>
                 <xsl:choose>
                     <xsl:when test="substring-before($vodml-ref,':')= $thisModelName">
-                        <xsl:value-of select="concat('[',substring-after($vodml-ref,':'),'](',substring-after($vodml-ref,':'),'.md)')"/>
+                        <xsl:value-of select="concat('[',substring-after($vodml-ref,':'),'](',substring-after($vodml-ref,':'),'.md ',$dq,$tooltip,$dq,')')"/>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="concat('[',$vodml-ref,'](../',substring-before($vodml-ref,':'),'/',substring-after($vodml-ref,':'),'.md)')"/>
+                        <xsl:value-of select="concat('[',$vodml-ref,'](../',substring-before($vodml-ref,':'),'/',substring-after($vodml-ref,':'),'.md ',$dq,$tooltip,$dq,')')"/>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
@@ -529,4 +593,21 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
         </xsl:choose>
     </xsl:function>
 
+    <xsl:function name="vf:multiplicityForDiagram" as="xsd:string*">
+        <xsl:param name="m" as="element()"/>
+        <xsl:variable name="r">
+        <xsl:choose>
+            <xsl:when test="not($m/minOccurs) and not($m/maxOccurs)">1</xsl:when>
+            <xsl:when test="number($m/minOccurs) eq 1 and number($m/maxOccurs) eq 1">1</xsl:when>
+            <xsl:when test="number($m/minOccurs) eq 0 and (number($m/maxOccurs) eq 1 or not($m/maxOccurs))">0..1</xsl:when>
+            <xsl:when test="number($m/minOccurs) eq 0 and number($m/maxOccurs) lt 1">0..*</xsl:when>
+            <xsl:when test="(not($m/minOccurs) or number($m/minOccurs) eq 1) and number($m/maxOccurs) lt 1">1..*</xsl:when>
+            <xsl:when test="not($m/minOccurs) and $m/maxOccurs"><xsl:value-of select="concat('1..', $m/maxOccurs)"/></xsl:when>
+            <xsl:when test="not($m/maxOccurs) and $m/minOccurs"><xsl:value-of select="concat($m/maxOccurs,'..', $m/maxOccurs)"/></xsl:when>
+            <xsl:otherwise><xsl:value-of select="concat($m/minOccurs,'..', $m/maxOccurs)"/></xsl:otherwise>
+        </xsl:choose>
+        </xsl:variable>
+        <xsl:sequence select="concat($dq,$r,$dq)"/>
+
+    </xsl:function>
 </xsl:stylesheet>

@@ -40,7 +40,7 @@
         <xsl:value-of select="concat(upper-case(substring($name,1,1)),substring($name,2))"/>
     </xsl:function>
 
-    <xsl:function name="vf:multiplicityAsSymbol">
+    <xsl:function name="vf:multiplicityAsSymbol" as="xsd:string*">
         <xsl:param name="m" as="element()"/>
         <xsl:choose>
             <xsl:when test="not($m/@minOccurs) and not($m/@maxOccurs)"><!-- do nothing --></xsl:when>

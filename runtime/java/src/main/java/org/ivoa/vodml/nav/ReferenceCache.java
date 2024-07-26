@@ -6,6 +6,7 @@ package org.ivoa.vodml.nav;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -20,13 +21,13 @@ public class ReferenceCache <T> {
    
   /**
    * Store values in the cache.
- * @param inital - the original reference.
+ * @param initial - the original reference.
  * @param cloned - the cloned value of the same reference.
  */
-public  void setValues(List<T> inital, List<T> cloned)
+public  void setValues(List<T> initial, List<T> cloned)
    {
-       for (int i = 0; i < inital.size(); i++) {
-       valmap.put(inital.get(i), cloned.get(i)) ;  
+       for (int i = 0; i < initial.size(); i++) {
+       valmap.put(initial.get(i), cloned.get(i)) ;
     }
    }
 
@@ -38,7 +39,16 @@ public  void setValues(List<T> inital, List<T> cloned)
    public T get(T initial) {
    return valmap.get(initial);
 }
-  
+
+   /**
+    * Get the new instance of the reference.
+    * @param initial the original value of the reference.
+    * @return the new List of the reference.
+    */
+   public List<T> get(List<T> initial) {
+      return initial.stream().map(s -> valmap.get(s)).collect(Collectors.toList());
+   }
+
 
 
 }

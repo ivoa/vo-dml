@@ -14,6 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
+
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -48,14 +50,14 @@ class JPATestModelTest extends AbstractTest {
     final ReferredTo1 referredTo = new ReferredTo1("top level ref");
     final ReferredTo2 referredToin = new ReferredTo2("lower ref");
     Child refcont = new Child(referredToin);
-    List<LChild> ll =
-        List.of(new LChild("First", 1), new LChild("Second", 2), new LChild("Third", 3));
+    List<LChild> ll = new ArrayList<LChild>(//IMPL make mutable
+        List.of(new LChild("First", 1), new LChild("Second", 2), new LChild("Third", 3)));
 
     atest =
         Parent.createParent(
             a -> {
               ReferredTo3 ref3 = new ReferredTo3("ref in dtype");
-              a.dval = new ADtype(1.1, "astring", ref3);
+              a.dval = new ADtype(1.1, "astring","intatt", "base", ref3);
               a.rval = referredTo;
               a.cval = refcont;
               a.lval = ll;
@@ -106,6 +108,8 @@ class JPATestModelTest extends AbstractTest {
     assertEquals("top level ref", par.get(0).rval.sval);
     assertEquals("lower ref", par.get(0).cval.rval.sval);
     assertEquals("ref in dtype", par.get(0).dval.dref.sval);
+    assertNotNull(par.get(0).dval.basestr);
+    dumpDbData(em, "jpa_test.sql");
   }
 
   @Test
@@ -155,5 +159,20 @@ class JPATestModelTest extends AbstractTest {
     assertEquals(3, ll2.size());
     LChild ain = ll2.get(1);
     assertEquals(2000, a.getIval());
+  }
+  
+  @Test
+  void jpaAddToListTest() {
+       jakarta.persistence.EntityManager em =
+        setupH2Db(SampleModel.pu_name()); // the persistence unit is all under the one file....
+    em.getTransaction().begin();
+    atest.persistRefs(em); // IMPL need to save references explicitly as they are new.
+    em.persist(atest);
+    em.getTransaction().commit();
+    em.getTransaction().begin();
+    LChild l = atest.lval.get(0);
+    LChild l2 = new LChild(l);
+    atest.addToLval(l2);
+    em.getTransaction().commit();
   }
 }

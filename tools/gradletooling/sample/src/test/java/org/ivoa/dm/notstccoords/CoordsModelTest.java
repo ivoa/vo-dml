@@ -9,6 +9,10 @@
 
 package org.ivoa.dm.notstccoords;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.List;
+
 import org.ivoa.dm.ivoa.RealQuantity;
 import org.ivoa.vodml.stdtypes.Unit;
 import org.ivoa.vodml.testing.AutoRoundTripWithValidationTest;
@@ -68,17 +72,32 @@ class CoordsModelTest extends AutoRoundTripWithValidationTest<CoordsModel> {
                       f.planetaryEphem = "DE432";
                     }));
 
+
+
+    // note that this cannot be added directly as it is a dtype...
+    LonLatPoint llp = new LonLatPoint(new RealQuantity(45.0, deg), new RealQuantity(15.0, deg), new RealQuantity(1.5, new Unit("Mpc")), ICRS_SYS);
+    AnObject a = new AnObject(llp);
     CoordsModel modelInstance = new CoordsModel();
 
     modelInstance.addReference(TIMESYS_TT);
     modelInstance.addReference(SPECSYS);
     modelInstance.addReference(ICRS_SYS);
+    modelInstance.addContent(a);
+    
+    
     modelInstance.processReferences();
+
     return modelInstance;
   }
 
   @Override
   public void testModel(CoordsModel coordsModel) {
-    // TODO actually make some specialist tests on returned model instance.
+     List<AnObject> ts = coordsModel.getContent(AnObject.class);
+     assertNotNull(ts);
+     assertEquals(1, ts.size());
+     AnObject ts1 = ts.get(0);
+     SpaceSys ss = ts1.getPosition().getCoordSys();
+     assertNotNull(ss);
+    
   }
 }

@@ -17,7 +17,7 @@ public class SerializationExampleTest
 
     List<BaseC> cc = List.of(new Dcont("a D", "dval"), new Econt("an E", "eval"));
 
-    SomeContent c = new SomeContent("a z val", cc, refa, refb);
+    SomeContent c = new SomeContent(refa, refb, "a z val", cc);
     retval.addContent(c);
 
     return retval;

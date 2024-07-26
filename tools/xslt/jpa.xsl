@@ -46,7 +46,9 @@
     </xsl:variable>
 
   @jakarta.persistence.Entity
+  <xsl:if test="not($isRdbSingleInheritance) or ($isRdbSingleInheritance and not(extends))">
   @jakarta.persistence.Table( name = "<xsl:apply-templates select="." mode="tableName"/>" )
+  </xsl:if>
   <xsl:if test="@abstract or $hasChild" >
       <xsl:choose>
           <xsl:when test="$isRdbSingleInheritance">
@@ -93,8 +95,8 @@
   <xsl:template match="dataType" mode="JPAAnnotation">
     <xsl:text>@jakarta.persistence.Embeddable</xsl:text>&cr;
     <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
-    <xsl:if test="vf:hasSubTypes($vodml-ref) and count(vf:baseTypes($vodml-ref)) = 0"  >
-        <xsl:text>@jakarta.persistence.MappedSuperclass</xsl:text>&cr;<!-- this works for hibernate -->
+    <xsl:if test="vf:hasSubTypes($vodml-ref)"  >
+        <xsl:text>@jakarta.persistence.MappedSuperclass</xsl:text>&cr;<!-- this works for hibernate but seem to need at every level not just top in multi-level hierarchy-->
     </xsl:if>
 <!--    <xsl:if test="vf:hasSubTypes($vodml-ref) or count(vf:baseTypes($vodml-ref))>0">-->
 <!--      @org.eclipse.persistence.annotations.Customizer(<xsl:value-of select="vf:upperFirst(name)"/>.DescConv.class)-->
@@ -260,12 +262,15 @@
 
     <xsl:template match="dataType" mode="attrovercols" as="xsd:string*">
         <xsl:param name="prefix" as="xsd:string"/>
-<!--        <xsl:message>** attrovercolsD <xsl:value-of select="concat(name(),' ',name,' *** ',$prefix)"/></xsl:message>-->
-        <xsl:for-each select="(attribute, vf:baseTypes(vf:asvodmlref(current()))/attribute)"> <!-- this takes care of dataType inheritance -->
+<!--        <xsl:message>** attrovercolsD <xsl:value-of select="concat(name(),' ',name,' *** ',$prefix, ' refs=', string-join(vf:baseTypes(vf:asvodmlref(current()))/reference/name,','))"/></xsl:message>-->
+        <xsl:for-each select="(attribute, vf:baseTypes(vf:asvodmlref(current()))/attribute)"> <!-- this takes care of dataType inheritance should work https://hibernate.atlassian.net/browse/HHH-12790 -->
             <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
             <xsl:apply-templates select="$type" mode="attrovercols">
                 <xsl:with-param name="prefix" select="concat($prefix,'_',name)"/>
             </xsl:apply-templates>
+        </xsl:for-each>
+        <xsl:for-each select="(reference, vf:baseTypes(vf:asvodmlref(current()))/reference)">
+                <xsl:sequence select="concat($prefix,'_',name)"/>
         </xsl:for-each>
     </xsl:template>
 
@@ -303,6 +308,7 @@
                 </xsl:otherwise>
             </xsl:choose>
     </xsl:template>
+
 
 
   <xsl:template match="attribute|reference|composition" mode="nullable">
@@ -353,9 +359,19 @@
 // TODO    [NOT_SUPPORTED_REFERENCE]
       </xsl:when>
       <xsl:otherwise>
-    <!-- require manual management of references - do not remove referenced entity : do not cascade delete -->
-    @jakarta.persistence.ManyToOne( cascade = {  jakarta.persistence.CascadeType.REFRESH } )
-    @jakarta.persistence.JoinColumn( nullable = <xsl:apply-templates select="." mode="nullable"/> )
+          <xsl:choose>
+              <xsl:when test="xsd:int(multiplicity/maxOccurs) != 1">
+                  <!-- TODO should not really leave join table naming to JPA - should be explicit-->
+                  <!-- require manual management of references - do not remove referenced entity : do not cascade delete -->
+@jakarta.persistence.ManyToMany( cascade = {  jakarta.persistence.CascadeType.REFRESH } )
+              </xsl:when>
+              <xsl:otherwise>
+<!-- require manual management of references - do not remove referenced entity : do not cascade delete -->
+@jakarta.persistence.ManyToOne( cascade = {  jakarta.persistence.CascadeType.REFRESH } )
+@jakarta.persistence.JoinColumn( nullable = <xsl:apply-templates select="." mode="nullable"/> )
+
+              </xsl:otherwise>
+          </xsl:choose>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -387,7 +403,7 @@
         <xsl:if test="isOrdered">
 @jakarta.persistence.OrderColumn
         </xsl:if>
-@jakarta.persistence.OneToMany(  cascade = jakarta.persistence.CascadeType.ALL, fetch = jakarta.persistence.FetchType.LAZY, targetEntity=<xsl:value-of select="concat(vf:JavaType(datatype/vodml-ref),'.class')" />)
+@jakarta.persistence.OneToMany(  cascade = jakarta.persistence.CascadeType.ALL, fetch = <xsl:value-of select="$jpafetch"/>, targetEntity=<xsl:value-of select="concat(vf:JavaType(datatype/vodml-ref),'.class')" />)
 @jakarta.persistence.JoinColumn( name="<xsl:value-of select="concat(upper-case(current()/parent::*/name),'_ID')"/>")
 @org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
       </xsl:otherwise>
@@ -397,8 +413,6 @@
     <xsl:template match="composition[multiplicity/maxOccurs =1]" mode="JPAAnnotation">
      @jakarta.persistence.OneToOne(cascade = jakarta.persistence.CascadeType.ALL)
   </xsl:template>
-
-
 
 
 
@@ -418,28 +432,31 @@
 
 
   <!-- persistence.xml configuration file -->  
-  <xsl:template match="vo-dml:model" mode="jpaConfig">
+  <xsl:template name="persistence_xml">
+    <xsl:param name="puname"/>
+    <xsl:param name="doit"/>
     <xsl:variable name="file" select="'META-INF/persistence.xml'"/>
 
     <!-- open file for jpa configuration -->
+   <xsl:if test="$doit">
     <xsl:result-document href="{$file}" format="persistenceInfo">
     <xsl:element name="persistence" namespace="http://java.sun.com/xml/ns/persistence">
       <xsl:attribute name="version" select="'2.0'"/>
       <xsl:element name="persistence-unit" namespace="http://java.sun.com/xml/ns/persistence">
-        <xsl:attribute name="name" select="concat('vodml_',name)"/>
+        <xsl:attribute name="name" select="$puname"/>
         <xsl:comment>we rely on hibernate extensions</xsl:comment>
         <xsl:element name="provider" namespace="http://java.sun.com/xml/ns/persistence">org.hibernate.jpa.HibernatePersistenceProvider<!--org.eclipse.persistence.jpa.PersistenceProvider--></xsl:element>
-        <xsl:apply-templates select="*" mode="jpaConfig"/>
-        <!--do the other models -->
-        <xsl:apply-templates select="$models/vo-dml:model[name != current()/name]/*" mode="jpaConfig"/>
+        <xsl:apply-templates select="$models/vo-dml:model/*" mode="jpaConfig"/>
         <xsl:element name="exclude-unlisted-classes" namespace="http://java.sun.com/xml/ns/persistence">true</xsl:element>
       </xsl:element>
     </xsl:element>
     </xsl:result-document>
+   </xsl:if>
       <!-- add beans.xml - for quarkus https://quarkus.io/guides/hibernate-orm#defining-entities-in-external-projects-or-jars - hopefully benign-->
       <xsl:result-document href="META-INF/beans.xml" format="persistenceInfo">
           <xsl:comment>this has been put here for quarkus</xsl:comment>
       </xsl:result-document>
+
   </xsl:template>
 
   <xsl:template match="package" mode="jpaConfig" >

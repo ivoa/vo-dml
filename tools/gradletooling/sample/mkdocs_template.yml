@@ -5,6 +5,7 @@ theme:
     - navigation.tracking
     - navigation.instant
     - toc.follow
+    - content.tooltips
 markdown_extensions:
   - tables
   - toc

@@ -8,13 +8,13 @@ plugins {
     `java-gradle-plugin`
 
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    id("org.jetbrains.kotlin.jvm") version "1.8.22"
+    id("org.jetbrains.kotlin.jvm") version "1.9.23"
     `maven-publish`
     id("com.gradle.plugin-publish") version "1.1.0"
 }
 
 group = "net.ivoa.vo-dml"
-version = "0.5.0"
+version = "0.5.5"
 
 repositories {
     mavenLocal() // FIXME remove this when releasing - just here to pick up local vodsl updates
@@ -33,7 +33,7 @@ dependencies {
     implementation("name.dmaus.schxslt:java:3.1.1") // for modern schematron
     implementation("name.dmaus.schxslt:schxslt:1.9.5") // force to use more updated schematron than the java wrapper naturally uses -
     implementation("org.xmlresolver:xmlresolver:6.0.4") // for xml catalogues - note that the apache xml-commons resolver is out of date
-    implementation("org.javastro.vodsl:vodslparser:0.4.6") //standalone vodsl parser
+    implementation("org.javastro.vodsl:vodslparser:0.4.8") //standalone vodsl parser
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
 
 

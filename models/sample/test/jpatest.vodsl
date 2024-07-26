@@ -6,10 +6,18 @@ enum AnEnum "enum" {
 	eval2 ""
 }
 
-dtype ADtype "dtype" {
+abstract dtype Base "base" {
+	basestr : ivoa:string "";
+	dref references ReferredTo3  "";
+}
+
+abstract dtype Intermediate -> Base "" {
+	intatt: ivoa:string "";
+}
+
+dtype ADtype -> Intermediate "dtype" {
 	dvalr: ivoa:real "";
 	dvals: ivoa:string "";
-	dref references ReferredTo3  "";
 }
 
 otype ReferredTo1 {
