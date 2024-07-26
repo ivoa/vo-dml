@@ -610,6 +610,7 @@
   <xsl:template match="objectType|dataType" mode="class">
     <xsl:param name="path"/>
     <xsl:variable name="vodml-ref"><xsl:apply-templates select="vodml-id" mode="asvodml-ref"/></xsl:variable>
+
   package <xsl:value-of select="$path"/>;
 
     <!-- imports -->
@@ -1562,6 +1563,13 @@ package <xsl:value-of select="$path"/>;
 @jakarta.xml.bind.annotation.XmlSchema(namespace = "<xsl:value-of select="normalize-space($ns)"/>",elementFormDefault=XmlNsForm.UNQUALIFIED, xmlns = {
 @jakarta.xml.bind.annotation.XmlNs(namespaceURI = "<xsl:value-of select="normalize-space($ns)"/>", prefix = "<xsl:value-of select="$ns/@prefix"/>")
   })
+@jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapters({
+@jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(value=org.ivoa.vodml.jaxb.DateTimeConverter.class, type=java.time.LocalDateTime.class)
+})
+/**
+* package <xsl:value-of select="name"/>.
+*   <xsl:apply-templates select="." mode="desc" />
+*/
 package <xsl:value-of select="$path"/>;
 import jakarta.xml.bind.annotation.XmlNsForm;
       </xsl:result-document>

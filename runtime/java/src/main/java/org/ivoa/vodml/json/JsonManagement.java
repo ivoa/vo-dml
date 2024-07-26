@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import org.ivoa.vodml.ModelDescription;
 
@@ -46,6 +47,7 @@ public class JsonManagement {
             PolymorphicTypeValidator sv = BasicPolymorphicTypeValidator.builder().allowIfBaseType("org.ivoa.dm").build();
             DefaultTyping app;
             return  JsonMapper.builder()
+                      .addModule(new JavaTimeModule())
                       .visibility(PropertyAccessor.FIELD, Visibility.ANY)
                       .visibility(PropertyAccessor.GETTER, Visibility.NONE)
                       

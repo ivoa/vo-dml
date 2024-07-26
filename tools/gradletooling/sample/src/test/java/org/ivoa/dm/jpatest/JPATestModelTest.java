@@ -15,6 +15,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
@@ -51,7 +52,8 @@ class JPATestModelTest extends AbstractTest {
     final ReferredTo2 referredToin = new ReferredTo2("lower ref");
     Child refcont = new Child(referredToin);
     List<LChild> ll = new ArrayList<LChild>(//IMPL make mutable
-        List.of(new LChild("First", 1), new LChild("Second", 2), new LChild("Third", 3)));
+        List.of(new LChild("First", 1, LocalDateTime.now()), new LChild("Second", 2,LocalDateTime.now().plusMonths(2)), new LChild("Third",
+                3,LocalDateTime.now().plusMonths(3))));
 
     atest =
         Parent.createParent(
@@ -138,7 +140,7 @@ class JPATestModelTest extends AbstractTest {
     assertEquals(2, a.getIval());
 
     // create an update object
-    String injson = "{\"sval\":\"Seconded\",\"ival\":2000,\"_id\":2}"; // assumes the id is 2
+    String injson = "{\"sval\":\"Seconded\",\"ival\":2000,\"_id\":2,\"dval\":\"2024-09-26T11:25:09.340631\"}"; // assumes the id is 2
     LChild arepl = SampleModel.jsonMapper().readValue(injson, LChild.class);
 
     em.getTransaction().begin();

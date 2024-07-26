@@ -114,7 +114,7 @@
             </xsl:when>
             <xsl:otherwise>
     @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required =<xsl:apply-templates
-                    select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+                    select="." mode="required"/>)
             </xsl:otherwise>
         </xsl:choose>
 

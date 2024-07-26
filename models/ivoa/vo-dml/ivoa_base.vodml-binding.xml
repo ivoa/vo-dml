@@ -50,7 +50,7 @@
 </type-mapping>
 <type-mapping>
   <vodml-id>datetime</vodml-id>
-  <java-type jpa-atomic="true">java.util.Date</java-type>
+  <java-type jpa-atomic="true">java.time.LocalDateTime</java-type>
   <python-type>datetime.datetime</python-type>
   <xsd-type>xsd:dateTime</xsd-type>
   <json-type format="date-time">string</json-type> <!-- format defines it really -->

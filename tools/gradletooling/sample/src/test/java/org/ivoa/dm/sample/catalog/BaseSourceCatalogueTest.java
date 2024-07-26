@@ -16,6 +16,7 @@ import static org.ivoa.dm.sample.catalog.SkyCoordinate.createSkyCoordinate;
 import static org.ivoa.dm.sample.catalog.inner.SourceCatalogue.createSourceCatalogue;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -61,8 +62,8 @@ public abstract class BaseSourceCatalogueTest extends AbstractTest {
                 fl -> {
                   fl.bandName = "C-Band";
                   fl.spectralLocation = new RealQuantity(5.0, GHz);
-                  fl.dataValidityFrom = new Date();
-                  fl.dataValidityTo = new Date();
+                  fl.dataValidityFrom = LocalDateTime.now();
+                  fl.dataValidityTo = LocalDateTime.now().plusMonths(2);
                   fl.description = "radio band";
                   fl.name = fl.bandName;
                 }),
@@ -70,8 +71,8 @@ public abstract class BaseSourceCatalogueTest extends AbstractTest {
                 fl -> {
                   fl.bandName = "L-Band";
                   fl.spectralLocation = new RealQuantity(1.5, GHz);
-                  fl.dataValidityFrom = new Date();
-                  fl.dataValidityTo = new Date();
+                  fl.dataValidityFrom = LocalDateTime.now();;
+                  fl.dataValidityTo = LocalDateTime.now().plusMonths(2);
                   fl.description = "radio band";
                   fl.name = fl.bandName;
                 }));

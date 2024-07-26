@@ -167,6 +167,7 @@ class VodmlGradlePlugin: Plugin<Project> {
              "org.hibernate.orm:hibernate-core:6.5.2.Final"
 //             ,"jakarta.persistence:jakarta.persistence-api:3.0.0" // dont use until go to hibernate 6
              ,"com.fasterxml.jackson.core:jackson-databind:2.15.1"
+             ,"com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.1"
              ,"org.eclipse.microprofile.openapi:microprofile-openapi-api:2.0.1"
 
        ).forEach {

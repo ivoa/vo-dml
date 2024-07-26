@@ -8,7 +8,7 @@
       <uri/>
       <title></title>
       <version>1.0</version>
-      <lastModified>2024-07-05T10:52:23Z</lastModified>
+      <lastModified>2024-07-25T15:58:25Z</lastModified>
       <import>
         <name>null</name><!--should not be needed in modern vo-dml -->
         <url>IVOA-v1.0.vo-dml.xml</url>
@@ -200,6 +200,18 @@
                  <description></description>	    
                  <datatype>
                     <vodml-ref>ivoa:integer</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </attribute>
+               <attribute>
+                 <vodml-id>LChild.dval</vodml-id>
+                 <name>dval</name>
+                 <description></description>	    
+                 <datatype>
+                    <vodml-ref>ivoa:datetime</vodml-ref>
                  </datatype>
                  <multiplicity>
                    <minOccurs>1</minOccurs>
