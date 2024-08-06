@@ -48,8 +48,8 @@ Paul Harrison
   <xsl:template match="vo-dml:model">  
   <xsl:message>Found model <xsl:value-of select="$modname"/></xsl:message>
 model <xsl:value-of select="$modname"/> (<xsl:value-of select="version"/>) "<xsl:value-of select="description"/>"
-     <xsl:apply-templates select="identifier" />
      <xsl:apply-templates select="author" />
+      <xsl:apply-templates select="title" />
 	  <xsl:apply-templates select="import" />
 	  <xsl:apply-templates select="* except (import|version|description|vodml-id|identifier|lastModified|name|title|author|previousVersion)"/>
   </xsl:template>
@@ -69,8 +69,8 @@ model <xsl:value-of select="$modname"/> (<xsl:value-of select="version"/>) "<xsl
    <xsl:value-of select="concat($nl,' author ',$dq,.,$dq)"/>
 </xsl:template>
 
-<xsl:template match="identifier">
-   <xsl:value-of select="concat($nl,$lt,.,$gt)"/>
+<xsl:template match="title">
+   <xsl:value-of select="concat($nl,'title ',$dq,.,$dq)"/>
 </xsl:template>
 
 
@@ -100,14 +100,14 @@ package <xsl:value-of select="concat(name,' ')"/> <xsl:call-template name= "do-d
   </xsl:template>
 
 <xsl:template match="objectType">
-  <xsl:value-of select="$nl"/><xsl:if test="@abstract">abstract </xsl:if>otype <xsl:value-of select="name"/><xsl:text> </xsl:text>
+  <xsl:value-of select="$nl"/><xsl:if test="@abstract and xsd:boolean(@abstract)">abstract </xsl:if>otype <xsl:value-of select="name"/><xsl:text> </xsl:text>
   <xsl:apply-templates select= "extends"/>
   <xsl:call-template name= "do-description"/>
   {   <xsl:apply-templates select="* except (vodml-id|description|name|extends)"/>
   }
 </xsl:template>
 <xsl:template match="dataType"><!-- is this really so different from object? -->
-  <xsl:value-of select="$nl"/><xsl:if test="@abstract">abstract </xsl:if>dtype <xsl:value-of select="name"/><xsl:text> </xsl:text>
+  <xsl:value-of select="$nl"/><xsl:if test="@abstract and xsd:boolean(@abstract)">abstract </xsl:if>dtype <xsl:value-of select="name"/><xsl:text> </xsl:text>
   <xsl:apply-templates select= "extends"/>
   <xsl:call-template name= "do-description"/>
   {   <xsl:apply-templates select="* except (vodml-id|description|name|extends)"/>
