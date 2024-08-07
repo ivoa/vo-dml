@@ -19,8 +19,8 @@ Paul Harrison
   
   <xsl:strip-space elements="*" />
   
-  <xsl:key name="element" match="*//vodml-id" use="."/>
-  <xsl:key name="package" match="*//package/vodml-id" use="."/>
+  <xsl:key name="element" match="//*[vodml-id]" use="vodml-id"/>
+  <xsl:key name="package" match="//package/vodml-id" use="."/>
 
   
   <xsl:variable name="packages" select="//package/vodml-id"/>
@@ -85,18 +85,51 @@ package <xsl:value-of select="concat(name,' ')"/> <xsl:call-template name= "do-d
     primitive <xsl:value-of select="concat(name, ' ')"/> <xsl:call-template name= "do-description"/>
   </xsl:template>  
 
-<!-- remove the local namespace -->  
-  <xsl:template match='vodml-ref'> 
+<!-- do some heuristics to try to normalize some different practices -->
+    <!-- TODO could to better with comparing child packages rather than just looking if same package - could avoid the full package referencing - however full package referencing does work in vodsl is a bit ugly -->
+  <xsl:template match='extends/vodml-ref'>
+      <xsl:variable name="ctx" select="current()/parent::extends/parent::*"/>
+<!--      <xsl:message><xsl:value-of select="concat(' extends ctx=',$ctx/name,' ',$ctx/vodml-id, '  ref=',current(), ' refparent=',key('element',substring-after(current(),':'))/parent::*/vodml-id )"/></xsl:message>-->
      <xsl:choose>
         <xsl:when test="substring-before( .,':') = $modname">
-           <xsl:value-of select="substring-after(.,':')"/>
+            <xsl:choose>
+                <xsl:when test="key('element',substring-after(current(),':'))/parent::package/vodml-id = $ctx/parent::package/vodml-id"> <!-- in same package -->
+                    <xsl:value-of select="key('element',substring-after(current(),':'))/name"/><!-- IMPL perhaps the -->
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:variable name="fullpath" select="string-join(key('element',substring-after(current(),':'))/ancestor-or-self::*/name[not(../name() = 'vo-dml:model')],'.')"/>
+                    <xsl:value-of select="$fullpath"/>
+                </xsl:otherwise>
+            </xsl:choose>
+
         </xsl:when>
         <xsl:otherwise>
            <!-- <xsl:value-of select="translate(.,':','.')"/> --> 
            <xsl:value-of select="."/>
         </xsl:otherwise>
      </xsl:choose>
-     
+  </xsl:template>
+    <xsl:template match='datatype/vodml-ref'>
+        <xsl:variable name="ctx" select="current()/parent::datatype/parent::*/parent::*"/>
+<!--        <xsl:message><xsl:value-of select="concat('datatype ctx=',$ctx/name(),' ',$ctx/vodml-id, '  ref=',current(), ' refparent=',key('element',substring-after(current(),':'))/parent::*/vodml-id )"/></xsl:message>-->
+        <xsl:choose>
+            <xsl:when test="substring-before( .,':') = $modname">
+                <xsl:choose>
+                    <xsl:when test="key('element',substring-after(current(),':'))/parent::package/vodml-id = $ctx/parent::package/vodml-id">
+                        <xsl:value-of select="substring-after(current(),':')"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:variable name="fullpath" select="string-join(key('element',substring-after(current(),':'))/ancestor-or-self::*/name[not(../name() = 'vo-dml:model')],'.')"/>
+                        <xsl:value-of select="$fullpath"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+
+            </xsl:when>
+            <xsl:otherwise>
+                <!-- <xsl:value-of select="translate(.,':','.')"/> -->
+                <xsl:value-of select="."/>
+            </xsl:otherwise>
+        </xsl:choose>
   </xsl:template>
 
 <xsl:template match="objectType">
