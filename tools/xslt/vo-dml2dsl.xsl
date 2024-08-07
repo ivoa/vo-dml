@@ -163,9 +163,10 @@ package <xsl:value-of select="concat(name,' ')"/> <xsl:call-template name= "do-d
         </xsl:text>
   <xsl:value-of select="concat(name, ': ')"/> 
   <xsl:apply-templates select="datatype/vodml-ref"/><xsl:text> </xsl:text> 
-  <xsl:apply-templates select="multiplicity"/><xsl:text> </xsl:text> 
+  <xsl:apply-templates select="multiplicity"/><xsl:text> </xsl:text>
+  <xsl:apply-templates select="constraint[@xsi:type='vo-dml:NaturalKey']"  /><!-- IMPL perhaps iskey is in 'wrong place' in vodsl -->
   <xsl:call-template name="do-description"/>
-  <xsl:apply-templates select="* except (description|datatype|name|vodml-id|multiplicity)"/>
+  <xsl:apply-templates select="* except (description|datatype|name|vodml-id|multiplicity|constraint[@xsi:type='vo-dml:NaturalKey'])"/>
   <xsl:text>;</xsl:text>
 </xsl:template>
   
