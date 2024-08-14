@@ -37,6 +37,8 @@ VODML Tooling TODO
 * Anything that might help in mapping to OPENAPI
   * idea of a "view" - eg. jobsummary in uws
   * OpenApi descriminators
+* THE <IDENTIFIER> element is supposed to register specify an identifier by which it is registered - any IVOA std should be 
+  in the standard namespace anyway - only use might be for arbitrary names - however this might be better done with "namespacing" of the model names...
  
 * STC
   * epoch - not really defined as something that is used properly
@@ -93,6 +95,7 @@ VODML Tooling TODO
   * can do better with subsets in subtypes - if supertype is abstract then it is possible to define in a subtype and get better type safety.
   * https://stackoverflow.com/questions/60402092/jackson-custom-deserializer-for-polymorphic-objects-and-string-literals-as-defau and https://stackoverflow.com/questions/18313323/how-do-i-call-the-default-deserializer-from-a-custom-deserializer-in-jackson
   * problem with the "lifecycle" example that is not present in json serialization - the contained and referenced example is output twice 
+  * check whether optional elements are output as Null when not specified or just absent - have consistent policy for this accross all areas...
 
 
 * JPA 

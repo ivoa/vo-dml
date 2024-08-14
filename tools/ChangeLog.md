@@ -54,3 +54,5 @@
   * add multiplicities to site diagrams (but not working in Safari on MacOS - see https://github.com/ivoa/vo-dml/issues/52)
 * 0.5.5
   *  allow binding to specify eager fetching for JPA
+* 0.5.6
+  * correct some file URIs for windows
