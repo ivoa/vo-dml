@@ -114,7 +114,7 @@ class ExternalModelHelper constructor (private val project: Project, private val
                  """.trimIndent()
             )
             v.forEach {
-                out.write("   <uri name=\"${it.name}\" uri=\"${it.toURI().toURL()}\"/>\n")
+                out.write("   <uri name=\"${it.name}\" uri=\"${java.nio.file.Paths.get(it.toURI()).toUri()}\"/>\n") //IMPL note that the File.toURI() does not produce a legal file: URI!
             }
             out.write(
                 """
