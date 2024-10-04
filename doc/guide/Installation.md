@@ -2,8 +2,8 @@ Installation
 ============
 
 The VO-DML tooling is based around [gradle](https://gradle.org) (currently version 8) which itself
-is based on Java. It is recommended that a minimum of JDK 11 is installed 
-(JDK 17 has also been tested) using a package manager for your OS and 
+is based on Java. It is recommended that a minimum of JDK 17 is installed 
+using a package manager for your OS and 
 similarly use a package manager for gradle installation. Although if you are working
 with a repository that already has a `gradelw` file at the top level, then that can be used
 in place of the gradle command, and it will handle the downloading and running of the correct gradle version. 
