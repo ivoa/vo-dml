@@ -29,7 +29,7 @@ otype Dcont -> BaseC {
 }
 
 otype Econt -> BaseC {
-	evalue: ivoa:string ""; 
+	evalue: ivoa:string "" semantic in "http://www.ivoa.net/rdf/product-type"; 
 }
 otype SomeContent "" {
 	ref1 references Refa "";

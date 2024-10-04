@@ -39,7 +39,7 @@ class CoordsModelTest extends AutoRoundTripWithValidationTest<CoordsModel> {
             .withFrame(
                 SpaceFrame.createSpaceFrame(
                     f -> {
-                      f.refPosition = new StdRefLocation("TOPOCENTRE");
+                      f.refPosition = new StdRefLocation("TOPOCENTER");
                       f.spaceRefFrame = "ICRS";
                       f.planetaryEphem = "DE432";
                     }));
@@ -49,7 +49,7 @@ class CoordsModelTest extends AutoRoundTripWithValidationTest<CoordsModel> {
             .withFrame(
                 TimeFrame.createTimeFrame(
                     f -> {
-                      f.refPosition = new StdRefLocation("TOPOCENTRE");
+                      f.refPosition = new StdRefLocation("TOPOCENTER");
                       f.timescale = "TT";
                       f.refDirection =
                           new CustomRefLocation()
@@ -68,7 +68,7 @@ class CoordsModelTest extends AutoRoundTripWithValidationTest<CoordsModel> {
             .withFrame(
                 GenericFrame.createGenericFrame(
                     f -> {
-                      f.refPosition = new StdRefLocation("TOPOCENTRE");
+                      f.refPosition = new StdRefLocation("TOPOCENTER");
                       f.planetaryEphem = "DE432";
                     }));
 

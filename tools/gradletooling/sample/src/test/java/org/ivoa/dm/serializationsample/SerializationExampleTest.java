@@ -15,7 +15,7 @@ public class SerializationExampleTest
     Refa refa = new Refa("a value");
     Refb refb = new Refb("a name", "another val");
 
-    List<BaseC> cc = List.of(new Dcont("a D", "dval"), new Econt("an E", "eval"));
+    List<BaseC> cc = List.of(new Dcont("a D", "dval"), new Econt("cube", "eval"));
 
     SomeContent c = new SomeContent(refa, refb, "a z val", cc);
     retval.addContent(c);
@@ -28,6 +28,6 @@ public class SerializationExampleTest
 
   @Test
   public void testStandaloneList() {
-    List<BaseC> cc = List.of(new Dcont("a D", "dval"), new Econt("an E", "eval"));
+    List<BaseC> cc = List.of(new Dcont("a D", "dval"), new Econt("image", "eval"));
   }
 }
