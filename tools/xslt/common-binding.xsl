@@ -536,4 +536,10 @@
         <xsl:sequence select="$models/key('ellookup',$vodml-ref)" />
     </xsl:function>
 
+    <xsl:function name="vf:modelJavaClass">
+        <xsl:param name="this" as="element()"/>
+        <xsl:variable name="model" select="$this/ancestor-or-self::vo-dml:model/name"/>
+        <xsl:sequence select="concat($mapping/bnd:mappedModels/model[name=$model]/java-package,'.',vf:upperFirst($model),'Model')"/>
+    </xsl:function>
+
 </xsl:stylesheet>
