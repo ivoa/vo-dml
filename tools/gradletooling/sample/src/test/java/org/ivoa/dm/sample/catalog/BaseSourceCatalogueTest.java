@@ -87,6 +87,7 @@ public abstract class BaseSourceCatalogueTest extends AbstractTest {
                           s -> {
                             s.name = "testSource";
                             s.classification = SourceClassification.AGN;
+                            s.label = "cepheid";
                             s.position =
                                 createSkyCoordinate(
                                     co -> {

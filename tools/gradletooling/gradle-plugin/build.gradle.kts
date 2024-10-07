@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "net.ivoa.vo-dml"
-version = "0.5.5"
+version = "0.5.7"
 
 repositories {
     mavenLocal() // FIXME remove this when releasing - just here to pick up local vodsl updates
@@ -73,9 +73,10 @@ gradlePlugin {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))//NB needs to stay at 11 for gradle plugin ATM
+        languageVersion =JavaLanguageVersion.of(17)
     }
 }
+
 
 sourceSets {
     main {

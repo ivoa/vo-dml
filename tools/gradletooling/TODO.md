@@ -37,6 +37,8 @@ VODML Tooling TODO
 * Anything that might help in mapping to OPENAPI
   * idea of a "view" - eg. jobsummary in uws
   * OpenApi descriminators
+* THE <IDENTIFIER> element is supposed to register specify an identifier by which it is registered - any IVOA std should be 
+  in the standard namespace anyway - only use might be for arbitrary names - however this might be better done with "namespacing" of the model names...
  
 * STC
   * epoch - not really defined as something that is used properly
@@ -81,6 +83,9 @@ VODML Tooling TODO
 * before and after serialization, the references need to be processed - it would be nice to do this automatically.... e.g. https://github.com/FasterXML/jackson-databind/issues/279 for jackson.
 * references
   * would be nice if the tooling warned when contained references are created bare.... - e.g. the filters in the original sample.
+* Vocabularies
+  * would be good to add in off-line capability - store the desise at generation time and read that if the on-line not accessible
+  * only does run-time checking - perhaps compile-time would be good?
 * JAXB
   * ~~idrefs referred to objects are not being output - http://stackoverflow.com/questions/12914382/marshalling-unmarshalling-fields-to-tag-with-attributes-using-jaxb~~
   * make the subsets create substitution group xml (i.e. have elements rather than xsi:type) http://blog.bdoughan.com/2010/11/jaxb-and-inheritance-using-substitution.html
@@ -93,6 +98,7 @@ VODML Tooling TODO
   * can do better with subsets in subtypes - if supertype is abstract then it is possible to define in a subtype and get better type safety.
   * https://stackoverflow.com/questions/60402092/jackson-custom-deserializer-for-polymorphic-objects-and-string-literals-as-defau and https://stackoverflow.com/questions/18313323/how-do-i-call-the-default-deserializer-from-a-custom-deserializer-in-jackson
   * problem with the "lifecycle" example that is not present in json serialization - the contained and referenced example is output twice 
+  * check whether optional elements are output as Null when not specified or just absent - have consistent policy for this accross all areas...
 
 
 * JPA 
@@ -113,6 +119,7 @@ VODML Tooling TODO
 * JSON
   * allow refs to be serialized/deserialized as ids always.... - for use in APIs.... https://stackoverflow.com/questions/51172496/how-to-dynamically-ignore-a-property-on-jackson-serialization
   * perhaps have custom written ivoa base schema.... express some better rules... e.g. non neg integer...
+  * modern usage https://blogs.oracle.com/javamagazine/post/java-json-serialization-jackson
 
 
 # Python production

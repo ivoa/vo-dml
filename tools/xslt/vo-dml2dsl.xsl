@@ -19,8 +19,8 @@ Paul Harrison
   
   <xsl:strip-space elements="*" />
   
-  <xsl:key name="element" match="*//vodml-id" use="."/>
-  <xsl:key name="package" match="*//package/vodml-id" use="."/>
+  <xsl:key name="element" match="//*[vodml-id]" use="vodml-id"/>
+  <xsl:key name="package" match="//package/vodml-id" use="."/>
 
   
   <xsl:variable name="packages" select="//package/vodml-id"/>
@@ -48,8 +48,8 @@ Paul Harrison
   <xsl:template match="vo-dml:model">  
   <xsl:message>Found model <xsl:value-of select="$modname"/></xsl:message>
 model <xsl:value-of select="$modname"/> (<xsl:value-of select="version"/>) "<xsl:value-of select="description"/>"
-     <xsl:apply-templates select="identifier" />
      <xsl:apply-templates select="author" />
+      <xsl:apply-templates select="title" />
 	  <xsl:apply-templates select="import" />
 	  <xsl:apply-templates select="* except (import|version|description|vodml-id|identifier|lastModified|name|title|author|previousVersion)"/>
   </xsl:template>
@@ -69,8 +69,8 @@ model <xsl:value-of select="$modname"/> (<xsl:value-of select="version"/>) "<xsl
    <xsl:value-of select="concat($nl,' author ',$dq,.,$dq)"/>
 </xsl:template>
 
-<xsl:template match="identifier">
-   <xsl:value-of select="concat($nl,$lt,.,$gt)"/>
+<xsl:template match="title">
+   <xsl:value-of select="concat($nl,'title ',$dq,.,$dq)"/>
 </xsl:template>
 
 
@@ -85,29 +85,62 @@ package <xsl:value-of select="concat(name,' ')"/> <xsl:call-template name= "do-d
     primitive <xsl:value-of select="concat(name, ' ')"/> <xsl:call-template name= "do-description"/>
   </xsl:template>  
 
-<!-- remove the local namespace -->  
-  <xsl:template match='vodml-ref'> 
+<!-- do some heuristics to try to normalize some different practices -->
+    <!-- TODO could to better with comparing child packages rather than just looking if same package - could avoid the full package referencing - however full package referencing does work in vodsl is a bit ugly -->
+  <xsl:template match='extends/vodml-ref'>
+      <xsl:variable name="ctx" select="current()/parent::extends/parent::*"/>
+<!--      <xsl:message><xsl:value-of select="concat(' extends ctx=',$ctx/name,' ',$ctx/vodml-id, '  ref=',current(), ' refparent=',key('element',substring-after(current(),':'))/parent::*/vodml-id )"/></xsl:message>-->
      <xsl:choose>
         <xsl:when test="substring-before( .,':') = $modname">
-           <xsl:value-of select="substring-after(.,':')"/>
+            <xsl:choose>
+                <xsl:when test="key('element',substring-after(current(),':'))/parent::package/vodml-id = $ctx/parent::package/vodml-id"> <!-- in same package -->
+                    <xsl:value-of select="key('element',substring-after(current(),':'))/name"/><!-- IMPL perhaps the -->
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:variable name="fullpath" select="string-join(key('element',substring-after(current(),':'))/ancestor-or-self::*/name[not(../name() = 'vo-dml:model')],'.')"/>
+                    <xsl:value-of select="$fullpath"/>
+                </xsl:otherwise>
+            </xsl:choose>
+
         </xsl:when>
         <xsl:otherwise>
            <!-- <xsl:value-of select="translate(.,':','.')"/> --> 
            <xsl:value-of select="."/>
         </xsl:otherwise>
      </xsl:choose>
-     
+  </xsl:template>
+    <xsl:template match='datatype/vodml-ref'>
+        <xsl:variable name="ctx" select="current()/parent::datatype/parent::*/parent::*"/>
+<!--        <xsl:message><xsl:value-of select="concat('datatype ctx=',$ctx/name(),' ',$ctx/vodml-id, '  ref=',current(), ' refparent=',key('element',substring-after(current(),':'))/parent::*/vodml-id )"/></xsl:message>-->
+        <xsl:choose>
+            <xsl:when test="substring-before( .,':') = $modname">
+                <xsl:choose>
+                    <xsl:when test="key('element',substring-after(current(),':'))/parent::package/vodml-id = $ctx/parent::package/vodml-id">
+                        <xsl:value-of select="substring-after(current(),':')"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:variable name="fullpath" select="string-join(key('element',substring-after(current(),':'))/ancestor-or-self::*/name[not(../name() = 'vo-dml:model')],'.')"/>
+                        <xsl:value-of select="$fullpath"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+
+            </xsl:when>
+            <xsl:otherwise>
+                <!-- <xsl:value-of select="translate(.,':','.')"/> -->
+                <xsl:value-of select="."/>
+            </xsl:otherwise>
+        </xsl:choose>
   </xsl:template>
 
 <xsl:template match="objectType">
-  <xsl:value-of select="$nl"/><xsl:if test="@abstract">abstract </xsl:if>otype <xsl:value-of select="name"/><xsl:text> </xsl:text>
+  <xsl:value-of select="$nl"/><xsl:if test="@abstract and xsd:boolean(@abstract)">abstract </xsl:if>otype <xsl:value-of select="name"/><xsl:text> </xsl:text>
   <xsl:apply-templates select= "extends"/>
   <xsl:call-template name= "do-description"/>
   {   <xsl:apply-templates select="* except (vodml-id|description|name|extends)"/>
   }
 </xsl:template>
 <xsl:template match="dataType"><!-- is this really so different from object? -->
-  <xsl:value-of select="$nl"/><xsl:if test="@abstract">abstract </xsl:if>dtype <xsl:value-of select="name"/><xsl:text> </xsl:text>
+  <xsl:value-of select="$nl"/><xsl:if test="@abstract and xsd:boolean(@abstract)">abstract </xsl:if>dtype <xsl:value-of select="name"/><xsl:text> </xsl:text>
   <xsl:apply-templates select= "extends"/>
   <xsl:call-template name= "do-description"/>
   {   <xsl:apply-templates select="* except (vodml-id|description|name|extends)"/>
@@ -130,9 +163,10 @@ package <xsl:value-of select="concat(name,' ')"/> <xsl:call-template name= "do-d
         </xsl:text>
   <xsl:value-of select="concat(name, ': ')"/> 
   <xsl:apply-templates select="datatype/vodml-ref"/><xsl:text> </xsl:text> 
-  <xsl:apply-templates select="multiplicity"/><xsl:text> </xsl:text> 
+  <xsl:apply-templates select="multiplicity"/><xsl:text> </xsl:text>
+  <xsl:apply-templates select="constraint[@xsi:type='vo-dml:NaturalKey']"  /><!-- IMPL perhaps iskey is in 'wrong place' in vodsl -->
   <xsl:call-template name="do-description"/>
-  <xsl:apply-templates select="* except (description|datatype|name|vodml-id|multiplicity)"/>
+  <xsl:apply-templates select="* except (description|datatype|name|vodml-id|multiplicity|constraint[@xsi:type='vo-dml:NaturalKey'])"/>
   <xsl:text>;</xsl:text>
 </xsl:template>
   

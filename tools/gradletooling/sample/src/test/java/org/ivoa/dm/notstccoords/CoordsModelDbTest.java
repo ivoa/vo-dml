@@ -14,8 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 
 import org.ivoa.dm.ivoa.RealQuantity;
-import org.ivoa.vodml.stdtypes.Unit;
-import org.ivoa.vodml.testing.AutoRoundTripWithValidationTest;
+import org.ivoa.dm.ivoa.Unit;
+import org.ivoa.vodml.testing.AutoDBRoundTripTest;
 
 /**
  * An example test for the "not coords" model.
@@ -23,11 +23,12 @@ import org.ivoa.vodml.testing.AutoRoundTripWithValidationTest;
  * @author Paul Harrison (paul.harrison@manchester.ac.uk)
  * @since 5 Nov 2021
  */
-class CoordsModelTest extends AutoRoundTripWithValidationTest<CoordsModel> {
+class CoordsModelDbTest extends AutoDBRoundTripTest<CoordsModel,Long,AnObject> {
 
   /** logger for this class */
   private static final org.slf4j.Logger logger =
-      org.slf4j.LoggerFactory.getLogger(CoordsModelTest.class);
+      org.slf4j.LoggerFactory.getLogger(CoordsModelDbTest.class);
+private AnObject a;
 
   @Override
   public CoordsModel createModel() {
@@ -76,7 +77,7 @@ class CoordsModelTest extends AutoRoundTripWithValidationTest<CoordsModel> {
 
     // note that this cannot be added directly as it is a dtype...
     LonLatPoint llp = new LonLatPoint(new RealQuantity(45.0, deg), new RealQuantity(15.0, deg), new RealQuantity(1.5, new Unit("Mpc")), ICRS_SYS);
-    AnObject a = new AnObject(llp);
+    a = new AnObject(llp);
     CoordsModel modelInstance = new CoordsModel();
 
     modelInstance.addReference(TIMESYS_TT);
@@ -85,7 +86,7 @@ class CoordsModelTest extends AutoRoundTripWithValidationTest<CoordsModel> {
     modelInstance.addContent(a);
     
     
-    modelInstance.processReferences();
+   
 
     return modelInstance;
   }
@@ -100,4 +101,25 @@ class CoordsModelTest extends AutoRoundTripWithValidationTest<CoordsModel> {
      assertNotNull(ss);
     
   }
+
+/**
+ * {@inheritDoc}
+ * overrides @see org.ivoa.vodml.testing.AutoDBRoundTripTest#entityForDb()
+ */
+@Override
+public AnObject entityForDb() {
+    return a;
+    
+}
+
+/**
+ * {@inheritDoc}
+ * overrides @see org.ivoa.vodml.testing.AutoDBRoundTripTest#testEntity(org.ivoa.vodml.jpa.JPAManipulationsForObjectType)
+ */
+@Override
+public void testEntity(AnObject e) {
+    SpaceSys ss = e.getPosition().getCoordSys();
+    assertNotNull(ss);
+    
+}
 }

@@ -51,7 +51,7 @@ The various sub-properties that can be set are
   ```
   will set the directory to be `vo-dml`
 * _vodmlFiles_ - this is set by default to be all the `*.vo-dml.xml` files in the vodmlDir, but can be individually overridden.
-* _bindingFiles_ - the files that specify the mapping details between the models and the generated code.
+* _bindingFiles_ - the files that specify the mapping details between the models and the generated code. _N.B._ there is no default for this setting - if generating code it must be specified.
 
 * _outputDocDir_ - where the generated documentation is created by the `gradle vodmlDoc` command- default `build/generated/docs/vodml/`.
 * _outputSiteDir_ - where the [mkdocs](https://www.mkdocs.org) suitable model description is created by the `gradle vodmlSite` command - default `build/generated/docs/vodml-site`.
@@ -88,7 +88,7 @@ This is a minimal sample file for mapping VO-DML models to XSD or Java using the
 <name>sample</name>
 <file>Sample.vo-dml.xml</file>
 <java-package>org.ivoa.dm.sample</java-package>
-<xml-targetnamespace prefix="simp" schemaFilename="simpleModel.xsd">http://ivoa.net/dm/models/vo-dml/xsd/sample/sample</xml-targetnamespace>
+<xml-targetnamespace prefix="simp" >http://ivoa.net/dm/models/vo-dml/xsd/sample/sample</xml-targetnamespace>
 </model>
 </m:mappedModels>
 ```

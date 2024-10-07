@@ -33,7 +33,7 @@ The task has the `--dml` parameter to indicate the input VO-DML file and the `--
 ```shell
 gradle vodmlToVodsl --dml=models/sample/sample/vo-dml/Sample.vo-dml.xml --dsl=test.vodsl 
 ```
-
+The transformation attempts to be faithful, but the generated VODSL is likely to need some manual editing to clean it up. As stated above, this transformation is expected to be a "one-time" operation as although the generation of VO-DML from VODSL is well defined, the reverse has some areas of possible ambiguity especially with VO-DML that has been created not using this toolkit.
 
 ## VODSL language
 

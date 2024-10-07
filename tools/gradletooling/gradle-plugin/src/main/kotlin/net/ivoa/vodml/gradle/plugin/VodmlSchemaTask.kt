@@ -7,9 +7,7 @@ import org.gradle.api.tasks.*
 import java.io.File
 import javax.inject.Inject
 import com.fasterxml.jackson.databind.ObjectMapper
-
-
-
+import java.nio.file.Paths
 
 
 /*
@@ -61,11 +59,15 @@ open class VodmlSchemaTask  @Inject constructor(ao1: ArchiveOperations) : VodmlB
             outfile.get().asFile.writeText(pretty)
         }
 
+        val xmlcat = java.nio.file.Paths.get(schemaDir.file("xmlcat.xml").get().asFile.toURI()).toUri().toString()
+        val jsoncat = java.nio.file.Paths.get(schemaDir.file("jsoncat.txt").get().asFile.toURI()).toUri().toString()
         logger.info("generating Catalogues")
+        logger.info("xml = $xmlcat")
+        logger.info("json= $jsoncat")
         Vodml2Catalogues.doTransform(mapOf(
             "binding" to bindingFiles.joinToString(separator = ",") { it.toURI().toURL().toString() },
-            "xml-catalogue" to schemaDir.file("xmlcat.xml").get().asFile.absolutePath,
-            "json-catalogue" to schemaDir.file("jsoncat.txt").get().asFile.absolutePath
+            "xml-catalogue" to xmlcat,
+            "json-catalogue" to jsoncat
 
         )
             )

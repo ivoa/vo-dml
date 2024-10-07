@@ -39,7 +39,17 @@ import org.ivoa.vodml.VodmlModel;
 import org.ivoa.vodml.jpa.JPAManipulationsForObjectType;
 import org.ivoa.vodml.validation.ModelValidator.ValidationResult;
 
+/**
+ * Base Class for doing validating tests.
+ */
 public abstract class AbstractBaseValidation {
+    /**
+     * Do a JSON round trip of a model instance.
+     * @param m A model instance.
+     * @return The result of the round trip test.
+     * @param <T> The Model class .
+     * @throws JsonProcessingException
+     */
     protected  <T> RoundTripResult<T> roundTripJSON(VodmlModel<T> m) throws JsonProcessingException {
         T model = m.management().theModel();
         if(m.management().hasReferences())
@@ -57,6 +67,10 @@ public abstract class AbstractBaseValidation {
 
     }
 
+    /**
+     * The result of doing a round trip test.
+     * @param <T> the model class.
+     */
     public static class RoundTripResult <T>  {
         public final boolean isValid;
         public final T retval;
@@ -66,6 +80,18 @@ public abstract class AbstractBaseValidation {
         }
     }
 
+    /**
+     * Do a XML round trip of a model instance.
+     * @param vodmlModel a model instance.
+     * @return the result of doing a round trip.
+     * @param <T> The model class.
+     * @throws ParserConfigurationException
+     * @throws JAXBException
+     * @throws PropertyException
+     * @throws TransformerFactoryConfigurationError
+     * @throws TransformerConfigurationException
+     * @throws TransformerException
+     */
     protected <T extends VodmlModel<T>> RoundTripResult<T> roundtripXML(VodmlModel<T> vodmlModel) throws ParserConfigurationException, JAXBException,
     PropertyException, TransformerFactoryConfigurationError,
     TransformerConfigurationException, TransformerException {
@@ -108,7 +134,16 @@ public abstract class AbstractBaseValidation {
         T modelin = el.getValue();
         return new RoundTripResult<T>(!vc.hasEvents(), modelin);
     }
-    
+
+    /**
+     * Do an RDB round trip of a model instance.
+     * @param modelManagement Then model management
+     * @param entity The entity to round trip.
+     * @return
+     * @param <M> the model class.
+     * @param <I> The type of the identifier for the entity.
+     * @param <T> The type of the entity.
+     */
     protected <M, I, T extends JPAManipulationsForObjectType<I>> RoundTripResult<T> roundtripRDB(ModelManagement<M> modelManagement, T  entity)
     {
        
@@ -118,7 +153,8 @@ public abstract class AbstractBaseValidation {
         em.persist(entity);
         em.getTransaction().commit();
         I id = entity.getId();
-
+        String dumpfile = setDbDumpFile();
+        if(dumpfile!= null) dumpDbData(em, dumpfile);
         //flush any existing entities
         em.clear();
         em.getEntityManagerFactory().getCache().evictAll();
@@ -131,7 +167,12 @@ public abstract class AbstractBaseValidation {
         return new RoundTripResult<T>(true, r);
 
     }
-    
+
+    /**
+     * Create an Entity manager for a memory-based test database;
+     * @param puname the persistence unit name of the JPA DB.
+     * @return the EntityManager for the database.
+     */
     protected EntityManager setupH2Db(String puname){
         Map<String, String> props = new HashMap<>();
 
@@ -173,7 +214,14 @@ public abstract class AbstractBaseValidation {
         return em;
 
     }
-    
+
+    /**
+     * Validate a model instance. This is done via JAXB.
+     * @param m the model instance.
+     * @return result of the validation.
+     * @param <T> the model class.
+     * @throws JAXBException exception when there is a JAXB problem.
+     */
     protected <T> ValidationResult validateModel(VodmlModel<T> m) throws JAXBException {
         
         final ModelDescription desc = m.descriptor();
@@ -196,6 +244,14 @@ public abstract class AbstractBaseValidation {
                 ps.setString(1, filename);
                 ps.execute();
             });
+    }
+
+    /**
+     * set the name of the file to which the dbDump is written. The default is null so that no file is written.
+     * @return the filename.
+     */
+    protected String setDbDumpFile() {
+        return  null;
     }
 
 }

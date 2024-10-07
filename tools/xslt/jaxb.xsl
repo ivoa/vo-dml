@@ -222,10 +222,9 @@
     import org.ivoa.vodml.annotation.VodmlRole;
     import org.ivoa.vodml.ModelContext;
     import org.ivoa.vodml.nav.ReferenceCache;
+    import org.ivoa.vodml.vocabularies.Vocabulary;
 
-
-
-        @XmlAccessorType(XmlAccessType.NONE)
+    @XmlAccessorType(XmlAccessType.NONE)
     @XmlRootElement
     @JsonTypeInfo(include=JsonTypeInfo.As.WRAPPER_OBJECT, use=JsonTypeInfo.Id.NAME)
     @JsonIgnoreProperties({"refmap"})
@@ -268,7 +267,33 @@
     })
         <xsl:value-of select="$jsontypinfo"/>
     private List&lt;Object&gt; content  = new ArrayList&lt;&gt;();
-      <xsl:for-each select="$contentTypes">
+
+    private static Map&lt;String,Vocabulary&gt; vocabs = new HashMap&lt;&gt;();
+
+    static {
+
+     <xsl:for-each select="distinct-values($models/vo-dml:model[name=$modelsInScope]//semanticconcept/vocabularyURI)">
+         vocabs.put(<xsl:value-of select="concat($dq,current(),$dq)"/>,Vocabulary.load(<xsl:value-of select="concat($dq,current(),$dq)"/>));
+     </xsl:for-each>
+    }
+        <!--- TODO possibly put this in the model management interface -->
+        /**
+        * Test if a term is in the vocabulary.
+        * @param value the value to test
+        * @param vocabulary the uri for the vocabulary.
+        * @return
+        */
+        public static boolean isInVocabulary(String value, String vocabulary)
+        {
+        if(vocabs.containsKey(vocabulary))
+        {
+        return vocabs.get(vocabulary).hasTerm(value);
+        }
+        return false;
+        }
+
+
+        <xsl:for-each select="$contentTypes">
 <!--         <xsl:message>ref in hierarchy <xsl:value-of select="vf:asvodmlref(.)"/> refs= <xsl:value-of select="vf:referenceTypesInContainmentHierarchy(vf:asvodmlref(.))"/>  </xsl:message>-->
       /**
       * add <xsl:value-of select="current()/name"/> to model.
