@@ -34,7 +34,7 @@ otype Econt -> BaseC {
 otype SomeContent "" {
 	ref1 references Refa "";
 	ref2 references Refb "";
-	zval : ivoa:string "";
+	zval : ivoa:string @+ "";
 	con: BaseC @+ as composition ""; 
 }
 

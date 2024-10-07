@@ -942,10 +942,10 @@ package <xsl:value-of select="$path"/>;
               </xsl:otherwise>
           </xsl:choose>
           <xsl:choose>
-        <xsl:when test="xsd:int(multiplicity/maxOccurs) gt 1">
+        <xsl:when test="xsd:int(multiplicity/maxOccurs) gt 1"> <!-- TODO this will not work in RDBs -->
     protected <xsl:value-of select="concat($type,'[] ',vf:javaMemberName(name))"/>;
         </xsl:when>
-        <xsl:when test="xsd:int(multiplicity/maxOccurs) lt 0"> <!-- IMPL - this probably should not be allowed -->
+        <xsl:when test="xsd:int(multiplicity/maxOccurs) lt 0"> <!-- IMPL - this is done in db by serializing to delimited string -->
     protected <xsl:value-of select="concat('java.util.List',$lt,$type,$gt,' ',vf:javaMemberName(name))"/>;
         </xsl:when>
         <xsl:otherwise>

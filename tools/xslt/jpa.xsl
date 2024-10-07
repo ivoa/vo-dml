@@ -154,9 +154,17 @@
                         <xsl:variable name="tableName">
                             <xsl:apply-templates select=".." mode="tableName"/><xsl:text>_</xsl:text><xsl:value-of select="$name"/>
                         </xsl:variable>
-        @jakarta.persistence.ElementCollection
-        @jakarta.persistence.CollectionTable(name = "<xsl:value-of select="$tableName"/>", joinColumns = @jakarta.persistence.JoinColumn(name="containerId") )
-        @jakarta.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
+                <xsl:variable name="converterClass">
+                    <xsl:variable name="jt" select="vf:findmapping(datatype/vodml-ref,'java')"/>
+                    <xsl:choose><!--TODO this is rather hard wired - perhaps do something else in mapping-->
+                        <xsl:when test="$jt = 'Integer'"><xsl:sequence select="'IntListConverter'"/></xsl:when>
+                        <xsl:when test="$jt = 'Double'"><xsl:sequence select="'DoubleListConverter'"/></xsl:when>
+                        <xsl:when test="$jt = 'Boolean'"><xsl:sequence select="'IntListConverter'"/></xsl:when>
+                        <xsl:otherwise><xsl:sequence select="'StringListConverter'"/></xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                @jakarta.persistence.Convert(converter=org.ivoa.vodml.jpa.AttributeConverters.<xsl:value-of select="$converterClass"/>.class)
+                @jakarta.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
                     </xsl:when>
                     <xsl:when test="xsd:int(multiplicity/maxOccurs) gt 1">
         //FIXME - how to do arrays for JPA.

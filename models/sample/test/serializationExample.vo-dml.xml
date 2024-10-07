@@ -8,7 +8,7 @@
       <uri/>
       <title></title>
       <version>1.0</version>
-      <lastModified>2024-09-10T15:34:00Z</lastModified>
+      <lastModified>2024-10-07T08:26:18Z</lastModified>
       <import>
         <name>null</name><!--should not be needed in modern vo-dml -->
         <url>IVOA-v1.0.vo-dml.xml</url>
@@ -169,7 +169,7 @@
                  </datatype>
                  <multiplicity>
                    <minOccurs>1</minOccurs>
-                   <maxOccurs>1</maxOccurs>
+                   <maxOccurs>-1</maxOccurs>
                  </multiplicity>
                </attribute>
                <composition>

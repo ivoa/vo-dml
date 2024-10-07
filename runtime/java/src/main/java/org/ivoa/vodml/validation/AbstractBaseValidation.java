@@ -153,7 +153,8 @@ public abstract class AbstractBaseValidation {
         em.persist(entity);
         em.getTransaction().commit();
         I id = entity.getId();
-
+        String dumpfile = setDbDumpFile();
+        if(dumpfile!= null) dumpDbData(em, dumpfile);
         //flush any existing entities
         em.clear();
         em.getEntityManagerFactory().getCache().evictAll();
@@ -243,6 +244,14 @@ public abstract class AbstractBaseValidation {
                 ps.setString(1, filename);
                 ps.execute();
             });
+    }
+
+    /**
+     * set the name of the file to which the dbDump is written. The default is null so that no file is written.
+     * @return the filename.
+     */
+    protected String setDbDumpFile() {
+        return  null;
     }
 
 }
