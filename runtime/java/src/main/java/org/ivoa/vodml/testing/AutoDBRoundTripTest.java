@@ -33,7 +33,7 @@ public abstract class AutoDBRoundTripTest <M extends VodmlModel<M>, I, T extends
      * @param e the entity to be tested.
      */
     public abstract void testEntity(T e);
-
+    
     @Test
     void testRDBRoundTrip()
     {
@@ -46,7 +46,8 @@ public abstract class AutoDBRoundTripTest <M extends VodmlModel<M>, I, T extends
         testEntity(result.retval);
        
     }
- 
+    
+   
 }
 
 

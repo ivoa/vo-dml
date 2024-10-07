@@ -330,8 +330,8 @@
                                <maxOccurs>1</maxOccurs>
                              </multiplicity>
         <semanticconcept>
-          <topConcept>http://purl.org/astronomy/vocab/DataObjectTypes/DataObjectType</topConcept>
-          <vocabularyURI>http://purl.org/astronomy/vocab/DataObjectTypes</vocabularyURI>
+          <topConcept>http://www.ivoa.net/rdf/object-type#DataObjectType</topConcept> <!--FIXME - this is probably not correct -->
+          <vocabularyURI>http://www.ivoa.net/rdf/object-type</vocabularyURI>
         </semanticconcept>
                            </attribute>
                         </objectType>

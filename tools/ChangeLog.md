@@ -56,3 +56,6 @@
   *  allow binding to specify eager fetching for JPA
 * 0.5.6
   * correct some file URIs for windows
+* 0.5.7
+  * Added support for validation against IVOA vocabularies
+  * Added support for rdb serialization of primitive attributes with unbounded multiplicity as colon separated string

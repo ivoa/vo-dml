@@ -370,7 +370,15 @@
             super(<xsl:value-of select="string-join(for $v in $superparams return vf:javaMemberName($models/key('ellookup',$v)/name),',')"/>);
            <xsl:for-each select="$localmembers">
                <xsl:variable name="m" select="$models/key('ellookup',current())"/>
-           this.<xsl:value-of select="vf:javaMemberName($m/name)"/> = <xsl:value-of select="vf:javaMemberName($m/name)"/>;
+               <xsl:choose>
+                   <xsl:when test="$m/semanticconcept/vocabularyURI">
+                       set<xsl:value-of select="concat(vf:upperFirst($m/name),'(',vf:javaMemberName($m/name),')')"/>;
+                   </xsl:when>
+                   <xsl:otherwise>
+                       this.<xsl:value-of select="vf:javaMemberName($m/name)"/> = <xsl:value-of select="vf:javaMemberName($m/name)"/>;
+                   </xsl:otherwise>
+               </xsl:choose>
+
            </xsl:for-each>
           }
         </xsl:if>
@@ -485,7 +493,14 @@
             super (<xsl:if test="not($supertype/@abstract)">superinstance</xsl:if>);
             <xsl:for-each select="$localmembers">
                 <xsl:variable name="m" select="$models/key('ellookup',current())"/>
-                this.<xsl:value-of select="$m/name"/> = <xsl:value-of select="$m/name"/>;
+                <xsl:choose>
+                    <xsl:when test="$m/semanticconcept/vocabularyURI">
+                        set<xsl:value-of select="concat(vf:upperFirst($m/name),'(',vf:javaMemberName($m/name),')')"/>;
+                    </xsl:when>
+                    <xsl:otherwise>
+                        this.<xsl:value-of select="vf:javaMemberName($m/name)"/> = <xsl:value-of select="vf:javaMemberName($m/name)"/>;
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:for-each>
 
             }
@@ -927,10 +942,10 @@ package <xsl:value-of select="$path"/>;
               </xsl:otherwise>
           </xsl:choose>
           <xsl:choose>
-        <xsl:when test="xsd:int(multiplicity/maxOccurs) gt 1">
+        <xsl:when test="xsd:int(multiplicity/maxOccurs) gt 1"> <!-- TODO this will not work in RDBs -->
     protected <xsl:value-of select="concat($type,'[] ',vf:javaMemberName(name))"/>;
         </xsl:when>
-        <xsl:when test="xsd:int(multiplicity/maxOccurs) lt 0"> <!-- IMPL - this probably should not be allowed -->
+        <xsl:when test="xsd:int(multiplicity/maxOccurs) lt 0"> <!-- IMPL - this is done in db by serializing to delimited string -->
     protected <xsl:value-of select="concat('java.util.List',$lt,$type,$gt,' ',vf:javaMemberName(name))"/>;
         </xsl:when>
         <xsl:otherwise>
@@ -1021,6 +1036,12 @@ package <xsl:value-of select="$path"/>;
         * @param p<xsl:value-of select="$upName"/> value to set
         */
         public void set<xsl:value-of select="$upName"/>(final <xsl:value-of select="$fulltype"/> p<xsl:value-of select="$upName"/>) {
+        <xsl:if test="semanticconcept/vocabularyURI">
+            if (!<xsl:value-of select="concat(vf:modelJavaClass(current()),'.isInVocabulary(p',$upName,',',$dq,semanticconcept/vocabularyURI,$dq,')')"/>)
+            {
+            throw new IllegalArgumentException(p<xsl:value-of select="$upName"/>+" is not a value in vocabulary <xsl:value-of select="semanticconcept/vocabularyURI"/> ");
+            }
+        </xsl:if>
         this.<xsl:value-of select="vf:javaMemberName($name)"/> = p<xsl:value-of select="$upName"/>;
         }
         </xsl:if>
@@ -1030,47 +1051,14 @@ package <xsl:value-of select="$path"/>;
         * @return <xsl:value-of select="current()/parent::*/name"/>
         */
         public <xsl:value-of select="vf:JavaType(vf:asvodmlref(parent::*))"/>&bl;with<xsl:value-of select="$upName"/>(final <xsl:value-of select="$fulltype"/> p<xsl:value-of select="$upName"/>) {
-        this.<xsl:value-of select="vf:javaMemberName($name)"/> = p<xsl:value-of select="$upName"/>;
+        set<xsl:value-of select="$upName"/>(p<xsl:value-of select="$upName"/>);
         return this;
         }
 
     </xsl:template>
 
-  <xsl:template match="attribute" mode="setProperty">
-    <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
-    <xsl:variable name="name">
-      <xsl:call-template name="upperFirst">
-        <xsl:with-param name="val" select="name"/>
-      </xsl:call-template>
-    </xsl:variable>
-    if ("<xsl:apply-templates select="vodml-id" mode="asvodml-ref"/>".equals(vodmlRef)) {
-      set<xsl:value-of select="$name"/>((<xsl:value-of select="$type"/><xsl:if test="contains(multiplicity,'*')">[]</xsl:if>)pValue);
-      return true;
-    }
-  </xsl:template>
 
-  <xsl:template match="attribute" mode="setStringProperty">
-    <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
-    <xsl:variable name="element" as="element()" select="vf:Element4vodml-ref(datatype/vodml-ref)"/>
-    <xsl:variable name="name">
-      <xsl:call-template name="upperFirst">
-        <xsl:with-param name="val" select="name"/>
-      </xsl:call-template>
-    </xsl:variable>
-    <xsl:if test="$element/name() = 'enumeration' or $element/name() = 'primitiveType'">
-    if ("<xsl:apply-templates select="vodml-id" mode="asvodml-ref"/>".equals(vodmlRef)) {
-     <xsl:choose>
-       <xsl:when test="$element/name() = 'enumeration'">
-             set<xsl:value-of select="$name"/>(<xsl:value-of select="$type"/>.fromValue(pValue));
-       </xsl:when>
-       <xsl:otherwise>
-      set<xsl:value-of select="$name"/>(new <xsl:value-of select="$type"/>(pValue));
-       </xsl:otherwise>
-     </xsl:choose>
-      return true;
-    }
-    </xsl:if>
-  </xsl:template>
+
 
 
 
@@ -1383,25 +1371,6 @@ package <xsl:value-of select="$path"/>;
         }
     </xsl:template>
 
-
-
- <!-- deprecated - references work differently now
- <xsl:template match="reference[multiplicity/maxOccurs != 1]" mode="setProperty">
-    <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
-    <xsl:variable name="name">
-      <xsl:call-template name="upperFirst">
-        <xsl:with-param name="val" select="name"/>
-      </xsl:call-template>
-    </xsl:variable>
-
-    if ("<xsl:apply-templates select="vodml-id" mode="asvodml-ref"/>".equals(vodmlRef)) {
-      if(pValue instanceof ReferenceObject)
-        set<xsl:value-of select="$name"/>((ReferenceObject)pValue);
-      else 
-        set<xsl:value-of select="$name"/>((<xsl:value-of select="$type"/>)pValue);
-      return true;
-    }
-  </xsl:template> -->
 
   <xsl:template match="literal" >
     /** 

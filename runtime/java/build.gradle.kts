@@ -6,7 +6,7 @@ plugins {
     signing
 }
 group = "org.javastro.ivoa.vo-dml"
-version = "0.7.1"
+version = "0.7.2"
 
 
 dependencies {
@@ -15,7 +15,7 @@ dependencies {
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.0")
 //    implementation("org.glassfish.jaxb:jaxb-runtime:2.3.6")
     implementation("jakarta.persistence:jakarta.persistence-api:3.1.0")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.15.1")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.0")
     implementation("org.hibernate.orm:hibernate-core:6.2.7.Final")
     
     implementation("org.slf4j:slf4j-api:1.7.36")
@@ -40,12 +40,16 @@ dependencies {
 //}
 
 java {
-//    modularity.inferModulePath.set(false) // still can only build on java 1.8
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
+        languageVersion = JavaLanguageVersion.of(17)
     }
     withJavadocJar()
     withSourcesJar()
+
+}
+
+tasks.javadoc {
+    (options as StandardJavadocDocletOptions).tags("TODO","IMPL")
 }
 
 tasks.test {
@@ -110,6 +114,9 @@ publishing.publications.withType(MavenPublication::class.java).forEach { publica
     }
 }
 println ("java property skipSigning= " + project.hasProperty("skipSigning"))
+repositories {
+    mavenCentral()
+}
 
 
 signing {

@@ -83,6 +83,9 @@ VODML Tooling TODO
 * before and after serialization, the references need to be processed - it would be nice to do this automatically.... e.g. https://github.com/FasterXML/jackson-databind/issues/279 for jackson.
 * references
   * would be nice if the tooling warned when contained references are created bare.... - e.g. the filters in the original sample.
+* Vocabularies
+  * would be good to add in off-line capability - store the desise at generation time and read that if the on-line not accessible
+  * only does run-time checking - perhaps compile-time would be good?
 * JAXB
   * ~~idrefs referred to objects are not being output - http://stackoverflow.com/questions/12914382/marshalling-unmarshalling-fields-to-tag-with-attributes-using-jaxb~~
   * make the subsets create substitution group xml (i.e. have elements rather than xsi:type) http://blog.bdoughan.com/2010/11/jaxb-and-inheritance-using-substitution.html
@@ -116,6 +119,7 @@ VODML Tooling TODO
 * JSON
   * allow refs to be serialized/deserialized as ids always.... - for use in APIs.... https://stackoverflow.com/questions/51172496/how-to-dynamically-ignore-a-property-on-jackson-serialization
   * perhaps have custom written ivoa base schema.... express some better rules... e.g. non neg integer...
+  * modern usage https://blogs.oracle.com/javamagazine/post/java-json-serialization-jackson
 
 
 # Python production

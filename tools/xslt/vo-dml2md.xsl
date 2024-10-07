@@ -543,7 +543,7 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
         <xsl:variable name="type" select="$models/key('ellookup',$vodml-ref)"/>
         <xsl:choose>
             <xsl:when test="name($type) = 'primitiveType'">
-                <xsl:value-of select="concat(name($type),' ',$type/name,' - ',$type/description)"/>
+                <xsl:value-of select="concat(name($type),' ',$type/name,' - ',normalize-space($type/description))"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:value-of select="name($type)"/>
