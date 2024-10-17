@@ -59,3 +59,6 @@
 * 0.5.7
   * Added support for validation against IVOA vocabularies
   * Added support for rdb serialization of primitive attributes with unbounded multiplicity as colon separated string
+* 0.5.8 - only lining up some dependency versions
+
+N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass - fixed in 6.6.1
