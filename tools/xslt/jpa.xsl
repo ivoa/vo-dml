@@ -317,9 +317,14 @@
             </xsl:choose>
     </xsl:template>
 
+    <xsl:template match="enumeration" mode="attrovercols" as="xsd:string*">
+        <xsl:param name="prefix" as="xsd:string"/>
+        <xsl:value-of select="$prefix"/>
+    </xsl:template>
 
 
-  <xsl:template match="attribute|reference|composition" mode="nullable">
+
+    <xsl:template match="attribute|reference|composition" mode="nullable">
 <!--      <xsl:message>nullability - <xsl:value-of select="concat(name,' parent=',./parent::*/name, ' type=',./parent::*/name())"/> </xsl:message>-->
       <xsl:variable name="vodml-ref" select="vf:asvodmlref(./parent::*)"/>
       <xsl:choose>
