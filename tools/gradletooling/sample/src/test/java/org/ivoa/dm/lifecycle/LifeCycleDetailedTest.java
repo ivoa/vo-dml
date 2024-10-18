@@ -60,7 +60,7 @@ public class LifeCycleDetailedTest extends AbstractTest {
             contained, refcont.get(0)); // TODO this will create contradictions.... how best to test
 
     model = new LifecycleTestModel();
-    model.addContent(atest);
+//    model.addContent(atest);
     model.addContent(atest2);
   }
 

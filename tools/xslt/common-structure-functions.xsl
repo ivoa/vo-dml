@@ -186,38 +186,16 @@ note - only define functions in here as it is included in the schematron rules
         <xsl:param name="name" as="xsd:string"/>
         <!-- imported model names -->
         <xsl:variable name="modelsInScope" select="($name,vf:importedModelNames($name))"/>
-        <xsl:sequence select="$models/vo-dml:model[name = $modelsInScope ]//objectType[not(@abstract='true') and (not(vf:referredTo(vf:asvodmlref(.))) or (vf:asvodmlref(.) = vf:referenceTypesInContainmentHierarchy(vf:asvodmlref(.)) ))]"/>
-    </xsl:function>
+        <xsl:sequence >
+            <xsl:for-each select="$models/vo-dml:model[name = $modelsInScope ]//objectType[not(@abstract='true')and not(vf:isContained(vf:asvodmlref(.)))]">
 
-
-
-    <!-- TODO delete as deprecated -->
-    <xsl:function name="vf:refsToSerializeOld" as="xsd:string*">
-        <xsl:param name="name" as="xsd:string"/>
-        <!-- imported model names -->
-        <xsl:variable name="modelsInScope" select="($name,vf:importedModelNames($name))"/>
-        <xsl:variable name="possibleRefs" select="distinct-values($models/vo-dml:model[name = $modelsInScope ]//reference/datatype/vodml-ref)" as="xsd:string*"/>
-
-        <xsl:message>models in scope=<xsl:value-of select="concat(string-join($modelsInScope,','), ' hasref=',string-join($possibleRefs,','))"/> </xsl:message>
-        <xsl:variable name="references-proc" as="xsd:string*">
-            <xsl:for-each select="$possibleRefs">
-                <xsl:variable name="contained" select="$models/vo-dml:model[name = $modelsInScope ]//*[composition/datatype/vodml-ref/text()=current()]" as="element()*"/> <!-- could be multiply contained? -->
-                <xsl:variable name="okref" select="for $v in $contained return vf:asvodmlref($v) = $possibleRefs" as="xsd:boolean*"/>
-                <xsl:message>model references type=<xsl:value-of select="."/> contained=<xsl:value-of select="string-join(for $v in $contained return vf:asvodmlref($v),',')" /> ok=<xsl:value-of
-                        select="string-join(string($okref),',')"/></xsl:message>
-                <xsl:sequence select="concat(.,'=',count($contained) = 0)"/>
-            </xsl:for-each>
-        </xsl:variable>
-        <xsl:message>** refs <xsl:value-of select="string-join($references-proc,',')"/></xsl:message>
-        <xsl:variable name="references-vodmlref" as="xsd:string*">
-            <xsl:for-each select="$references-proc">
-                <xsl:variable name="tmp" select="tokenize(current(),'=')" as="xsd:string*"/>
-                <xsl:if test="$tmp[2]='true'">
-                    <xsl:sequence select="$tmp[1]"/>
+                <xsl:variable name="cont" select="vf:containedTypes(vf:asvodmlref(current()))"/>
+                <xsl:variable name="refby" select="vf:referredByInModels(vf:asvodmlref(current()),$modelsInScope)"/>
+                <xsl:if test="empty($refby[not(. = $cont)])">
+                    <xsl:sequence select="current()"/>
                 </xsl:if>
             </xsl:for-each>
-        </xsl:variable>
-        <xsl:value-of select="$references-vodmlref"/>
+        </xsl:sequence>
     </xsl:function>
 
 
@@ -249,6 +227,15 @@ note - only define functions in here as it is included in the schematron rules
                 <xsl:message terminate="yes">type '<xsl:value-of select="$vodml-ref"/>' not in considered models</xsl:message>
             </xsl:otherwise>
         </xsl:choose>
+    </xsl:function>
+
+    <xsl:function name="vf:containedTypes" >
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:sequence>
+            <xsl:for-each select="$models/key('ellookup',$vodml-ref)/composition/datatype/vodml-ref">
+                <xsl:sequence select="(current(), vf:containedTypes(current()))"/>
+            </xsl:for-each>
+        </xsl:sequence>
     </xsl:function>
 
     <!-- is the type (sub or base) used as a  contained reference -->
@@ -284,7 +271,7 @@ note - only define functions in here as it is included in the schematron rules
             <xsl:when test="$models/key('ellookup',$vodml-ref)">
                 <xsl:variable name="hier" select="vf:typeHierarchy($vodml-ref)"/>
                 <!--                <xsl:message>refs <xsl:value-of select="concat ($vodml-ref,' ',count($models//reference/datatype[vodml-ref = $hier])> 0,' h=',string-join($hier,','))"/></xsl:message>-->
-                <xsl:sequence select="for $i in $models/vo-dml:model[name = $modelsToSearch]//(objectType|dataType)[reference/datatype/vodml-ref = $hier] return vf:asvodmlref($i)"/> <!-- FIXME do datypes too - and proper vodml ids -->
+                <xsl:sequence select="distinct-values(for $i in $models/vo-dml:model[name = $modelsToSearch]//(objectType|dataType)[reference/datatype/vodml-ref = $hier] return vf:asvodmlref($i))"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:message terminate="yes">type '<xsl:value-of select="$vodml-ref"/>' not in considered models</xsl:message>
