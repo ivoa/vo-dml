@@ -127,9 +127,9 @@ vodml-id '<sch:value-of select="."/>' is not unique, there are <sch:value-of sel
 
     <sch:pattern name="Unique_composition">
   <sch:rule context="composition/datatype/vodml-ref">
-    <sch:let name="count" value="count(//composition/datatype/vodml-ref[. = current()])"/>
+    <sch:let name="count" value="count(distinct-values(//composition/datatype/vodml-ref[. = current()]/ancestor::objectType))"/>
     <sch:let name="container" value="vf:asvodmlref(current()/ancestor::objectType)"/>
-    <sch:assert test="$count = 1" flag="error">
+    <sch:assert test="$count = 1" flag="warning">
 objecttype <sch:value-of select="."/> is used more than once, as target of composition relation. In this case for containing objectType <sch:value-of select="$container"/>
         ** (this message will repeat itself <sch:value-of select="$count"/> times!, once for each different container) **
     </sch:assert>
