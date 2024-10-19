@@ -224,16 +224,18 @@
     import org.ivoa.vodml.nav.ReferenceCache;
     import org.ivoa.vodml.vocabularies.Vocabulary;
 
+        /** The container class for the <xsl:value-of select="name"/> Model.
+        * <xsl:value-of select="description" disable-output-escaping="yes"/>
+        */
     @XmlAccessorType(XmlAccessType.NONE)
     @XmlRootElement
     @JsonTypeInfo(include=JsonTypeInfo.As.WRAPPER_OBJECT, use=JsonTypeInfo.Id.NAME)
     @JsonIgnoreProperties({"refmap"})
     @VoDml(id="<xsl:value-of select="name"/>" ,role = VodmlRole.model, type="<xsl:value-of select="name"/>")
-    /** The container class for the <xsl:value-of select="name"/> Model. */
         public class <xsl:value-of select="$ModelClass"/> implements VodmlModel&lt;<xsl:value-of select="$ModelClass"/>&gt; {
 
-    @XmlType
     /** A container class for the references in the model. */
+    @XmlType
     public static class References {
     <xsl:for-each select="$references-vodmlref"> <!-- looking at all possible refs -->
         @XmlElement(name="<xsl:value-of select='vf:lowerFirst(vf:jaxbType(current()))'/>")
@@ -281,7 +283,7 @@
         * Test if a term is in the vocabulary.
         * @param value the value to test
         * @param vocabulary the uri for the vocabulary.
-        * @return
+        * @return true if the term is in the vocabulary.
         */
         public static boolean isInVocabulary(String value, String vocabulary)
         {
@@ -332,6 +334,12 @@
             refs.add(c);
         }
         </xsl:for-each>
+        /**
+        * Get the content of the given type.
+        * @param &lt;T&gt; The type of the content
+        * @param c the class of the content.
+        * @return the content.
+        */
         @SuppressWarnings("unchecked")
       public &lt;T&gt; List&lt;T&gt; getContent(Class&lt;T&gt; c) {
       return (List&lt;T&gt;) content.stream().filter(p -> p.getClass().isAssignableFrom(c)).collect(
@@ -349,22 +357,32 @@
         </xsl:if>
         org.ivoa.vodml.nav.Util.makeUniqueIDs(il);
       }
+      /** if the model has references.
+        * @return true if the model has references.
+        */
       public static boolean hasReferences(){
          return <xsl:value-of select="$hasReferences"/>;
       }
 
-      public static JAXBContext contextFactory()  throws JAXBException
+        /**
+        * the context factory for the model.
+        * @return the JAXBContext.
+        * @throws JAXBException if there is a problem.
+        */
+        public static JAXBContext contextFactory()  throws JAXBException
       {
       <xsl:variable name="packages" as="xsd:string*">
         <xsl:apply-templates select="$models" mode="JAXBContext"/>
       </xsl:variable>
          return JAXBContext.newInstance("<xsl:value-of select="string-join($packages,':')"/>" );
       }
-        /** The persistence unit name for the model. */
+        /** The persistence unit name for the model.
+        * @return the name.
+        */
        public static String pu_name(){
         return "<xsl:value-of select='$pu_name'/>";
         }
-
+        /** write an XML schema based on JAXB interpretation. */
         public static void writeXMLSchema() {
         try {
             contextFactory().generateSchema(new org.javastro.ivoa.jaxb.SchemaNamer(description().schemaMap()));
@@ -433,6 +451,9 @@
 
         };};
 
+        /** Get the model description.
+        * @return the description.
+        */
         public static ModelDescription description(){
         return new ModelDescription() {
         @SuppressWarnings("rawtypes")
@@ -475,6 +496,7 @@
         return description();
 
         }
+        /** create a context in preparation for cloning. */
         @SuppressWarnings("rawtypes")
         public void createContext()
         {
