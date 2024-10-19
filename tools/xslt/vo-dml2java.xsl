@@ -1079,10 +1079,10 @@ package <xsl:value-of select="$path"/>;
       <xsl:apply-templates select="." mode="openapiAnnotation"/>
       <xsl:choose>
            <xsl:when test="vf:isSubSetted(vf:asvodmlref(.)) "><!--  or $rt/@abstract or vf:hasSubTypes(datatype/vodml-ref)-->
-     protected List&lt;? extends <xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="vf:javaMemberName(name)"/> = null;
+     protected java.util.List&lt;? extends <xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="vf:javaMemberName(name)"/> = null;
           </xsl:when>
           <xsl:otherwise>
-     protected List&lt;<xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="vf:javaMemberName(name)"/> = null;
+     protected java.util.List&lt;<xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="vf:javaMemberName(name)"/> = null;
           </xsl:otherwise>
       </xsl:choose>
 
@@ -1137,10 +1137,10 @@ package <xsl:value-of select="$path"/>;
     */
     <xsl:choose>
         <xsl:when test="vf:isSubSetted(vf:asvodmlref(.))">
-    public void set<xsl:value-of select="$name"/>(final List&lt;? extends <xsl:value-of select="$type"/>&gt; p<xsl:value-of select="$name"/>) {
+    public void set<xsl:value-of select="$name"/>(final java.util.List&lt;? extends <xsl:value-of select="$type"/>&gt; p<xsl:value-of select="$name"/>) {
         </xsl:when>
         <xsl:otherwise>
-    public void set<xsl:value-of select="$name"/>(final List&lt;<xsl:value-of select="$type"/>&gt; p<xsl:value-of select="$name"/>) {
+    public void set<xsl:value-of select="$name"/>(final java.util.List&lt;<xsl:value-of select="$type"/>&gt; p<xsl:value-of select="$name"/>) {
         </xsl:otherwise>
     </xsl:choose>
     this.<xsl:value-of select="vf:javaMemberName(name)"/> = p<xsl:value-of select="$name"/>;
@@ -1359,14 +1359,14 @@ package <xsl:value-of select="$path"/>;
         * Returns <xsl:value-of select="name"/> Reference<br/>
         * @return <xsl:value-of select="name"/> Reference
         */
-        public List&lt;<xsl:value-of select="$type"/>&gt;&bl;get<xsl:value-of select="$name"/>() {
+        public java.util.List&lt;<xsl:value-of select="$type"/>&gt;&bl;get<xsl:value-of select="$name"/>() {
         return this.<xsl:value-of select="vf:javaMemberName(name)"/>;
         }
         /**
         * Defines <xsl:value-of select="name"/> Reference
         * @param p<xsl:value-of select="$name"/> references to set
         */
-        public void set<xsl:value-of select="$name"/>(final List&lt;<xsl:value-of select="$type"/>&gt; p<xsl:value-of select="$name"/>) {
+        public void set<xsl:value-of select="$name"/>(final java.util.List&lt;<xsl:value-of select="$type"/>&gt; p<xsl:value-of select="$name"/>) {
         this.<xsl:value-of select="vf:javaMemberName(name)"/> = p<xsl:value-of select="$name"/>;
         }
     </xsl:template>
