@@ -187,7 +187,7 @@ note - only define functions in here as it is included in the schematron rules
         <!-- imported model names -->
         <xsl:variable name="modelsInScope" select="($name,vf:importedModelNames($name))"/>
         <xsl:sequence >
-            <xsl:for-each select="$models/vo-dml:model[name = $modelsInScope ]//objectType[not(@abstract='true')and not(vf:isContained(vf:asvodmlref(.)))]">
+            <xsl:for-each select="$models/vo-dml:model[name = $modelsInScope ]//objectType[not(@abstract='true')and not(vf:isContainedInModels(vf:asvodmlref(.),$modelsInScope))]">
 
                 <xsl:variable name="cont" select="vf:containedTypes(vf:asvodmlref(current()))"/>
                 <xsl:variable name="refby" select="vf:referredByInModels(vf:asvodmlref(current()),$modelsInScope)"/>
@@ -468,9 +468,14 @@ note - only define functions in here as it is included in the schematron rules
     </xsl:function>
 
 
-    <!-- is the type (or supertypes) contained anywhere -->
     <xsl:function name="vf:isContained" as="xsd:boolean">
+    <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:sequence select="vf:isContainedInModels($vodml-ref,$models/vo-dml:model/name)"/>
+    </xsl:function>
+    <!-- is the type (or supertypes) contained anywhere -->
+    <xsl:function name="vf:isContainedInModels" as="xsd:boolean">
         <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:param name="modelsToSearch" as="xsd:string*"/>
         <xsl:choose>
             <xsl:when test="$models/key('ellookup',$vodml-ref)">
                 <xsl:variable name="el" as="element()">
@@ -479,10 +484,10 @@ note - only define functions in here as it is included in the schematron rules
                 <!--                <xsl:message>contained <xsl:value-of select="concat($vodml-ref, ' ', count($models//(attribute|composition)/datatype[vodml-ref=$vodml-ref])>0)"/> </xsl:message>-->
                 <xsl:choose>
                     <xsl:when test="not($el/extends)">
-                        <xsl:value-of select="count($models//(attribute|composition)/datatype[vodml-ref=$vodml-ref])>0"/><!-- TODO should this not be just composition? -->
+                        <xsl:value-of select="count($models/vo-dml:model[name = $modelsToSearch]//(attribute|composition)/datatype[vodml-ref=$vodml-ref])>0"/><!-- TODO should this not be just composition? -->
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="count($models//(attribute|composition)/datatype[vodml-ref=$vodml-ref])>0 or vf:isContained($el/extends/vodml-ref)"/>
+                        <xsl:value-of select="count($models/vo-dml:model[name = $modelsToSearch]//(attribute|composition)/datatype[vodml-ref=$vodml-ref])>0 or vf:isContained($el/extends/vodml-ref)"/>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
