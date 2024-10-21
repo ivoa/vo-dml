@@ -85,6 +85,11 @@ public class Util {
         });
 
     }
+    /**
+     * get the id management for all the objects in a model.
+     * @param modelInstance the list of content for a model instance.
+     * @return interfaces to manage the ids for the objects in the mode.
+     */
     public static List<XmlIdManagement> findXmlIDs(final List<Object> modelInstance)
     {
         List<XmlIdManagement> retval = new ArrayList<>();
@@ -106,6 +111,10 @@ public class Util {
         return retval;
     }
     
+    /**
+     * make the IDs unique within a model instance.
+     * @param els the id management interfaces for each object in the model.
+     */
     public static void makeUniqueIDs(List<? extends XmlIdManagement> els ) {
         
       Set<String> currentValues = els.stream().map(p->p.getXmlId()).collect(Collectors.toSet());
@@ -127,6 +136,12 @@ public class Util {
     }
     }
 
+    /**
+     * clone a list of objects.
+     * @param <T> the type of the ohjects in the list.
+     * @param l the list of objects.
+     * @return the cloned list.
+     */
     public static <T extends ObjectCopier<T>> List<? extends T> cloneList(List<? extends T> l)
     {
          List<T> retval = new ArrayList<T>();

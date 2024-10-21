@@ -32,6 +32,10 @@ public class VodmlTypeResolver extends TypeIdResolverBase {
     @SuppressWarnings("rawtypes")
     private Map<String, Class> typeMap;
 
+    /**
+     * Create a type resolver from a model description.
+     * @param md the model description.
+     */
     public VodmlTypeResolver(ModelDescription md)
     {
         this.typeMap = md.utypeToClassMap();

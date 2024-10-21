@@ -55,6 +55,11 @@ public class ModelInstanceTraverser {
         void startInstance(final Object o, final VodmlTypeInfo v, boolean firstVisit );
     }
 
+    /**
+     * A visitor with more action points.
+     * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
+     * 
+     */
     public interface FullVisitor extends Visitor {
         /**
          * perform an action on a "leaf" object i.e. has no model children.
@@ -82,6 +87,11 @@ public class ModelInstanceTraverser {
     public ModelInstanceTraverser() {
         stack = new LinkedList<>();
     }
+    /**
+     * Create a full visitor from a visitor.
+     * @param vis the visitor.
+     * @return the FullVisitor.
+     */
     public static FullVisitor makeFullVisitor (Visitor vis) {
         return new FullVisitor() {
 
@@ -110,16 +120,31 @@ public class ModelInstanceTraverser {
     {
         traverse(o,makeFullVisitor(visitor));
     }
+    /**
+     * Traverse an object tree with a FullVisitor.
+     * @param o the base of the object tree.
+     * @param visitor the FullVisitor.
+     */
     public static void traverse(Object o,  FullVisitor visitor)
     {
         ModelInstanceTraverser traverser = new ModelInstanceTraverser();
         ObjInfo oi = traverser.new ObjInfo(o);
         traverser.walk(oi, visitor);
     }
+    /**
+     * Traverse a list of object trees with a Visitor.
+     * @param o the list of object trees.
+     * @param visitor the Visitor.
+     */
     public static void traverse(List<Object> o,  Visitor visitor)
     {
         traverse(o,makeFullVisitor(visitor));
     }
+     /**
+     * Traverse a list of object trees with a FullVisitor.
+     * @param o the list of object trees.
+     * @param visitor the FullVisitor.
+     */
     public static void traverse(List<Object> o ,  FullVisitor visitor)
     {
         ModelInstanceTraverser traverser = new ModelInstanceTraverser();

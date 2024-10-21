@@ -58,7 +58,7 @@ public class ModelValidator {
 
     private final Source[] schemaFiles;
 
-    
+
     /**
      * Create modelValidator from XML Schema.
      * @param model the model description.
@@ -75,39 +75,62 @@ public class ModelValidator {
             logger.error("unable to create a model validator", e);
         }
     }
-    
-   
-    
+
+
+
     static private String makeCatalogue(Map<String, String> schemaMap) {
-       StringWriter writer = new StringWriter();
-       
-       writer.write("<catalog xmlns=\"urn:oasis:names:tc:entity:xmlns:xml:catalog\">\n");
-       schemaMap.forEach((k,v) -> {
-           writer.append("<uri name=\"");
-           writer.append(k);
-           writer.append("\" uri=\"classpath:/");
-           writer.append(v);
-           writer.append("\"/>\n");
-           });
-       
-       writer.write("</catalog>");
-       
-       
-       return writer.toString();
+        StringWriter writer = new StringWriter();
+
+        writer.write("<catalog xmlns=\"urn:oasis:names:tc:entity:xmlns:xml:catalog\">\n");
+        schemaMap.forEach((k,v) -> {
+            writer.append("<uri name=\"");
+            writer.append(k);
+            writer.append("\" uri=\"classpath:/");
+            writer.append(v);
+            writer.append("\"/>\n");
+        });
+
+        writer.write("</catalog>");
+
+
+        return writer.toString();
     }
 
 
+    /**
+     * the model validation kind.
+     * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
+     * 
+     */
     public enum ErrorKind {
+        /** Unknown.
+         */
         Unknown,
+        /** Warning.
+         */
         Warning,
+        /** Error.
+         */
         Error,
+        /** FatalError.
+         */
         FatalError,
+        /** Sax.
+         */
         Sax
     }
 
+    /** the map of validation errors.
+     */
     protected Map<ErrorKind, List<ErrorDescription>> errorMap;
 
+    /**
+     * Represents the validation resulf. .
+     * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
+     */
     public static class ValidationResult {
+        /** is the result valid.
+         */
         public final boolean isOk;
         private final  Map<ErrorKind, List<ErrorDescription>> errorMap;
         ValidationResult(boolean isOk,
@@ -115,6 +138,10 @@ public class ModelValidator {
             this.isOk = isOk;
             this.errorMap = new HashMap<>(errorMap);
         }
+        /**
+         * print the validation result.
+         * @param printStream the printstream to which the result is printed.
+         */
         public void printValidationErrors(PrintStream printStream) {
             errorMap.forEach((kind, errors) -> {
                 errors.stream().forEach(printStream::println);
@@ -127,7 +154,7 @@ public class ModelValidator {
         int line;
         int column;
 
-        
+
         ErrorDescription(ErrorKind kind, SAXParseException e) {
             this.desc = e.getMessage();
             this.kind = kind;
@@ -135,7 +162,7 @@ public class ModelValidator {
             this.column = e.getColumnNumber();
         }
 
-         ErrorDescription(SAXException e) {
+        ErrorDescription(SAXException e) {
             this.desc = e.getMessage();
             this.kind = ErrorKind.Sax;
             this.line = 0;
@@ -151,7 +178,7 @@ public class ModelValidator {
             this.column = 0;
 
         }
-               /**
+        /**
          * {@inheritDoc}
          * overrides @see java.lang.Object#toString()
          */
@@ -162,12 +189,12 @@ public class ModelValidator {
             builder.append(kind);
             builder.append(" ").append(desc);
             if(line> 0) {
-            builder.append(" line=");
-            builder.append(line);
-            if (column > 0) {
-            builder.append(", column=");
-            builder.append(column);
-            }
+                builder.append(" line=");
+                builder.append(line);
+                if (column > 0) {
+                    builder.append(", column=");
+                    builder.append(column);
+                }
             }
             return builder.toString();
         }
@@ -217,42 +244,51 @@ public class ModelValidator {
 
     }
 
-    
-   /**
-    * validate an object from the model.
- * @param <T> The type of the object
- * @param p The type to be validated.
- * @return the result of the validation.
- */
-public  <T> ValidationResult validate (T p) {
-         try {
+
+    /**
+     * validate an object from the model.
+     * @param <T> The type of the object
+     * @param p The type to be validated.
+     * @return the result of the validation.
+     */
+    public  <T> ValidationResult validate (T p) {
+        try {
             JAXBSource source = new JAXBSource(jc, p);
             validateJAXB(source);
         } catch (JAXBException e) {
             ErrorDescription d = new ErrorDescription(new RuntimeException(e));
             put(errorMap, d.kind, d);;
         } 
-         return new ValidationResult(errorMap.isEmpty(), errorMap);
+        return new ValidationResult(errorMap.isEmpty(), errorMap);
     }
-   
-   /**
-    * Validate the file content against the model
- * @param file containing xml instance of the model.
- * @return the validation
- */
-public ValidationResult validate(File file) {
-      return validateInternal(new StreamSource(file));
-   }
 
-public ValidationResult validate(String s) {
-    return validateInternal(new StreamSource(new StringReader(s)));
-}
+    /**
+     * Validate the file content against the model.
+     * @param file containing xml instance of the model.
+     * @return the validation
+     */
+    public ValidationResult validate(File file) {
+        return validateInternal(new StreamSource(file));
+    }
 
+    /**
+     * Validate the string content against the model.
+     * @param s string containing a model instance.
+     * @return the validation.
+     */
+    public ValidationResult validate(String s) {
+        return validateInternal(new StreamSource(new StringReader(s)));
+    }
+
+    /**
+     * @param source
+     * @return
+     */
     ValidationResult validateInternal(Source source) {
-           try {
-            
+        try {
+
             Validator validator = initValidator();
-            
+
             validator.validate(source);
 
 
@@ -264,14 +300,14 @@ public ValidationResult validate(String s) {
             ErrorDescription d = new ErrorDescription(new RuntimeException(e));
             put(errorMap, d.kind, d);;
         }
-      
+
         return new ValidationResult(errorMap.isEmpty(), errorMap);
-       
-   }
-   
+
+    }
+
 
     ValidationResult validateJAXB (JAXBSource source) {
-       return validateInternal(source);
+        return validateInternal(source);
     }
 
 
@@ -287,7 +323,7 @@ public ValidationResult validate(String s) {
         return validator;
     }
 
-     XMLResolver makeXMLResolver() {
+    XMLResolver makeXMLResolver() {
         XMLResolverConfiguration config = new XMLResolverConfiguration();
         config.setFeature(ResolverFeature.DEFAULT_LOGGER_LOG_LEVEL, "info");
         config.setFeature(ResolverFeature.ACCESS_EXTERNAL_DOCUMENT, "");
@@ -297,7 +333,7 @@ public ValidationResult validate(String s) {
         config.setFeature(ResolverFeature.CLASSPATH_CATALOGS, true);
 
         org.xmlresolver.CatalogManager manager = config
-              .getFeature(ResolverFeature.CATALOG_MANAGER);
+                .getFeature(ResolverFeature.CATALOG_MANAGER);
         URI caturi = URI.create("https://ivoa.net/vodml/catalog.xml");//IMPL - not sure is this should be more obviously false.
         config.addCatalog(caturi.toString());
         EntryCatalog cat = manager.loadCatalog(caturi, new InputSource(new StringReader(schemaCat)));

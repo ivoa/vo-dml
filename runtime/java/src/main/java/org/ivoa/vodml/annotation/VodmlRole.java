@@ -8,14 +8,32 @@ package org.ivoa.vodml.annotation;
  * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
  */
 public enum VodmlRole {
+    /** unknown type.
+     */
     unknown, // special "null" value
+    /** model.
+     */
     model,
+    /** objectType.
+     */
     objectType,
+    /** attribute.
+     */
     attribute,
+    /** composition.
+     */
     composition,
+    /** reference.
+     */
     reference,
+    /** dataType.
+     */
     dataType,
+    /** primitiveType.
+     */
     primitiveType,
+    /** enumeration.
+     */
     enumeration
 
 }

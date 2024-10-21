@@ -18,12 +18,22 @@ import java.util.stream.Stream;
 import jakarta.persistence.AttributeConverter;
 
 /**
- * Attribute converters to convert lists to comma separated strings.
+ * JPA Attribute converters to convert lists to comma separated strings.
  * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
+ */
+/**
+ *  .
+ * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
+ * @since 21 Oct 2024
  */
 public class AttributeConverters {
 
     private static final String SPLIT_CHAR = ";";
+    /**
+     * A  .
+     * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
+     * 
+     */
     public static class StringListConverter implements AttributeConverter<List<String>, String> {
 
        
@@ -47,6 +57,11 @@ public class AttributeConverters {
         
     }
     
+    /**
+     *  The base class for converters.
+     * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
+     *
+     */
     public static abstract class NumberListConverter <T> implements AttributeConverter<List<T>, String> {
 
         /**
@@ -68,6 +83,11 @@ public class AttributeConverters {
 
     
     }
+    /**
+     * A converter for Integers.
+     * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
+     * 
+     */
     public static class IntListConverter extends NumberListConverter<Integer>
     {
 
@@ -86,6 +106,11 @@ public class AttributeConverters {
         }
         
     }
+    /**
+     *  A converter for doubles.
+     * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
+     * 
+     */
     public static class DoubleListConverter extends NumberListConverter<Double>
     {
 
@@ -104,6 +129,12 @@ public class AttributeConverters {
         }
         
     }
+    
+    /**
+     * A converter for booleans.
+     * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
+     * 
+     */
     public static class BooleanListConverter extends NumberListConverter<Boolean> 
     {
 

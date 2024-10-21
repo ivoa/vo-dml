@@ -10,6 +10,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /*
  * Created on 11/08/2021 by Paul Harrison (paul.harrison@manchester.ac.uk).
  */
+/**
+ *  Annotation to store VO-DML information.
+ */
 @Documented
 @Retention(RUNTIME) @Target({TYPE,FIELD})
 public @interface VoDml {

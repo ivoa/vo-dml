@@ -19,19 +19,34 @@ import java.util.Objects;
  * @since 1 Sep 2021
  */
 public final class VodmlTypeInfo {
-  
+
+    /** default value for typeinfo if not known.
+     */
     public static final VodmlTypeInfo UNKNOWN=new VodmlTypeInfo("", VodmlRole.unknown,"");
 
-    
-        public VodmlTypeInfo(String vodmlRef, VodmlRole role, String type, VodmlRole typeRole) {
+
+    /**
+     * Create typeinfo.
+     * @param vodmlRef the reference.
+     * @param role the role.
+     * @param type the type.
+     * @param typeRole the role of the type.
+     */
+    public VodmlTypeInfo(String vodmlRef, VodmlRole role, String type, VodmlRole typeRole) {
         this.vodmlRef = vodmlRef;
         this.role = role;
         this.vodmlType = type;
         this.vodmlTypeRole = typeRole;
-           
-        }
 
-    
+    }
+
+
+    /**
+     * Create typeinfo.
+     * @param vodmlRef the vodml-ref of the type.   
+     * @param role the role of the type.
+     * @param type the type of the type.
+     */
     public VodmlTypeInfo(String vodmlRef, VodmlRole role, String type) {
         this(vodmlRef, role, vodmlRef, role);
         if (role ==  VodmlRole.attribute)
@@ -40,10 +55,15 @@ public final class VodmlTypeInfo {
         }
 
     }
-    
+
+    /**
+     * Create typeinfo.
+     * @param vodmlRef the vodml-ref of the type.   
+     * @param role the role.
+     */
     public VodmlTypeInfo(String vodmlRef, VodmlRole role) {
         this(vodmlRef, role, vodmlRef);
-        
+
         //IMPL would assertion be better here?
         switch (role) {
         case attribute:
@@ -60,19 +80,19 @@ public final class VodmlTypeInfo {
      * the full VODML reference for the entity (including the model prefix).
      */
     public final String vodmlRef;    
-    
+
     /**
-     * the role
+     * the role.
      */
     public final VodmlRole role;
-    
-     /**
+
+    /**
      * the full VODML reference for the type (including the model prefix).
      */
     public final String vodmlType;
-    
-    
-    /** the role of the type pointed to for an attribute
+
+
+    /** the role of the type pointed to for an attribute.
      */
     public final VodmlRole vodmlTypeRole;
 
@@ -115,8 +135,8 @@ public final class VodmlTypeInfo {
                 vodmlRef, role, vodmlType, vodmlTypeRole);
     }
 
- 
-    
+
+
 
 }
 

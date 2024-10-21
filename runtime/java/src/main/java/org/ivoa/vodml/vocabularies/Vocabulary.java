@@ -30,6 +30,10 @@ public class Vocabulary {
      */
     Map<String,Term> terms = new HashMap<>();
 
+    /**
+     * Create a vocabulary for the given URI.
+     * @param url the identifier for the vocabulary.
+     */
     public Vocabulary(String url) {
         this.url = url;
     }
@@ -109,8 +113,8 @@ public class Vocabulary {
 
     /**
      * Fetch a term definition from the vocabulary.
-     * @param term
-     * @return
+     * @param term the term value.
+     * @return the definition.
      */
     public Optional<Term> getTerm(String term) {
         return Optional.ofNullable(terms.get(term));
