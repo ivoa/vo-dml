@@ -31,8 +31,10 @@ The gradle task
 ```shell
 gradle vodmlSchema
 ```
-will generate XML and JSON schema for the model. These schema files will automatically be included withing the jar file for the model.
+will generate XML and JSON schema for the model. The schema will be generated in the directory defined by the `outputSchemaDir` property (default `build/generated/sources/vodml/schema/`).
+
+These schema files will automatically be included within the jar file for the model, so that instance validation can be automatically be done without reference to external files.
 
 # Transformation to VO-DML
 
-The transformation of other data model representations to VO-DML is discussed elsewhere. 
+The transformation of other data model representations to VO-DML is [discussed elsewhere](modelling/TransformingToVODML.md). 
