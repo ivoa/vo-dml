@@ -1221,7 +1221,7 @@ package <xsl:value-of select="$path"/>;
     <xsl:template match="objectType|dataType" mode="jparefs">
         /**
         * {@inheritDoc}
-        * @deprecated generally better to use the model level reference persistence as only this can deal with "contained" references properly.
+        * @deprecated generally better to use the model level reference persistence as only this can deal with "contained" references properly. */
         @Override
         @Deprecated
         public void persistRefs(jakarta.persistence.EntityManager _em) {
