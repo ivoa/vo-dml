@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema elementFormDefault="unqualified" version="1.0" targetNamespace="http://ivoa.net/vodml/sample/serialization" xmlns:ser="http://ivoa.net/vodml/sample/serialization" xmlns:tns="http://ivoa.net/vodml/sample/serialization" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="myModelModel" type="tns:myModelModel"/>
+
+  <xs:complexType name="myModelModel">
+    <xs:sequence>
+      <xs:element name="refs" type="tns:references" minOccurs="0"/>
+      <xs:element name="someContent" type="tns:SomeContent" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="references">
+    <xs:sequence>
+      <xs:element name="refa" type="tns:Refa" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="refb" type="tns:Refb" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Refa">
+    <xs:sequence>
+      <xs:element name="val" type="xs:string"/>
+    </xs:sequence>
+    <xs:attribute name="_id" type="xs:ID"/>
+  </xs:complexType>
+
+  <xs:complexType name="Refb">
+    <xs:sequence>
+      <xs:element name="name" type="xs:ID"/>
+      <xs:element name="val" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SomeContent">
+    <xs:sequence>
+      <xs:element name="zval" type="xs:string" maxOccurs="unbounded"/>
+      <xs:element name="con" type="tns:BaseC" maxOccurs="unbounded"/>
+      <xs:element name="ref1" type="xs:IDREF" minOccurs="0"/>
+      <xs:element name="ref2" type="xs:IDREF" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="BaseC" abstract="true">
+    <xs:sequence>
+      <xs:element name="bname" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Dcont">
+    <xs:complexContent>
+      <xs:extension base="tns:BaseC">
+        <xs:sequence>
+          <xs:element name="dval" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Econt">
+    <xs:complexContent>
+      <xs:extension base="tns:BaseC">
+        <xs:sequence>
+          <xs:element name="evalue" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>
+

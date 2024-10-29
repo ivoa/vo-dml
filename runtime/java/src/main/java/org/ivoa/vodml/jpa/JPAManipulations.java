@@ -23,8 +23,9 @@ public interface JPAManipulations {
  *    entityManager.merge(to_clone);
  * </pre>
     * 
-    * 
+    * @deprecated - use the copy constructor instead.
     */
+   @Deprecated(forRemoval = true)
    void jpaClone(EntityManager em);
 
    /**
@@ -32,7 +33,9 @@ public interface JPAManipulations {
     * a model instance, as no JPA operations (apart from refresh) are cascaded to references.
     * References lifecycle is expected to be managed separately.
     * @param em the entity manager
+    * @deprecated use the method at the model level - as it is only then that "contained" references can be determined.
     */
+   @Deprecated
    void persistRefs(EntityManager em);
 
 }

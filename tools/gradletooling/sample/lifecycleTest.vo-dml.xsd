@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema elementFormDefault="unqualified" version="1.0" targetNamespace="http://ivoa.net/vodml/sample/lifecycle" xmlns:tns="http://ivoa.net/vodml/sample/lifecycle" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:life="http://ivoa.net/vodml/sample/lifecycle">
+
+  <xs:element name="lifecycleTestModel" type="tns:lifecycleTestModel"/>
+
+  <xs:complexType name="lifecycleTestModel">
+    <xs:sequence>
+      <xs:element name="refs" type="tns:references" minOccurs="0"/>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="aTest2" type="tns:ATest2"/>
+        <xs:element name="aTest3" type="tns:ATest3"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="references">
+    <xs:sequence>
+      <xs:element name="referredTo" type="tns:ReferredTo" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ReferredTo">
+    <xs:sequence>
+      <xs:element name="test1" type="xs:int"/>
+    </xs:sequence>
+    <xs:attribute name="_id" type="xs:ID"/>
+  </xs:complexType>
+
+  <xs:complexType name="ATest2">
+    <xs:sequence>
+      <xs:element name="atest" type="tns:ATest"/>
+      <xs:element name="refagg" type="xs:IDREF" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="refcont" type="xs:IDREF" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ATest">
+    <xs:sequence>
+      <xs:element name="contained" type="tns:Contained" maxOccurs="unbounded"/>
+      <xs:element name="refandcontained" type="tns:ReferredLifeCycle" maxOccurs="unbounded"/>
+      <xs:element name="contained2" type="tns:ATest4"/>
+      <xs:element name="ref1" type="xs:IDREF" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Contained">
+    <xs:sequence>
+      <xs:element name="test2" type="xs:string"/>
+      <xs:element name="refbad2" type="xs:IDREF" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ReferredLifeCycle">
+    <xs:sequence>
+      <xs:element name="test3" type="xs:string"/>
+    </xs:sequence>
+    <xs:attribute name="_id" type="xs:ID"/>
+  </xs:complexType>
+
+  <xs:complexType name="ATest4">
+    <xs:sequence>
+      <xs:element name="lowr" type="xs:IDREF" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ATest3">
+    <xs:sequence>
+      <xs:element name="contained" type="tns:Contained" maxOccurs="unbounded"/>
+      <xs:element name="refBad" type="xs:IDREF" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+

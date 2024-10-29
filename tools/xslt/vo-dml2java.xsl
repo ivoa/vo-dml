@@ -663,7 +663,6 @@
           @jakarta.persistence.Id
           @jakarta.persistence.GeneratedValue
           @jakarta.persistence.Column(name = "ID")
-          @com.fasterxml.jackson.annotation.JsonProperty(value="_id", access=com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE) // This is an attempt to get the schema generator to create an entry - TODO JSON schema generation should really just understand the @JsonIdentityInfo
           protected Long _id = (long) 0;
 
           /**
@@ -1119,7 +1118,7 @@ package <xsl:value-of select="$path"/>;
     
     /**
     * Returns <xsl:value-of select="name"/> composition as an immutable list.
-    * @return <xsl:value-of select="name"/> composition
+    * @return <xsl:value-of select="name"/> composition.
     */
       <xsl:choose>
       <xsl:when test="vf:isSubSetted(vf:asvodmlref(.))">
@@ -1133,7 +1132,7 @@ package <xsl:value-of select="$path"/>;
     }
     /**
     * Defines whole <xsl:value-of select="name"/> composition.
-    * @param p<xsl:value-of select="$name"/> composition to set
+    * @param p<xsl:value-of select="$name"/> composition to set.
     */
     <xsl:choose>
         <xsl:when test="vf:isSubSetted(vf:asvodmlref(.))">
@@ -1220,7 +1219,11 @@ package <xsl:value-of select="$path"/>;
 
 <!-- jparefs-->
     <xsl:template match="objectType|dataType" mode="jparefs">
+        /**
+        * {@inheritDoc}
+        * @deprecated generally better to use the model level reference persistence as only this can deal with "contained" references properly.
         @Override
+        @Deprecated
         public void persistRefs(jakarta.persistence.EntityManager _em) {
           <xsl:variable name="localdefs" select="vf:javaLocalDefines(vf:asvodmlref(current()))"/>
           <xsl:apply-templates select="composition[vf:asvodmlref(.) = $localdefs]

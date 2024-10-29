@@ -153,7 +153,7 @@ public abstract class AbstractBaseValidation {
        
         jakarta.persistence.EntityManager em = setupH2Db(modelManagement.pu_name());
         em.getTransaction().begin();
-        entity.persistRefs(em);
+        modelManagement.persistRefs(em);
         em.persist(entity);
         em.getTransaction().commit();
         I id = entity.getId();

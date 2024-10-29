@@ -1,0 +1,206 @@
+{
+  "uri": "http://www.ivoa.net/rdf/product-type",
+  "flavour": "SKOS",
+  "terms": {
+    "spatially-resolved-dataset": {
+      "label": "Spatially Resolved",
+      "description": "A dataset that has one or more spatial axes. This term is mainly intended for retrieval.  To annotate datasets, use a narrower term.",
+      "wider": [],
+      "narrower": [
+        "image",
+        "cube",
+        "spectral-cube",
+        "time-cube",
+        "polarization-cube",
+        "spatial-profile",
+        "slit-spectrum"
+      ]
+    },
+    "image": {
+      "label": "Image",
+      "description": "An astronomical image with exactly two spatial axes. The image content may be complex.  For instance, an objective-prism observation would be considered a type of image, even though an extracted spectrum would be a spectrum data product.",
+      "wider": [
+        "spatially-resolved-dataset"
+      ],
+      "narrower": []
+    },
+    "cube": {
+      "label": "Cube",
+      "description": "A multidimensional astronomical image with 3 or more axes, e.g., a spectral image cube, a polarization cube, a full Stokes radio data cube, a time image cube.",
+      "wider": [
+        "spatially-resolved-dataset"
+      ],
+      "narrower": [
+        "spectral-cube",
+        "time-cube",
+        "polarization-cube"
+      ]
+    },
+    "spectral-cube": {
+      "label": "Spectral Cube",
+      "description": "A 3-dimensional astronomical image with two spatial  and one spectral axis.",
+      "wider": [
+        "spatially-resolved-dataset",
+        "cube",
+        "spectrally-resolved-dataset"
+      ],
+      "narrower": []
+    },
+    "time-cube": {
+      "label": "Time Cube",
+      "description": "A 3-dimensional astronomical image with two spatial  and one temporal axis.",
+      "wider": [
+        "spatially-resolved-dataset",
+        "cube",
+        "temporally-resolved-dataset"
+      ],
+      "narrower": []
+    },
+    "polarization-cube": {
+      "label": "Polarization Cube",
+      "description": "A 3-dimensional astronomical image with two spatial  and one polarization axis.",
+      "wider": [
+        "polarization-resolved-dataset",
+        "spatially-resolved-dataset",
+        "cube"
+      ],
+      "narrower": []
+    },
+    "spatial-profile": {
+      "label": "Spatial Profile",
+      "description": "An observable obtained along a one-dimensional spatial path.",
+      "wider": [
+        "spatially-resolved-dataset"
+      ],
+      "narrower": []
+    },
+    "polarization-resolved-dataset": {
+      "label": "Polarization Resolved",
+      "description": "Sets of fluxes for different polarization states.  This term is mainly intended for retrieval.  To annotate datasets, use a narrower term.",
+      "wider": [],
+      "narrower": [
+        "polarization-cube",
+        "polarized-spectrum"
+      ]
+    },
+    "spectrally-resolved-dataset": {
+      "label": "Spectrally Resolved",
+      "description": "A dataset that has a spectral axis. This term is mainly intended for retrieval.  To annotate datasets, use a narrower term.",
+      "wider": [],
+      "narrower": [
+        "spectral-cube",
+        "spectrum",
+        "slit-spectrum",
+        "polarized-spectrum",
+        "dynamic-spectrum"
+      ]
+    },
+    "spectrum": {
+      "label": "Spectrum",
+      "description": "Flux or magnitude as a function of a spectral coordinate.",
+      "wider": [
+        "spectrally-resolved-dataset"
+      ],
+      "narrower": [
+        "sed"
+      ]
+    },
+    "sed": {
+      "label": "SED",
+      "description": "A spectral energy distribution, i.e., a set of calibrated fluxes over a typically wide part of the spectrum.  An SED is usually produced by combining data from multiple observations.",
+      "wider": [
+        "spectrum"
+      ],
+      "narrower": []
+    },
+    "slit-spectrum": {
+      "label": "Slit Spectrum",
+      "description": "Spectral measurements along a slit in space, organized as a set of successive spectra along the slit.",
+      "wider": [
+        "spatially-resolved-dataset",
+        "spectrally-resolved-dataset"
+      ],
+      "narrower": []
+    },
+    "polarized-spectrum": {
+      "label": "Polarization Spectrum",
+      "description": "Fluxes or magnitudes given as a function of a spectral coordinate and a polarization state.",
+      "wider": [
+        "polarization-resolved-dataset",
+        "spectrally-resolved-dataset"
+      ],
+      "narrower": []
+    },
+    "dynamic-spectrum": {
+      "label": "Dynamic Spectrum",
+      "description": "Consecutive spectral measurements through time,organized as a sequence of successive spectra",
+      "wider": [
+        "temporally-resolved-dataset",
+        "spectrally-resolved-dataset"
+      ],
+      "narrower": []
+    },
+    "visibility": {
+      "label": "Visibility",
+      "description": "An interferometric radio observation given in Fourier space.",
+      "wider": [],
+      "narrower": []
+    },
+    "temporally-resolved-dataset": {
+      "label": "Temporally Resolved",
+      "description": "A dataset with a time axis.  This term is mainly intended for retrieval.  To annotate datasets, use a narrower term.",
+      "wider": [],
+      "narrower": [
+        "time-cube",
+        "dynamic-spectrum",
+        "event-list",
+        "timeseries",
+        "light-curve",
+        "velocity-curve"
+      ]
+    },
+    "event-list": {
+      "label": "Event List",
+      "description": " A collection of observed events, such as incoming high-energy particles. A row in an event list is typically characterised by a spatial position, a time and an energy.",
+      "wider": [
+        "temporally-resolved-dataset"
+      ],
+      "narrower": []
+    },
+    "timeseries": {
+      "label": "Time Series",
+      "description": "One or a few scalar observables as a function of time.  Prefer narrower terms if there is one for your observable(s).",
+      "wider": [
+        "temporally-resolved-dataset"
+      ],
+      "narrower": [
+        "light-curve",
+        "velocity-curve"
+      ]
+    },
+    "light-curve": {
+      "label": "Light Curve",
+      "description": "Flux or magnitude as a function of time",
+      "wider": [
+        "timeseries",
+        "temporally-resolved-dataset"
+      ],
+      "narrower": []
+    },
+    "velocity-curve": {
+      "label": "Velocity Curve",
+      "description": "Radial velocities or redshifts as a function of time",
+      "wider": [
+        "timeseries",
+        "temporally-resolved-dataset"
+      ],
+      "narrower": []
+    },
+    "measurements": {
+      "label": "Measurements",
+      "description": "  Generic tabular data not fitting any of the other terms.  For instance, a list of sources extracted from an image might be a measurement.  Because of its lack of specificity, this term should generally be avoided, and new, more precise terms should be introduced instead.",
+      "wider": [],
+      "narrower": []
+    }
+  }
+}

@@ -237,7 +237,9 @@
     /** A container class for the references in the model. */
     @XmlType
     public static class References {
+    <xsl:message>references</xsl:message>
     <xsl:for-each select="$references-vodmlref"> <!-- looking at all possible refs -->
+        <xsl:message>ref=<xsl:value-of select="concat(current(),'  references=',string-join(vf:referenceTypesInContainmentHierarchy(current()),','))"/></xsl:message>
         @XmlElement(name="<xsl:value-of select='vf:lowerFirst(vf:jaxbType(current()))'/>")
         @JsonProperty("<xsl:value-of select="vf:utype(.)"/>")
         <xsl:if test="$models/key('ellookup',current())/@abstract or vf:hasSubTypes(current())">
@@ -246,9 +248,12 @@
         private Set&lt;<xsl:value-of select="vf:QualifiedJavaType(current())"/>&gt;&bl; <xsl:value-of select="vf:lowerFirst($models/key('ellookup',current())/name)"/> = new HashSet&lt;&gt;();
         void add(<xsl:value-of select="vf:QualifiedJavaType(current())"/> r){<xsl:value-of select="vf:lowerFirst($models/key('ellookup',current())/name)"/>.add(r);}
     </xsl:for-each>
+    <xsl:message>reforder=<xsl:value-of select="string-join(vf:orderReferences($references-vodmlref),',')"/></xsl:message>
     }
     @XmlElement
     private References refs = new References();
+        @SuppressWarnings("rawtypes")
+    private static java.util.List&lt;Class&gt; refOrder = java.util.List.of(<xsl:value-of select="string-join(vf:orderReferences($references-vodmlref) ! concat(vf:QualifiedJavaType(.),'.class'),',')"/>);
     <xsl:if test="$hasReferences" >
     @SuppressWarnings("rawtypes")
     private final  Map&lt;Class, Set&gt; refmap = Stream.of(
@@ -323,7 +328,9 @@
           }
       </xsl:if>
       }
+
       </xsl:for-each>
+
         <xsl:for-each select="$references-vodmlref">
         <!--         <xsl:message>ref in hierarchy <xsl:value-of select="vf:asvodmlref(.)"/> refs= <xsl:value-of select="vf:referenceTypesInContainmentHierarchy(vf:asvodmlref(.))"/>  </xsl:message>-->
         /** directly add reference. N.B. should not be necessary in normal operation adding content should find embedded references.
@@ -357,6 +364,8 @@
         </xsl:if>
         org.ivoa.vodml.nav.Util.makeUniqueIDs(il);
       }
+
+
       /** if the model has references.
         * @return true if the model has references.
         */
@@ -432,6 +441,22 @@
         * {@inheritDoc}
         */
         @Override
+        public void persistRefs(jakarta.persistence.EntityManager em)
+        {
+        <xsl:if test="$hasReferences">
+            for(@SuppressWarnings("rawtypes") Set refset: refOrder.stream().map(c->refmap.get(c)).toList())
+            {
+            for(Object ref:refset) {
+            em.persist(ref);
+            }
+            }
+        </xsl:if>
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
         public ObjectMapper jsonMapper() { return <xsl:value-of select="$ModelClass"/>.jsonMapper();}
 
         /**
@@ -480,6 +505,21 @@
         public String xmlNamespace() {
         return "<xsl:value-of select="vf:xsdNs(current()/name)"/>";
 
+        }
+
+        /**
+        * Return a list of content classes for this model.
+        * @return the list.
+        */
+        @Override
+        @SuppressWarnings("rawtypes")
+        public  java.util.List&lt;Class&gt; contentClasses()
+        {
+        return java.util.List.of(
+        <xsl:for-each select="$contentTypes">
+            <xsl:if test="position() != 1">,</xsl:if><xsl:value-of select="concat(vf:QualifiedJavaType(vf:asvodmlref(.)),'.class')"/>
+        </xsl:for-each>
+        );
         }
 
         };

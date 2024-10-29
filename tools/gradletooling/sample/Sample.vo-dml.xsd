@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema elementFormDefault="unqualified" version="1.0" targetNamespace="http://ivoa.net/dm/sample/sample/v1" xmlns:tns="http://ivoa.net/dm/sample/sample/v1" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://ivoa.net/vodml/ivoa" xmlns:simp="http://ivoa.net/dm/sample/sample/v1" xmlns:ns1="http://ivoa.net/dm/sample/filter/v1">
+
+  <xs:import namespace="http://ivoa.net/dm/sample/filter/v1" schemaLocation="Filter.vo-dml.xsd"/>
+
+  <xs:import namespace="http://ivoa.net/vodml/ivoa" schemaLocation="IVOA-v1.0.vo-dml.xsd"/>
+
+  <xs:element name="sampleModel" type="tns:sampleModel"/>
+
+  <xs:complexType name="sampleModel">
+    <xs:sequence>
+      <xs:element name="refs" type="tns:references" minOccurs="0"/>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="catalog.inner.SourceCatalogue" type="tns:catalog.inner.SourceCatalogue"/>
+        <xs:element name="photometricSystem" type="ns1:PhotometricSystem"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="references">
+    <xs:sequence>
+      <xs:element name="catalog.SkyCoordinateFrame" type="tns:catalog.SkyCoordinateFrame" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="catalog.SkyCoordinateFrame">
+    <xs:sequence>
+      <xs:element name="documentURI" type="xs:string"/>
+      <xs:element name="equinox" type="xs:string" minOccurs="0"/>
+      <xs:element name="system" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:ID" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="catalog.inner.SourceCatalogue">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string"/>
+      <xs:element name="entry" type="tns:catalog.AbstractSource" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="aTest" type="tns:catalog.inner.Testing" minOccurs="0"/>
+      <xs:element name="aTestMore" type="tns:catalog.inner.Testing" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="catalog.AbstractSource" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="tns:catalog.AstroObject">
+        <xs:sequence>
+          <xs:element name="name" type="xs:string"/>
+          <xs:element name="description" type="xs:string" minOccurs="0"/>
+          <xs:element name="position" type="tns:catalog.SkyCoordinate"/>
+          <xs:element name="positionError" type="tns:catalog.SkyError" minOccurs="0"/>
+          <xs:element name="classification" type="tns:sourceClassification"/>
+          <xs:element name="luminosity" type="tns:catalog.LuminosityMeasurement" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="catalog.AstroObject" abstract="true">
+    <xs:sequence>
+      <xs:element name="label" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="catalog.SkyCoordinate">
+    <xs:sequence>
+      <xs:element name="longitude" type="ns2:RealQuantity"/>
+      <xs:element name="latitude" type="ns2:RealQuantity"/>
+      <xs:element name="frame" type="xs:IDREF" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="catalog.SkyError" abstract="true">
+    <xs:sequence/>
+  </xs:complexType>
+
+  <xs:complexType name="catalog.AlignedEllipse">
+    <xs:complexContent>
+      <xs:extension base="tns:catalog.SkyError">
+        <xs:sequence>
+          <xs:element name="longError" type="xs:double"/>
+          <xs:element name="latError" type="xs:double"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="catalog.CircleError">
+    <xs:complexContent>
+      <xs:extension base="tns:catalog.SkyError">
+        <xs:sequence>
+          <xs:element name="radius" type="xs:double"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="catalog.GenericEllipse">
+    <xs:complexContent>
+      <xs:extension base="tns:catalog.SkyError">
+        <xs:sequence>
+          <xs:element name="major" type="xs:double"/>
+          <xs:element name="minor" type="xs:double"/>
+          <xs:element name="pa" type="xs:double"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="catalog.LuminosityMeasurement">
+    <xs:sequence>
+      <xs:element name="value" type="ns2:RealQuantity"/>
+      <xs:element name="error" type="ns2:RealQuantity" minOccurs="0"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="type" type="tns:luminosityType"/>
+      <xs:element name="filter" type="xs:IDREF" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="catalog.SDSSSource">
+    <xs:complexContent>
+      <xs:extension base="tns:catalog.AbstractSource">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="catalog.Source">
+    <xs:complexContent>
+      <xs:extension base="tns:catalog.AbstractSource">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="catalog.TwoMassSource">
+    <xs:complexContent>
+      <xs:extension base="tns:catalog.AbstractSource">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="catalog.inner.Testing">
+    <xs:sequence>
+      <xs:element name="plain" type="xs:string"/>
+      <xs:element name="arrayIsh" type="xs:string" maxOccurs="unbounded"/>
+      <xs:element name="unbounded" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="sourceClassification">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="star"/>
+      <xs:enumeration value="galaxy"/>
+      <xs:enumeration value="AGN"/>
+      <xs:enumeration value="planet"/>
+      <xs:enumeration value="unknown"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="luminosityType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="magnitude"/>
+      <xs:enumeration value="flux"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>
+

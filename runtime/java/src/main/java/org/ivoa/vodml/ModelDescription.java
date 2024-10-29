@@ -9,6 +9,7 @@
 
 package org.ivoa.vodml;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,6 +38,12 @@ public interface ModelDescription  {
      */
     String xmlNamespace();
 
+    /**
+     * Get the classes that make up content.
+     * @return the list of classes.
+     */
+    @SuppressWarnings("rawtypes")
+    List<Class> contentClasses();
 }
 
 

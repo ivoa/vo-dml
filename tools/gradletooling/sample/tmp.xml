@@ -1,0 +1,10 @@
+<memberInfo>
+    <member name="longitude" ptype="RealQuantity" pyprim="false">
+        <member name="unit" ptype="Unit" pyprim="false" altype="sqlalchemy.String"/>
+        <member name="value" ptype="float" pyprim="true" altype="sqlalchemy.Double"/>
+    </member>
+    <member name="latitude" ptype="RealQuantity" pyprim="false">
+        <member name="unit" ptype="Unit" pyprim="false" altype="sqlalchemy.String"/>
+        <member name="value" ptype="float" pyprim="true" altype="sqlalchemy.Double"/>
+    </member>
+</memberInfo>

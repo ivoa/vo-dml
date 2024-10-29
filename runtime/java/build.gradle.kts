@@ -6,7 +6,7 @@ plugins {
     signing
 }
 group = "org.javastro.ivoa.vo-dml"
-version = "0.7.3"
+version = "0.7.4"
 
 
 dependencies {
