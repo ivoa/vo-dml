@@ -132,7 +132,7 @@ The generated code has JPA annotations to allow storing in RDBs with compliant s
 
 Operations are not in general cascaded into references - so that the references need to be explicitly managed. In most cases this will be the "natural" way to do things 
 for the model - however at creation time it might be inconvenient to do this so that there is a method
-`persistRefs(jakarta.persistence.EntityManager _em)` that will do a deep persist of any references in the child objects, which in turn then will allow an error free persist of the parent. 
+`persistRefs(jakarta.persistence.EntityManager _em)` on the model that will do a deep persist of any references in the child objects, which in turn then will allow an error free persist of the content. Note that in general it is only possible to run the persistRefs once all of the content has been added to the model, and only for the first time a reference is created - for subsequent updates of the model it will be necessary to manage the references manually. 
 
 In general collections are marked for lazy loading, and as a convenience there is a `forceLoad()`
 method generated that will do a deep walk of all the collections in a particular type, which will force the loading of the whole instance tree if that is desired.
