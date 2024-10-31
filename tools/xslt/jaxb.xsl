@@ -229,6 +229,7 @@
         */
     @XmlAccessorType(XmlAccessType.NONE)
     @XmlRootElement
+    @XmlType(propOrder = {"refs","content"} )
     @JsonTypeInfo(include=JsonTypeInfo.As.WRAPPER_OBJECT, use=JsonTypeInfo.Id.NAME)
     @JsonIgnoreProperties({"refmap"})
     @VoDml(id="<xsl:value-of select="name"/>" ,role = VodmlRole.model, type="<xsl:value-of select="name"/>")
@@ -250,18 +251,41 @@
     </xsl:for-each>
     <xsl:message>reforder=<xsl:value-of select="string-join(vf:orderReferences($references-vodmlref),',')"/></xsl:message>
     }
-    @XmlElement
     private References refs = new References();
-        @SuppressWarnings("rawtypes")
+
+        /**
+        * @return the refs
+        */
+        private References getRefs() {
+        return refs;
+        }
+
+
+        /**
+        * @param refs the refs to set
+        */
+        @XmlElement(required = true)
+        private void setRefs(References refs) {
+        this.refs = refs;
+        <xsl:if test="$hasReferences" >
+        this.refmap = updateRefmap();
+        </xsl:if>
+        }
+
+
+    @SuppressWarnings("rawtypes")
     private static java.util.List&lt;Class&gt; refOrder = java.util.List.of(<xsl:value-of select="string-join(vf:orderReferences($references-vodmlref) ! concat(vf:QualifiedJavaType(.),'.class'),',')"/>);
     <xsl:if test="$hasReferences" >
     @SuppressWarnings("rawtypes")
-    private final  Map&lt;Class, Set&gt; refmap = Stream.of(
+    private  Map&lt;Class, Set&gt; refmap;
+    @SuppressWarnings("rawtypes")
+    private  Map&lt;Class, Set&gt; updateRefmap(){
+        return Map.ofEntries(
       <xsl:for-each select="$references-vodmlref"> <!-- looking at all possible refs -->
-        new AbstractMap.SimpleImmutableEntry&lt;&gt;(<xsl:value-of select="vf:QualifiedJavaType(.)"/>.class, refs.<xsl:value-of select="vf:lowerFirst($models/key('ellookup',current())/name)"/>)<xsl:if test="position() != last()">,</xsl:if>
+          java.util.Map.entry(<xsl:value-of select="vf:QualifiedJavaType(.)"/>.class, refs.<xsl:value-of select="vf:lowerFirst($models/key('ellookup',current())/name)"/>)<xsl:if test="position() != last()">,</xsl:if>
       </xsl:for-each>
-      ).collect(
-      Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        );
+    }
     </xsl:if>
     <xsl:variable name="contentTypes" as="element()*" select="vf:contentToSerialize(name)"/>
     @XmlElements(value = {
@@ -275,9 +299,23 @@
         <xsl:value-of select="$jsontypinfo"/>
     private List&lt;Object&gt; content  = new ArrayList&lt;&gt;();
 
-    private static Map&lt;String,Vocabulary&gt; vocabs = new HashMap&lt;&gt;();
+    /** default constructor.
+    */
+    public <xsl:value-of select="$ModelClass"/>(){
+        <xsl:choose>
+            <xsl:when test="$hasReferences">
+                refmap = updateRefmap();
+            </xsl:when>
+            <xsl:otherwise>
+                //no references
+            </xsl:otherwise>
+        </xsl:choose>
+    }
 
+    private static Map&lt;String,Vocabulary&gt; vocabs = new HashMap&lt;&gt;();
+    private static ModelDescription modelDescription;
     static {
+        modelDescription = description();
 
      <xsl:for-each select="distinct-values($models/vo-dml:model[name=$modelsInScope]//semanticconcept/vocabularyURI)">
          vocabs.put(<xsl:value-of select="concat($dq,current(),$dq)"/>,Vocabulary.load(<xsl:value-of select="concat($dq,current(),$dq)"/>));
@@ -333,7 +371,7 @@
 
         <xsl:for-each select="$references-vodmlref">
         <!--         <xsl:message>ref in hierarchy <xsl:value-of select="vf:asvodmlref(.)"/> refs= <xsl:value-of select="vf:referenceTypesInContainmentHierarchy(vf:asvodmlref(.))"/>  </xsl:message>-->
-        /** directly add reference. N.B. should not be necessary in normal operation adding content should find embedded references.
+        /** directly add reference. N.B. should not be necessary in normal operation - adding content should find embedded references.
          * @param c the reference to be added.
          */
         public void addReference( final <xsl:value-of select="vf:QualifiedJavaType(current())"/> c)
@@ -349,9 +387,22 @@
         */
         @SuppressWarnings("unchecked")
       public &lt;T&gt; List&lt;T&gt; getContent(Class&lt;T&gt; c) {
-      return (List&lt;T&gt;) content.stream().filter(p -> p.getClass().isAssignableFrom(c)).collect(
+        if(!Stream.concat(refOrder.stream(), modelDescription.contentClasses().stream()).anyMatch(i -> i.isAssignableFrom(c))) throw new IllegalArgumentException(c.getCanonicalName() + " is not part of the model");
+
+        return (List&lt;T&gt;)
+        <xsl:choose>
+            <xsl:when test="$hasReferences">
+                Stream.concat(content.stream(),
+                refmap.getOrDefault(c, java.util.Collections.emptySet()).stream())
+            </xsl:when>
+            <xsl:otherwise>
+                content.stream()
+            </xsl:otherwise>
+        </xsl:choose>
+        .filter(p -> p.getClass().isAssignableFrom(c)).collect(
       Collectors.toUnmodifiableList()
       );
+
       }
       @Override
       public void processReferences()
