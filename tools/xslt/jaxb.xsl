@@ -312,15 +312,19 @@
         </xsl:choose>
     }
 
-    private static Map&lt;String,Vocabulary&gt; vocabs = new HashMap&lt;&gt;();
+    private static volatile Map&lt;String,Vocabulary&gt; vocabs;
     private static ModelDescription modelDescription;
     static {
         modelDescription = description();
 
-     <xsl:for-each select="distinct-values($models/vo-dml:model[name=$modelsInScope]//semanticconcept/vocabularyURI)">
-         vocabs.put(<xsl:value-of select="concat($dq,current(),$dq)"/>,Vocabulary.load(<xsl:value-of select="concat($dq,current(),$dq)"/>));
-     </xsl:for-each>
     }
+        private static void loadVocabs() {
+        vocabs = new HashMap&lt;&gt;();
+        <xsl:for-each select="distinct-values($models/vo-dml:model[name=$modelsInScope]//semanticconcept/vocabularyURI)">
+            vocabs.put(<xsl:value-of select="concat($dq,current(),$dq)"/>,Vocabulary.load(<xsl:value-of select="concat($dq,current(),$dq)"/>));
+        </xsl:for-each>
+
+        }
         <!--- TODO possibly put this in the model management interface -->
         /**
         * Test if a term is in the vocabulary.
@@ -330,6 +334,12 @@
         */
         public static boolean isInVocabulary(String value, String vocabulary)
         {
+        if(vocabs == null)
+        {
+          synchronized(<xsl:value-of select="$ModelClass"/>.class) {
+        loadVocabs();
+        }
+        }
         if(vocabs.containsKey(vocabulary))
         {
         return vocabs.get(vocabulary).hasTerm(value);
