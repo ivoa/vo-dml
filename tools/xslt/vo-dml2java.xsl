@@ -753,7 +753,6 @@
       </xsl:if>
 
       <xsl:apply-templates select="." mode="jpawalker"/>
-      <xsl:apply-templates select="." mode="cloner"/>
       <xsl:apply-templates select="." mode="jparefs"/>
 
 <!--      <xsl:if test="local-name() eq 'dataType'">-->
@@ -1254,49 +1253,6 @@ package <xsl:value-of select="$path"/>;
     </xsl:template>
 
 
-    <xsl:template match="objectType" mode="cloner">
-
-        @Override
-        public void jpaClone(jakarta.persistence.EntityManager em) {
-
-        <xsl:choose>
-            <xsl:when test="extends">
-            super.jpaClone(em);
-            </xsl:when>
-            <xsl:otherwise>
-            em.detach(this);
-             <xsl:choose>
-              <!-- IMPL  Assume that the natural key can only occur at top of class hierarchy -->
-              <xsl:when test="not(attribute/constraint[ends-with(@xsi:type,':NaturalKey')])">
-            _id = (long)0;
-              </xsl:when>
-              <xsl:otherwise>
-<!--               TODO natural key might not be nullable?-->
-                  <xsl:value-of select="attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"></xsl:value-of> = null;
-              </xsl:otherwise>
-          </xsl:choose>
-
-            </xsl:otherwise>
-        </xsl:choose>
-
-        <xsl:apply-templates select="composition" mode="cloner"/>
-
-        }
-    </xsl:template>
-    <xsl:template match="composition" mode="cloner">
-        if( <xsl:value-of select="vf:javaMemberName(name)"/> != null ) <xsl:value-of select="vf:javaMemberName(name)"/>.jpaClone(em);
-    </xsl:template>
-    <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="cloner">
-        for( <xsl:value-of select="vf:FullJavaType(datatype/vodml-ref, true())"/> c : <xsl:value-of select="vf:javaMemberName(name)"/> ) {
-         c.jpaClone(em);
-        }
-    </xsl:template>
-    <xsl:template match="dataType" mode="cloner">
-        @Override
-        public void jpaClone(jakarta.persistence.EntityManager em) {
-        <!-- do nothing for datatypes ??? -->
-        }
-    </xsl:template>
 
 
 
