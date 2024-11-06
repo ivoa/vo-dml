@@ -518,10 +518,10 @@ note - only define functions in here as it is included in the schematron rules
                 <!--                <xsl:message>contained <xsl:value-of select="concat($vodml-ref, ' ', count($models//(attribute|composition)/datatype[vodml-ref=$vodml-ref])>0)"/> </xsl:message>-->
                 <xsl:choose>
                     <xsl:when test="not($el/extends)">
-                        <xsl:value-of select="count($models/vo-dml:model[name = $modelsToSearch]//(attribute|composition)/datatype[vodml-ref=$vodml-ref])>0"/><!-- TODO should this not be just composition? -->
+                        <xsl:value-of select="count($models/vo-dml:model[name = $modelsToSearch]//composition/datatype[vodml-ref=$vodml-ref])>0"/>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="count($models/vo-dml:model[name = $modelsToSearch]//(attribute|composition)/datatype[vodml-ref=$vodml-ref])>0 or vf:isContained($el/extends/vodml-ref)"/>
+                        <xsl:value-of select="count($models/vo-dml:model[name = $modelsToSearch]//composition/datatype[vodml-ref=$vodml-ref])>0 or vf:isContained($el/extends/vodml-ref)"/>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
