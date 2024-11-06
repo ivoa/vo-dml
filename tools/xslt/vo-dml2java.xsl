@@ -433,7 +433,7 @@
                         }
                     </xsl:when>
                     <xsl:otherwise>
-                        //  this.<xsl:value-of select="concat(vf:javaMemberName($m/name),' ', vf:hasReferencesInContainmentHierarchy($m/datatype/vodml-ref), ' ', vf:hasContainedReferencesInContainmentHierarchy($m/datatype/vodml-ref,vf:asvodmlref($this)),' ', string-join(vf:referenceTypesInContainmentHierarchy($m/datatype/vodml-ref),','))"/>;
+                        //  this.<xsl:value-of select="concat(vf:javaMemberName($m/name),' ', vf:hasReferencesInContainmentHierarchy($m/datatype/vodml-ref), ' ', vf:hasContainedReferencesInContainmentHierarchy($m/datatype/vodml-ref,vf:asvodmlref($this)),' ', string-join(vf:referenceTypesInContainmentHierarchy($m/datatype/vodml-ref),','),' ch=',string-join(vf:ContainerHierarchyInOwnModel(vf:asvodmlref($this)),','))"/>;
                     </xsl:otherwise>
                 </xsl:choose>
 

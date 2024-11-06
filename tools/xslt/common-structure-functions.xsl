@@ -238,6 +238,13 @@ note - only define functions in here as it is included in the schematron rules
         </xsl:sequence>
     </xsl:function>
 
+    <xsl:function name="vf:ContainerHierarchyInOwnModel" as="xsd:string*" >
+    <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="modelName" select="$models/key('ellookup',$vodml-ref)/ancestor::vo-dml:model/name"/>
+        <xsl:variable name="models" select="($modelName,vf:importedModelNames($modelName))"/>
+        <xsl:sequence select="vf:ContainerHierarchy($vodml-ref,$models)"/>
+    </xsl:function>
+
     <!-- finds the top container of a type in models -->
     <xsl:function name="vf:ContainerHierarchy" as="xsd:string*" >
         <xsl:param name="vodml-ref" as="xsd:string"/>
@@ -332,13 +339,23 @@ note - only define functions in here as it is included in the schematron rules
         <xsl:sequence select="sort($cont,default-collation(),function($e){count(vf:referenceTypesInContainmentHierarchy($e))})"/>
     </xsl:function>
 
-    <!--TODO do we really want this? -->
+    <!-- has contained reference in containment hierarchy - including above, starting at the second argument - this is needed in the contained reference handling rather than the reporting-->
     <xsl:function name="vf:hasContainedReferencesInContainmentHierarchy" as="xsd:boolean">
         <xsl:param name="vodml-ref"/>
         <xsl:param name="root-vodml-ref"/>
-        <xsl:sequence select="count(vf:referenceTypesInContainmentHierarchy($vodml-ref)[vf:isTypeContainedBelow(.,$root-vodml-ref)]) != 0"/>
+        <xsl:choose>
+            <xsl:when test="vf:isContained($root-vodml-ref)">
+                <xsl:variable name="top-container" select="vf:ContainerHierarchyInOwnModel($root-vodml-ref)[1]"/><!-- IMPL this may go wrong if multiply contained -->
+                <xsl:sequence select="count(vf:referenceTypesInContainmentHierarchy($vodml-ref)[vf:isTypeContainedBelow(.,$top-container)]) != 0"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="count(vf:referenceTypesInContainmentHierarchy($vodml-ref)[vf:isTypeContainedBelow(.,$root-vodml-ref)]) != 0"/>
+            </xsl:otherwise>
+        </xsl:choose>
+
     </xsl:function>
 
+    <!-- all the reference types below in the containment hierarchy -->
     <xsl:function name="vf:containedReferencesInContainmentHierarchy" as="xsd:string*">
         <xsl:param name="vodml-ref"/>
         <xsl:sequence select="vf:referenceTypesInContainmentHierarchy($vodml-ref)[vf:isTypeContainedBelow(.,$vodml-ref)]"/>
