@@ -65,10 +65,7 @@ public class Duration implements JPAManipulations {
         // nothing to do
     }
 
-    @Override
-    public void jpaClone(EntityManager em) {
-        // nothing to do
-    }
+   
 
     @Override
     public void persistRefs(EntityManager em) {

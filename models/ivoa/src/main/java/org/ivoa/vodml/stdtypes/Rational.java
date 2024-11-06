@@ -80,11 +80,7 @@ public class Rational  implements JPAManipulations {
         // nothing to do
     }
 
-    @Override
-    public void jpaClone(EntityManager em) {
-       // nothing to do
-    }
-
+   
     @Override
     public void persistRefs(EntityManager em) {
        // nothing to do.

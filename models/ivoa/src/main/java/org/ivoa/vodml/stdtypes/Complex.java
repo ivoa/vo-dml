@@ -85,10 +85,6 @@ public class Complex implements JPAManipulations {
         // nothing to do
     }
 
-    @Override
-    public void jpaClone(EntityManager em) {
-        // nothing to do
-    }
 
     @Override
     public void persistRefs(EntityManager em) {
