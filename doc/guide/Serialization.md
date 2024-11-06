@@ -19,8 +19,10 @@ classDiagram
 ```
 
 The aim of the top level container object is to contain all the referred to objects as well as the general content within
-a single document. It should be noted that this is a different methodology to the way that the 
+a single document. References external to the model would need to be incorporated into the model design with an explicit external reference (hence [this proposal for VO-DML 1.1](https://github.com/ivoa/vo-dml/issues/5) and ). It should be noted that this is a different methodology to the way that the 
 XML was produced in the previous (ant based) versions of this tooling, and as such the XML target namespaces have been changed.
+
+The schema for the serializations can be created with the `gradle vodmlSchema` command ([more detail](./Transformers.md#schema)).
 
 
 ## XML
@@ -52,7 +54,7 @@ typically are only unique per table, then the string part of the id is made up f
 
 JSON does not natively have an equivalent to the XML-ID/IDREF mechanism, however, it is possible to distinguish between 
 a named object as the value of a field or a string or integer literal value for the same field which could be interpreted
-as a reference to the object if the data model is known.
+as a reference to the object if the data model is known. An `_id` property is added to referenced types which can then used to make a reference. Unlike the XML case where the ID values need to be unique across the whole document, for the JSON serialization the IDs need only be unique for each type - this makes it somewhat easier to use the native database keys directly.
 
 ```json
 {

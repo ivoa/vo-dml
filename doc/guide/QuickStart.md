@@ -16,7 +16,7 @@ plugins {
 }
 ```
 2. create a `settings.gradle.kts` - it is possible just to copy the [template version](https://github.com/ivoa/DataModelTemplate/blob/master/settings.gradle.kts) and just edit the `rootProject.name`.
-3. create the binding file for the model (see [below](#binding-files)) for more detail 
+3. create the binding file for the model (see [below](#binding-files)) for more detail (in fact if you only want to run validation, then the binding file is not necessary).
 
 There is nothing else that needs to be done if the VO-DML files in the default place 
 (see [sample build file](https://github.com/ivoa/vo-dml/tree/master/tools/gradletooling/sample/build.gradle.kts) for some more 

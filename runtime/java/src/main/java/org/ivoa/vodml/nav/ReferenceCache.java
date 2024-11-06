@@ -32,21 +32,21 @@ public  void setValues(List<T> initial, List<T> cloned)
    }
 
 /**
- * Get the new instance of the reference.
+ * Get the new instance of the reference. Note that if the initial value is not in the cache then the value itself is returned.
  * @param initial the original value of the reference.
  * @return the new instance of the reference. 
  */
    public T get(T initial) {
-   return valmap.get(initial);
+   return valmap.getOrDefault(initial,initial);
 }
 
    /**
-    * Get the new instance of the reference.
+    * Get the new instance of the reference. Note that if the initial value is not in the cache then the value itself is returned.
     * @param initial the original value of the reference.
     * @return the new List of the reference.
     */
    public List<T> get(List<T> initial) {
-      return initial.stream().map(s -> valmap.get(s)).collect(Collectors.toList());
+      return initial.stream().map(s -> valmap.getOrDefault(s,s)).collect(Collectors.toList());
    }
 
 

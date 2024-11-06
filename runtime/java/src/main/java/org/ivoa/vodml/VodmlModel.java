@@ -10,13 +10,21 @@
 package org.ivoa.vodml;
 
 /**
- *  Marks as a vodml model. Also provides some useful management interfaces.
+ *  Marks as a VO-DML model. Also provides some useful management interfaces.
  * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
  * @since 3 May 2023
  * IMPL it might be nicer just to inherit all of the interfaces.
  */
 public interface VodmlModel <T> extends org.ivoa.vodml.jaxb.JaxbManagement {
+    /**
+     * get the management interface.
+     * @return the management infterface.
+     */
     ModelManagement<T> management(); 
+    /**
+     * get the description.
+     * @return the description interface.
+     */
     ModelDescription descriptor();
 }
 

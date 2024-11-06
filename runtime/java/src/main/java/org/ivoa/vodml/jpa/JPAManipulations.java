@@ -15,24 +15,13 @@ public interface JPAManipulations {
    void forceLoad();
 
    /**
-    * Deep clone entity by detaching. Note that references are left alone.
-    * @param em the entity manager
- * <pre>
- *    MyEntity to_clone = entityManager.find(MyEntity.class, ID);
- *    to_clone.jpaClone(entityManager);
- *    entityManager.merge(to_clone);
- * </pre>
-    * 
-    * 
-    */
-   void jpaClone(EntityManager em);
-
-   /**
     * Persist any references in the object tree. This exists to aid initial persistence of
     * a model instance, as no JPA operations (apart from refresh) are cascaded to references.
     * References lifecycle is expected to be managed separately.
     * @param em the entity manager
+    * @deprecated use the method at the model level - as it is only then that "contained" references can be determined.
     */
+   @Deprecated
    void persistRefs(EntityManager em);
 
 }

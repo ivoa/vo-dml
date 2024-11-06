@@ -433,7 +433,7 @@
                         }
                     </xsl:when>
                     <xsl:otherwise>
-                        //  this.<xsl:value-of select="concat(vf:javaMemberName($m/name),' ', vf:hasReferencesInContainmentHierarchy($m/datatype/vodml-ref), ' ', vf:hasContainedReferencesInContainmentHierarchy($m/datatype/vodml-ref,vf:asvodmlref($this)),' ', string-join(vf:referenceTypesInContainmentHierarchy($m/datatype/vodml-ref),','))"/>;
+                        //  this.<xsl:value-of select="concat(vf:javaMemberName($m/name),' ', vf:hasReferencesInContainmentHierarchy($m/datatype/vodml-ref), ' ', vf:hasContainedReferencesInContainmentHierarchy($m/datatype/vodml-ref,vf:asvodmlref($this)),' ', string-join(vf:referenceTypesInContainmentHierarchy($m/datatype/vodml-ref),','),' ch=',string-join(vf:ContainerHierarchyInOwnModel(vf:asvodmlref($this)),','))"/>;
                     </xsl:otherwise>
                 </xsl:choose>
 
@@ -663,7 +663,6 @@
           @jakarta.persistence.Id
           @jakarta.persistence.GeneratedValue
           @jakarta.persistence.Column(name = "ID")
-          @com.fasterxml.jackson.annotation.JsonProperty(value="_id", access=com.fasterxml.jackson.annotation.JsonProperty.Access.READ_WRITE) // This is an attempt to get the schema generator to create an entry - TODO JSON schema generation should really just understand the @JsonIdentityInfo
           protected Long _id = (long) 0;
 
           /**
@@ -754,7 +753,6 @@
       </xsl:if>
 
       <xsl:apply-templates select="." mode="jpawalker"/>
-      <xsl:apply-templates select="." mode="cloner"/>
       <xsl:apply-templates select="." mode="jparefs"/>
 
 <!--      <xsl:if test="local-name() eq 'dataType'">-->
@@ -1079,10 +1077,10 @@ package <xsl:value-of select="$path"/>;
       <xsl:apply-templates select="." mode="openapiAnnotation"/>
       <xsl:choose>
            <xsl:when test="vf:isSubSetted(vf:asvodmlref(.)) "><!--  or $rt/@abstract or vf:hasSubTypes(datatype/vodml-ref)-->
-     protected List&lt;? extends <xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="vf:javaMemberName(name)"/> = null;
+     protected java.util.List&lt;? extends <xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="vf:javaMemberName(name)"/> = null;
           </xsl:when>
           <xsl:otherwise>
-     protected List&lt;<xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="vf:javaMemberName(name)"/> = null;
+     protected java.util.List&lt;<xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="vf:javaMemberName(name)"/> = null;
           </xsl:otherwise>
       </xsl:choose>
 
@@ -1119,7 +1117,7 @@ package <xsl:value-of select="$path"/>;
     
     /**
     * Returns <xsl:value-of select="name"/> composition as an immutable list.
-    * @return <xsl:value-of select="name"/> composition
+    * @return <xsl:value-of select="name"/> composition.
     */
       <xsl:choose>
       <xsl:when test="vf:isSubSetted(vf:asvodmlref(.))">
@@ -1133,14 +1131,14 @@ package <xsl:value-of select="$path"/>;
     }
     /**
     * Defines whole <xsl:value-of select="name"/> composition.
-    * @param p<xsl:value-of select="$name"/> composition to set
+    * @param p<xsl:value-of select="$name"/> composition to set.
     */
     <xsl:choose>
         <xsl:when test="vf:isSubSetted(vf:asvodmlref(.))">
-    public void set<xsl:value-of select="$name"/>(final List&lt;? extends <xsl:value-of select="$type"/>&gt; p<xsl:value-of select="$name"/>) {
+    public void set<xsl:value-of select="$name"/>(final java.util.List&lt;? extends <xsl:value-of select="$type"/>&gt; p<xsl:value-of select="$name"/>) {
         </xsl:when>
         <xsl:otherwise>
-    public void set<xsl:value-of select="$name"/>(final List&lt;<xsl:value-of select="$type"/>&gt; p<xsl:value-of select="$name"/>) {
+    public void set<xsl:value-of select="$name"/>(final java.util.List&lt;<xsl:value-of select="$type"/>&gt; p<xsl:value-of select="$name"/>) {
         </xsl:otherwise>
     </xsl:choose>
     this.<xsl:value-of select="vf:javaMemberName(name)"/> = p<xsl:value-of select="$name"/>;
@@ -1220,7 +1218,11 @@ package <xsl:value-of select="$path"/>;
 
 <!-- jparefs-->
     <xsl:template match="objectType|dataType" mode="jparefs">
+        /**
+        * {@inheritDoc}
+        * @deprecated generally better to use the model level reference persistence as only this can deal with "contained" references properly. */
         @Override
+        @Deprecated
         public void persistRefs(jakarta.persistence.EntityManager _em) {
           <xsl:variable name="localdefs" select="vf:javaLocalDefines(vf:asvodmlref(current()))"/>
           <xsl:apply-templates select="composition[vf:asvodmlref(.) = $localdefs]
@@ -1251,49 +1253,6 @@ package <xsl:value-of select="$path"/>;
     </xsl:template>
 
 
-    <xsl:template match="objectType" mode="cloner">
-
-        @Override
-        public void jpaClone(jakarta.persistence.EntityManager em) {
-
-        <xsl:choose>
-            <xsl:when test="extends">
-            super.jpaClone(em);
-            </xsl:when>
-            <xsl:otherwise>
-            em.detach(this);
-             <xsl:choose>
-              <!-- IMPL  Assume that the natural key can only occur at top of class hierarchy -->
-              <xsl:when test="not(attribute/constraint[ends-with(@xsi:type,':NaturalKey')])">
-            _id = (long)0;
-              </xsl:when>
-              <xsl:otherwise>
-<!--               TODO natural key might not be nullable?-->
-                  <xsl:value-of select="attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"></xsl:value-of> = null;
-              </xsl:otherwise>
-          </xsl:choose>
-
-            </xsl:otherwise>
-        </xsl:choose>
-
-        <xsl:apply-templates select="composition" mode="cloner"/>
-
-        }
-    </xsl:template>
-    <xsl:template match="composition" mode="cloner">
-        if( <xsl:value-of select="vf:javaMemberName(name)"/> != null ) <xsl:value-of select="vf:javaMemberName(name)"/>.jpaClone(em);
-    </xsl:template>
-    <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="cloner">
-        for( <xsl:value-of select="vf:FullJavaType(datatype/vodml-ref, true())"/> c : <xsl:value-of select="vf:javaMemberName(name)"/> ) {
-         c.jpaClone(em);
-        }
-    </xsl:template>
-    <xsl:template match="dataType" mode="cloner">
-        @Override
-        public void jpaClone(jakarta.persistence.EntityManager em) {
-        <!-- do nothing for datatypes ??? -->
-        }
-    </xsl:template>
 
 
 
@@ -1359,14 +1318,14 @@ package <xsl:value-of select="$path"/>;
         * Returns <xsl:value-of select="name"/> Reference<br/>
         * @return <xsl:value-of select="name"/> Reference
         */
-        public List&lt;<xsl:value-of select="$type"/>&gt;&bl;get<xsl:value-of select="$name"/>() {
+        public java.util.List&lt;<xsl:value-of select="$type"/>&gt;&bl;get<xsl:value-of select="$name"/>() {
         return this.<xsl:value-of select="vf:javaMemberName(name)"/>;
         }
         /**
         * Defines <xsl:value-of select="name"/> Reference
         * @param p<xsl:value-of select="$name"/> references to set
         */
-        public void set<xsl:value-of select="$name"/>(final List&lt;<xsl:value-of select="$type"/>&gt; p<xsl:value-of select="$name"/>) {
+        public void set<xsl:value-of select="$name"/>(final java.util.List&lt;<xsl:value-of select="$type"/>&gt; p<xsl:value-of select="$name"/>) {
         this.<xsl:value-of select="vf:javaMemberName(name)"/> = p<xsl:value-of select="$name"/>;
         }
     </xsl:template>
@@ -1528,13 +1487,13 @@ package <xsl:value-of select="$path"/>;
       <xsl:message >Writing package info file <xsl:value-of select="$file"/></xsl:message>
       <xsl:variable name="ns" select="$mapping/bnd:mappedModels/model[name=current()/ancestor-or-self::vo-dml:model/name]/xml-targetnamespace"/>
       <xsl:result-document href="{$file}" >
-@jakarta.xml.bind.annotation.XmlSchema(namespace = "<xsl:value-of select="normalize-space($ns)"/>",elementFormDefault=XmlNsForm.UNQUALIFIED, xmlns = {
-@jakarta.xml.bind.annotation.XmlNs(namespaceURI = "<xsl:value-of select="normalize-space($ns)"/>", prefix = "<xsl:value-of select="$ns/@prefix"/>")
-  })
 /**
 * package <xsl:value-of select="name"/>.
 *   <xsl:apply-templates select="." mode="desc" />
 */
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "<xsl:value-of select="normalize-space($ns)"/>",elementFormDefault=XmlNsForm.UNQUALIFIED, xmlns = {
+@jakarta.xml.bind.annotation.XmlNs(namespaceURI = "<xsl:value-of select="normalize-space($ns)"/>", prefix = "<xsl:value-of select="$ns/@prefix"/>")
+  })
 package <xsl:value-of select="$path"/>;
 import jakarta.xml.bind.annotation.XmlNsForm;
       </xsl:result-document>

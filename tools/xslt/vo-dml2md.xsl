@@ -277,18 +277,35 @@ The whole model is represented in a model diagram below
     <xsl:if test="vf:referredTo($vodml-ref) or vf:hasReferencesInContainmentHierarchy($vodml-ref)">
 ## References Detail
 
+      <xsl:for-each select="reference/datatype/vodml-ref">
+          <xsl:choose>
+              <xsl:when test="vf:isContained(current())">
+*  <xsl:value-of select="vf:doLink(current())"/> is contained in  <xsl:value-of select="string-join(for $i in vf:containingTypes(current()) return vf:doLink(vf:asvodmlref($i)),', ')"/>
+              </xsl:when>
+              <xsl:otherwise>
+*  <xsl:value-of select="vf:doLink(current())"/>  is model wide.
+              </xsl:otherwise>
+          </xsl:choose>
+      </xsl:for-each>
+
       <xsl:if test="vf:referredTo($vodml-ref)">
 This is referred to by <xsl:value-of select="string-join(for $i in vf:referredBy($vodml-ref) return vf:doLink($i),', ')"/>
 
     </xsl:if>
       <xsl:if test="count(vf:containedReferencesInContainmentHierarchy($vodml-ref)) > 0">
-
 Has contained reference(s) <xsl:value-of select="string-join(for $i in vf:containedReferencesInContainmentHierarchy($vodml-ref) return vf:doLink($i),', ')"/> in the containment hierarchy.
       </xsl:if>
        <!-- TODO report on the bad contained references - ie those in another containment hierarchy -->
        <!-- FIXME still not sure that this is really reporting what we want - i.e. knowing when to do special cloning for a particular type
         in this case it would be good to report where in the containment hierarchy-->
 
+    </xsl:if>
+
+    <xsl:if test="vf:isContained($vodml-ref)">
+
+## Containment
+
+This is contained by <xsl:value-of select="string-join(for $i in vf:containingTypes($vodml-ref) return vf:doLink(vf:asvodmlref($i)),', ')"/>
     </xsl:if>
 
 

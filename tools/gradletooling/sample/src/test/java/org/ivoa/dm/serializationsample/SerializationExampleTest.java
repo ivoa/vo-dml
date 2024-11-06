@@ -1,9 +1,15 @@
 package org.ivoa.dm.serializationsample;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.jupiter.api.Test;
+
+import jakarta.persistence.EntityManager;
 
 /*
  * Created on 16/05/2023 by Paul Harrison (paul.harrison@manchester.ac.uk).
@@ -67,6 +73,18 @@ public void testEntity(SomeContent e) {
 protected String setDbDumpFile() {
   return "serialization_dump.sql";
     
+}
+@Test
+public void DBandJsonRoundTest() throws JsonProcessingException
+{
+    MyModelModel model = createModel();
+    RoundTripResult<SomeContent> ret = roundtripRDB(model.management(), model.getContent(SomeContent.class).get(0));
+    ObjectMapper mapper = model.management().jsonMapper();
+    String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(ret.retval);
+    System.out.println("JSON output");
+    System.out.println(json);
+    SomeContent retval = mapper.readValue(json, SomeContent.class);
+    assertNotNull(retval);
 }
 
 }

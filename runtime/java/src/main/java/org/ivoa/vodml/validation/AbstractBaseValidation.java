@@ -48,7 +48,7 @@ public abstract class AbstractBaseValidation {
      * @param m A model instance.
      * @return The result of the round trip test.
      * @param <T> The Model class .
-     * @throws JsonProcessingException
+     * @throws JsonProcessingException if there is a problem with the JSON processing
      */
     protected  <T> RoundTripResult<T> roundTripJSON(VodmlModel<T> m) throws JsonProcessingException {
         T model = m.management().theModel();
@@ -72,7 +72,11 @@ public abstract class AbstractBaseValidation {
      * @param <T> the model class.
      */
     public static class RoundTripResult <T>  {
+        /** if the result passes validity tests.
+         */
         public final boolean isValid;
+        /** The returned value from the round trip.
+         */
         public final T retval;
         RoundTripResult(boolean isValid, T retval) {
             this.isValid = isValid;
@@ -85,12 +89,12 @@ public abstract class AbstractBaseValidation {
      * @param vodmlModel a model instance.
      * @return the result of doing a round trip.
      * @param <T> The model class.
-     * @throws ParserConfigurationException
-     * @throws JAXBException
-     * @throws PropertyException
-     * @throws TransformerFactoryConfigurationError
-     * @throws TransformerConfigurationException
-     * @throws TransformerException
+     * @throws ParserConfigurationException if there is a parser problem.
+     * @throws JAXBException if there is a JAX problem.
+     * @throws PropertyException if the property is problematic.
+     * @throws TransformerFactoryConfigurationError if there is an error in the setup of the transformer.
+     * @throws TransformerConfigurationException if there is an error in the setup of the transformer.
+     * @throws TransformerException if there is an error in the setup of the transformer.
      */
     protected <T extends VodmlModel<T>> RoundTripResult<T> roundtripXML(VodmlModel<T> vodmlModel) throws ParserConfigurationException, JAXBException,
     PropertyException, TransformerFactoryConfigurationError,
@@ -139,7 +143,7 @@ public abstract class AbstractBaseValidation {
      * Do an RDB round trip of a model instance.
      * @param modelManagement Then model management
      * @param entity The entity to round trip.
-     * @return
+     * @return the entity retrieved from the database after it has been stored.
      * @param <M> the model class.
      * @param <I> The type of the identifier for the entity.
      * @param <T> The type of the entity.
@@ -149,7 +153,7 @@ public abstract class AbstractBaseValidation {
        
         jakarta.persistence.EntityManager em = setupH2Db(modelManagement.pu_name());
         em.getTransaction().begin();
-        entity.persistRefs(em);
+        modelManagement.persistRefs(em);
         em.persist(entity);
         em.getTransaction().commit();
         I id = entity.getId();

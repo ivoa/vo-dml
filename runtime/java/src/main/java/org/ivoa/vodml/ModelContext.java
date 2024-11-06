@@ -28,6 +28,10 @@ public class ModelContext {
 
     private Map<Class, ReferenceCache> mm;
 
+    /**
+     * get the current model context.
+     * @return the context.
+     */
     public static synchronized ModelContext current() {
         if (instance != null)
             return instance;

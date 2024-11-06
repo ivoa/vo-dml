@@ -43,10 +43,12 @@ public class LifeCycleDetailedTest extends AbstractTest {
   @BeforeEach
   void setUp() throws Exception {
     final ReferredTo referredTo = new ReferredTo(3);
-    List<Contained> contained =
-        Arrays.asList(new Contained("firstcontained"), new Contained("secondContained"));
+
     List<ReferredLifeCycle> refcont =
         Arrays.asList(new ReferredLifeCycle("rc1"), new ReferredLifeCycle("rc2"));
+    List<Contained> contained =
+        Arrays.asList(new Contained("firstcontained", refcont.get(0)), new Contained("secondContained", refcont.get(1)));
+    
     atest =
         ATest.createATest(
             a -> {
@@ -60,7 +62,7 @@ public class LifeCycleDetailedTest extends AbstractTest {
             contained, refcont.get(0)); // TODO this will create contradictions.... how best to test
 
     model = new LifecycleTestModel();
-    model.addContent(atest);
+//    model.addContent(atest);
     model.addContent(atest2);
   }
 

@@ -16,12 +16,14 @@
  
  otype Contained "" {
  	test2: ivoa:string "";
+ 	refbad2 references ReferredLifeCycle "";/* this is bad because one of the places that Contained could be contained - i.e Atest3 is not in the ReferredLifeCycle containment hierarchy */
  }
  
 otype ATest { //this does things as per current rules
 	ref1 references ReferredTo "";
 	contained : Contained @+ as composition "";
 	refandcontained : ReferredLifeCycle @+ as composition "";
+	contained2 : ATest4 as composition "";
 }
 
 otype ATest2 {
@@ -42,4 +44,8 @@ otype ATest3 { /*  fails the "unique composition rule" in schematron if the one 
 	*/
 	contained : Contained @+ as composition ""; //vodsl tooling does not flag this- but the vodml schematron does.
 	refBad references ReferredLifeCycle ""; //this should be lifecycle warning
+}
+
+otype ATest4 {
+	lowr references ReferredLifeCycle "";
 }

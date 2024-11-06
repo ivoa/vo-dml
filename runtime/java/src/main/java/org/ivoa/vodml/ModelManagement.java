@@ -11,6 +11,7 @@ package org.ivoa.vodml;
 
 import java.util.List;
 
+import jakarta.persistence.EntityManager;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 
@@ -67,7 +68,17 @@ public interface ModelManagement <T>{
      * @return true if the model has references.
      */
     boolean hasReferences();
-    
+
+    /**
+     * Persist any references in the model. This exists to aid initial persistence of
+     * a model instance, as no JPA operations (apart from refresh) are cascaded to references.
+     * References lifecycle is expected to be managed separately.  This also means that this method
+     * cannot be used repeatedly, as new elements are added to a model instance as it would then attempt
+     * to persist references that might already exist.
+     * @param em the entity manager
+     */
+    void persistRefs(EntityManager em);
+
     /**
      * Return a Jackson objectMapper suitable for JSON serialization.
      * @return the objectmapper.

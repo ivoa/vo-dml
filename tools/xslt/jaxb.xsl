@@ -224,18 +224,23 @@
     import org.ivoa.vodml.nav.ReferenceCache;
     import org.ivoa.vodml.vocabularies.Vocabulary;
 
+        /** The container class for the <xsl:value-of select="name"/> Model.
+        * <xsl:value-of select="description" disable-output-escaping="yes"/>
+        */
     @XmlAccessorType(XmlAccessType.NONE)
     @XmlRootElement
+    @XmlType(propOrder = {"refs","content"} )
     @JsonTypeInfo(include=JsonTypeInfo.As.WRAPPER_OBJECT, use=JsonTypeInfo.Id.NAME)
     @JsonIgnoreProperties({"refmap"})
     @VoDml(id="<xsl:value-of select="name"/>" ,role = VodmlRole.model, type="<xsl:value-of select="name"/>")
-    /** The container class for the <xsl:value-of select="name"/> Model. */
         public class <xsl:value-of select="$ModelClass"/> implements VodmlModel&lt;<xsl:value-of select="$ModelClass"/>&gt; {
 
-    @XmlType
     /** A container class for the references in the model. */
+    @XmlType
     public static class References {
+    <xsl:message>references</xsl:message>
     <xsl:for-each select="$references-vodmlref"> <!-- looking at all possible refs -->
+        <xsl:message>ref=<xsl:value-of select="concat(current(),'  references=',string-join(vf:referenceTypesInContainmentHierarchy(current()),','))"/></xsl:message>
         @XmlElement(name="<xsl:value-of select='vf:lowerFirst(vf:jaxbType(current()))'/>")
         @JsonProperty("<xsl:value-of select="vf:utype(.)"/>")
         <xsl:if test="$models/key('ellookup',current())/@abstract or vf:hasSubTypes(current())">
@@ -244,17 +249,43 @@
         private Set&lt;<xsl:value-of select="vf:QualifiedJavaType(current())"/>&gt;&bl; <xsl:value-of select="vf:lowerFirst($models/key('ellookup',current())/name)"/> = new HashSet&lt;&gt;();
         void add(<xsl:value-of select="vf:QualifiedJavaType(current())"/> r){<xsl:value-of select="vf:lowerFirst($models/key('ellookup',current())/name)"/>.add(r);}
     </xsl:for-each>
+    <xsl:message>reforder=<xsl:value-of select="string-join(vf:orderReferences($references-vodmlref),',')"/></xsl:message>
     }
-    @XmlElement
     private References refs = new References();
+
+        /**
+        * @return the refs
+        */
+        private References getRefs() {
+        return refs;
+        }
+
+
+        /**
+        * @param refs the refs to set
+        */
+        @XmlElement(required = true)
+        private void setRefs(References refs) {
+        this.refs = refs;
+        <xsl:if test="$hasReferences" >
+        this.refmap = updateRefmap();
+        </xsl:if>
+        }
+
+
+    @SuppressWarnings("rawtypes")
+    private static java.util.List&lt;Class&gt; refOrder = java.util.List.of(<xsl:value-of select="string-join(vf:orderReferences($references-vodmlref) ! concat(vf:QualifiedJavaType(.),'.class'),',')"/>);
     <xsl:if test="$hasReferences" >
     @SuppressWarnings("rawtypes")
-    private final  Map&lt;Class, Set&gt; refmap = Stream.of(
+    private  Map&lt;Class, Set&gt; refmap;
+    @SuppressWarnings("rawtypes")
+    private  Map&lt;Class, Set&gt; updateRefmap(){
+        return Map.ofEntries(
       <xsl:for-each select="$references-vodmlref"> <!-- looking at all possible refs -->
-        new AbstractMap.SimpleImmutableEntry&lt;&gt;(<xsl:value-of select="vf:QualifiedJavaType(.)"/>.class, refs.<xsl:value-of select="vf:lowerFirst($models/key('ellookup',current())/name)"/>)<xsl:if test="position() != last()">,</xsl:if>
+          java.util.Map.entry(<xsl:value-of select="vf:QualifiedJavaType(.)"/>.class, refs.<xsl:value-of select="vf:lowerFirst($models/key('ellookup',current())/name)"/>)<xsl:if test="position() != last()">,</xsl:if>
       </xsl:for-each>
-      ).collect(
-      Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        );
+    }
     </xsl:if>
     <xsl:variable name="contentTypes" as="element()*" select="vf:contentToSerialize(name)"/>
     @XmlElements(value = {
@@ -268,23 +299,47 @@
         <xsl:value-of select="$jsontypinfo"/>
     private List&lt;Object&gt; content  = new ArrayList&lt;&gt;();
 
-    private static Map&lt;String,Vocabulary&gt; vocabs = new HashMap&lt;&gt;();
-
-    static {
-
-     <xsl:for-each select="distinct-values($models/vo-dml:model[name=$modelsInScope]//semanticconcept/vocabularyURI)">
-         vocabs.put(<xsl:value-of select="concat($dq,current(),$dq)"/>,Vocabulary.load(<xsl:value-of select="concat($dq,current(),$dq)"/>));
-     </xsl:for-each>
+    /** default constructor.
+    */
+    public <xsl:value-of select="$ModelClass"/>(){
+        <xsl:choose>
+            <xsl:when test="$hasReferences">
+                refmap = updateRefmap();
+            </xsl:when>
+            <xsl:otherwise>
+                //no references
+            </xsl:otherwise>
+        </xsl:choose>
     }
+
+    private static volatile Map&lt;String,Vocabulary&gt; vocabs;
+    private static ModelDescription modelDescription;
+    static {
+        modelDescription = description();
+
+    }
+        private static void loadVocabs() {
+        vocabs = new HashMap&lt;&gt;();
+        <xsl:for-each select="distinct-values($models/vo-dml:model[name=$modelsInScope]//semanticconcept/vocabularyURI)">
+            vocabs.put(<xsl:value-of select="concat($dq,current(),$dq)"/>,Vocabulary.load(<xsl:value-of select="concat($dq,current(),$dq)"/>));
+        </xsl:for-each>
+
+        }
         <!--- TODO possibly put this in the model management interface -->
         /**
         * Test if a term is in the vocabulary.
         * @param value the value to test
         * @param vocabulary the uri for the vocabulary.
-        * @return
+        * @return true if the term is in the vocabulary.
         */
         public static boolean isInVocabulary(String value, String vocabulary)
         {
+        if(vocabs == null)
+        {
+          synchronized(<xsl:value-of select="$ModelClass"/>.class) {
+        loadVocabs();
+        }
+        }
         if(vocabs.containsKey(vocabulary))
         {
         return vocabs.get(vocabulary).hasTerm(value);
@@ -321,10 +376,12 @@
           }
       </xsl:if>
       }
+
       </xsl:for-each>
+
         <xsl:for-each select="$references-vodmlref">
         <!--         <xsl:message>ref in hierarchy <xsl:value-of select="vf:asvodmlref(.)"/> refs= <xsl:value-of select="vf:referenceTypesInContainmentHierarchy(vf:asvodmlref(.))"/>  </xsl:message>-->
-        /** directly add reference. N.B. should not be necessary in normal operation adding content should find embedded references.
+        /** directly add reference. N.B. should not be necessary in normal operation - adding content should find embedded references.
          * @param c the reference to be added.
          */
         public void addReference( final <xsl:value-of select="vf:QualifiedJavaType(current())"/> c)
@@ -332,11 +389,30 @@
             refs.add(c);
         }
         </xsl:for-each>
+        /**
+        * Get the content of the given type.
+        * @param &lt;T&gt; The type of the content
+        * @param c the class of the content.
+        * @return the content.
+        */
         @SuppressWarnings("unchecked")
       public &lt;T&gt; List&lt;T&gt; getContent(Class&lt;T&gt; c) {
-      return (List&lt;T&gt;) content.stream().filter(p -> p.getClass().isAssignableFrom(c)).collect(
+        if(!Stream.concat(refOrder.stream(), modelDescription.contentClasses().stream()).anyMatch(i -> i.isAssignableFrom(c))) throw new IllegalArgumentException(c.getCanonicalName() + " is not part of the model");
+
+        return (List&lt;T&gt;)
+        <xsl:choose>
+            <xsl:when test="$hasReferences">
+                Stream.concat(content.stream(),
+                refmap.getOrDefault(c, java.util.Collections.emptySet()).stream())
+            </xsl:when>
+            <xsl:otherwise>
+                content.stream()
+            </xsl:otherwise>
+        </xsl:choose>
+        .filter(p -> p.getClass().isAssignableFrom(c)).collect(
       Collectors.toUnmodifiableList()
       );
+
       }
       @Override
       public void processReferences()
@@ -349,22 +425,34 @@
         </xsl:if>
         org.ivoa.vodml.nav.Util.makeUniqueIDs(il);
       }
+
+
+      /** if the model has references.
+        * @return true if the model has references.
+        */
       public static boolean hasReferences(){
          return <xsl:value-of select="$hasReferences"/>;
       }
 
-      public static JAXBContext contextFactory()  throws JAXBException
+        /**
+        * the context factory for the model.
+        * @return the JAXBContext.
+        * @throws JAXBException if there is a problem.
+        */
+        public static JAXBContext contextFactory()  throws JAXBException
       {
       <xsl:variable name="packages" as="xsd:string*">
         <xsl:apply-templates select="$models" mode="JAXBContext"/>
       </xsl:variable>
          return JAXBContext.newInstance("<xsl:value-of select="string-join($packages,':')"/>" );
       }
-        /** The persistence unit name for the model. */
+        /** The persistence unit name for the model.
+        * @return the name.
+        */
        public static String pu_name(){
         return "<xsl:value-of select='$pu_name'/>";
         }
-
+        /** write an XML schema based on JAXB interpretation. */
         public static void writeXMLSchema() {
         try {
             contextFactory().generateSchema(new org.javastro.ivoa.jaxb.SchemaNamer(description().schemaMap()));
@@ -414,6 +502,22 @@
         * {@inheritDoc}
         */
         @Override
+        public void persistRefs(jakarta.persistence.EntityManager em)
+        {
+        <xsl:if test="$hasReferences">
+            for(@SuppressWarnings("rawtypes") Set refset: refOrder.stream().map(c->refmap.get(c)).toList())
+            {
+            for(Object ref:refset) {
+            em.persist(ref);
+            }
+            }
+        </xsl:if>
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
         public ObjectMapper jsonMapper() { return <xsl:value-of select="$ModelClass"/>.jsonMapper();}
 
         /**
@@ -433,6 +537,9 @@
 
         };};
 
+        /** Get the model description.
+        * @return the description.
+        */
         public static ModelDescription description(){
         return new ModelDescription() {
         @SuppressWarnings("rawtypes")
@@ -461,6 +568,21 @@
 
         }
 
+        /**
+        * Return a list of content classes for this model.
+        * @return the list.
+        */
+        @Override
+        @SuppressWarnings("rawtypes")
+        public  java.util.List&lt;Class&gt; contentClasses()
+        {
+        return java.util.List.of(
+        <xsl:for-each select="$contentTypes">
+            <xsl:if test="position() != 1">,</xsl:if><xsl:value-of select="concat(vf:QualifiedJavaType(vf:asvodmlref(.)),'.class')"/>
+        </xsl:for-each>
+        );
+        }
+
         };
         }
 
@@ -475,6 +597,7 @@
         return description();
 
         }
+        /** create a context in preparation for cloning. */
         @SuppressWarnings("rawtypes")
         public void createContext()
         {

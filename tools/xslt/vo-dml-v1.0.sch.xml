@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sch:schema xmlns:sch="http://purl.oclc.org/dsdl/schematron" queryBinding="xslt2"
+<sch:schema xmlns:sch="http://purl.oclc.org/dsdl/schematron" queryBinding="xslt3"
 	        xmlns:fct="localFunctions"
             xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
             xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -126,10 +126,11 @@ vodml-id '<sch:value-of select="."/>' is not unique, there are <sch:value-of sel
     </sch:pattern>
 
     <sch:pattern name="Unique_composition">
+        <!-- Note - this is probably really only a problem if the multiply contained thing also contains or references something -->
   <sch:rule context="composition/datatype/vodml-ref">
-    <sch:let name="count" value="count(//composition/datatype/vodml-ref[. = current()])"/>
+    <sch:let name="count" value="count(distinct-values(//composition/datatype/vodml-ref[. = current()]/ancestor::objectType))"/>
     <sch:let name="container" value="vf:asvodmlref(current()/ancestor::objectType)"/>
-    <sch:assert test="$count = 1" flag="error">
+    <sch:assert test="$count = 1" flag="warning">
 objecttype <sch:value-of select="."/> is used more than once, as target of composition relation. In this case for containing objectType <sch:value-of select="$container"/>
         ** (this message will repeat itself <sch:value-of select="$count"/> times!, once for each different container) **
     </sch:assert>
@@ -149,23 +150,27 @@ type <sch:value-of select="datatype/vodml-ref"/> of <sch:value-of select="$owner
     </sch:assert>
   </sch:rule>
 
-  <sch:rule context="reference">
-    <sch:let name="owner" value="vf:asvodmlref(current())"/>
-    <sch:let name="reftype-vodml-ref" value="current()/datatype/vodml-ref"/>
-      <sch:let name="parent" value="vf:asvodmlref(current()/(ancestor::objectType|ancestor::dataType))"/>
-      <sch:assert test="vf:vo-dml-ref-exists($reftype-vodml-ref)" flag="error">
-      vodml-ref  <sch:value-of select="$reftype-vodml-ref"/> for type of  <sch:value-of select="$owner"/> does not exist
-  </sch:assert>
-    <sch:let name="target" value="fct:vo-dml_element_kind($reftype-vodml-ref)"/>
-    <sch:let name="incomposition" value="count(//objectType[composition/datatype/vodml-ref = $reftype-vodml-ref]) != 0" />
-    <sch:assert test="$target = 'objectType'" flag="error">
-type <sch:value-of select="datatype/vodml-ref"/> of reference <sch:value-of select="$owner"/> is not an object type but a '<sch:value-of select="$target"/>'
-    </sch:assert>
-      <!--warn if a reference "lives" in a composition rather than freestanding in the whole model     -->
-      <sch:assert test="not ($incomposition) or ( $incomposition and vf:isTypeContainedBelow($reftype-vodml-ref,$parent)) " flag="warn">
-Reference <sch:value-of select="$reftype-vodml-ref"/> used in <sch:value-of select="./vodml-id"/> is already use in unrelated composition <sch:value-of select="//objectType[composition/datatype/vodml-ref = $reftype-vodml-ref]/vodml-id"/> which has lifecycle implications (i.e. the reference could disappear unless code is aware of relationship)
+    <sch:rule context="reference">
+        <sch:let name="owner" value="vf:asvodmlref(current())"/>
+        <sch:let name="reftype-vodml-ref" value="current()/datatype/vodml-ref"/>
+        <sch:let name="parent" value="vf:asvodmlref(current()/(ancestor::objectType|ancestor::dataType))"/>
+        <sch:assert test="vf:vo-dml-ref-exists($reftype-vodml-ref)" flag="error">
+            vodml-ref  <sch:value-of select="$reftype-vodml-ref"/> for type of  <sch:value-of select="$owner"/> does not exist
+        </sch:assert>
+        <sch:let name="target" value="fct:vo-dml_element_kind($reftype-vodml-ref)"/>
+        <sch:let name="incomposition" value="count(//objectType[composition/datatype/vodml-ref = $reftype-vodml-ref]) != 0" />
+        <sch:assert test="$target = 'objectType'" flag="error">
+            type <sch:value-of select="datatype/vodml-ref"/> of reference <sch:value-of select="$owner"/> is not an object type but a '<sch:value-of select="$target"/>'
+        </sch:assert>
+        <sch:let name="refcontainers" value="vf:ContainerHierarchy($reftype-vodml-ref,$models/vo-dml:model/name)" />
+        <sch:let name="pcontainers" value="($parent,vf:ContainerHierarchy($parent,$models/vo-dml:model/name))" />
+
+        <!--warn if a reference "lives" in a composition rather than freestanding in the whole model     -->
+      <sch:assert test="not ($incomposition) or ( $incomposition and $refcontainers = $pcontainers ) " flag="warn">
+            Reference <sch:value-of select="$reftype-vodml-ref"/> used in <sch:value-of select="./vodml-id"/> is in unrelated composition hierarchy <sch:value-of select="string-join($refcontainers,',')"/> which has lifecycle implications (i.e. the reference could disappear unless code is aware of relationship)
       </sch:assert>
-   </sch:rule>
+    </sch:rule>
+
 
   <sch:rule context="objectType/composition">
     <sch:let name="owner" value="vf:asvodmlref(current())"/>

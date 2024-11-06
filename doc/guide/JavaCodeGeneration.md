@@ -132,18 +132,10 @@ The generated code has JPA annotations to allow storing in RDBs with compliant s
 
 Operations are not in general cascaded into references - so that the references need to be explicitly managed. In most cases this will be the "natural" way to do things 
 for the model - however at creation time it might be inconvenient to do this so that there is a method
-`persistRefs(jakarta.persistence.EntityManager _em)` that will do a deep persist of any references in the child objects, which in turn then will allow an error free persist of the parent. 
+`persistRefs(jakarta.persistence.EntityManager _em)` on the model that will do a deep persist of any references in the child objects, which in turn then will allow an error free persist of the content. Note that in general it is only possible to run the persistRefs once all of the content has been added to the model, and only for the first time a reference is created - for subsequent updates of the model it will be necessary to manage the references manually. 
 
 In general collections are marked for lazy loading, and as a convenience there is a `forceLoad()`
 method generated that will do a deep walk of all the collections in a particular type, which will force the loading of the whole instance tree if that is desired.
-
-A second convenience method that is created to make it easy to clone an entity is show below
-```java
- MyEntity to_clone = entityManager.find(MyEntity.class, ID);
- to_clone.jpaClone(entityManager);
- entityManager.merge(to_clone);
-```
-which will create a new entity along with any contained compositions, but will maintain the original references.
 
 This extra JPA functionality is described by the [JPAManipulations](https://github.com/ivoa/vo-dml/tree/master/runtime/java/src/main/java/org/ivoa/vodml/jpa/JPAManipulations.java) interface.
 
@@ -211,9 +203,9 @@ is set up in the `build.gradle.kts` file.
 ## General interfaces
 
 Much of the functionality described above is defined in two interfaces
-[ModelManagement](https://github.com/ivoa/vo-dmltree/master//runtime/java/src/main/java/org/ivoa/vodml/ModelManagement.java) an 
+[ModelManagement](https://github.com/ivoa/vo-dml/blob/master/runtime/java/src/main/java/org/ivoa/vodml/ModelManagement.java) an 
 instance of which can be obtained with the `management()` method on the model class and
-[ModelDescription](https://github.com/ivoa/vo-dml/tree/master/runtime/java/src/main/java/org/ivoa/vodml/ModelDescription.java) an
+[ModelDescription](https://github.com/ivoa/vo-dml/blob/master/runtime/java/src/main/java/org/ivoa/vodml/ModelDescription.java) an
 instance of which can be obtained with the `description()` method on the model class.
 These interfaces allow generic model handling code to be written.
 

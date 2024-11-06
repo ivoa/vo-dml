@@ -19,6 +19,10 @@ public class LSResourceAdapter implements LSResourceResolver {
     private final XMLResolver resolver;
     private final ResolverLogger logger;
 
+    /**
+     * Create a resource adapter from and xml resolver.
+     * @param resolver the resolver.
+     */
     public LSResourceAdapter(XMLResolver resolver) {
         if (resolver == null) {
             throw new NullPointerException();
@@ -27,6 +31,10 @@ public class LSResourceAdapter implements LSResourceResolver {
         this.logger = resolver.getConfiguration().getFeature(ResolverFeature.RESOLVER_LOGGER);
     }
 
+    /**
+     * {@inheritDoc}
+     * overrides @see org.w3c.dom.ls.LSResourceResolver#resolveResource(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+     */
     @Override
     public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId, String baseURI) {
         if (systemId == null) {

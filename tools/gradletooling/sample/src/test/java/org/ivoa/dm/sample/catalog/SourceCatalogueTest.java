@@ -54,8 +54,12 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
   @org.junit.jupiter.api.Test
   void sourceCatJPATest() {
     jakarta.persistence.EntityManager em = setupH2Db(SampleModel.pu_name());
+    SampleModel omodel = new SampleModel();
+    omodel.addContent(sc);
+    omodel.addContent(ps);
     em.getTransaction().begin();
-    sc.persistRefs(em);
+    omodel.management().persistRefs(em);
+    em.persist(ps);
     em.persist(sc); // TODO need to test whether Photometric system is saved....
     em.getTransaction().commit();
     Long id = sc.getId();
@@ -102,41 +106,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
         modelRoundTripJSONwithTest(model); // FIXME need to test that the refenences are gone
   }
 
-  @org.junit.jupiter.api.Test
-  void sourceCatJPACloneTest() throws JsonProcessingException {
-    SampleModel model = new SampleModel();
-    jakarta.persistence.EntityManager em = setupH2Db(SampleModel.pu_name());
-    em.getTransaction().begin();
-    sc.persistRefs(em);
-    em.persist(sc);
-    em.getTransaction().commit();
-    model.addContent(sc);
-
-    em.getTransaction().begin();
-    sc.jpaClone(em);
-    sc.setName("cloned catalogue");
-    sc.getEntry().get(0).setName("cloned source");
-    em.merge(sc);
-    em.getTransaction().commit();
-    model.addContent(sc);
-    // note that sc gets updated by the clone - so would appear twice in the following
-    //       SampleModel modelin = roundTripJSON(model.management());
-
-    List<SourceCatalogue> cats =
-        em.createQuery("select s from SourceCatalogue s", SourceCatalogue.class).getResultList();
-    model = new SampleModel();
-    for (SourceCatalogue s : cats) {
-      model.addContent(s);
-    }
-
-    SampleModel modelin = modelRoundTripJSONwithTest(model);
-    assertNotNull(modelin);
-    long ncat = (long) em.createQuery("select count(o) from SourceCatalogue o").getSingleResult();
-    assertEquals(2, ncat, "number of catalogues");
-    long nsrc = (long) em.createQuery("select count(o) from SDSSSource o").getSingleResult();
-    assertEquals(2, nsrc, "number of sources");
-  }
-
+ 
   @org.junit.jupiter.api.Test
   void sourceCatCopyTest() throws JsonProcessingException {
     SourceCatalogue newsc = new SourceCatalogue(sc);

@@ -24,65 +24,70 @@ public class ReflectIveVodmlTypeGetter implements VodmlTypeGetter {
     /** logger for this class */
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory
             .getLogger(ReflectIveVodmlTypeGetter.class);
-    
-    
+
+
     private final VoDml vodmlann;
     private final String id;
     private final VodmlTypeInfo info;
 
     /**
+     * Creates a typegetter for a class.
      * @param c the class to query
      */
     public ReflectIveVodmlTypeGetter(Class<?> c) {
-       vodmlann = c.getAnnotation(VoDml.class);
-       id = c.getCanonicalName();
-       if (vodmlann != null)
-       {
-           info = new VodmlTypeInfo(vodmlann.id(), vodmlann.role());
-       }
-       else {
-           logger.trace("no VODML meta information for {}  - this should be expected  ",id); 
-           info = VodmlTypeInfo.UNKNOWN;
-       }
-       
-    }
-        
-     public ReflectIveVodmlTypeGetter(Field f) {
-       vodmlann = f.getAnnotation(VoDml.class);
-       id = f.getName();
-       
-       if (vodmlann != null )
-       {
-           switch (vodmlann.role()) {
-        case attribute:
-        {          
-            info = new VodmlTypeInfo(vodmlann.id(), vodmlann.role(), vodmlann.type(), vodmlann.typeRole());
-            break;
-        }
-        default:
+        vodmlann = c.getAnnotation(VoDml.class);
+        id = c.getCanonicalName();
+        if (vodmlann != null)
         {
-            info = new VodmlTypeInfo(vodmlann.id(), vodmlann.role(), vodmlann.type());
-            break;
+            info = new VodmlTypeInfo(vodmlann.id(), vodmlann.role());
         }
+        else {
+            logger.trace("no VODML meta information for {}  - this should be expected  ",id); 
+            info = VodmlTypeInfo.UNKNOWN;
         }
-           
-       }
-       else {
-           logger.trace("no VODML meta information for {} - this should be expected ",id); 
-           info = VodmlTypeInfo.UNKNOWN;
-       }
-       
-      
+
     }
-    
- /**
- * {@inheritDoc}
- * overrides @see org.ivoa.vodml.nav.VodmlTypeGetter#vodmlInfo()
- */
-@Override
-      public VodmlTypeInfo vodmlInfo() {
-         return info;
-      }
+
+    /**
+     * Creates a typegetter for a field.
+     * @param f the field to query.
+     */
+    public ReflectIveVodmlTypeGetter(Field f) {
+        vodmlann = f.getAnnotation(VoDml.class);
+        id = f.getName();
+
+        if (vodmlann != null )
+        {
+            switch (vodmlann.role()) {
+            case attribute:
+            {          
+                info = new VodmlTypeInfo(vodmlann.id(), vodmlann.role(), vodmlann.type(), vodmlann.typeRole());
+                break;
+            }
+            default:
+            {
+                info = new VodmlTypeInfo(vodmlann.id(), vodmlann.role(), vodmlann.type());
+                break;
+            }
+            }
+
+        }
+        else {
+            logger.trace("no VODML meta information for {} - this should be expected ",id); 
+            info = VodmlTypeInfo.UNKNOWN;
+        }
+
+
+    }
+
+    /**
+     * {@inheritDoc}
+     * overrides @see org.ivoa.vodml.nav.VodmlTypeGetter#vodmlInfo()
+     */
+    @Override
+    public VodmlTypeInfo vodmlInfo() {
+        return info;
+    }
 
 
 }
