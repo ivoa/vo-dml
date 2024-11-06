@@ -291,6 +291,13 @@ Has contained reference(s) <xsl:value-of select="string-join(for $i in vf:contai
 
     </xsl:if>
 
+    <xsl:if test="vf:isContained($vodml-ref)">
+
+## Containment
+
+This is contained by <xsl:value-of select="string-join(for $i in vf:containingTypes($vodml-ref) return vf:doLink(vf:asvodmlref($i)),', ')"/>
+    </xsl:if>
+
 
   </xsl:template>
     <xsl:template match="enumeration" mode="desc">
