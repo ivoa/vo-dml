@@ -311,8 +311,11 @@ TBD continue based on VO-DML specification document.
      </xsd:sequence>
      <xsd:attribute name="vodmlVersion" type="xsd:string" use="optional">
         <xsd:annotation>
-           <xsd:documentation>the actual version of vodml that this model uses</xsd:documentation>
-        </xsd:annotation></xsd:attribute>
+           <xsd:documentation>the version of VO-DML metamodel that the model uses - this is distinct from the version of the model itself
+           which is denoted by the version element child of the model
+           </xsd:documentation>
+        </xsd:annotation>
+     </xsd:attribute>
   </xsd:complexType>
   <xsd:complexType name="ModelImport">
     <xsd:annotation>
