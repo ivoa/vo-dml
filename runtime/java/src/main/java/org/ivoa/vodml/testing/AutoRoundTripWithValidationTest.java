@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import jakarta.xml.bind.JAXBException;
 
 import org.ivoa.vodml.VodmlModel;
-import org.ivoa.vodml.validation.ModelValidator.ValidationResult;
+import org.ivoa.vodml.validation.XMLValidator.ValidationResult;
 import org.junit.jupiter.api.Test;
 
 /**

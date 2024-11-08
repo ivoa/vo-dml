@@ -19,8 +19,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.ivoa.dm.sample.SampleModel;
 import org.ivoa.dm.sample.catalog.inner.SourceCatalogue;
-import org.ivoa.vodml.validation.ModelValidator;
-import org.ivoa.vodml.validation.ModelValidator.ValidationResult;
+import org.ivoa.vodml.validation.XMLValidator;
+import org.ivoa.vodml.validation.XMLValidator.ValidationResult;
 
 /*
  * Created on 20/08/2021 by Paul Harrison (paul.harrison@manchester.ac.uk).
@@ -47,8 +47,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
 
     SampleModel modelin = modelRoundTripXMLwithTest(model);
     checkModel(modelin.getContent(SourceCatalogue.class));
-    System.out.println("generating schema");
-    SampleModel.writeXMLSchema();
+   
   }
 
   @org.junit.jupiter.api.Test
@@ -174,13 +173,13 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
     model.addContent(ps);
     model.processReferences();
 
-    String topschema = model.descriptor().schemaMap().get(model.descriptor().xmlNamespace());
+    String topschema = model.modelDescription.schemaMap().get(model.modelDescription.xmlNamespace());
     System.out.println(topschema);
     assertNotNull(topschema);
     InputStream schemastream = this.getClass().getResourceAsStream("/" + topschema);
     assertNotNull(schemastream);
 
-    ModelValidator validator = new ModelValidator(model);
+    XMLValidator validator = new XMLValidator(model.management());
     Marshaller jaxbMarshaller = model.management().contextFactory().createMarshaller();
     jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
     File fout = File.createTempFile("samplemod", ".tmp");

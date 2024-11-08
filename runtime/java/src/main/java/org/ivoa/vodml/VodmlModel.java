@@ -21,11 +21,7 @@ public interface VodmlModel <T> extends org.ivoa.vodml.jaxb.JaxbManagement {
      * @return the management infterface.
      */
     ModelManagement<T> management(); 
-    /**
-     * get the description.
-     * @return the description interface.
-     */
-    ModelDescription descriptor();
+  
 }
 
 

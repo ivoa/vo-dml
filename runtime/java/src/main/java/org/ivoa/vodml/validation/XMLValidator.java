@@ -14,14 +14,11 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.FileInputStream;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.xml.XMLConstants;
 import jakarta.xml.bind.JAXBContext;
@@ -34,6 +31,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.ivoa.vodml.ModelManagement;
 import org.ivoa.vodml.VodmlModel;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
@@ -49,9 +47,9 @@ import org.xmlresolver.catalog.entry.EntryCatalog;
  * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
  * @since 3 May 2023
  */
-public class ModelValidator {
+public class XMLValidator {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory
-            .getLogger(ModelValidator.class);
+            .getLogger(XMLValidator.class);
 
     private final String schemaCat;
     private JAXBContext jc;
@@ -61,15 +59,15 @@ public class ModelValidator {
 
     /**
      * Create modelValidator from XML Schema.
-     * @param model the model description.
+     * @param modelManagement the model description.
      */
-    public  ModelValidator(VodmlModel<?> model) {
-        schemaFiles = model.descriptor().schemaMap().entrySet().stream()
+    public XMLValidator(ModelManagement<?> modelManagement) {
+        schemaFiles = modelManagement.description().schemaMap().entrySet().stream()
                 .map(s -> new StreamSource(this.getClass().getResourceAsStream("/"+s.getValue()),s.getKey()))
                 .toArray(Source[]::new);
-        schemaCat = makeCatalogue( model.descriptor().schemaMap());
+        schemaCat = makeCatalogue( modelManagement.description().schemaMap());
         try {
-            this.jc = model.management().contextFactory();
+            this.jc = modelManagement.contextFactory();
         } catch (JAXBException e) {
             this.jc = null;
             logger.error("unable to create a model validator", e);
@@ -251,7 +249,7 @@ public class ModelValidator {
      * @param p The type to be validated.
      * @return the result of the validation.
      */
-    public  <T> ValidationResult validate (T p) {
+    public  <T> ValidationResult validateObject(T p) {
         try {
             JAXBSource source = new JAXBSource(jc, p);
             validateJAXB(source);
@@ -268,7 +266,7 @@ public class ModelValidator {
      * @return the validation
      */
     public ValidationResult validate(File file) {
-        return validateInternal(new StreamSource(file));
+        return validate(new StreamSource(file));
     }
 
     /**
@@ -277,14 +275,15 @@ public class ModelValidator {
      * @return the validation.
      */
     public ValidationResult validate(String s) {
-        return validateInternal(new StreamSource(new StringReader(s)));
+        return validate(new StreamSource(new StringReader(s)));
     }
 
     /**
-     * @param source
-     * @return
+     * Validate a source.
+     * @param source the source to be validated.
+     * @return the validation result.
      */
-    ValidationResult validateInternal(Source source) {
+    public ValidationResult validate(Source source) {
         try {
 
             Validator validator = initValidator();
@@ -307,7 +306,7 @@ public class ModelValidator {
 
 
     ValidationResult validateJAXB (JAXBSource source) {
-        return validateInternal(source);
+        return validate(source);
     }
 
 
@@ -331,6 +330,7 @@ public class ModelValidator {
         config.setFeature(ResolverFeature.ALWAYS_RESOLVE, false);
         config.setFeature(ResolverFeature.PREFER_PUBLIC, false);
         config.setFeature(ResolverFeature.CLASSPATH_CATALOGS, true);
+        config.setFeature(ResolverFeature.CLASSLOADER, ClassLoader.getSystemClassLoader());//trying to get a classloader that will load resources from inside jar...
 
         org.xmlresolver.CatalogManager manager = config
                 .getFeature(ResolverFeature.CATALOG_MANAGER);
