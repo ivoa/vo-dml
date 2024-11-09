@@ -26,7 +26,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Setup gradle
-        uses: gradle/actions/setup-gradle@3
+        uses: gradle/actions/setup-gradle@v3
 
       - name: Build the Runtime
         run: |
