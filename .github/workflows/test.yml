@@ -49,4 +49,4 @@ jobs:
         if: always()
         with:
           files: |
-            tools/gradletooling/sample/build/reports/tests/**/*.xml
+            vo-dml/tools/gradletooling/sample/build/reports/tests/**/*.xml
