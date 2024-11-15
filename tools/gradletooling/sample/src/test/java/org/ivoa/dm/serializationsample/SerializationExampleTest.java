@@ -26,7 +26,7 @@ private Refb refb;
   public MyModelModel createModel() {
     themodel = new MyModelModel();
     refa = new Refa("a value");
-    refb = new Refb("a name", "another val");
+    refb = new Refb("naturalkey", "another val");
 
     List<BaseC> clist = List.of(new Dcont("a D", "dval"), new Econt("cube", "eval"));
 

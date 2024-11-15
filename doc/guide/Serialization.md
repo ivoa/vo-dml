@@ -30,21 +30,31 @@ The schema for the serializations can be created with the `gradle vodmlSchema` c
 For the [small example model](https://github.com/ivoa/vo-dml/tree/master/models/sample/test/serializationExample.vodsl), the overall model object will produce xml like
 
 ```xml
-<ser:myModelModel xmlns:ser="http://ivoa.net/vodml/sample/serialization" >
+<ser:myModelModel xmlns:ser="http://ivoa.net/vodml/sample/serialization" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
     <refs>
-        <refa _id="id_0">
+        <refa _id="MyModel-Refa_1000">
             <val>a value</val>
         </refa>
         <refb>
-            <name>a name</name>
+            <name>naturalkey</name>
             <val>another val</val>
         </refb>
     </refs>
-    <SomeContent>
-        <zval>a z val</zval>
-        <ref1>id_0</ref1>
-        <ref2>a name</ref2>
-    </SomeContent>
+    <someContent>
+        <zval>some</zval>
+        <zval>z</zval>
+        <zval>values</zval>
+        <con xsi:type="ser:Dcont" >
+            <bname>dval</bname>
+            <dval>a D</dval>
+        </con>
+        <con xsi:type="ser:Econt" >
+            <bname>eval</bname>
+            <evalue>cube</evalue>
+        </con>
+        <ref1>MyModel-Refa_1000</ref1>
+        <ref2>naturalkey</ref2>
+    </someContent>
 </ser:myModelModel>
 ```
 Note that because the integer parts of the id might have come from database indices, which 
@@ -61,19 +71,31 @@ as a reference to the object if the data model is known. An `_id` property is ad
   "MyModelModel" : {
     "refs" : {
       "MyModel:Refa" : [ {
-        "_id" : 0,
+        "_id" : 1000,
         "val" : "a value"
       } ],
       "MyModel:Refb" : [ {
-        "name" : "a name",
+        "name" : "naturalkey",
         "val" : "another val"
       } ]
     },
     "content" : [ {
       "@type" : "MyModel:SomeContent",
-      "zval" : "a z val",
-      "ref1" : 0,
-      "ref2" : "a name"
+      "_id" : 0,
+      "zval" : [ "some", "z", "values" ],
+      "con" : [ {
+        "@type" : "MyModel:Dcont",
+        "_id" : 0,
+        "bname" : "dval",
+        "dval" : "a D"
+      }, {
+        "@type" : "MyModel:Econt",
+        "_id" : 0,
+        "bname" : "eval",
+        "evalue" : "cube"
+      } ],
+      "ref1" : 1000,
+      "ref2" : "naturalkey"
     } ]
   }
 }

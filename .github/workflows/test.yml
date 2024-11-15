@@ -49,4 +49,4 @@ jobs:
         if: always()
         with:
           files: |
-            ./**/test/*.xml
+            ./**/reports/**/test/*.xml
