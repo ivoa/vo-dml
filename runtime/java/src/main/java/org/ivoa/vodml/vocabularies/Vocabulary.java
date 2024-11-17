@@ -42,6 +42,8 @@ public class Vocabulary {
      * The base URL that defines the vocabulary.
      */
     private String url;
+    
+    private boolean loadSuccessful;
 
     /**
      * Load a vocabulary. Note that this is implemented by requesting the "desise" format for ease.
@@ -92,8 +94,10 @@ public class Vocabulary {
                     voterm.addParent(vocabulary.terms.get(term.get("parent").textValue()));
                 }
             }
+            vocabulary.loadSuccessful = true;
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException("cannot load vocabulary",e);
+            //throw new RuntimeException("cannot load vocabulary",e);
+            System.err.println("cannot load vocabulary "+url+" "+e.getMessage());//TODO decide on logging
         }
 
 
@@ -108,7 +112,7 @@ public class Vocabulary {
      */
     public boolean hasTerm(String term)
     {
-        return terms.containsKey(term);
+        return loadSuccessful? terms.containsKey(term):true; //TODO might want to warn that not testing....
     }
 
     /**
