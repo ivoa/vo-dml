@@ -526,8 +526,8 @@
 
         };};
 
-        /** Get the model description.
-        * @return the description.
+        /**
+        * the description.
         */
         public static final ModelDescription modelDescription = new ModelDescription() {
         @SuppressWarnings("rawtypes")
