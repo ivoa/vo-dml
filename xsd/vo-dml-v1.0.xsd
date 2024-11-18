@@ -4,11 +4,7 @@
             targetNamespace="http://www.ivoa.net/xml/VODML/v1"
             attributeFormDefault="unqualified" elementFormDefault="unqualified"
             version="1.1-WD">
-<!--
-2017-09-23: 
-- added version attribute in schema 
-- removed minor version from targetNamespace and default xmlns declaration
--->
+
   <xsd:annotation>
     <xsd:documentation>
     
@@ -327,11 +323,9 @@ TBD continue based on VO-DML specification document.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
-        <xsd:element name="name" type="ModelName" minOccurs="0" maxOccurs="1">
+        <xsd:element name="name" type="ModelName" minOccurs="1" maxOccurs="1">
             <xsd:annotation>
                <xsd:documentation>
-                  DEPRECATED - this just repeats information in the referenced model document
-
                     Name by which imported model is used in the current model and its documentation.
                     This name MUST be the same as the 'name' of the model definition in that remote document.
                     For all utypes pointing to elements in the imported model MUST use this name as prefix.
@@ -349,7 +343,7 @@ TBD continue based on VO-DML specification document.
         <xsd:element name="version" type="xsd:string" minOccurs="0">
             <xsd:annotation>
                 <xsd:documentation>
-                    Version of the imported model.
+                    Version of the imported model - Note that this is important to specify for minor versions to ensure compatibility.
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:element>
