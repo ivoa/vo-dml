@@ -2,6 +2,7 @@ package org.ivoa.dm.serializationsample;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.net.URL;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -74,6 +75,13 @@ protected String setDbDumpFile() {
   return "serialization_dump.sql";
     
 }
+
+@Test 
+public void loadBaseSchemaTest() {
+    URL s = this.getClass().getResource("/IVOA-v1.0.vo-dml.xsd");
+    assertNotNull(s);
+}
+
 @Test
 public void DBandJsonRoundTest() throws JsonProcessingException
 {
