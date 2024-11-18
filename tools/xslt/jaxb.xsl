@@ -8,7 +8,6 @@
 
 <!-- 
   This XSLT is used by  to generate JAXB annotations and JAXB specific java code.
-
 -->
 
 <xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -227,7 +226,7 @@
         * <xsl:value-of select="description" disable-output-escaping="yes"/>
         */
     @XmlAccessorType(XmlAccessType.NONE)
-    @XmlRootElement
+    @XmlRootElement(name="<xsl:value-of select="name"/>Model")
     @XmlType(propOrder = {"refs","content"} )
     @JsonTypeInfo(include=JsonTypeInfo.As.WRAPPER_OBJECT, use=JsonTypeInfo.Id.NAME)
     @JsonIgnoreProperties({"refmap"})
