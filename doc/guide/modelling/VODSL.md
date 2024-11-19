@@ -3,7 +3,7 @@
 
 ## VODSL support in the gradle tools
 
-There is a `vodslToVodml` task that will convert models authored in [vodsl](https://github.com/pahjbo/vodsl) into standard VO-DML.
+There is a `vodslToVodml` task that will convert models authored in [vodsl](https://www.ivoa.net/documents/Notes/VODSL/) into standard VO-DML.
 
 the configurable properties within the vodml extension are;
 
