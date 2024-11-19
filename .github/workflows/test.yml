@@ -19,37 +19,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up JDK 17
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Build java runtime with Gradle
+      - name: Setup gradle
         uses: gradle/actions/setup-gradle@v3
-        with:
-          cache-disabled: false
-          arguments: |
-            :java:publishToMavenLocal  
-            -PskipSigning=True
+
+      - name: Build the Runtime
+        run: |
+            ./gradlew :java:publishToMavenLocal  -PskipSigning=True
+
       - name: Build ivoa model with Gradle
-        uses:  gradle/actions/setup-gradle@v3
-        with:
-          cache-disabled: false
-          arguments: |
-            :ivoa:publishToMavenLocal  
-            -PskipSigning=True
+        run : |
+          ./gradlew  :ivoa:publishToMavenLocal  -PskipSigning=True
+
       - name: Test sample model with Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          cache-disabled: false
-          arguments: |
-            :sample:test
-            -PskipSigning=True
+        run: |
+          ./gradlew :sample:test -PskipSigning=True
+
       - name: Validate sample model with Gradle
-        uses: gradle/actions/setup-gradle@v3
+        run : |
+          ./gradlew :sample:vodmlValidate  -PskipSigning=True
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
         with:
-          cache-disabled: false
-          arguments: |
-            :sample:vodmlValidate
-            -PskipSigning=True
+          files: |
+            ./**/reports/**/test/*.xml

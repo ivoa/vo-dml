@@ -2,6 +2,7 @@ package org.ivoa.dm.serializationsample;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.net.URL;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,7 +27,7 @@ private Refb refb;
   public MyModelModel createModel() {
     themodel = new MyModelModel();
     refa = new Refa("a value");
-    refb = new Refb("a name", "another val");
+    refb = new Refb("naturalkey", "another val");
 
     List<BaseC> clist = List.of(new Dcont("a D", "dval"), new Econt("cube", "eval"));
 
@@ -74,6 +75,13 @@ protected String setDbDumpFile() {
   return "serialization_dump.sql";
     
 }
+
+@Test 
+public void loadBaseSchemaTest() {
+    URL s = this.getClass().getResource("/IVOA-v1.0.vo-dml.xsd");
+    assertNotNull(s);
+}
+
 @Test
 public void DBandJsonRoundTest() throws JsonProcessingException
 {

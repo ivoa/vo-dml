@@ -128,9 +128,9 @@ note that this schema is substantially different from the era when this code was
       <xsl:attribute name="namespace">
         <xsl:value-of select="vf:xsdNs($mname)"/>
       </xsl:attribute>
-      <xsl:attribute name="schemaLocation">
-        <xsl:value-of select="vf:xsdFileName($mname)"/>
-      </xsl:attribute>
+<!-- would like to not issue this - use catalogues all the time- but gradle build time testing is not working without this for some reason... -->   <xsl:attribute name="schemaLocation">
+       <xsl:value-of select="vf:xsdFileName($mname)"/>
+       </xsl:attribute>
     </xsl:element>
   </xsl:template>
 

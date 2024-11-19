@@ -59,12 +59,19 @@ class VodmlGradlePlugin: Plugin<Project> {
             it.docDir.set(extension.outputSiteDir)
             it.modelsToDocument.set(extension.modelsToDocument)
         }
-        // register the schame task
-        val schematask: TaskProvider<VodmlSchemaTask> = project.tasks.register(VODML_SCHEMA_TASK_NAME,VodmlSchemaTask::class.java) {
-            it.description = "create schema for VO-DML models"
-            setVodmlFiles(it,extension,project)
-            it.schemaDir.set(extension.outputSchemaDir)
-            it.modelsToGenerate.set(extension.modelsToDocument)
+        // register the schema task
+        val schematask: TaskProvider<VodmlSchemaTask> = project.tasks.register(VODML_SCHEMA_TASK_NAME,VodmlSchemaTask::class.java) { task->
+            task.description = "create schema for VO-DML models"
+            setVodmlFiles(task,extension,project)
+            task.schemaDir.set(extension.outputSchemaDir)
+            task.modelsToGenerate.set(extension.modelsToDocument)
+            val sourceSets = project.properties["sourceSets"] as SourceSetContainer
+
+            //IMPL this seems hacky as the tests should just pick up the normal resources above, but they do not seem to
+            sourceSets.named(SourceSet.TEST_SOURCE_SET_NAME){
+                it.resources.srcDir(task.schemaDir)
+            }
+
         }
         // register the validate task
         project.tasks.register(VODML_VAL_TASK_NAME,VodmlValidateTask::class.java) { task ->
@@ -108,10 +115,7 @@ class VodmlGradlePlugin: Plugin<Project> {
                 it.resources.srcDir(task.javaGenDir)
 
             }
-            //IMPL this seems hacky as the tests should just pick up the normal resources above, but they do not seem to
-            sourceSets.named(SourceSet.TEST_SOURCE_SET_NAME){
-                it.resources.srcDir(schematask)
-            }
+
             // add the vo-dml and binding files to the jar setup
             val jartask = project.tasks.named(JavaPlugin.JAR_TASK_NAME).get() as Jar
             jartask.from(task.vodmlFiles)
@@ -131,7 +135,7 @@ class VodmlGradlePlugin: Plugin<Project> {
         processResources.from(schematask)
         processResources.dependsOn.add(schematask)
 
-        //using java 11 minimum
+        //using java 17 minimum
         val toolchain = project.extensions.getByType(JavaPluginExtension::class.java).toolchain
         toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 
@@ -159,7 +163,7 @@ class VodmlGradlePlugin: Plugin<Project> {
 
 
         //add the dependencies for JAXB and JPA - using the hibernate implementation
-       listOf("org.javastro.ivoa.vo-dml:vodml-runtime:0.8.0",
+       listOf("org.javastro.ivoa.vo-dml:vodml-runtime:0.8.2",
             "jakarta.xml.bind:jakarta.xml.bind-api:4.0.0",
             "org.glassfish.jaxb:jaxb-runtime:4.0.2",
 //             "org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.10",  // supports JPA 2.2

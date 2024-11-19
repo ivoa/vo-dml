@@ -3,7 +3,6 @@ package org.ivoa.vodml.validation;
  * Created on 03/05/2023 by Paul Harrison (paul.harrison@manchester.ac.uk).
  */
 
-import java.io.File;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.sql.PreparedStatement;
@@ -37,7 +36,7 @@ import org.ivoa.vodml.ModelDescription;
 import org.ivoa.vodml.ModelManagement;
 import org.ivoa.vodml.VodmlModel;
 import org.ivoa.vodml.jpa.JPAManipulationsForObjectType;
-import org.ivoa.vodml.validation.ModelValidator.ValidationResult;
+import org.ivoa.vodml.validation.XMLValidator.ValidationResult;
 
 /**
  * Base Class for doing validating tests.
@@ -123,20 +122,27 @@ public abstract class AbstractBaseValidation {
         StreamResult result = new StreamResult(sw2);
 
         trans.transform(new StreamSource(new StringReader(sw.toString())), result);
-        System.out.println(sw2.toString());
+        final String xmlOutput = sw2.toString();
+        System.out.println(xmlOutput);
+        XMLValidator xmlValidator = new XMLValidator(vodmlModel.management());
+        ValidationResult validation = xmlValidator.validate(xmlOutput);
+        if(!validation.isOk)
+        {
+           validation.printValidationErrors(System.err); 
+        }
 
         //try to read in again
         Unmarshaller um = jc.createUnmarshaller();
         ValidationEventCollector vc = new jakarta.xml.bind.util.ValidationEventCollector();
         um.setEventHandler(vc);
-        JAXBElement<T> el = um.unmarshal(new StreamSource(new StringReader(sw2.toString())),clazz);
+        JAXBElement<T> el = um.unmarshal(new StreamSource(new StringReader(xmlOutput)),clazz);
         if (vc.hasEvents()) {
             for (ValidationEvent err : vc.getEvents()) {
                 System.err.println(err.getMessage());
             }
         }           
         T modelin = el.getValue();
-        return new RoundTripResult<T>(!vc.hasEvents(), modelin);
+        return new RoundTripResult<T>(!vc.hasEvents() & validation.isOk, modelin);
     }
 
     /**
@@ -227,11 +233,9 @@ public abstract class AbstractBaseValidation {
      * @throws JAXBException exception when there is a JAXB problem.
      */
     protected <T> ValidationResult validateModel(VodmlModel<T> m) throws JAXBException {
-        
-        final ModelDescription desc = m.descriptor();
-        File schemaFile = new File(desc.schemaMap().get(desc.xmlNamespace()));
-        ModelValidator v = new ModelValidator(m);
-        return v.validate(m);
+
+        XMLValidator v = new XMLValidator(m.management());
+        return v.validateObject(m.management().theModel());
         
     }
 

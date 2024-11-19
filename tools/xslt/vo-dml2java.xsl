@@ -441,14 +441,22 @@
             }
 
         </xsl:if>
-        <xsl:if test="not(@abstract)">
+
         /**
         * Copy Constructor. Note that references will remain as is rather than be copied.
         * @param other the object to be copied.
         */
         public  <xsl:value-of select="vf:capitalize(name)"/> ( final <xsl:value-of select="vf:capitalize(name)"/> other)
         {
-           super ();
+        <xsl:choose>
+            <xsl:when test="extends">
+                super(other);
+            </xsl:when>
+            <xsl:otherwise>
+                super ();
+            </xsl:otherwise>
+        </xsl:choose>
+
 
         <xsl:for-each select="$members">
             <xsl:variable name="m" select="$models/key('ellookup',current())"/>
@@ -459,7 +467,7 @@
         </xsl:for-each>
 
         }
-        </xsl:if>
+
 
         /**
         * Update this object with the content of the given object. Note that references will remain as is rather than be copied.
@@ -478,7 +486,7 @@
 
         }
 
-        <xsl:if test="not(@abstract) and extends ">
+        <xsl:if test="not(@abstract) and extends "><!--TODO if abstact of abstract! -->
             <xsl:variable name="sparms" select="(concat('final ',vf:JavaType(extends/vodml-ref), ' superinstance'), for $v in $localmembers return map:get($decls, $v))"/>
             /**
             * Constructor from supertype instance.
@@ -490,7 +498,7 @@
             */
             public  <xsl:value-of select="vf:capitalize(name)"/> ( <xsl:value-of select="string-join($sparms,',')"/> )
             {
-            super (<xsl:if test="not($supertype/@abstract)">superinstance</xsl:if>);
+            super (superinstance);
             <xsl:for-each select="$localmembers">
                 <xsl:variable name="m" select="$models/key('ellookup',current())"/>
                 <xsl:choose>

@@ -7,9 +7,7 @@
 ]>
 
 <!-- 
-  This XSLT is used by intermediate2java.xsl to generate JAXB annotations and JAXB specific java code.
-  
-  Java 1.8+ is required by JAXB 2.1.
+  This XSLT is used by  to generate JAXB annotations and JAXB specific java code.
 -->
 
 <xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -228,7 +226,7 @@
         * <xsl:value-of select="description" disable-output-escaping="yes"/>
         */
     @XmlAccessorType(XmlAccessType.NONE)
-    @XmlRootElement
+    @XmlRootElement(name="<xsl:value-of select="name"/>Model")
     @XmlType(propOrder = {"refs","content"} )
     @JsonTypeInfo(include=JsonTypeInfo.As.WRAPPER_OBJECT, use=JsonTypeInfo.Id.NAME)
     @JsonIgnoreProperties({"refmap"})
@@ -313,11 +311,7 @@
     }
 
     private static volatile Map&lt;String,Vocabulary&gt; vocabs;
-    private static ModelDescription modelDescription;
-    static {
-        modelDescription = description();
 
-    }
         private static void loadVocabs() {
         vocabs = new HashMap&lt;&gt;();
         <xsl:for-each select="distinct-values($models/vo-dml:model[name=$modelsInScope]//semanticconcept/vocabularyURI)">
@@ -452,21 +446,14 @@
        public static String pu_name(){
         return "<xsl:value-of select='$pu_name'/>";
         }
-        /** write an XML schema based on JAXB interpretation. */
-        public static void writeXMLSchema() {
-        try {
-            contextFactory().generateSchema(new org.javastro.ivoa.jaxb.SchemaNamer(description().schemaMap()));
-        } catch (IOException | JAXBException e) {
-            throw new RuntimeException("Problem writing XML Schema",e);
-        }
-        }
+
         /**
         * Return a Jackson objectMapper suitable for JSON serialzation.
         * @return the objectmapper.
         */
         public static ObjectMapper jsonMapper()
         {
-        return org.ivoa.vodml.json.JsonManagement.jsonMapper(<xsl:value-of select="$ModelClass"/>.description());
+        return org.ivoa.vodml.json.JsonManagement.jsonMapper(<xsl:value-of select="$ModelClass"/>.modelDescription);
         }
         /**
         * generate management interface instance for model.
@@ -480,12 +467,6 @@
         */
         @Override
         public String pu_name() {return <xsl:value-of select="$ModelClass"/>.pu_name();}
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public void writeXMLSchema() { <xsl:value-of select="$ModelClass"/>.writeXMLSchema();}
-
         /**
         * {@inheritDoc}
         */
@@ -534,14 +515,20 @@
         return content;
         }
 
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public ModelDescription description() {
+        return modelDescription;
+        }
 
         };};
 
-        /** Get the model description.
-        * @return the description.
+        /**
+        * the description.
         */
-        public static ModelDescription description(){
-        return new ModelDescription() {
+        public static final ModelDescription modelDescription = new ModelDescription() {
         @SuppressWarnings("rawtypes")
         @Override
         public Map&lt;String, Class&gt; utypeToClassMap() {
@@ -584,19 +571,10 @@
         }
 
         };
-        }
 
 
-        /**
-        * Return the model description in non-static fashion.
-        * overrides @see org.ivoa.vodml.VodmlModel#descriptor()
-        * @return the model description.
-        */
-        @Override
-        public ModelDescription descriptor() {
-        return description();
 
-        }
+
         /** create a context in preparation for cloning. */
         @SuppressWarnings("rawtypes")
         public void createContext()

@@ -6,15 +6,14 @@ Build for vodml gradle plugin. Written in Kotlin as that allows for better IDEA 
 plugins {
     // Apply the Java Gradle plugin development plugin to add support for developing Gradle plugins
     `java-gradle-plugin`
-
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    id("org.jetbrains.kotlin.jvm") version "1.9.23"
+    kotlin("jvm") version "2.0.0"
     `maven-publish`
     id("com.gradle.plugin-publish") version "1.1.0"
 }
 
 group = "net.ivoa.vo-dml"
-version = "0.5.10"
+version = "0.5.11"
 
 repositories {
     mavenLocal() // FIXME remove this when releasing - just here to pick up local vodsl updates
@@ -32,7 +31,7 @@ dependencies {
     implementation("net.sf.saxon:Saxon-HE:10.8") // for xslt 3.0
     implementation("name.dmaus.schxslt:java:3.1.1") // for modern schematron
     implementation("name.dmaus.schxslt:schxslt:1.10") // force to use more updated schematron than the java wrapper naturally uses -
-    implementation("org.xmlresolver:xmlresolver:6.0.4") // for xml catalogues - note that the apache xml-commons resolver is out of date
+    implementation("org.xmlresolver:xmlresolver:6.0.9") // for xml catalogues - note that the apache xml-commons resolver is out of date
     implementation("org.javastro.vodsl:vodslparser:0.4.8") //standalone vodsl parser
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
 

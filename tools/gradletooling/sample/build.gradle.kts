@@ -8,7 +8,7 @@ import ru.vyarus.gradle.plugin.python.task.PythonTask
 plugins {
     id("net.ivoa.vo-dml.vodmltools") version "0.5.7"
     id("com.diffplug.spotless") version "6.25.0"
-    id("ru.vyarus.use-python") version "4.0.0"
+    id("ru.vyarus.use-python") version "4.1.0"
 
 }
 
@@ -92,8 +92,8 @@ dependencies {
     testImplementation("com.networknt:json-schema-validator:1.4.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation("org.slf4j:slf4j-api:2.0.9")
-    testRuntimeOnly("ch.qos.logback:logback-classic:1.4.7")
-    testImplementation("com.h2database:h2:2.1.214") // try out h2
+    testRuntimeOnly("ch.qos.logback:logback-classic:1.4.12")
+    testImplementation("com.h2database:h2:2.2.220") // try out h2
 //    testImplementation("org.apache.derby:derby:10.14.2.0")
     compileOnly("com.google.googlejavaformat:google-java-format:1.22.0")
 }
@@ -107,10 +107,12 @@ python {
 //                     +":"+layout.projectDirectory.dir("../../../models/ivoa/build/generated/sources/vodml/python").asFile.absolutePath
     )
 
-   pip("pytest:7.3.1")
-   pip("SQLAlchemy:2.0.30")
+    pip("pytest:7.3.1")
+    pip("SQLAlchemy:2.0.30")
     pip("xsdata[lxml,cli]:24.5")
     pip("pydantic:2.7.1")
+    pip("sqlmodel:0.0.22")
+    pip("xsdata-pydantic:24.5")
 }
 
 
@@ -123,9 +125,9 @@ dependsOn("vodmlJavaGenerate")
     doLast{
 
         println(sourceSets.main.get().java.sourceDirectories.asPath)
-        println(sourceSets.main.get().resources.sourceDirectories.asPath)
+        println("resources="+sourceSets.main.get().resources.sourceDirectories.asPath)
         println(sourceSets.main.get().output.classesDirs.asPath)
-        println(sourceSets.test.get().resources.sourceDirectories.asPath)
+        println("testresources="+sourceSets.test.get().resources.sourceDirectories.asPath)
 
         sourceSets.test.get().compileClasspath.files.forEach{
             println(it.path)
