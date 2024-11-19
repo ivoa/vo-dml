@@ -63,5 +63,8 @@
 * 0.5.9 - redo how references are managed.
 * 0.5.10 
   * further reference management refinement
+* 0.5.11
+  * further reference management tweaks & fixed support for abstract base class cloning.
+  
 
 N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass - fixed in 6.6.1
