@@ -86,8 +86,8 @@
       </extends>
       </primitiveType>
       <primitiveType>
-      <vodml-id>ivorn</vodml-id>
-      <name>ivorn</name>
+      <vodml-id>ivoid</vodml-id>
+      <name>ivoid</name>
       <description>an identifier that can be used as a key to look up in an IVOA registry - see https://www.ivoa.net/documents/IVOAIdentifiers/</description>	    
       <extends>
          <vodml-ref>ivoa:anyURI</vodml-ref>
