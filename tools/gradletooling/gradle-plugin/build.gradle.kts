@@ -6,9 +6,8 @@ Build for vodml gradle plugin. Written in Kotlin as that allows for better IDEA 
 plugins {
     // Apply the Java Gradle plugin development plugin to add support for developing Gradle plugins
     `java-gradle-plugin`
-
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    id("org.jetbrains.kotlin.jvm") version "1.9.23"
+    kotlin("jvm") version "2.0.0"
     `maven-publish`
     id("com.gradle.plugin-publish") version "1.1.0"
 }
