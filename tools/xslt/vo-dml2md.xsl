@@ -394,8 +394,18 @@ classDiagram
     <xsl:template match="attribute|reference|composition">
         <xsl:text> | </xsl:text>
         <xsl:value-of select="name"/>
+        <xsl:if test="constraint[ends-with(@xsi:type,':NaturalKey')]">
+            <xsl:value-of select="concat(' :material-key-variant:{title=',$dq,'natural key',$dq,'}')"/>
+        </xsl:if>
+        <xsl:if test="./ancestor-or-self::reference">
+            <xsl:value-of select="concat(' :material-arrow-top-right:{title=',$dq,'reference',$dq,'}')"/>
+        </xsl:if>
+
         <xsl:text> | </xsl:text>
         <xsl:apply-templates select="datatype/vodml-ref"/>
+        <xsl:if test="semanticconcept">
+             <xsl:value-of select="concat(' from [',semanticconcept/vocabularyURI,'](',semanticconcept/vocabularyURI,'){:target=',$dq,'_blank',$dq,'}')"/>
+        </xsl:if>
         <xsl:text> | </xsl:text>
         <xsl:apply-templates select="multiplicity"/><xsl:if test="@isOrdered"><xsl:text> ordered</xsl:text></xsl:if>
         <xsl:text> | </xsl:text>
