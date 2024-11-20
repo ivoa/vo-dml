@@ -15,9 +15,9 @@
         <documentationURL>not known</documentationURL>
       </import>
       <primitiveType >
-      <vodml-id>ivorn</vodml-id>
-      <name>ivorn</name>
-      <description>a specialization for IVORNs</description>	    
+      <vodml-id>ivoid</vodml-id>
+      <name>ivoid</name>
+      <description>a specialization for IVOIDs</description>
       <extends>
          <vodml-ref>ivoa:anyURI</vodml-ref>
       </extends>
