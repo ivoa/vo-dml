@@ -1043,10 +1043,21 @@ package <xsl:value-of select="$path"/>;
         */
         public void set<xsl:value-of select="$upName"/>(final <xsl:value-of select="$fulltype"/> p<xsl:value-of select="$upName"/>) {
         <xsl:if test="semanticconcept/vocabularyURI">
-            if (!<xsl:value-of select="concat(vf:modelJavaClass(current()),'.isInVocabulary(p',$upName,',',$dq,semanticconcept/vocabularyURI,$dq,')')"/>)
-            {
-            throw new IllegalArgumentException(p<xsl:value-of select="$upName"/>+" is not a value in vocabulary <xsl:value-of select="semanticconcept/vocabularyURI"/> ");
-            }
+            <xsl:choose>
+                <xsl:when test="$mult/maxOccurs = 1">
+                    if (!<xsl:value-of select="concat(vf:modelJavaClass(current()),'.isInVocabulary(p',$upName,',',$dq,semanticconcept/vocabularyURI,$dq,')')"/>)
+                    {
+                    throw new IllegalArgumentException(p<xsl:value-of select="$upName"/>+" is not a value in vocabulary <xsl:value-of select="semanticconcept/vocabularyURI"/> ");
+                    }
+
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:value-of select="concat($fulltype,' _i = p',$upName,'.stream().filter(i-> !',vf:modelJavaClass(current()),'.isInVocabulary(i,',$dq,semanticconcept/vocabularyURI,$dq,')).toList();')"/>
+                   if(!_i.isEmpty()) {
+                    throw new IllegalArgumentException(_i.stream().collect(java.util.stream.Collectors.joining(", ")) +" is not a value in vocabulary <xsl:value-of select="semanticconcept/vocabularyURI"/> ");
+                    }
+                </xsl:otherwise>
+            </xsl:choose>
         </xsl:if>
         this.<xsl:value-of select="vf:javaMemberName($name)"/> = p<xsl:value-of select="$upName"/>;
         }
