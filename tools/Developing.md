@@ -18,6 +18,7 @@ of useful functions that can answer model questions such as "has subtypes" defin
 * 
 There is a [sample](./gradletooling/sample) project that acts as a test bench for the plugin.
 
+http://dh.obdurodon.org/xslt3.xhtml is a good summary of the new features in XSLT 3.0.
 
 ## Local testing
 

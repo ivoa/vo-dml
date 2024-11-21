@@ -110,7 +110,7 @@ python {
     pip("pytest:7.3.1")
     pip("SQLAlchemy:2.0.30")
     pip("xsdata[lxml,cli]:24.5")
-    pip("pydantic:2.7.1")
+    pip("pydantic:2.9.2")
     pip("sqlmodel:0.0.22")
     pip("xsdata-pydantic:24.5")
 }

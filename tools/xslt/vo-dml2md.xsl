@@ -397,7 +397,7 @@ classDiagram
         <xsl:if test="constraint[ends-with(@xsi:type,':NaturalKey')]">
             <xsl:value-of select="concat(' :material-key-variant:{title=',$dq,'natural key',$dq,'}')"/>
         </xsl:if>
-        <xsl:if test="./ancestor-or-self::reference">
+        <xsl:if test="./self::reference">
             <xsl:value-of select="concat(' :material-arrow-top-right:{title=',$dq,'reference',$dq,'}')"/>
         </xsl:if>
 

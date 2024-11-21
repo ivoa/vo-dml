@@ -43,7 +43,7 @@ otype ATest3 { /*  fails the "unique composition rule" in schematron if the one 
  *  but this should be unlikely if a contained type instance is created at the same time as its container instance.
 	*/
 	contained : Contained @+ as composition ""; //vodsl tooling does not flag this- but the vodml schematron does.
-	refBad references ReferredLifeCycle ""; //this should be lifecycle warning
+	refBad @? references ReferredLifeCycle ""; //this should be lifecycle warning
 }
 
 otype ATest4 {

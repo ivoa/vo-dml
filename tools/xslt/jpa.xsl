@@ -495,7 +495,46 @@
   </xsl:template>
   <xsl:template match="*" mode="jpaConfig"><!-- do nothing --></xsl:template>
 
+  <!-- template to do smart deletion in the case of contained references
+  TODO could also do something better in the case of bulk deletion.-->
+  <xsl:template match="objectType" mode="jpadeleter">
+      <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
+      <xsl:if test="not(@abstract)">
+    /**
+      * {@inheritDoc}
+      */
+      @Override
+      public void delete(jakarta.persistence.EntityManager em) {
+      <xsl:variable name="crefs" select="distinct-values(vf:containedReferencesInContainmentHierarchy($vodml-ref))"/>
 
+      <xsl:choose>
+          <xsl:when test="count($crefs)> 0">
+              //has contained references <xsl:value-of select="string-join($crefs,',')"/>
+              <xsl:variable name="by" select="distinct-values(for $i in $crefs return vf:referredBy($i))"/>
+              //referred to by <xsl:value-of select="concat(string-join($by,','),$nl)"/>
+              <!-- TODO this only deals with referrers same level of containment.... -->
+              <xsl:for-each select="for $v in (vf:baseTypes($vodml-ref),$models/key('ellookup',$vodml-ref)) return $v/(composition)[datatype/vodml-ref= $by]"> <!--assume JPA will deal with attributes OK... -->
+                  <xsl:choose>
+                      <xsl:when test="vf:multiple(current())">
+                          <!-- IMPL perhaps we could do bulk delete to speed things up -->
+                          <xsl:value-of select="vf:javaMemberName(current()/name)"/>.stream().forEach(i -> em.remove(i));
+                      </xsl:when>
+                      <xsl:otherwise>
+                          em.remove(<xsl:value-of select="vf:javaMemberName(current()/name)"/>);
+                      </xsl:otherwise>
+                  </xsl:choose>
+
+              </xsl:for-each>
+              em.remove(this); // finish up with itself.
+          </xsl:when>
+          <xsl:otherwise>
+              em.remove(this); // nothing special to do
+          </xsl:otherwise>
+      </xsl:choose>
+
+      }
+      </xsl:if>
+  </xsl:template>
 
 
 </xsl:stylesheet>

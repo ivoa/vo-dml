@@ -161,7 +161,10 @@
     <xsl:value-of select="concat(./ancestor::vo-dml:model/name,':',.)" />
   </xsl:template>
 
-
+  <xsl:function name="vf:multiple" as="xsd:boolean">
+    <xsl:param name="p" as="element()"/>
+    <xsl:sequence select="xsd:int($p/multiplicity/maxOccurs) ne 1"/>
+  </xsl:function>
 
   <xsl:template match="multiplicity" mode="tostring">
     <xsl:variable name="lower">

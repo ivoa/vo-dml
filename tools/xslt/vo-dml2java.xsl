@@ -762,6 +762,7 @@
 
       <xsl:apply-templates select="." mode="jpawalker"/>
       <xsl:apply-templates select="." mode="jparefs"/>
+      <xsl:apply-templates select="./self::objectType" mode="jpadeleter"/>
 
 <!--      <xsl:if test="local-name() eq 'dataType'">-->
 <!--          <xsl:apply-templates select="." mode="JPAConverter"/>-->
