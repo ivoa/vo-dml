@@ -65,6 +65,8 @@
   * further reference management refinement
 * 0.5.11
   * further reference management tweaks & fixed support for abstract base class cloning.
+* 0.5.12
+  * initial support for automatic RDB entity deletion taking into account need to delete the referrers to the contained references first.
   
 
 N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass - fixed in 6.6.1
