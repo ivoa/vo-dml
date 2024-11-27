@@ -10,7 +10,8 @@
       <version>1.0</version>
       <lastModified>2024-10-07T08:26:18Z</lastModified>
       <import>
-        <name>null</name><!--should not be needed in modern vo-dml -->
+        <name>ivoa</name>
+          <version>1.0</version>
         <url>IVOA-v1.0.vo-dml.xml</url>
         <documentationURL>not known</documentationURL>
       </import>

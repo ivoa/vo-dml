@@ -12,7 +12,7 @@ VODML Tooling TODO
 * multiple attribute can be OK (small fixed numbers) - happens for DTypes in coordinates for example...
 * unique constraint in composition...- would result in Set as the container - are compositions assumed to contain unique members anyway - that is effectively what is happening in the JPA interpretation where a surrogate 
  key is used. In this case it might be a lifecycle issue. This is also the distinction between a datatype and an objectType.
-* the rdb and xml schemas produced by the xslt are do not match the java generated ones exactly - they need to be updated.
+* the rdb ~~and xml schemas~~ produced by the xslt are do not match the java generated ones exactly - they need to be updated.
 * vodml to specify attribute defaults?
 * semantic
   * need to overhaul the main meaning - need exact mapping to current vocabularies - more than just for lists for enums...
@@ -58,8 +58,8 @@ VODML Tooling TODO
 * generate python
 * integrate with the model mapping in VOT.
 * ~~autogenerate the dependent vosdl files.~~
-* improve generated documentation
-  * add description of "is a ref", has subtypes etc....
+* ~~improve generated documentation~~
+  * ~~add description of "is a ref", has subtypes etc....~~
 * improve generation of vodsl from xsd
   * add better heuristics for dealing with restriction patterns
 * Perhaps add a more general transformation of the VO-DML step prior to generation
@@ -79,7 +79,7 @@ VODML Tooling TODO
   * ~~subsets not forced in some SRC coords~~ 
   * add constructor that misses out the optional attributes.
   * think again about the subsetting strategy and type safety
-* make semantic constraints work - i.e. look up the RDF....
+* ~~make semantic constraints work - i.e. look up the RDF....~~
 * before and after serialization, the references need to be processed - it would be nice to do this automatically.... e.g. https://github.com/FasterXML/jackson-databind/issues/279 for jackson.
 * references
   * would be nice if the tooling warned when contained references are created bare.... - e.g. the filters in the original sample.
@@ -89,8 +89,8 @@ VODML Tooling TODO
 * JAXB
   * ~~idrefs referred to objects are not being output - http://stackoverflow.com/questions/12914382/marshalling-unmarshalling-fields-to-tag-with-attributes-using-jaxb~~
   * make the subsets create substitution group xml (i.e. have elements rather than xsi:type) http://blog.bdoughan.com/2010/11/jaxb-and-inheritance-using-substitution.html
-  * don't allow to add to content something that is a reference? 
-  * should dtypes be root elements? better to add to the modelElement....
+  * ~~don't allow to add to content something that is a reference?~~ 
+  * ~~should dtypes be root elements? NO! better to add to the modelElement....~~
   * not dealing well with something that is a composition and also a reference in full model
     * at the moment the logic is conservative in that all references listed - leads to repetition in full model output - e.g. telescopes in proposaldm
     * has been improved from around 0.3.15

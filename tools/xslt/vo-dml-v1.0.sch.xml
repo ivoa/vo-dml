@@ -15,7 +15,6 @@
 
     <xsl:include href="classpath:xslt/common-structure-functions.xsl"/>
 
-
 <xsl:function name="fct:vo-dml_element_kind" as="xs:string">
     <!--  returns name of element containing the vodml-id identified by the vodml-ref -->
         <xsl:param name="vodml-ref" />
@@ -71,6 +70,20 @@ all model imports did not succeed (only <sch:value-of select="$count"/>)
                 There is no imported model corresponding to model prefix '<sch:value-of select="$prefix"/>' in this model.
             </sch:assert>
         </sch:rule>
+        <sch:rule context="import">
+            <sch:let name="impname" value="document(url)/vo-dml:model/name"/>
+            <sch:let name="impvers" value="document(url)/vo-dml:model/version"/>
+            <sch:assert test="name = $impname"  flag="error">
+                The imported model namespace <sch:value-of select="concat('&quot;',$impname,'&quot;', ' for import of ', url,' is not the expected &quot;', name,'&quot;')"/>
+            </sch:assert>
+            <sch:assert test="version" flag="warning">
+                the imported model version has not been specified for the import of model '<sch:value-of select="$impname"/>'
+            </sch:assert>
+            <sch:assert test="version = $impvers"  flag="error">
+                The imported model version=<sch:value-of select="concat('&quot;',$impvers,'&quot;', ' for import of ', url,' is not the expected &quot;', version,'&quot;')"/>
+            </sch:assert>
+        </sch:rule>
+
     </sch:pattern>
 
 <sch:pattern name="Unique_vodml-id">
