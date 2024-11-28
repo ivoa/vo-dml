@@ -93,9 +93,11 @@
 
 
   <xsl:template match="dataType" mode="JPAAnnotation">
-    <xsl:text>@jakarta.persistence.Embeddable</xsl:text>&cr;
-    <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
-    <xsl:if test="vf:hasSubTypes($vodml-ref)"  >
+    <xsl:if test="not(@abstract)">
+       <xsl:text>@jakarta.persistence.Embeddable</xsl:text>&cr;
+    </xsl:if>
+      <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
+    <xsl:if test="vf:hasSubTypes($vodml-ref) and @abstract"  >
         <xsl:text>@jakarta.persistence.MappedSuperclass</xsl:text>&cr;<!-- this works for hibernate but seem to need at every level not just top in multi-level hierarchy-->
     </xsl:if>
 <!--    <xsl:if test="vf:hasSubTypes($vodml-ref) or count(vf:baseTypes($vodml-ref))>0">-->
