@@ -76,7 +76,8 @@ class CoordsModelTest extends AutoRoundTripWithValidationTest<CoordsModel> {
 
     // note that this cannot be added directly as it is a dtype...
     LonLatPoint llp = new LonLatPoint(new RealQuantity(45.0, deg), new RealQuantity(15.0, deg), new RealQuantity(1.5, new Unit("Mpc")), ICRS_SYS);
-    AnObject a = new AnObject(llp);
+    MJD mjd = new MJD(60000.0, TIMESYS_TT);
+    AnObject a = new AnObject(llp, mjd);
     CoordsModel modelInstance = new CoordsModel();
 
     modelInstance.addReference(TIMESYS_TT);

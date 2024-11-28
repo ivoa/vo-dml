@@ -10,10 +10,10 @@
       <title></title>
       <author>Arnold Rots, Mark Cresitello-Dittmar, Omar Laurino</author>
       <version>1.0</version>
-      <lastModified>2024-07-04T20:32:17Z</lastModified>
+      <lastModified>2024-11-28T11:52:20Z</lastModified>
       <import>
         <name>ivoa</name>
-          <version>1.0</version>
+        <version>1.0</version>
         <url>IVOA-v1.0.vo-dml.xml</url>
         <documentationURL>not known</documentationURL>
       </import>
@@ -1033,6 +1033,18 @@
                  <description>the position</description>	    
                  <datatype>
                     <vodml-ref>coords:LonLatPoint</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </attribute>
+               <attribute>
+                 <vodml-id>AnObject.time</vodml-id>
+                 <name>time</name>
+                 <description>The time</description>	    
+                 <datatype>
+                    <vodml-ref>coords:MJD</vodml-ref>
                  </datatype>
                  <multiplicity>
                    <minOccurs>1</minOccurs>

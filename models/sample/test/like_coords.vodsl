@@ -261,4 +261,5 @@ otype CartesianCoordSpace  -> PhysicalCoordSpace "Spatial domain, three-dimensio
 //just here to make testing easier.
  otype AnObject "example content" {
  	   position:LonLatPoint "the position";
+ 	   time:MJD "The time";
  } 

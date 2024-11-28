@@ -82,6 +82,7 @@
           <!-- TODO need to think about subgraphs -->
           )
       </xsl:if>
+     <xsl:apply-templates select="current()[attribute[vf:isDataType(.)]]" mode="doEmbeddedRefs"/>
 
  </xsl:template>
 
@@ -270,19 +271,19 @@
 
     </xsl:template>
 
+
     <xsl:template match="dataType" mode="attrovercols" as="xsd:string*">
         <xsl:param name="prefix" as="xsd:string"/>
-<!--        <xsl:message>** attrovercolsD <xsl:value-of select="concat(name(),' ',name,' *** ',$prefix, ' refs=', string-join(vf:baseTypes(vf:asvodmlref(current()))/reference/name,','))"/></xsl:message>-->
+        <!--        <xsl:message>** attrovercolsD <xsl:value-of select="concat(name(),' ',name,' *** ',$prefix, ' refs=', string-join(vf:baseTypes(vf:asvodmlref(current()))/reference/name,','))"/></xsl:message>-->
         <xsl:for-each select="(attribute, vf:baseTypes(vf:asvodmlref(current()))/attribute)"> <!-- this takes care of dataType inheritance should work https://hibernate.atlassian.net/browse/HHH-12790 -->
             <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
             <xsl:apply-templates select="$type" mode="attrovercols">
                 <xsl:with-param name="prefix" select="concat($prefix,'_',name)"/>
             </xsl:apply-templates>
         </xsl:for-each>
-        <xsl:for-each select="(reference, vf:baseTypes(vf:asvodmlref(current()))/reference)">
-                <xsl:sequence select="concat($prefix,'_',name)"/>
-        </xsl:for-each>
     </xsl:template>
+
+
 
     <!--produces _ separated string with possible last + separated
     for the type access all _ and + should be changed to .
@@ -324,6 +325,26 @@
         <xsl:value-of select="$prefix"/>
     </xsl:template>
 
+   <!-- do the embedded refs -->
+    <xsl:template match="objectType[attribute[vf:isDataType(.)]]" mode="doEmbeddedRefs">
+        <xsl:variable name="attovers" as="xsd:string*">
+            <xsl:for-each select="attribute[vf:isDataType(.)]">
+               <xsl:apply-templates select="current()" mode="doEmbeddedRefs"/>
+            </xsl:for-each>
+        </xsl:variable>
+        <xsl:if test="not(empty($attovers))">
+            @jakarta.persistence.AssociationOverrides( {
+            <xsl:value-of select="string-join($attovers,concat(',',$cr))"/>
+            })
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template match="attribute" mode="doEmbeddedRefs" as="xsd:string*">
+        <xsl:variable name="thisname" select="name"/>
+        <xsl:for-each select="($models/key('ellookup',current()/datatype/vodml-ref)/reference,vf:baseTypes(current()/datatype/vodml-ref)/reference)">
+            <xsl:value-of select="concat('@jakarta.persistence.AssociationOverride(name=',$dq,$thisname,'.',name,$dq,',joinColumns = { @jakarta.persistence.JoinColumn(name=',$dq,$thisname,'_',name,$dq,  ',nullable =',true(),')})')"/><!--IMPL have to allow null - too difficult to work out when not allowed - see proposalDM ObservingPlatform -->
+        </xsl:for-each>
+    </xsl:template>
 
 
     <xsl:template match="attribute|reference|composition" mode="nullable">

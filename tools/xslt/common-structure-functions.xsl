@@ -580,6 +580,19 @@ note - only define functions in here as it is included in the schematron rules
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
+    <xsl:function name="vf:isPrimitiveType" as="xsd:boolean">
+        <xsl:param name="el" as="element()"/>
+        <xsl:sequence select="vf:typeRole($el/datatype/vodml-ref) = 'primtiveType'"/>
+    </xsl:function>
+    <xsl:function name="vf:isDataType" as="xsd:boolean">
+        <xsl:param name="el" as="element()"/>
+        <xsl:sequence select="vf:typeRole($el/datatype/vodml-ref) = 'dataType'"/>
+    </xsl:function>
+    <xsl:function name="vf:isObjectType" as="xsd:boolean">
+        <xsl:param name="el" as="element()"/>
+        <xsl:sequence select="vf:typeRole($el/datatype/vodml-ref) = 'objectType'"/>
+    </xsl:function>
+
     <!-- returns the vodml-refs of the members including inherited ones -->
     <xsl:function name="vf:allInheritedMembers" as="xsd:string*">
         <xsl:param name="vodml-ref" as="xsd:string"/>

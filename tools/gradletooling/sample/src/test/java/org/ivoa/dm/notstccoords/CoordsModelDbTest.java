@@ -77,7 +77,8 @@ private AnObject a;
 
     // note that this cannot be added directly as it is a dtype...
     LonLatPoint llp = new LonLatPoint(new RealQuantity(45.0, deg), new RealQuantity(15.0, deg), new RealQuantity(1.5, new Unit("Mpc")), ICRS_SYS);
-    a = new AnObject(llp);
+    MJD mjd = new MJD(60310.0, TIMESYS_TT);
+    a = new AnObject(llp,mjd);
     CoordsModel modelInstance = new CoordsModel();
 
     modelInstance.addReference(TIMESYS_TT);
@@ -91,7 +92,17 @@ private AnObject a;
     return modelInstance;
   }
 
-  @Override
+  /**
+ * {@inheritDoc}
+ * overrides @see org.ivoa.vodml.validation.AbstractBaseValidation#setDbDumpFile()
+ */
+@Override
+protected String setDbDumpFile() {
+    return "notcoords_dump.sql";
+    
+}
+
+@Override
   public void testModel(CoordsModel coordsModel) {
      List<AnObject> ts = coordsModel.getContent(AnObject.class);
      assertNotNull(ts);
