@@ -47,7 +47,7 @@
   <xsl:param name="binding"/>
     <xsl:param name="do_jpa" select="true()"/>
   <xsl:param name="write_persistence_xml" select="true()"/>
-  <xsl:param name="pu_name" select="'model_pu'"/>
+  <xsl:param name="pu_name" select="'model_pu'"/> <!--FIXME not used -->
 
     <xsl:param name="isMain"/>
   <xsl:include href="binding_setup.xsl"/>
@@ -115,7 +115,6 @@
       <xsl:if test="$isMain eq 'True'">
           <xsl:if test="$do_jpa ">
             <xsl:call-template name="persistence_xml">
-                <xsl:with-param name="puname" select="$pu_name"/>
                 <xsl:with-param name="doit" select="$write_persistence_xml"/>
             </xsl:call-template>
           </xsl:if>

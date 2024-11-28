@@ -446,7 +446,6 @@
 
   <!-- persistence.xml configuration file -->  
   <xsl:template name="persistence_xml">
-    <xsl:param name="puname"/>
     <xsl:param name="doit"/>
     <xsl:variable name="file" select="'META-INF/persistence.xml'"/>
 
@@ -455,13 +454,18 @@
     <xsl:result-document href="{$file}" format="persistenceInfo">
     <xsl:element name="persistence" namespace="http://java.sun.com/xml/ns/persistence">
       <xsl:attribute name="version" select="'2.0'"/>
+      <xsl:for-each select="$models/vo-dml:model">
       <xsl:element name="persistence-unit" namespace="http://java.sun.com/xml/ns/persistence">
-        <xsl:attribute name="name" select="$puname"/>
+        <xsl:attribute name="name" select="name"/>
         <xsl:comment>we rely on hibernate extensions</xsl:comment>
         <xsl:element name="provider" namespace="http://java.sun.com/xml/ns/persistence">org.hibernate.jpa.HibernatePersistenceProvider<!--org.eclipse.persistence.jpa.PersistenceProvider--></xsl:element>
-        <xsl:apply-templates select="$models/vo-dml:model/*" mode="jpaConfig"/>
+        <xsl:apply-templates select="*" mode="jpaConfig"/>
+        <xsl:for-each select="import/name">
+            <xsl:apply-templates select="$models/vo-dml:model[name=current()]/*" mode="jpaConfig"/>
+        </xsl:for-each>
         <xsl:element name="exclude-unlisted-classes" namespace="http://java.sun.com/xml/ns/persistence">true</xsl:element>
       </xsl:element>
+      </xsl:for-each>
     </xsl:element>
     </xsl:result-document>
    </xsl:if>

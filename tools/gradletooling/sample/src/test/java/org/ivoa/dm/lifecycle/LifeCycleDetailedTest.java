@@ -77,7 +77,7 @@ public class LifeCycleDetailedTest extends AbstractTest {
   @Test
   void MultiContainedJPATest() {
     jakarta.persistence.EntityManager em =
-        setupH2Db(SampleModel.pu_name()); // IMPL build means that everything is in one
+        setupH2Db(LifecycleTestModel.pu_name()); // IMPL build means that everything is in one
     // persistence unit.
     em.getTransaction().begin();
     atest2.persistRefs(em);
@@ -137,7 +137,7 @@ public class LifeCycleDetailedTest extends AbstractTest {
   @Test
   void deleteTest() {
        jakarta.persistence.EntityManager em =
-        setupH2Db(SampleModel.pu_name()); // IMPL build means that everything is in one
+        setupH2Db(LifecycleTestModel.pu_name()); // IMPL build means that everything is in one
     // persistence unit.
     em.getTransaction().begin();
     model.management().persistRefs(em);

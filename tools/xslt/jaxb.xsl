@@ -444,7 +444,7 @@
         * @return the name.
         */
        public static String pu_name(){
-        return "<xsl:value-of select='$pu_name'/>";
+        return "<xsl:value-of select='name'/>";
         }
 
         /**
