@@ -168,7 +168,7 @@ class VodmlGradlePlugin: Plugin<Project> {
             "org.glassfish.jaxb:jaxb-runtime:4.0.2",
 //             "org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.10",  // supports JPA 2.2
 //            "org.eclipse.persistence:org.eclipse.persistence.moxy:3.0.2", //alternative Jaxb runtime...
-             "org.hibernate.orm:hibernate-core:6.5.3.Final"
+             "org.hibernate.orm:hibernate-core:6.6.3.Final"
 //             ,"jakarta.persistence:jakarta.persistence-api:3.0.0" // dont use until go to hibernate 6
              ,"com.fasterxml.jackson.core:jackson-databind:2.15.1"
              ,"org.eclipse.microprofile.openapi:microprofile-openapi-api:2.0.1"
