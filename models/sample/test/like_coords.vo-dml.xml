@@ -10,7 +10,7 @@
       <title></title>
       <author>Arnold Rots, Mark Cresitello-Dittmar, Omar Laurino</author>
       <version>1.0</version>
-      <lastModified>2024-11-28T11:52:20Z</lastModified>
+      <lastModified>2024-11-29T09:02:40Z</lastModified>
       <import>
         <name>ivoa</name>
         <version>1.0</version>
@@ -1051,5 +1051,17 @@
                    <maxOccurs>1</maxOccurs>
                  </multiplicity>
                </attribute>
+               <composition>
+                 <vodml-id>AnObject.sys</vodml-id>
+                 <name>sys</name>
+                 <description>the system</description>	    
+                 <datatype>
+                    <vodml-ref>coords:GenericSys</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </composition>
             </objectType>
 </vo-dml:model>

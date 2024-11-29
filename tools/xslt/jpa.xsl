@@ -239,7 +239,8 @@
         <xsl:param name="nillable"/>
         @jakarta.persistence.Embedded
         <xsl:variable name="attovers" as="xsd:string*">
-
+              <!-- IMPL - this code is a bit ugly - is attempting to deal with the case where a dataType has a dataType member (quite frequent as base model has quantities)
+              it probably can be refactored to be a bit more recursive -->
                 <xsl:variable name="atv" as="xsd:string*">
                     <xsl:apply-templates select="$models/key('ellookup',current()/datatype/vodml-ref)" mode="attrovercols"><xsl:with-param name="prefix" select="$name"/></xsl:apply-templates>
                 </xsl:variable>
