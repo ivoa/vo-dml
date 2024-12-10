@@ -476,18 +476,28 @@
     <!-- open file for jpa configuration -->
    <xsl:if test="$doit">
     <xsl:result-document href="{$file}" format="persistenceInfo">
-    <xsl:element name="persistence" namespace="http://java.sun.com/xml/ns/persistence">
-      <xsl:attribute name="version" select="'2.0'"/>
+    <xsl:element name="persistence" namespace="https://jakarta.ee/xml/ns/persistence">
+      <xsl:attribute name="version" select="'3.0'"/>
       <xsl:for-each select="$models/vo-dml:model">
-      <xsl:element name="persistence-unit" namespace="http://java.sun.com/xml/ns/persistence">
+      <xsl:element name="persistence-unit" namespace="https://jakarta.ee/xml/ns/persistence">
         <xsl:attribute name="name" select="name"/>
         <xsl:comment>we rely on hibernate extensions</xsl:comment>
-        <xsl:element name="provider" namespace="http://java.sun.com/xml/ns/persistence">org.hibernate.jpa.HibernatePersistenceProvider<!--org.eclipse.persistence.jpa.PersistenceProvider--></xsl:element>
-        <xsl:apply-templates select="*" mode="jpaConfig"/>
+        <xsl:element name="provider" namespace="https://jakarta.ee/xml/ns/persistence">org.hibernate.jpa.HibernatePersistenceProvider<!--org.eclipse.persistence.jpa.PersistenceProvider--></xsl:element>
+
         <xsl:for-each select="import/name">
-            <xsl:apply-templates select="$models/vo-dml:model[name=current()]/*" mode="jpaConfig"/>
+            <xsl:apply-templates select="$models/vo-dml:model[name=current()]/(dataType,objectType,enumeration,package)" mode="jpaConfig"/>
         </xsl:for-each>
-        <xsl:element name="exclude-unlisted-classes" namespace="http://java.sun.com/xml/ns/persistence">true</xsl:element>
+        <xsl:apply-templates select="dataType,objectType,enumeration,package" mode="jpaConfig">
+           <xsl:sort select="vf:persistOrder(current())" order="descending"/>
+        </xsl:apply-templates>
+        <xsl:element name="exclude-unlisted-classes" namespace="https://jakarta.ee/xml/ns/persistence">true</xsl:element>
+<!-- autodetection will not work?
+          <xsl:element name="properties" namespace="https://jakarta.ee/xml/ns/persistence">
+              <xsl:element name="property" namespace="https://jakarta.ee/xml/ns/persistence">
+                  <xsl:attribute name="name">hibernate.archive.autodetection</xsl:attribute>
+                  <xsl:attribute name="value">class, hbm</xsl:attribute>
+              </xsl:element>
+          </xsl:element> -->
       </xsl:element>
       </xsl:for-each>
     </xsl:element>
@@ -499,14 +509,27 @@
       </xsl:result-document>
 
   </xsl:template>
+  <!-- returns a larger value the more subtypes -->
+  <xsl:function name="vf:persistOrder" >
+      <xsl:param name="el" as="element()"/>
+      <xsl:choose>
+          <xsl:when test="$el/self::package">
+              <xsl:sequence select="number(0)"/>
+          </xsl:when>
+          <xsl:otherwise>
+              <xsl:sequence select="count(vf:subTypeIds(vf:asvodmlref($el)))"/>
+          </xsl:otherwise>
+      </xsl:choose>
+
+  </xsl:function>
 
   <xsl:template match="package" mode="jpaConfig" >
-    <xsl:apply-templates select="*" mode="jpaConfig"/>
+    <xsl:apply-templates select="* except (name,vodml-id)" mode="jpaConfig"/>
   </xsl:template>
 
   <xsl:template name="jpaclassdecl">
     <xsl:param name="vodml-ref"/>
-    <xsl:element name="class" namespace="http://java.sun.com/xml/ns/persistence">
+    <xsl:element name="class" namespace="https://jakarta.ee/xml/ns/persistence">
 
       <xsl:value-of select="vf:QualifiedJavaType($vodml-ref)"/>
     </xsl:element>
