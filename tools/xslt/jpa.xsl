@@ -94,16 +94,20 @@
 
 
   <xsl:template match="dataType" mode="JPAAnnotation">
-    <xsl:if test="not(@abstract)">
-       <xsl:text>@jakarta.persistence.Embeddable</xsl:text>&cr;
-    </xsl:if>
+   <!-- the rules for how embeddables work is complex in hibernate -
+   cannot mark everything as embeddable (which would be easiest) as then only the base class may ever be used
+   and everything becomes polymorphic so it is necessary to impose some heuristics to try to work out when
+   the intention of a class hierarchy is only some convenience sharing - TODO need schematron rules to match...-->
       <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
-    <xsl:if test="vf:hasSubTypes($vodml-ref) and @abstract"  >
-        <xsl:text>@jakarta.persistence.MappedSuperclass</xsl:text>&cr;<!-- this works for hibernate but seem to need at every level not just top in multi-level hierarchy-->
-    </xsl:if>
-<!--    <xsl:if test="vf:hasSubTypes($vodml-ref) or count(vf:baseTypes($vodml-ref))>0">-->
-<!--      @org.eclipse.persistence.annotations.Customizer(<xsl:value-of select="vf:upperFirst(name)"/>.DescConv.class)-->
-<!--    </xsl:if>-->
+    <xsl:choose>
+        <xsl:when test="vf:hasSubTypes($vodml-ref) and not(vf:dtypeUsedDirectly($vodml-ref))"><!--TODO this is not sufficient - I think that the trigger is sibling classes at same level in hinheritance hierarcy. -->
+            <xsl:text>@jakarta.persistence.MappedSuperclass</xsl:text>&cr;
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:text>@jakarta.persistence.Embeddable</xsl:text>&cr;
+        </xsl:otherwise>
+    </xsl:choose>
+
   </xsl:template>
 
 
@@ -187,6 +191,7 @@
                                 </xsl:if>)
                             </xsl:when>
                             <xsl:otherwise>
+        //direct
         @jakarta.persistence.Embedded
         @jakarta.persistence.AttributeOverrides ({@jakarta.persistence.AttributeOverride(name = "value", column =@jakarta.persistence.Column(name="<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/>))})
                             </xsl:otherwise>
@@ -211,7 +216,9 @@
       @jakarta.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
               </xsl:when>
               <xsl:otherwise>
-                      <xsl:call-template name="doEmbeddedJPA">
+      @jakarta.persistence.Embedded
+               <xsl:if test="current()[parent::*]"><!--was just objectType -->
+                      <xsl:call-template name="doEmbeddedOverrides">
                       <xsl:with-param name="name" select="$name"/>
                       <xsl:with-param name="type" select="$type"/>
                       <xsl:with-param name="nillable" >
@@ -223,6 +230,7 @@
                           </xsl:choose>
                       </xsl:with-param>
                   </xsl:call-template>
+               </xsl:if>
               </xsl:otherwise>
           </xsl:choose>
           </xsl:when>
@@ -233,11 +241,11 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template name="doEmbeddedJPA">
+    <xsl:template name="doEmbeddedOverrides">
         <xsl:param name="name"/>
         <xsl:param name="type"/>
         <xsl:param name="nillable"/>
-        @jakarta.persistence.Embedded
+
         <xsl:variable name="attovers" as="xsd:string*">
               <!-- IMPL - this code is a bit ugly - is attempting to deal with the case where a dataType has a dataType member (quite frequent as base model has quantities)
               it probably can be refactored to be a bit more recursive -->
@@ -266,6 +274,7 @@
                     <xsl:value-of select="$tmp"/>
                 </xsl:for-each>
         </xsl:variable>
+        //other
         @jakarta.persistence.AttributeOverrides( {
         <xsl:value-of select="string-join($attovers,concat(',',$cr))"/>
         })
@@ -276,7 +285,7 @@
     <xsl:template match="dataType" mode="attrovercols" as="xsd:string*">
         <xsl:param name="prefix" as="xsd:string"/>
         <!--        <xsl:message>** attrovercolsD <xsl:value-of select="concat(name(),' ',name,' *** ',$prefix, ' refs=', string-join(vf:baseTypes(vf:asvodmlref(current()))/reference/name,','))"/></xsl:message>-->
-        <xsl:for-each select="(attribute, vf:baseTypes(vf:asvodmlref(current()))/attribute)"> <!-- this takes care of dataType inheritance should work https://hibernate.atlassian.net/browse/HHH-12790 -->
+        <xsl:for-each select="(attribute, vf:baseTypes(vf:asvodmlref(current()))/attribute,vf:subTypes(vf:asvodmlref(current()))/attribute)"> <!-- this takes care of dataType inheritance should work https://hibernate.atlassian.net/browse/HHH-12790 -->
             <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
             <xsl:apply-templates select="$type" mode="attrovercols">
                 <xsl:with-param name="prefix" select="concat($prefix,'_',name)"/>

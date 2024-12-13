@@ -19,18 +19,25 @@ dtype ADtype -> Intermediate "dtype" {
 	dvalr: ivoa:real "";
 	dvals: ivoa:string "";
 }
+dtype AEtype -> Intermediate "dtype" {
+	evalr: ivoa:real "";
+	evals: ivoa:string "";
+}
 
-otype ReferredTo1 {
+
+abstract otype Refbase "" {}
+
+otype ReferredTo1 -> Refbase {
 	sval : ivoa:string "";
 	
 }
 
-otype ReferredTo2 "" {
+otype ReferredTo2 -> Refbase "" {
 	sval : ivoa:string "";
 }
 
-otype ReferredTo3 "" {
-	sval : ivoa:string "";
+otype ReferredTo3 -> ReferredTo2 "" {
+ival : ivoa:integer "";
 }
 
 otype Child {
