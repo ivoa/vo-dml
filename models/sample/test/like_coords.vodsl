@@ -127,17 +127,17 @@ dtype PolState  -> PolCoordinate "Coordinate type for discrete polarization stat
 ";
   }
 
-abstract dtype RefLocation  "RefLocation defines the origin of the spatial coordinate space.  This location is represented either by a standard reference position (for which the absolute location in phase space is known by definition), or a specified point in another Spatial frame.  This object is used as the origin of the SpaceFrame here, but also to specify the Spatial Reference Position (refPosition) associated with other domain Frames.  For example, in the Time domain, the Spatial Reference Position indicates that the 'time' values are the time that the 'event' occured at that location, which might be different from the detector location.  
+abstract otype RefLocation  "RefLocation defines the origin of the spatial coordinate space.  This location is represented either by a standard reference position (for which the absolute location in phase space is known by definition), or a specified point in another Spatial frame.  This object is used as the origin of the SpaceFrame here, but also to specify the Spatial Reference Position (refPosition) associated with other domain Frames.  For example, in the Time domain, the Spatial Reference Position indicates that the 'time' values are the time that the 'event' occured at that location, which might be different from the detector location.  
  "
   {   
   }
 
-dtype StdRefLocation  -> RefLocation "An absolute a-priori known location in phase space (position and velocity).  Values are selected from the StdRefPosition vocabulary.  Considering that the GEOCENTER is really the only place for which we know the absolute location at all times, all other locations require the specification of a planetary ephemeris.  LSR[KD] are reserved for spectral and reshift frames.  TOPOCENTER (location of the observer) is special in that it assumes that the observing location is available through other means (e.g. a geographic location or an orbit ephemeris).  RELOCATABLE is available for simulations.  UNKNOWN should only be used if absolutely necessary."
+otype StdRefLocation  -> RefLocation "An absolute a-priori known location in phase space (position and velocity).  Values are selected from the StdRefPosition vocabulary.  Considering that the GEOCENTER is really the only place for which we know the absolute location at all times, all other locations require the specification of a planetary ephemeris.  LSR[KD] are reserved for spectral and reshift frames.  TOPOCENTER (location of the observer) is special in that it assumes that the observing location is available through other means (e.g. a geographic location or an orbit ephemeris).  RELOCATABLE is available for simulations.  UNKNOWN should only be used if absolutely necessary."
   {   
         position: ivoa:string   "Standard reference location.  Values MUST be selected from the controlled vocabulary at the given URL. " semantic "ReferencePosition" in "http://www.ivoa.net/rdf/refposition";
   }
 
-dtype CustomRefLocation  -> RefLocation "A custom reference location in phase space (position and velocity).  Position and velocity are given as coordinates with an associated SpaceFrame.  An epoch MAY be provided to further refine the location."
+otype CustomRefLocation  -> RefLocation "A custom reference location in phase space (position and velocity).  Position and velocity are given as coordinates with an associated SpaceFrame.  An epoch MAY be provided to further refine the location."
   {   
         epoch: Epoch  @?   "Epoch for the reference location.";
         position: Point   "The spatial coordinates of the reference location.";
@@ -176,7 +176,7 @@ abstract otype CoordFrame  "This is the abstract, empty, base class for all coor
 
 otype GenericFrame  -> CoordFrame "The generic coordinate frame is for cases where a domain-specific frame (e.g.: Space, Time), is not required, but the relevant reference metadata is still needed (e.g.: for Redshift or Spectral data)"
   {   
-        refPosition: RefLocation   "Spatial location in phase space (position and velocity) at which the observed value is considered to have been taken. This will typically be given by a standard reference position, but we allow for custom locations as well.
+        refPosition: RefLocation as composition  "Spatial location in phase space (position and velocity) at which the observed value is considered to have been taken. This will typically be given by a standard reference position, but we allow for custom locations as well.
 ";
         planetaryEphem: ivoa:string  @?   "A planetary ephemeris MAY be provided, and SHOULD be provided whenever appropriate, to indicate which solar system ephemeris was used.  If needed, but not provided, it is assumed to be 'DE405'";
   }
@@ -184,7 +184,7 @@ otype GenericFrame  -> CoordFrame "The generic coordinate frame is for cases whe
 otype SpaceFrame  -> CoordFrame "A SpaceFrame is specified by its reference frame (orientation), and a reference position (origin). Currently only standard reference frames are allowed. An equinox MUST be provided for pre-ICRS reference frames. A planetary ephemeris MAY be provided if relevant. If needed, but not provided, it is assumed to be 'DE405'.
 "
   {   
-        refPosition: RefLocation   "The spatial location at which the coordinates are considered to have been determined.  This model supports locations provided as either a standard reference position (e.g. GEOCENTER), or a coordinate specifying a custom location (e.g. long, lat, height ).";
+        refPosition: RefLocation as composition   "The spatial location at which the coordinates are considered to have been determined.  This model supports locations provided as either a standard reference position (e.g. GEOCENTER), or a coordinate specifying a custom location (e.g. long, lat, height ).";
         spaceRefFrame: ivoa:string   "The spatial reference frame. Values MUST be selected from the controlled vocabulary at the given URL.
 " semantic "SpaceRefFrame" in "http://www.ivoa.net/rdf/refframe";
         equinox: Epoch  @?   "Reference date for the frame, required for pre-ICRS reference frames.";
@@ -193,9 +193,9 @@ otype SpaceFrame  -> CoordFrame "A SpaceFrame is specified by its reference fram
 
 otype TimeFrame  -> CoordFrame "A TimeFrame SHALL include a time scale and reference position.  It MAY also include a reference direction."
   {   
-        refPosition: RefLocation   "The spatial location at which the coordinate is considered to have been taken.  This model supports locations provided as either a standard reference position (e.g. GEOCENTER), or a coordinate specifying a custom location (e.g. long, lat, height).";
+        refPosition: RefLocation as composition   "The spatial location at which the coordinate is considered to have been taken.  This model supports locations provided as either a standard reference position (e.g. GEOCENTER), or a coordinate specifying a custom location (e.g. long, lat, height).";
         timescale: ivoa:string   "The time scale sets the reference frame.  The value MUST be selected from the controlled vocabulary at the given URL." semantic "TimeScale" in "http://www.ivoa.net/rdf/timescale";
-        refDirection: RefLocation  @?   "The reference direction is needed if the time stamps are transformed to a time frame with a different reference position.  In those situations, the solar system ephemeris also comes into play.  See: FITS WCS Paper IV for details, but in short:  The reference direction, presumably the direction to the thing being observed, is used in conjunction with the reference position and planetary ephemeris to determine the correction applied for the path length change.  To be fully useful, one also needs to know the location at which the observation was made ( i.e. the observatory location), which is not considered to be Frame metadata.";
+        refDirection: RefLocation  @? as composition   "The reference direction is needed if the time stamps are transformed to a time frame with a different reference position.  In those situations, the solar system ephemeris also comes into play.  See: FITS WCS Paper IV for details, but in short:  The reference direction, presumably the direction to the thing being observed, is used in conjunction with the reference position and planetary ephemeris to determine the correction applied for the path length change.  To be fully useful, one also needs to know the location at which the observation was made ( i.e. the observatory location), which is not considered to be Frame metadata.";
   }
 
 otype AstroCoordSystem  -> CoordSys "The AstroCoordSystem object holds a collection of component coordinate system descriptions across all represented physical domains."
