@@ -26,6 +26,7 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
      </xsd:element>
      <xsd:element name="java-package" type="JavaName" minOccurs="0" maxOccurs="1" />
      <xsd:element name="python-package" type="PythonName" minOccurs="0" maxOccurs="1" />
+     <!-- TODO put all the XML mapping into own element -->
      <xsd:element name="xml-targetnamespace" type="xmlnsMapping" minOccurs="0" maxOccurs="1">
         <xsd:annotation>
            <xsd:documentation>
@@ -39,6 +40,21 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
               the xml namespace that is to be the target namespace for the generated model code
            </xsd:documentation>
         </xsd:annotation>
+     </xsd:element>
+     <xsd:element name="xml" maxOccurs="1" minOccurs="0">
+        <xsd:complexType>
+           <xsd:attribute name="compositionStyle" default="wrapped">
+                        <xsd:annotation>
+                           <xsd:documentation>whether compositions with multiplicities greater than 1 should have a wrapper element</xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                 <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="wrapped"></xsd:enumeration>
+                    <xsd:enumeration value="unwrapped"></xsd:enumeration>
+                 </xsd:restriction>
+              </xsd:simpleType>
+           </xsd:attribute>
+        </xsd:complexType>
      </xsd:element>
      <xsd:element name="json-baseURI" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
      <xsd:element name="rdb" minOccurs="0" maxOccurs="1">
@@ -60,13 +76,15 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
               </xsd:annotation>
            </xsd:attribute>
            <xsd:attribute name="fetching" use="optional" default="lazy">
-            <xsd:annotation>
-               <xsd:documentation>whether child objects from the database are fetched at initial query time or only on use</xsd:documentation>
-            </xsd:annotation>
+              <xsd:annotation>
+                 <xsd:documentation>
+                    whether child objects from the database are fetched at initial query time or only on use
+                 </xsd:documentation>
+              </xsd:annotation>
               <xsd:simpleType>
                  <xsd:restriction base="xsd:string">
-                   <xsd:enumeration value="lazy"></xsd:enumeration>
-                   <xsd:enumeration value="eager"></xsd:enumeration>
+                    <xsd:enumeration value="lazy"></xsd:enumeration>
+                    <xsd:enumeration value="eager"></xsd:enumeration>
                  </xsd:restriction>
               </xsd:simpleType>
            </xsd:attribute>
@@ -78,10 +96,9 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
         </xsd:annotation>
      </xsd:element>
      <xsd:element name="type-detail" type="TypeDetail" minOccurs="0" maxOccurs="unbounded">
-         <xsd:annotation>
-             <xsd:documentation>the list of type detail the model.</xsd:documentation>
-         </xsd:annotation>
-
+        <xsd:annotation>
+           <xsd:documentation>the list of type detail the model.</xsd:documentation>
+        </xsd:annotation>
      </xsd:element>
   </xsd:sequence>
 </xsd:complexType>
@@ -244,4 +261,8 @@ IMPL - this could be put into the code - especially as the number of JSON built-
   </xsd:complexType>
 
  
+
+  <xsd:simpleType name="NewSimpleType">
+     <xsd:restriction base="xsd:string"></xsd:restriction>
+  </xsd:simpleType>
 </xsd:schema>

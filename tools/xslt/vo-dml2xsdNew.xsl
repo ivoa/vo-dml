@@ -37,7 +37,7 @@ note that this schema is substantially different from the era when this code was
 
   <xsl:variable name="xsd-ns">http://www.w3.org/2001/XMLSchema</xsl:variable>
 
-
+  <xsl:variable name="modelname" select="/vo-dml:model/name"/>
 
  <!-- main pattern : processes for root node model -->
   <xsl:template match="/">
@@ -45,9 +45,6 @@ note that this schema is substantially different from the era when this code was
   </xsl:template>
 
   <xsl:template match="vo-dml:model">
-
-    <xsl:variable name="modelname" select="name"/>
-
 
     <xsl:variable name="targetNamespace">
       <xsl:value-of select="vf:xsdNs($modelname)"/>
@@ -363,7 +360,7 @@ note that this schema is substantially different from the era when this code was
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="composition[multiplicity/maxOccurs != 1]" >
+  <xsl:template match="composition[multiplicity/maxOccurs != 1 and not($mapping/bnd:mappedModels/model[name=$modelname]/xml/@compositionStyle='unwrapped')]" >
     <xsd:element>
       <xsl:attribute name="name" >
         <xsl:value-of select="name"/>
