@@ -44,6 +44,15 @@
     <xsl:copy-of select="$models/vo-dml:model[name=$modelname]"/>
     </xsl:template>
 
+    <xsl:template name="listVocabs">
+        <xsl:param name="outfile"/>
+        <xsl:result-document href="{$outfile}" method="text">
+            <xsl:for-each select="distinct-values($models/vo-dml:model//semanticconcept/vocabularyURI)">
+                <xsl:value-of select="concat(current(),$nl)"/>
+            </xsl:for-each>
+        </xsl:result-document>
+
+    </xsl:template>
 
     <xsl:function name="vf:JavaType" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/>

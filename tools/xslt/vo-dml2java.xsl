@@ -119,6 +119,9 @@
             </xsl:call-template>
           </xsl:if>
       </xsl:if>
+      <xsl:call-template name="listVocabs">
+          <xsl:with-param name="outfile" select="'vocabularies.txt'"/>
+      </xsl:call-template>
   </xsl:template>  
 
 

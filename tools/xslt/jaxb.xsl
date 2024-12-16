@@ -315,7 +315,7 @@
         private static void loadVocabs() {
         vocabs = new HashMap&lt;&gt;();
         <xsl:for-each select="distinct-values($models/vo-dml:model[name=$modelsInScope]//semanticconcept/vocabularyURI)">
-            vocabs.put(<xsl:value-of select="concat($dq,current(),$dq)"/>,Vocabulary.load(<xsl:value-of select="concat($dq,current(),$dq)"/>));
+            vocabs.put(<xsl:value-of select="concat($dq,current(),$dq)"/>,Vocabulary.loadLocal(<xsl:value-of select="concat($dq,current(),$dq)"/>));
         </xsl:for-each>
 
         }
