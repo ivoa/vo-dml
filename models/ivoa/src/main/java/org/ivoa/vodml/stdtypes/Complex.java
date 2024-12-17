@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import org.ivoa.vodml.annotation.VoDml;
 import org.ivoa.vodml.annotation.VodmlRole;
+import org.ivoa.vodml.jpa.JPAManipulations;
 
 /**
  * UML PrimitiveType complex : Represents a complex number, consisting of a real
@@ -17,7 +18,7 @@ import org.ivoa.vodml.annotation.VodmlRole;
  */
 @VoDml(id = "ivoa:complex", role=VodmlRole.primitiveType, type="ivoa:complex")
 @Embeddable
-public class Complex {
+public class Complex implements JPAManipulations {
 
     /** string representation */
     private double re;
@@ -77,5 +78,16 @@ public class Complex {
 
     public void setIm(double im) {
         this.im = im;
+    }
+
+    @Override
+    public void forceLoad() {
+        // nothing to do
+    }
+
+
+    @Override
+    public void persistRefs(EntityManager em) {
+        // nothing to do.
     }
 }
