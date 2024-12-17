@@ -8,7 +8,7 @@
       <uri/>
       <title></title>
       <version>1.0</version>
-      <lastModified>2024-10-07T16:00:35Z</lastModified>
+      <lastModified>2024-12-02T20:51:41Z</lastModified>
       <import>
         <name>ivoa</name>
         <version>1.0</version>
@@ -111,10 +111,50 @@
               </multiplicity>
             </attribute>
             </dataType>
+            <dataType>
+              <vodml-id>AEtype</vodml-id>
+              <name>AEtype</name>
+              <description>dtype</description>	    
+               <extends>
+                  <vodml-ref>jpatest:Intermediate</vodml-ref>
+               </extends>
+            <attribute>
+              <vodml-id>AEtype.evalr</vodml-id>
+              <name>evalr</name>
+              <description></description>	    
+              <datatype>
+                 <vodml-ref>ivoa:real</vodml-ref>
+              </datatype>
+              <multiplicity>
+                <minOccurs>1</minOccurs>
+                <maxOccurs>1</maxOccurs>
+              </multiplicity>
+            </attribute>
+            <attribute>
+              <vodml-id>AEtype.evals</vodml-id>
+              <name>evals</name>
+              <description></description>	    
+              <datatype>
+                 <vodml-ref>ivoa:string</vodml-ref>
+              </datatype>
+              <multiplicity>
+                <minOccurs>1</minOccurs>
+                <maxOccurs>1</maxOccurs>
+              </multiplicity>
+            </attribute>
+            </dataType>
+            <objectType abstract="true">
+               <vodml-id>Refbase</vodml-id>
+               <name>Refbase</name>
+               <description></description>	    
+            </objectType>
             <objectType>
                <vodml-id>ReferredTo1</vodml-id>
                <name>ReferredTo1</name>
                <description></description>	    
+               <extends>
+                  <vodml-ref>jpatest:Refbase</vodml-ref>
+               </extends>
                <attribute>
                  <vodml-id>ReferredTo1.sval</vodml-id>
                  <name>sval</name>
@@ -132,6 +172,9 @@
                <vodml-id>ReferredTo2</vodml-id>
                <name>ReferredTo2</name>
                <description></description>	    
+               <extends>
+                  <vodml-ref>jpatest:Refbase</vodml-ref>
+               </extends>
                <attribute>
                  <vodml-id>ReferredTo2.sval</vodml-id>
                  <name>sval</name>
@@ -149,12 +192,15 @@
                <vodml-id>ReferredTo3</vodml-id>
                <name>ReferredTo3</name>
                <description></description>	    
+               <extends>
+                  <vodml-ref>jpatest:ReferredTo2</vodml-ref>
+               </extends>
                <attribute>
-                 <vodml-id>ReferredTo3.sval</vodml-id>
-                 <name>sval</name>
+                 <vodml-id>ReferredTo3.ival</vodml-id>
+                 <name>ival</name>
                  <description></description>	    
                  <datatype>
-                    <vodml-ref>ivoa:string</vodml-ref>
+                    <vodml-ref>ivoa:integer</vodml-ref>
                  </datatype>
                  <multiplicity>
                    <minOccurs>1</minOccurs>

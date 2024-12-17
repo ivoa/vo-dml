@@ -617,6 +617,14 @@ note - only define functions in here as it is included in the schematron rules
             </xsl:for-each>
         </xsl:sequence>
     </xsl:function>
+    <xsl:function name="vf:dtypeUsedDirectly" as="xsd:boolean">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="name" select="$models/key('ellookup',$vodml-ref)/ancestor-or-self::vo-dml:model/name"/>
+        <xsl:variable name="modelsInScope" select="($name,vf:importedModelNames($name))"/>
+        <xsl:sequence select="count($models/vo-dml:model[name = $modelsInScope]//attribute/datatype[vodml-ref=$vodml-ref])>0" />
+    </xsl:function>
+
+
 
     <xsl:function name="vf:isOptional" as="xsd:boolean">
         <xsl:param name="el" as="element()"/>

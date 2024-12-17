@@ -88,12 +88,12 @@ tasks.test {
 
 dependencies {
     implementation("org.javastro.ivoa.vo-dml:ivoa-base")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.11.3")
     testImplementation("com.networknt:json-schema-validator:1.4.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    implementation("org.slf4j:slf4j-api:2.0.9")
+    testRuntimeOnly("org.hibernate.orm:hibernate-testing:6.6.3.Final")
     testRuntimeOnly("ch.qos.logback:logback-classic:1.4.12")
-    testImplementation("com.h2database:h2:2.2.220") // try out h2
+    testImplementation("com.h2database:h2:2.3.232") // try out h2
 //    testImplementation("org.apache.derby:derby:10.14.2.0")
     compileOnly("com.google.googlejavaformat:google-java-format:1.22.0")
 }
