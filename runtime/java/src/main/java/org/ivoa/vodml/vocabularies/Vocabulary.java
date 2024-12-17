@@ -113,7 +113,7 @@ public class Vocabulary {
      */
     public static Vocabulary loadLocal(String url)  {
         Vocabulary vocabulary = new Vocabulary(url);
-        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        ClassLoader classLoader = Vocabulary.class.getClassLoader();
         try (InputStream is = classLoader.getResourceAsStream(URLEncoder.encode(url, StandardCharsets.UTF_8))) {
             if (is == null) {
                 System.err.println("cannot load vocabulary " + url);//TODO decide on logging
