@@ -83,7 +83,6 @@ that allow for successful JSON round tripping.
   </xsl:template>
     <xsl:template match="vo-dml:model" mode="refs">
         <xsl:variable name="references-vodmlref" select="vf:refsToSerialize(name)"/>
-        <xsl:if test="count($references-vodmlref) > 0">
             "refs" : {
                "type" : "object"
                ,"properties" : {
@@ -102,12 +101,11 @@ that allow for successful JSON round tripping.
             }
             ,"additionalProperties": false
             }
-        </xsl:if>
     </xsl:template>
 
     <xsl:template match="vo-dml:model" mode="content">
         <xsl:variable name="contentTypes" as="element()*" select="vf:contentToSerialize(name)"/>
-        <xsl:if test="count(vf:refsToSerialize(name))>0">,</xsl:if> "content" : {
+        ,"content" : {
            "type" : "array"
             ,"items" : {
                 "anyOf" : [
