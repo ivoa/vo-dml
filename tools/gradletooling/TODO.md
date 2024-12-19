@@ -120,6 +120,7 @@ VODML Tooling TODO
   * allow refs to be serialized/deserialized as ids always.... - for use in APIs.... https://stackoverflow.com/questions/51172496/how-to-dynamically-ignore-a-property-on-jackson-serialization
   * perhaps have custom written ivoa base schema.... express some better rules... e.g. non neg integer...
   * modern usage https://blogs.oracle.com/javamagazine/post/java-json-serialization-jackson
+  * It might be best to generate schema even for imported models as it is difficult to decide what to do for `"additionalProperties": false` without context of how a particular type is being derived from.
 
 
 # Python production

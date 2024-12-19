@@ -16,7 +16,7 @@ dependencies {
 //    implementation("org.glassfish.jaxb:jaxb-runtime:2.3.6")
     implementation("jakarta.persistence:jakarta.persistence-api:3.1.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.0")
-    implementation("com.networknt:json-schema-validator:1.5.3")
+    implementation("com.networknt:json-schema-validator:1.5.4")
     implementation("org.hibernate.orm:hibernate-core:6.5.3.Final")
     
     implementation("org.slf4j:slf4j-api:1.7.36")

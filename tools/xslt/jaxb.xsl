@@ -563,6 +563,11 @@
 
         }
 
+        @Override
+        public String jsonSchema() {
+        return "<xsl:value-of select="vf:jsonBaseURI(current()/name)"/>";
+        }
+
         /**
         * Return a list of content classes for this model.
         * @return the list.
