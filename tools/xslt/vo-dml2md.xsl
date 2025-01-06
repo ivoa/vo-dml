@@ -347,30 +347,28 @@ This is contained by <xsl:value-of select="string-join(for $i in vf:containingTy
 
     <xsl:template match="enumeration|dataType|objectType" mode="mermdiag">
 &cr;&cr;
-```mermaid
-classDiagram
-    <xsl:apply-templates select="current()" mode="merm"/>
+```plantuml format="svg_inline"
+hide empty members
+        <xsl:apply-templates select="current()" mode="diag"/>
 ```
 &cr;
     </xsl:template>
 
-    <xsl:template match="enumeration" mode="merm">
+    <xsl:template match="enumeration" mode="diag">
         <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
-        class <xsl:value-of select="name"/>{
-           &lt;&lt;enumeration&gt;&gt;&cr;
+        enum <xsl:value-of select="name"/>{
            <xsl:for-each select="literal">
                <xsl:value-of select="concat(name,$nl)"/>
            </xsl:for-each>
         }
     </xsl:template>
-    <xsl:template match="dataType|objectType" mode="merm">
+    <xsl:template match="dataType|objectType" mode="diag">
         <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
         <xsl:variable name="thisClass" select="name"/>
-        class <xsl:value-of select="name"/>{
-        <xsl:if test="name()= dataType">
-        &lt;&lt;dataType&gt;&gt;&cr;
-        </xsl:if>
-        <xsl:apply-templates select="(attribute|constraint)" mode="merm"/>
+        <xsl:if test="@abstract">abstract</xsl:if> class <xsl:value-of select="name"/><xsl:text> #LightGray ##[bold]Purple</xsl:text>
+        <xsl:if test="current()/name()='dataType'">&lt;&lt;dataType&gt;&gt;</xsl:if>
+        {
+        <xsl:apply-templates select="(attribute|constraint)" mode="diag"/>
         }
         <xsl:call-template name="doSupers"><xsl:with-param name="vodml-ref" select="$vodml-ref"/> </xsl:call-template>
         <xsl:call-template name="doSubs"><xsl:with-param name="vodml-ref" select="$vodml-ref"/> </xsl:call-template>
@@ -380,14 +378,14 @@ classDiagram
 
     </xsl:template>
 
-    <xsl:template match="attribute" mode="merm">
+    <xsl:template match="attribute" mode="diag">
         <xsl:value-of select="concat(datatype/vodml-ref,' ',name,$nl)"/>
     </xsl:template>
-    <xsl:template match="constraint[@xsi:type='vo-dml:SubsettedRole']" mode="merm">
+    <xsl:template match="constraint[@xsi:type='vo-dml:SubsettedRole']" mode="diag">
         <xsl:value-of select="concat(datatype/vodml-ref,' ',vf:nameFromVodmlref(role/vodml-ref),$nl)"/>
     </xsl:template>
 
-    <xsl:template match="constraint" mode="merm">
+    <xsl:template match="constraint" mode="diag">
         <!-- don't display general constraints -->
     </xsl:template>
 
@@ -484,7 +482,17 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
         </xsl:choose>
     </xsl:template>
 
-    <!-- mermaid diagrams -->
+    <!-- diagrams -->
+    <xsl:function name="vf:diagclassdef" as="xsd:string">
+        <xsl:param name="vodml-ref"/>
+        <xsl:variable name="thisClass" as="element()">
+            <xsl:copy-of select="$models/key('ellookup',$vodml-ref)" />
+        </xsl:variable>
+        <xsl:variable name="result">
+        <xsl:if test="$thisClass/@abstract">abstract </xsl:if> class <xsl:value-of select="$thisClass/name"/><xsl:if test="name($thisClass)='dataType'">&lt;&lt;dataType&gt;&gt;</xsl:if>
+        </xsl:variable>
+        <xsl:value-of select="string-join($result)"/>
+    </xsl:function>
     <xsl:template name="doSupers">
         <xsl:param name="vodml-ref"/>
         <xsl:if test="vf:hasSuperTypes($vodml-ref)">
@@ -492,14 +500,16 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
                 <xsl:copy-of select="$models/key('ellookup',$vodml-ref)" />
             </xsl:variable>
             <xsl:variable name="bases" select="vf:baseTypeIds($vodml-ref)"/>
-            <xsl:value-of select="concat($thisClass/name,' --|',$gt,' ',vf:nameFromVodmlref($bases[1]),$nl)"/>
+            <xsl:value-of select="vf:diagclassdef($bases[1]),$nl"/>
+            <xsl:value-of select="concat($thisClass/name,' -[#red]-|',$gt,' ',vf:nameFromVodmlref($bases[1]),$nl)"/>
             <xsl:for-each select="1 to count($bases) -1">
-                <xsl:value-of select="concat(vf:nameFromVodmlref($bases[xsd:integer(current())]),' --|',$gt,' ',vf:nameFromVodmlref($bases[xsd:integer(current())+1]),$nl)"/>
+                <xsl:value-of select="concat(vf:diagclassdef($bases[xsd:integer(current())+1]),$nl,vf:nameFromVodmlref($bases[xsd:integer(current())]),' -[#red]-|',$gt,' ',vf:nameFromVodmlref($bases[xsd:integer(current())+1]),$nl)"/>
             </xsl:for-each>
         </xsl:if>
     </xsl:template>
     <xsl:template name="doDiagLinks">
         <xsl:param name="vodml-ref"/>
+        <xsl:param name="type">plantuml</xsl:param>
         <xsl:variable name="thisClass" as="element()">
             <xsl:copy-of select="$models/key('ellookup',$vodml-ref)" />
         </xsl:variable>
@@ -510,7 +520,15 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
             <xsl:sequence select="$thisClass/composition/datatype/vodml-ref"/>
         </xsl:variable>
         <xsl:for-each select="$classIds">
-            <xsl:value-of select="concat($nl,vf:doMermaidLink(current()))"/>
+            <xsl:choose>
+                <xsl:when test="$type = 'mermaid'">
+                    <xsl:value-of select="concat($nl,vf:doMermaidLink(current()))"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="concat($nl,vf:doPlantUMLLink(current()))"/>
+                </xsl:otherwise>
+            </xsl:choose>
+
         </xsl:for-each>
 
     </xsl:template>
@@ -521,7 +539,7 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
                 <xsl:copy-of select="$models/key('ellookup',$vodml-ref)" />
             </xsl:variable>
             <xsl:for-each select="for $x in //*[extends/vodml-ref = $vodml-ref] return vf:asvodmlref($x) ">
-                <xsl:value-of select="concat(vf:nameFromVodmlref(current()),' --|',$gt,' ',$thisClass/name,$nl)"/>
+                <xsl:value-of select="concat(vf:diagclassdef(current()),$nl,vf:nameFromVodmlref(current()),' -[#red]-|',$gt,' ',$thisClass/name,$nl)"/>
             </xsl:for-each>
         </xsl:if>
     </xsl:template>
@@ -529,7 +547,7 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
         <xsl:variable name="thisClass" select="current()/name"/>
         <xsl:if test="reference">
             <xsl:for-each select="reference">
-                <xsl:value-of select="concat($thisClass,' --',$gt,' ',vf:multiplicityForDiagram(current()/multiplicity),' ',vf:nameFromVodmlref(current()/datatype/vodml-ref),' : ',current()/name,$nl)"/>
+                <xsl:value-of select="concat(vf:diagclassdef(current()/datatype/vodml-ref),$nl,$thisClass,' -[#green]-',$gt,' ',vf:multiplicityForDiagram(current()/multiplicity),' ',vf:nameFromVodmlref(current()/datatype/vodml-ref),' : ',current()/name,$nl)"/>
             </xsl:for-each>
         </xsl:if>
     </xsl:template>
@@ -538,7 +556,7 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
         <xsl:if test="composition">
             <xsl:for-each select="composition">
 
-                <xsl:value-of select="concat($thisClass,' *-- ',vf:multiplicityForDiagram(current()/multiplicity),' ',vf:nameFromVodmlref(current()/datatype/vodml-ref),' : ',current()/name,$nl)"/>
+                <xsl:value-of select="concat(vf:diagclassdef(current()/datatype/vodml-ref),$nl,$thisClass,' *-[#blue]- ',vf:multiplicityForDiagram(current()/multiplicity),' ',vf:nameFromVodmlref(current()/datatype/vodml-ref),' : ',current()/name,$nl)"/>
             </xsl:for-each>
         </xsl:if>
     </xsl:template>
@@ -598,6 +616,24 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
             </xsl:when>
             <xsl:otherwise>
                 <xsl:value-of select="$vodml-ref"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+    <xsl:function name="vf:doPlantUMLLink" >
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:choose>
+            <xsl:when test="substring-before($vodml-ref,':') = $docmods">
+                <xsl:choose>
+                    <xsl:when test="substring-before($vodml-ref,':')= $thisModelName">
+                        <xsl:value-of select="concat('url of ', vf:nameFromVodmlref($vodml-ref),' is [[../',substring-after($vodml-ref,':'),']]')"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="concat('url of ',vf:nameFromVodmlref($vodml-ref),' is [[../../',substring-before($vodml-ref,':'),'/',substring-after($vodml-ref,':'),']]')"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <!-- do nothing - TODO link to external? -->
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
