@@ -365,8 +365,8 @@ hide empty members
     <xsl:template match="dataType|objectType" mode="diag">
         <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
         <xsl:variable name="thisClass" select="name"/>
-        <xsl:if test="@abstract">abstract</xsl:if> class <xsl:value-of select="name"/><xsl:text> #LightGray ##[bold]Purple</xsl:text>
-        <xsl:if test="current()/name()='dataType'">&lt;&lt;dataType&gt;&gt;</xsl:if>
+        <xsl:if test="@abstract">abstract</xsl:if> class <xsl:value-of select="name"/>
+        <xsl:if test="current()/name()='dataType'"><xsl:text> &lt;&lt;dataType&gt;&gt;</xsl:text></xsl:if><xsl:text> #LightGray ##[bold]Purple</xsl:text>
         {
         <xsl:apply-templates select="(attribute|constraint)" mode="diag"/>
         }
@@ -489,7 +489,7 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
             <xsl:copy-of select="$models/key('ellookup',$vodml-ref)" />
         </xsl:variable>
         <xsl:variable name="result">
-        <xsl:if test="$thisClass/@abstract">abstract </xsl:if> class <xsl:value-of select="$thisClass/name"/><xsl:if test="name($thisClass)='dataType'">&lt;&lt;dataType&gt;&gt;</xsl:if>
+        <xsl:if test="$thisClass/@abstract">abstract </xsl:if> class <xsl:value-of select="$thisClass/name"/><xsl:if test="name($thisClass)='dataType'"> &lt;&lt;dataType&gt;&gt;</xsl:if>
         </xsl:variable>
         <xsl:value-of select="string-join($result)"/>
     </xsl:function>
