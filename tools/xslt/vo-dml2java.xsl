@@ -728,10 +728,13 @@
 
       <xsl:apply-templates select="attribute|reference|composition|constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="getset"/>
 
-      <xsl:if test="vf:referredTo($vodml-ref) and attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
+      <xsl:if test="attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
+
           <!--TODO deal with multiple natural keys -->
           <!-- TODO this assumes that the natural key is a string -->
           <xsl:variable name="nk" select="attribute[ends-with(constraint/@xsi:type,':NaturalKey')]"/>
+          <xsl:variable name="nktype" select="vf:JavaKeyType($vodml-ref)"/>
+          <xsl:if test="vf:referredTo($vodml-ref)" >
           @Override
           public String getXmlId(){
           return <xsl:value-of select="$nk/name"/>;
@@ -746,13 +749,14 @@
           {
           return true;
           }
+      </xsl:if>
           <xsl:if test="$nk/name != 'id'"> <!--only produce this method if the ID is not called ID -->
           /**
           * return the database key id. Note that this is the same as attribute <xsl:value-of select="$nk/name"/>.
           * @return the id
           */
           @Override
-          public String getId() {
+          public <xsl:value-of select="$nktype"/> getId() {
           return <xsl:value-of select="$nk/name"/>;
           }</xsl:if>
 
