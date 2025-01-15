@@ -137,8 +137,16 @@
 
   <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="JAXBAnnotation">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
-  @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
-      <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref)">
+    <xsl:choose>
+        <xsl:when test="$mapping/bnd:mappedModels/model[name=current()/ancestor-or-self::vo-dml:model/name]/xml/@compositionStyle='unwrapped'">
+@jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+        </xsl:when>
+        <xsl:otherwise>
+@jakarta.xml.bind.annotation.XmlElementWrapper( name = "<xsl:value-of select="name"/>")
+@jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="$models/key('ellookup',current()/datatype/vodml-ref)/name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+        </xsl:otherwise>
+    </xsl:choose>
+       <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref)">
        <xsl:value-of select="$jsontypinfo"/>
       </xsl:if>
   </xsl:template>
@@ -315,7 +323,7 @@
         private static void loadVocabs() {
         vocabs = new HashMap&lt;&gt;();
         <xsl:for-each select="distinct-values($models/vo-dml:model[name=$modelsInScope]//semanticconcept/vocabularyURI)">
-            vocabs.put(<xsl:value-of select="concat($dq,current(),$dq)"/>,Vocabulary.load(<xsl:value-of select="concat($dq,current(),$dq)"/>));
+            vocabs.put(<xsl:value-of select="concat($dq,current(),$dq)"/>,Vocabulary.loadLocal(<xsl:value-of select="concat($dq,current(),$dq)"/>));
         </xsl:for-each>
 
         }
@@ -553,6 +561,11 @@
         public String xmlNamespace() {
         return "<xsl:value-of select="vf:xsdNs(current()/name)"/>";
 
+        }
+
+        @Override
+        public String jsonSchema() {
+        return "<xsl:value-of select="vf:jsonBaseURI(current()/name)"/>";
         }
 
         /**

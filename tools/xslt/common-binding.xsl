@@ -44,6 +44,15 @@
     <xsl:copy-of select="$models/vo-dml:model[name=$modelname]"/>
     </xsl:template>
 
+    <xsl:template name="listVocabs">
+        <xsl:param name="outfile"/>
+        <xsl:result-document href="{$outfile}" method="text">
+            <xsl:for-each select="distinct-values($models/vo-dml:model//semanticconcept/vocabularyURI)">
+                <xsl:value-of select="concat(current(),$nl)"/>
+            </xsl:for-each>
+        </xsl:result-document>
+
+    </xsl:template>
 
     <xsl:function name="vf:JavaType" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/>
@@ -518,6 +527,14 @@
         <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelName]/rdb[@inheritance-strategy='single-table'] )= 1"/>
     </xsl:function>
 
+    <xsl:function name="vf:isRdbAddRef" as="xsd:boolean">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelName]/rdb[@useRefInColumnName=true()] )= 1"/>
+    </xsl:function>
+    <xsl:function name="vf:isRdbNaturalJoin" as="xsd:boolean">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelName]/rdb[@naturalJoin=true()] )= 1"/>
+    </xsl:function>
 
     <xsl:function name="vf:schema-location4model" as="xsd:string">
         <xsl:param name="s" as="xsd:string"/>

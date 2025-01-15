@@ -67,6 +67,15 @@
   * further reference management tweaks & fixed support for abstract base class cloning.
 * 0.5.12
   * initial support for automatic RDB entity deletion taking into account need to delete the referrers to the contained references first.
-  
+* 0.5.13
+  * update vodsl to 0.4.9 (inserts name and version into imports)
+  * schamatron checks the name and version in the imports
+  * correct embedded reference overrides.
+  * vocabularies downloaded at compile time for inclusion in jar.
+    * default behaviour now is to only consult the compile-time version
+  * add in wrapped XML serialization for compositions with multiplicity > 1
+  * actually do JSON schema validation in the JSON round trip tests
+    * there still needs to be some work in "tightening" the JSON schema.
+    
 
-N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass - fixed in 6.6.1
+N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass in same hierarchy - still waiting for a solution

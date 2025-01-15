@@ -35,9 +35,11 @@ that allow for successful JSON round tripping.
   <!-- Input parameters -->
   <xsl:param name="lastModifiedText"/>
   <xsl:param name="binding"/>
-  <xsl:param name="strict" select="false()"/> <!-- TODO not really sure if strict working in the sense wanted -i.e. picking up on "undefined" properties, but that might be a function of the java verifier -->
   <xsl:include href="binding_setup.xsl"/>
 
+  <xsl:variable name="strict" as="xsd:boolean">
+      <xsl:sequence select="not($mapping/bnd:mappedModels/model[name=current()/vo-dml:model/name]/json/@lax='true')"/>
+  </xsl:variable>
  <!-- main pattern : processes for root node model -->
   <xsl:template match="/">
     <xsl:message >Generating JSON <xsl:value-of select="document-uri(.) "/> - considering models <xsl:value-of select="string-join($models/vo-dml:model/name,' and ')" /></xsl:message>
@@ -61,7 +63,7 @@ that allow for successful JSON round tripping.
                 <xsl:apply-templates select="current()" mode="refs"/>
                 <xsl:apply-templates select="current()" mode="content"/>
              }
-             <xsl:call-template name="makeStrict"/>
+             ,"additionalProperties": false
             }
 
          }
@@ -81,28 +83,29 @@ that allow for successful JSON round tripping.
   </xsl:template>
     <xsl:template match="vo-dml:model" mode="refs">
         <xsl:variable name="references-vodmlref" select="vf:refsToSerialize(name)"/>
-        <xsl:if test="count($references-vodmlref) > 0">
             "refs" : {
                "type" : "object"
                ,"properties" : {
             "$comment" : "placeholder to make commas easier!"
-            <xsl:for-each select="$references-vodmlref">
+            <xsl:for-each select="$references-vodmlref"><!-- IMPL mostly expecting the actual reference object mostly in the refs array - but could be a ref to an object if it has occurred as contained reference in a preceding reference object -->
                 ,"<xsl:value-of select="current()"/>" : {
                    "type": "array"
                    ,"items" : {
-                         <xsl:value-of select="vf:jsonType(current())"/>
+                      "oneOf" : [
+                         {<xsl:value-of select="vf:jsonType(current())"/>},
+                         {<xsl:value-of select="vf:jsonReferenceType(current())"/>}
+                       ]
                    }
                 }
             </xsl:for-each>
             }
-            <xsl:call-template name="makeStrict"/>
+            ,"additionalProperties": false
             }
-        </xsl:if>
     </xsl:template>
 
     <xsl:template match="vo-dml:model" mode="content">
         <xsl:variable name="contentTypes" as="element()*" select="vf:contentToSerialize(name)"/>
-        <xsl:if test="count(vf:refsToSerialize(name))>0">,</xsl:if> "content" : {
+        ,"content" : {
            "type" : "array"
             ,"items" : {
                 "anyOf" : [
@@ -111,7 +114,7 @@ that allow for successful JSON round tripping.
                 </xsl:for-each>
             ]
         }
-           <xsl:call-template name="makeStrict"/>
+        ,"additionalProperties": false
         }
     </xsl:template>
 
@@ -139,7 +142,15 @@ that allow for successful JSON round tripping.
 
   <xsl:template name="makeStrict">
     <xsl:if test="$strict">
-      ,"additionalProperties": false
+      <xsl:choose>
+          <xsl:when test="not(current()/extends) and not(vf:hasSubTypes(vf:asvodmlref(current())))">
+              ,"additionalProperties" : false
+          </xsl:when>
+          <xsl:when test="not(vf:hasSubTypes(vf:asvodmlref(current())))">
+              ,"unevaluatedProperties" : false
+          </xsl:when>
+      </xsl:choose>
+
     </xsl:if>
   </xsl:template>
 
@@ -155,9 +166,9 @@ that allow for successful JSON round tripping.
     ,<xsl:apply-templates select="description"/>
     ,"properties" : {
     "$comment" : "placeholder to make commas easier!"
-    <xsl:if test="not(extends)"> <!-- impl perhaps vf:hasSubTypes(vf:asvodmlref(current())) what we really want and then do special things for the "content" types -->
+      <!--  as properties optional by default - just define this  <xsl:if test="not(extends)"> &lt;!&ndash; impl perhaps vf:hasSubTypes(vf:asvodmlref(current())) what we really want and then do special things for the "content" types &ndash;&gt;-->
     ,"@type" : { "type": "string"}
-    </xsl:if>
+<!--    </xsl:if>-->
     <xsl:apply-templates select="attribute"/>
     <xsl:apply-templates select="composition"/>
     <xsl:apply-templates select="reference"/>
@@ -186,6 +197,7 @@ that allow for successful JSON round tripping.
         ,<xsl:apply-templates select="description"/>
         ,"properties" : {
         "$comment" : "placeholder to make commas easier!"
+        ,"@type" : { "type": "string"}
         <xsl:apply-templates select="attribute"/>
         <xsl:apply-templates select="reference"/>
         }
@@ -239,12 +251,22 @@ that allow for successful JSON round tripping.
 
 
 
-  <xsl:template match="attribute" >
+  <xsl:template match="attribute[multiplicity/maxOccurs=1]" >
       , "<xsl:value-of select="name"/>" : {
        <xsl:value-of select="vf:jsonType(datatype/vodml-ref)"/>
        ,<xsl:apply-templates select="description"/>
     }
   </xsl:template>
+    <!-- allow attributes with multiplicity > 1 -->
+    <xsl:template match="attribute[multiplicity/maxOccurs!=1]" >
+        , "<xsl:value-of select="name"/>" : {
+        "type":"array"
+        ,"items": {
+        <xsl:value-of select="vf:jsonType(datatype/vodml-ref)"/>
+        }
+        ,<xsl:apply-templates select="description"/>
+        }
+    </xsl:template>
 
   <xsl:template match="multiplicity">
     <!--  only legal values: 0..1   1   0..*   1..* -->
@@ -265,6 +287,21 @@ that allow for successful JSON round tripping.
     </xsl:if>
   </xsl:template>
 
+    <xsl:template match="composition[multiplicity/maxOccurs=1]" >
+        ,"<xsl:value-of select="name"/>" : {
+        "type":"object"
+        <xsl:choose>
+            <xsl:when test="vf:hasSubTypes(datatype/vodml-ref)">
+                ,"anyOf": [
+                <xsl:value-of select="string-join(for $v in vf:subTypeIds(datatype/vodml-ref) return concat('{',vf:jsonType($v),'}') ,',')"/>
+                ]
+            </xsl:when>
+            <xsl:otherwise>
+                ,<xsl:value-of select="vf:jsonType(datatype/vodml-ref)"/>
+            </xsl:otherwise>
+        </xsl:choose>
+        }
+    </xsl:template>
 
   <xsl:template match="composition" >
       ,"<xsl:value-of select="name"/>" : {
@@ -284,7 +321,20 @@ that allow for successful JSON round tripping.
       }
   </xsl:template>
 
-  <xsl:template match="reference" > <!-- IMPL normally this will be just an integer reference to an existing instance - apart from first occurance of contained reference -->
+    <!-- allow for "plain aggregation" of references-->
+    <xsl:template match="reference[multiplicity/maxOccurs!=1]" >
+        , "<xsl:value-of select="name"/>" : {
+        "type":"array"
+        ,"items": {
+        <xsl:value-of select="vf:jsonReferenceType(datatype/vodml-ref)"/>
+        }
+        ,<xsl:apply-templates select="description"/>
+        }
+    </xsl:template>
+
+
+    <xsl:template match="reference" > <!-- IMPL normally this will be just an integer reference to an existing instance - apart from first occurrence of contained reference
+  IMPL - ideally this would just be a reference - however if there is a reference within a reference then the first instance might be the object-->
       , "<xsl:value-of select="name"/>" : {
       "oneOf" : [
       {<xsl:value-of select="vf:jsonReferenceType(datatype/vodml-ref)"/>},

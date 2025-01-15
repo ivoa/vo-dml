@@ -119,6 +119,9 @@
             </xsl:call-template>
           </xsl:if>
       </xsl:if>
+      <xsl:call-template name="listVocabs">
+          <xsl:with-param name="outfile" select="'vocabularies.txt'"/>
+      </xsl:call-template>
   </xsl:template>  
 
 
@@ -660,6 +663,16 @@
 
     &bl;{
       <xsl:if test="local-name() eq 'objectType' and not (extends) and not(attribute/constraint[ends-with(@xsi:type,':NaturalKey')])" >
+          <xsl:variable name="IDColumnName">
+              <xsl:choose>
+                  <xsl:when test="$isRDBNaturalJoin">
+                      <xsl:value-of select="concat(upper-case(name),'_ID')"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                      <xsl:text>ID</xsl:text>
+                  </xsl:otherwise>
+              </xsl:choose>
+          </xsl:variable>
           /**
           * inserted database key
           */
@@ -669,7 +682,7 @@
           </xsl:if>
           @jakarta.persistence.Id
           @jakarta.persistence.GeneratedValue
-          @jakarta.persistence.Column(name = "ID")
+          @jakarta.persistence.Column(name = "<xsl:value-of select="$IDColumnName"/>")
           protected Long _id = (long) 0;
 
           /**
@@ -725,10 +738,13 @@
 
       <xsl:apply-templates select="attribute|reference|composition|constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="getset"/>
 
-      <xsl:if test="vf:referredTo($vodml-ref) and attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
+      <xsl:if test="attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
+
           <!--TODO deal with multiple natural keys -->
           <!-- TODO this assumes that the natural key is a string -->
           <xsl:variable name="nk" select="attribute[ends-with(constraint/@xsi:type,':NaturalKey')]"/>
+          <xsl:variable name="nktype" select="vf:JavaKeyType($vodml-ref)"/>
+          <xsl:if test="vf:referredTo($vodml-ref)" >
           @Override
           public String getXmlId(){
           return <xsl:value-of select="$nk/name"/>;
@@ -743,13 +759,14 @@
           {
           return true;
           }
+      </xsl:if>
           <xsl:if test="$nk/name != 'id'"> <!--only produce this method if the ID is not called ID -->
           /**
           * return the database key id. Note that this is the same as attribute <xsl:value-of select="$nk/name"/>.
           * @return the id
           */
           @Override
-          public String getId() {
+          public <xsl:value-of select="$nktype"/> getId() {
           return <xsl:value-of select="$nk/name"/>;
           }</xsl:if>
 

@@ -13,7 +13,7 @@ class VocabularyTest {
    @Test
    void load() {
 
-      Vocabulary v = Vocabulary.load("http://www.ivoa.net/rdf/product-type");
+      Vocabulary v = Vocabulary.loadRemote("http://www.ivoa.net/rdf/product-type");
       assertNotNull(v);
 
       Term cube = v.terms.get("cube");
@@ -25,7 +25,7 @@ class VocabularyTest {
 
    @Test
    void deprecated() {
-      Vocabulary v2 = Vocabulary.load("http://www.ivoa.net/rdf/voresource/relationship_type");
+      Vocabulary v2 = Vocabulary.loadRemote("http://www.ivoa.net/rdf/voresource/relationship_type");
       assertNotNull(v2);
       Term term = v2.terms.get("mirror-of");
       System.out.println(term.toString());
@@ -36,7 +36,7 @@ class VocabularyTest {
    /* FIXME desise does not show parent
    @Test
    void parent() {
-      Vocabulary v2 = Vocabulary.load("http://www.ivoa.net/rdf/datalink/core");
+      Vocabulary v2 = Vocabulary.loadRemote("http://www.ivoa.net/rdf/datalink/core");
       assertNotNull(v2);
       Term bias = v2.terms.get("bias");
       assertNotNull(bias);
@@ -45,5 +45,11 @@ class VocabularyTest {
    }
 
     */
+   @Test
+   void loadLocal() {
+      Vocabulary v2 = Vocabulary.loadLocal("http://www.ivoa.net/rdf/refframe");
+      assertNotNull(v2);
+      assertTrue(v2.isLoadSuccessful());
+   }
 
 }

@@ -47,7 +47,7 @@ public class LifeCycleDetailedTest extends AbstractTest {
     List<ReferredLifeCycle> refcont =
         Arrays.asList(new ReferredLifeCycle("rc1"), new ReferredLifeCycle("rc2"));
     List<Contained> contained =
-        Arrays.asList(new Contained("firstcontained", refcont.get(0)), new Contained("secondContained", refcont.get(1)));
+        Arrays.asList(new Contained("firstcontained"), new Contained("secondContained"));
     
     atest =
         ATest.createATest(

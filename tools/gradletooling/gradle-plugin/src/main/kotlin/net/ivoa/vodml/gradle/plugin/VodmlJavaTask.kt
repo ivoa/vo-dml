@@ -8,6 +8,12 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
 import java.io.File
+import java.net.URI
+import java.net.URLEncoder
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import java.nio.charset.StandardCharsets
 import java.nio.file.Paths
 import java.util.jar.JarInputStream
 import javax.inject.Inject
@@ -46,7 +52,47 @@ import javax.inject.Inject
                  ),
                  actualCatalog, outfile.get().asFile
              )
+
          }
+
+         //load the vocabs locally
+         fun loadVocab(url:String) {
+             logger.debug("loading vocab $url")
+             val client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).build();
+
+             // read the vocabulary in the 'desise' format
+             val uri = URI.create(url)
+             val request = HttpRequest.newBuilder()
+                 .uri(uri)
+                 .header("Accept", "application/x-desise+json")
+                 .GET()
+                 .build();
+             val response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+             // Check if the response is OK (status code 200)
+             if (response.statusCode() != 200) {
+                 throw  RuntimeException("cannot load vocabulary : " + response.statusCode());
+             }
+             val out = javaGenDir.file(URLEncoder.encode(uri.toString(), StandardCharsets.UTF_8)).get().asFile
+             out.bufferedWriter().use { wout ->
+                 wout.write(response.body());
+             }
+
+
+         }
+         fun loadVocabs (file:File) {
+             file.bufferedReader().useLines { lines ->
+                 lines.forEach { line ->
+                     loadVocab(line) // Process each line here
+                 }
+             }
+         }
+         logger.debug("loading vocabularies")
+         loadVocabs(javaGenDir.file("vocabularies.txt").get().asFile)
+
      }
+
+
+
  }
 
