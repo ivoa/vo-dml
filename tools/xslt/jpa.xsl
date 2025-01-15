@@ -401,9 +401,28 @@
 @jakarta.persistence.ManyToMany( cascade = {  jakarta.persistence.CascadeType.REFRESH } )
               </xsl:when>
               <xsl:otherwise>
-<!-- require manual management of references - do not remove referenced entity : do not cascade delete -->
+
+
+                  <!-- require manual management of references - do not remove referenced entity : do not cascade delete -->
 @jakarta.persistence.ManyToOne( cascade = {  jakarta.persistence.CascadeType.REFRESH } )
+                  <xsl:choose>
+                      <xsl:when test="$isRDBUseColRef">
+                          <xsl:choose>
+                              <xsl:when test="$isRDBNaturalJoin">
+@jakarta.persistence.JoinColumn( name="<xsl:value-of select="concat(upper-case($type/name),'_ID')"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
+
+                              </xsl:when>
+                              <xsl:otherwise>
+                                  <!--TODO at the moment just relying on default hibernate behaviour when not explicit....-->
 @jakarta.persistence.JoinColumn( nullable = <xsl:apply-templates select="." mode="nullable"/> )
+                              </xsl:otherwise>
+                          </xsl:choose>
+                       </xsl:when>
+                      <xsl:otherwise>
+@jakarta.persistence.JoinColumn( name="<xsl:value-of select="name"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
+                      </xsl:otherwise>
+                  </xsl:choose>
+
 
               </xsl:otherwise>
           </xsl:choose>
@@ -414,7 +433,7 @@
 
   <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="JPAAnnotation">
     <xsl:variable name="type" select="$models/key('ellookup', current()/datatype/vodml-ref)"/>
-
+    <xsl:variable name="parent" select="current()/parent::*"/>
     <xsl:choose>
       <xsl:when test="name($type) = 'primitiveType'">
           
@@ -434,12 +453,21 @@
 /* TODO: [NOT_SUPPORTED_COLLECTION = <xsl:value-of select="name($type)"/>] */
       </xsl:when>
       <xsl:otherwise>
-
+        <xsl:variable name="joinname">
+            <xsl:choose>
+                <xsl:when test="$parent/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
+                    <xsl:value-of select="$parent/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="concat(upper-case($parent/name),'_ID')"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
         <xsl:if test="isOrdered">
 @jakarta.persistence.OrderColumn
         </xsl:if>
 @jakarta.persistence.OneToMany(  cascade = jakarta.persistence.CascadeType.ALL, fetch = <xsl:value-of select="$jpafetch"/>, targetEntity=<xsl:value-of select="concat(vf:JavaType(datatype/vodml-ref),'.class')" />)
-@jakarta.persistence.JoinColumn( name="<xsl:value-of select="concat(upper-case(current()/parent::*/name),'_ID')"/>")
+@jakarta.persistence.JoinColumn( name="<xsl:value-of select="$joinname"/>")
 @org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
       </xsl:otherwise>
     </xsl:choose>
