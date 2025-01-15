@@ -76,6 +76,8 @@
   * add in wrapped XML serialization for compositions with multiplicity > 1
   * actually do JSON schema validation in the JSON round trip tests
     * there still needs to be some work in "tightening" the JSON schema.
-    
+  * 0.5.14
+  * make site diagrams from plantuml
+  * add naturalJoin style to the ID column naming options
 
 N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass in same hierarchy - still waiting for a solution
