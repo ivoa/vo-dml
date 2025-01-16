@@ -536,6 +536,19 @@
         <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelName]/rdb[@naturalJoin=true()] )= 1"/>
     </xsl:function>
 
+    <xsl:function name="vf:rdbTableName" as="xsd:string">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
+        <xsl:choose>
+            <xsl:when test="$mapping/bnd:mappedModels/model[name=substring-before($vodml-ref,':')]/rdb/rdbmap[@vodml-id=substring-after($vodml-ref,':')]">
+                <xsl:sequence select="$mapping/bnd:mappedModels/model[name=substring-before($vodml-ref,':')]/rdb/rdbmap[@vodml-id=substring-after($vodml-ref,':')]/tableName"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="$el/name"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
     <xsl:function name="vf:schema-location4model" as="xsd:string">
         <xsl:param name="s" as="xsd:string"/>
         <xsl:value-of select="concat($s, 'xsd')"/>
@@ -558,5 +571,8 @@
         <xsl:variable name="model" select="$this/ancestor-or-self::vo-dml:model/name"/>
         <xsl:sequence select="concat($mapping/bnd:mappedModels/model[name=$model]/java-package,'.',vf:upperFirst($model),'Model')"/>
     </xsl:function>
+
+
+
 
 </xsl:stylesheet>

@@ -79,6 +79,9 @@ In general if a model is expected to be used a a "base model" then this should p
      </xsd:element>
      <xsd:element name="rdb" minOccurs="0" maxOccurs="1">
         <xsd:complexType>
+           <xsd:sequence>
+              <xsd:element name="rdbmap" type="rdbmapType" maxOccurs="unbounded" minOccurs="0"></xsd:element>
+           </xsd:sequence>
            <xsd:attribute name="inheritance-strategy">
               <xsd:annotation>
                  <xsd:documentation>the inheritance strategy in generating tables - follows JPA strategies</xsd:documentation>
@@ -110,12 +113,20 @@ In general if a model is expected to be used a a "base model" then this should p
            </xsd:attribute>
            <xsd:attribute name="uesRefInColumnName" type="xsd:boolean" default="false">
               <xsd:annotation>
-                 <xsd:documentation>if true the column name for a reference will use the referred name in some way (depenedent on naturalJoin) rather than simply using the member name as the column name</xsd:documentation>
-              </xsd:annotation></xsd:attribute>
+                 <xsd:documentation>
+                    if true the column name for a reference will use the referred name in some way (depenedent on naturalJoin)
+                    rather than simply using the member name as the column name
+                 </xsd:documentation>
+              </xsd:annotation>
+           </xsd:attribute>
            <xsd:attribute name="naturalJoin" type="xsd:boolean" default="false">
               <xsd:annotation>
-                 <xsd:documentation>if true then primary keys will have a name that includes the table name so that natural joins might be made - otherwise the default is that surrogate primary keys as just called ID</xsd:documentation>
-              </xsd:annotation></xsd:attribute>
+                 <xsd:documentation>
+                    if true then primary keys will have a name that includes the table name so that natural joins might be made -
+                    otherwise the default is that surrogate primary keys as just called ID
+                 </xsd:documentation>
+              </xsd:annotation>
+           </xsd:attribute>
         </xsd:complexType>
      </xsd:element>
      <xsd:element name="type-mapping" type="TypeMapping" minOccurs="0" maxOccurs="unbounded">
@@ -290,7 +301,12 @@ IMPL - this could be put into the code - especially as the number of JSON built-
 
  
 
-  <xsd:simpleType name="NewSimpleType">
-     <xsd:restriction base="xsd:string"></xsd:restriction>
-  </xsd:simpleType>
+
+
+  <xsd:complexType name="rdbmapType">
+     <xsd:sequence>
+        <xsd:element name="tableName" type="xsd:string"></xsd:element>
+     </xsd:sequence>
+     <xsd:attribute name="vodml-id" type="xsd:string"></xsd:attribute>
+  </xsd:complexType>
 </xsd:schema>
