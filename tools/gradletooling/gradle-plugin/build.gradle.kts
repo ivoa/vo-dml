@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "net.ivoa.vo-dml"
-version = "0.5.13"
+version = "0.5.14"
 
 repositories {
     mavenLocal() // FIXME remove this when releasing - just here to pick up local vodsl updates
@@ -28,7 +28,7 @@ repositories {
 
 dependencies {
 
-    implementation("net.sf.saxon:Saxon-HE:10.8") // for xslt 3.0
+    implementation("net.sf.saxon:Saxon-HE:12.5") // for xslt 3.0
     implementation("name.dmaus.schxslt:java:3.1.1") // for modern schematron
     implementation("name.dmaus.schxslt:schxslt:1.10") // force to use more updated schematron than the java wrapper naturally uses -
     implementation("org.xmlresolver:xmlresolver:6.0.9") // for xml catalogues - note that the apache xml-commons resolver is out of date
@@ -46,6 +46,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.2")
 
+    implementation("org.slf4j:slf4j-api:2.0.9")
+    testRuntimeOnly("ch.qos.logback:logback-classic:1.4.12")
 
 }
 

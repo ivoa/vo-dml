@@ -13,7 +13,6 @@ import org.xmlresolver.ResolverFeature
 import org.xmlresolver.XMLResolverConfiguration
 import java.io.File
 import java.io.StringWriter
-import javax.xml.transform.URIResolver
 import javax.xml.transform.stream.StreamSource
 
 
@@ -24,18 +23,16 @@ import javax.xml.transform.stream.StreamSource
 abstract class BaseTransformer( val script: String ) {
     protected val logger = LoggerFactory.getLogger(this.javaClass.name)
     protected val processor : Processor
-    protected val defaultResolver: URIResolver
     protected val stylesheet: XsltExecutable
     init {
-        logger.debug("initializing transformer for ${script}")
+        logger.info("initializing transformer for ${script}")
         processor = Processor(false)
-        defaultResolver = processor.underlyingConfiguration.uriResolver
-        processor.underlyingConfiguration.setURIResolver { href, base ->
-            logger.debug("XSLT Transform uri resolver href={} base={}", href, base)
-            if (base.isBlank()) //IMPL is this the correct heuristic?
-                StreamSource(this::class.java.getResourceAsStream("/xslt/$href"))
+        processor.underlyingConfiguration.setResourceResolver { href ->
+            logger.debug("XSLT Transform uri resolver rel={} base={} nature={}", href.relativeUri, href.baseUri, href.nature)
+            if(href.relativeUri.endsWith(".xsl"))//IMPL - only the stylesheets that are in their own dir
+                 StreamSource(this::class.java.getResourceAsStream("/xslt/${href.relativeUri}"))
             else
-                defaultResolver.resolve(href, base)
+                null //IMPL should use default resolver
         }
         val compiler = processor.newXsltCompiler()
         val streamSource = StreamSource(this::class.java.getResourceAsStream("/xslt/$script"))
@@ -92,7 +89,7 @@ abstract class BaseTransformer( val script: String ) {
         }
         config.setFeature(ResolverFeature.URI_FOR_SYSTEM, false) // don't automatically use URI as system to prevent surprises
         val resolver = XMLResolver(config)
-        trans.uriResolver = resolver.getURIResolver()
+        trans.uriResolver = resolver.getURIResolver() // TODO this is deprecated but still working in v12 - might be able to get away with just setting the Catalogue files directly on the Saxon Processor - https://www.saxonica.com/documentation12/index.html#!javadoc/net.sf.saxon.lib/CatalogResourceResolver
         trans.transform(StreamSource(vodmlFile), out)
     }
 
@@ -135,3 +132,4 @@ object Vodml2json : XSLTTransformer("vo-dml2jsonschema.xsl", "text")
 object Vodml2Catalogues : XSLTExecutionOnlyTransformer("create-catalogues.xsl", "main")
 
 object Vodml2md : XSLTTransformer("vo-dml2md.xsl", "text")
+object Vodml2TAP : XSLTTransformer("vo-dml2tap.xsl", "xml")
