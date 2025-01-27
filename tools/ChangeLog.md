@@ -76,6 +76,15 @@
   * add in wrapped XML serialization for compositions with multiplicity > 1
   * actually do JSON schema validation in the JSON round trip tests
     * there still needs to be some work in "tightening" the JSON schema.
-    
+* 0.5.14
+  * make site diagrams from plantuml
+  * add naturalJoin style to the ID column naming options
+  * add ability to override table names to the binding.
+  * preliminary tap schema support
+    * initial tap schema produced as part of the vodmlSchema task - the schema is actually the XML serialization of the tap schema as defined in VO-DML https://github.com/ivoa/TAPSchemaDM
+    * still has several deficiencies - mainly
+      * type inheritance not supported
+      * no mapping of the dataTypes to columns
+
 
 N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass in same hierarchy - still waiting for a solution

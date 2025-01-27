@@ -28,7 +28,7 @@
   <xsl:output name="persistenceInfo" method="xml" encoding="UTF-8" indent="yes"  />
 
   <xsl:template match="objectType" mode="JPAAnnotation">
-    <xsl:variable name="className" select="name" /> <!-- might need to be javaified -->
+    <xsl:variable name="className" select="vf:upperFirst(name)" /> <!-- IMPL has been javaified -->
     <xsl:variable name="vodml-ref" select="concat(ancestor::vo-dml:model/name,':',vodml-id)" />
     <xsl:variable name="hasChild" as="xsd:boolean"
                   select="vf:hasSubTypes($vodml-ref)"/>
@@ -401,29 +401,11 @@
 @jakarta.persistence.ManyToMany( cascade = {  jakarta.persistence.CascadeType.REFRESH } )
               </xsl:when>
               <xsl:otherwise>
-
+              <xsl:variable name="colname" select="vf:rdbRefColumnName(vf:asvodmlref(current()))"/>
 
                   <!-- require manual management of references - do not remove referenced entity : do not cascade delete -->
 @jakarta.persistence.ManyToOne( cascade = {  jakarta.persistence.CascadeType.REFRESH } )
-                  <xsl:choose>
-                      <xsl:when test="$isRDBUseColRef">
-                          <xsl:choose>
-                              <xsl:when test="$isRDBNaturalJoin">
-@jakarta.persistence.JoinColumn( name="<xsl:value-of select="concat(upper-case($type/name),'_ID')"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
-
-                              </xsl:when>
-                              <xsl:otherwise>
-                                  <!--TODO at the moment just relying on default hibernate behaviour when not explicit....-->
-@jakarta.persistence.JoinColumn( nullable = <xsl:apply-templates select="." mode="nullable"/> )
-                              </xsl:otherwise>
-                          </xsl:choose>
-                       </xsl:when>
-                      <xsl:otherwise>
-@jakarta.persistence.JoinColumn( name="<xsl:value-of select="name"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
-                      </xsl:otherwise>
-                  </xsl:choose>
-
-
+@jakarta.persistence.JoinColumn( name="<xsl:value-of select="$colname"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
               </xsl:otherwise>
           </xsl:choose>
       </xsl:otherwise>

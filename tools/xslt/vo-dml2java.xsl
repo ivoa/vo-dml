@@ -663,16 +663,7 @@
 
     &bl;{
       <xsl:if test="local-name() eq 'objectType' and not (extends) and not(attribute/constraint[ends-with(@xsi:type,':NaturalKey')])" >
-          <xsl:variable name="IDColumnName">
-              <xsl:choose>
-                  <xsl:when test="$isRDBNaturalJoin">
-                      <xsl:value-of select="concat(upper-case(name),'_ID')"/>
-                  </xsl:when>
-                  <xsl:otherwise>
-                      <xsl:text>ID</xsl:text>
-                  </xsl:otherwise>
-              </xsl:choose>
-          </xsl:variable>
+
           /**
           * inserted database key
           */
@@ -682,7 +673,7 @@
           </xsl:if>
           @jakarta.persistence.Id
           @jakarta.persistence.GeneratedValue
-          @jakarta.persistence.Column(name = "<xsl:value-of select="$IDColumnName"/>")
+          @jakarta.persistence.Column(name = "<xsl:value-of select="vf:rdbIDColumnName($vodml-ref)"/>")
           protected Long _id = (long) 0;
 
           /**

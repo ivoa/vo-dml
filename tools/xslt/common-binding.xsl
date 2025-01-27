@@ -548,6 +548,77 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
+    <xsl:function name="vf:rdbIDColumnName" as="xsd:string">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
+        <xsl:choose>
+            <xsl:when test="count($mapping/bnd:mappedModels/model[name=substring-before($vodml-ref,':')]/rdb[@naturalJoin=true()])> 0">
+                <xsl:sequence select="concat(upper-case($el/name),'_ID')"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="'ID'"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
+    <xsl:function name="vf:rdbRefColumnName" as="xsd:string">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
+        <xsl:variable name="type" select="$models/key('ellookup',$el/datatype/vodml-ref)"/>
+        <xsl:variable name="modelName" select="$el/ancestor-or-self::vo-dml:model/name"/>
+        <xsl:choose>
+            <xsl:when test="vf:isRdbAddRef($modelName)">
+                <xsl:choose>
+                    <xsl:when test="vf:isRdbNaturalJoin($modelName)">
+                       <xsl:sequence select="concat(upper-case($type/name),'_ID')"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence  select="concat(upper-case($el/name),'_',upper-case($type/name),'_ID')"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="$el/name"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
+
+    <xsl:function name="vf:rdbTapType" as="xsd:string">
+    <xsl:param name="vodml-ref" as="xsd:string"/>
+
+     <xsl:choose>
+         <xsl:when test="vf:typeRole($vodml-ref) = 'enumeration'">VARCHAR</xsl:when>
+         <xsl:otherwise>
+             <xsl:variable name="jtype" select="vf:JavaType($vodml-ref)"/>
+             <!-- IMPL mapping from JavaType for convenience as that will include other primitives not thought of yet - would probably need another mapping in the binding otherwise-->
+             <xsl:choose>
+                 <xsl:when test="$jtype='String'">VARCHAR</xsl:when>
+                 <xsl:when test="$jtype=('Double', 'double')">DOUBLE</xsl:when>
+                 <xsl:when test="$jtype=('Integer','int')">INTEGER</xsl:when>
+                 <xsl:when test="$jtype=('Boolean','boolean')">INTEGER</xsl:when>
+                 <xsl:when test="$jtype=('java.math.BigDecimal')">INTEGER</xsl:when>
+                 <xsl:when test="$jtype=('java.util.Date')">TIMESTAMP</xsl:when>
+                 <!--TODO this is incomplete -->
+                 <xsl:otherwise>UNKNOWN</xsl:otherwise>
+             </xsl:choose>
+         </xsl:otherwise>
+     </xsl:choose>
+
+    </xsl:function>
+
+    <xsl:function name="vf:rdbKeyType" as="xsd:string">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="supers" select="($models/key('ellookup',$vodml-ref),vf:baseTypes($vodml-ref))"/>
+        <xsl:choose>
+            <xsl:when test="$supers/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]">
+                <xsl:value-of select="vf:rdbTapType($supers/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/datatype/vodml-ref)"/>
+            </xsl:when>
+            <xsl:otherwise>BIGINT</xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
+
 
     <xsl:function name="vf:schema-location4model" as="xsd:string">
         <xsl:param name="s" as="xsd:string"/>

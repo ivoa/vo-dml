@@ -1,6 +1,7 @@
 package net.ivoa.vodml.gradle.plugin
 
-
+import net.sf.saxon.s9api.SaxonApiException
+import net.sf.saxon.s9api.SaxonApiUncheckedException
 import net.sf.saxon.s9api.Processor
 import net.sf.saxon.s9api.QName
 import net.sf.saxon.s9api.Serializer
@@ -36,7 +37,20 @@ abstract class BaseTransformer( val script: String ) {
         }
         val compiler = processor.newXsltCompiler()
         val streamSource = StreamSource(this::class.java.getResourceAsStream("/xslt/$script"))
-        stylesheet = compiler.compile(streamSource)
+        try {
+            stylesheet = compiler.compile(streamSource)
+        }// attempt to get any compilation errors printed out - gradle tends to swallow the messages
+        catch (e:SaxonApiException)
+        {
+            logger.error(e.toString())
+            throw  SaxonApiException("error compiling {$script}",e)
+        }
+        catch (e:SaxonApiUncheckedException)
+        {
+            logger.error(e.toString())
+            throw  SaxonApiException("error compiling {$script}",e)
+        }
+
     }
 
 }
