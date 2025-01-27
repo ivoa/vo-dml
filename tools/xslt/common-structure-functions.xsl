@@ -232,8 +232,13 @@ note - only define functions in here as it is included in the schematron rules
     <xsl:function name="vf:containedTypes" as="xsd:string*" >
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:sequence>
-            <xsl:for-each select="for $v in (vf:baseTypes($vodml-ref),$models/key('ellookup',$vodml-ref)) return $v/composition/datatype/vodml-ref">
-                <xsl:sequence select="(current(), vf:containedTypes(current()))"/>
+            <xsl:for-each select="distinct-values(for $v in (vf:baseTypes($vodml-ref),$models/key('ellookup',$vodml-ref)) return $v/composition/datatype/vodml-ref)">
+                <xsl:choose>
+                    <xsl:when test="current() != $vodml-ref">
+                        <xsl:sequence select="(current(), vf:containedTypes(current()))"/>
+                    </xsl:when>
+                    <xsl:otherwise><xsl:sequence select="current()"/></xsl:otherwise>
+                </xsl:choose>
             </xsl:for-each>
         </xsl:sequence>
     </xsl:function>
@@ -303,13 +308,13 @@ note - only define functions in here as it is included in the schematron rules
     </xsl:function>
 
 
-<!-- return all the reference types in the containment hierarchy of the argument type -->
+<!-- return all the reference types in the containment hierarchy of the argument type (and its bases) -->
     <xsl:function name="vf:referenceTypesInContainmentHierarchy" as="xsd:string*">
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:choose>
             <xsl:when test="$models/key('ellookup',$vodml-ref)">
-                <xsl:sequence select="for $t in ($models/key('ellookup',$vodml-ref),vf:baseTypes($vodml-ref)) return $t/reference/datatype/vodml-ref"/>
-                <xsl:for-each select="for $t in ($models/key('ellookup',$vodml-ref),vf:baseTypes($vodml-ref)) return $t/composition/datatype/vodml-ref">
+                <xsl:sequence select="distinct-values(for $t in ($models/key('ellookup',$vodml-ref),vf:baseTypes($vodml-ref)) return $t/reference/datatype/vodml-ref)"/>
+                <xsl:for-each select="distinct-values(for $t in ($models/key('ellookup',$vodml-ref),vf:baseTypes($vodml-ref)) return $t/composition/datatype/vodml-ref)[. != $vodml-ref]">
                     <!--                            <xsl:message><xsl:value-of select="concat('subtype of ',$vodml-ref, ' is ', name)" /></xsl:message>-->
                     <xsl:sequence select="vf:referenceTypesInContainmentHierarchy(.)"/>
                 </xsl:for-each>
@@ -363,7 +368,6 @@ note - only define functions in here as it is included in the schematron rules
     <xsl:function name="vf:hasContainedReferenceInTypeHierarchy" as="xsd:boolean">
         <xsl:param name="vodml-ref"/>
         <xsl:variable name="types" as="xsd:string*" >
-        <xsl:sequence  select="for $v in vf:baseTypeIds($vodml-ref) return vf:referenceTypesInContainmentHierarchy($v)"/>
         <xsl:sequence  select="vf:referenceTypesInContainmentHierarchy($vodml-ref)"/>
         <xsl:sequence  select="for $v in vf:subTypeIds($vodml-ref) return vf:referenceTypesInContainmentHierarchy($v)"/>
         </xsl:variable>
