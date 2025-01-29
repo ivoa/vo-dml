@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-This will produce a tap schema representation of a data model.
+This will produce a tap schema representation of the data model database serialization
 
 FIXME This is not yet complete
-* no support for type inheritance
 * no datatype mapping to columns not done
 * subsetting rules not done
  -->
@@ -69,10 +68,6 @@ FIXME This is not yet complete
   </xsl:template>
 
 
-
-
-
-
   <xsl:template match="package">
     <xsl:apply-templates select="objectType"/>
     <xsl:apply-templates select="package"/>
@@ -81,6 +76,7 @@ FIXME This is not yet complete
 
   <xsl:template match="objectType" >
    <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
+   <xsl:if test="not(extends and vf:isRdbSingleTable($modelname))">
    <table>
      <table_name>{vf:rdbTableName($vodml-ref)}</table_name>
        <table_type>table</table_type>
@@ -91,23 +87,79 @@ FIXME This is not yet complete
              <!--add the primary key column -->
              <column>
                  <column_name>{vf:rdbIDColumnName($vodml-ref)}</column_name>
+                 <xsl:comment>primary key</xsl:comment>
                  <datatype>BIGINT</datatype>
                  <description>primary key for {name}</description>
                  <indexed>true</indexed>
                  <principal>false</principal>
                  <std>true</std> <!--IMPL if generated from VO-DML - should be a standard -->
-
              </column>
-               <xsl:apply-templates select="$models//composition[datatype/vodml-ref=$vodml-ref]" mode="fkeyColumn"/>
            </xsl:if>
-        <xsl:apply-templates select="(attribute|reference|composition)" mode="defn"/>
+           <xsl:apply-templates select="$models//composition[datatype/vodml-ref=$vodml-ref]" mode="fkeyColumn"/>
+           <xsl:choose>
+               <xsl:when test="vf:isRdbSingleTable($modelname)">
+                   <xsl:choose>
+                       <xsl:when test="vf:hasSubTypes($vodml-ref)  and not(extends)"> <!-- base type-->
+                            <column>
+                                <column_name>{concat(name,'.',vf:rdbODiscriminatorName($vodml-ref))}</column_name>
+                                <datatype>VARCHAR</datatype>
+                                <description>discriminator column for {$vodml-ref} sub-types</description>
+                                <utype>{$vodml-ref}</utype>
+                                <indexed>false</indexed>
+                                <principal>false</principal>
+                                <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
+                            </column>
+                           <xsl:apply-templates select="(attribute|reference|composition),vf:subTypes($vodml-ref)/(attribute|reference|composition)" mode="defn"/>
+
+                       </xsl:when>
+                       <xsl:when test="not(extends)">
+                           <xsl:apply-templates select="(attribute|reference|composition)" mode="defn"/>
+                       </xsl:when>
+                       <xsl:otherwise><!--do nothing --></xsl:otherwise>
+                   </xsl:choose>
+               </xsl:when>
+               <xsl:otherwise> <!-- joined table mode -->
+                   <xsl:choose>
+                       <xsl:when test="vf:hasSubTypes($vodml-ref)  and not(extends)"> <!-- base type-->
+                           <xsl:apply-templates select="(attribute|reference|composition)" mode="defn"/>
+                       </xsl:when>
+                       <xsl:when test="extends">
+                           <!-- FIXME - need to add the fkey -->
+                           <xsl:apply-templates select="(attribute|reference|composition)" mode="defn"/>
+                       </xsl:when>
+                       <xsl:otherwise>
+                           <xsl:apply-templates select="(attribute|reference|composition)" mode="defn"/>
+                       </xsl:otherwise>
+                   </xsl:choose>
+               </xsl:otherwise>
+           </xsl:choose>
        </columns>
        <fkeys>
            <xsl:apply-templates select="reference" mode="fkey"/>
            <xsl:apply-templates select="$models//composition[datatype/vodml-ref=$vodml-ref]" mode="fkey"/>
+           <xsl:if test="vf:isRdbSingleTable($modelname)">
+               <xsl:apply-templates select="vf:subTypes($vodml-ref)/reference" mode="fkey"/>
+               <!-- TODO need to do the composition back refs too? -->
+           </xsl:if>
+           <xsl:if test="not(vf:isRdbSingleTable($modelname)) and extends">
+               <ForeignKey>
+                   <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
+                   <key_id>{vf:tapFkeyID($vodml-ref)}</key_id>
+                   <description>join back to supertype {extends/vodml-ref}</description>
+                   <utype>{$vodml-ref}</utype>
+                   <columns>
+                       <FKColumn>
+                           <from_column>{vf:tapTargetColumnName($vodml-ref)}</from_column>
+                           <target_column>{vf:tapTargetColumnName(extends/vodml-ref)}</target_column>
+                       </FKColumn>
+                   </columns>
+                   <target_table>{vf:rdbTableName(extends/vodml-ref)}</target_table>
+               </ForeignKey>
+
+           </xsl:if>
        </fkeys>
    </table>
-
+   </xsl:if>
   </xsl:template>
 
     <xsl:template match="attribute[not(vf:isDataType(.))]" mode="defn" >
@@ -153,17 +205,7 @@ FIXME This is not yet complete
         </column>
     </xsl:template>
     <xsl:template match="composition" mode="defn">
-        <column>
-            <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
-            <column_name>{vf:tapcolumnName($vodml-ref)}</column_name>
-            <xsl:comment>composition of {datatype/vodml-ref}</xsl:comment>
-            <datatype>{vf:rdbKeyType(datatype/vodml-ref)}</datatype>
-            <description>{description}</description>
-            <utype>{$vodml-ref}</utype>
-            <indexed>false</indexed><!-- IMPL or true?! -->
-            <principal>false</principal><!-- FIXME need a way of actually specifying this -->
-            <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
-        </column>
+    <!-- do nothing if called - it all happens for the type being composed -->
     </xsl:template>
 
     <xsl:template match="reference" mode="fkey">
@@ -177,7 +219,7 @@ FIXME This is not yet complete
             <columns>
                 <FKColumn>
                     <from_column>{vf:tapcolumnName($vodml-ref)}</from_column>
-                    <target_column>{vf:tapcolumnIndexID(datatype/vodml-ref)}</target_column>
+                    <target_column>{vf:tapTargetColumnName(datatype/vodml-ref)}</target_column>
                 </FKColumn>
             </columns>
             <target_table>{vf:rdbTableName(datatype/vodml-ref)}</target_table>
@@ -185,37 +227,38 @@ FIXME This is not yet complete
     </xsl:template>
 
     <xsl:template match="composition" mode="fkey">
-
+        <xsl:if test="number(multiplicity/maxOccurs) != 1"> <!-- IMPL keys not created for OneToOne -->
         <ForeignKey>
             <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
             <xsl:variable name="target" select="vf:asvodmlref(current()/parent::*)"/>
             <key_id>{vf:tapFkeyID($vodml-ref)}</key_id>
             <xsl:comment>back reference to {datatype/vodml-ref} composition of {$target} </xsl:comment>
-
             <description>foreign key for {datatype/vodml-ref} composition of {$target} </description>
             <utype>{$vodml-ref}</utype> <!-- IMPL not sure is this is the appropriate utype -->
             <columns>
                 <FKColumn>
-                    <from_column>{vf:tapcolumnName($vodml-ref)}</from_column>
-                    <target_column>{vf:tapcolumnIndexID($target)}</target_column>
+                    <from_column>{vf:tapJoinColumnName(current())}</from_column>
+                    <target_column>{vf:tapTargetColumnName($target)}</target_column>
                 </FKColumn>
             </columns>
             <target_table>{vf:rdbTableName($target)}</target_table>
         </ForeignKey>
+        </xsl:if>
     </xsl:template>
     <xsl:template match="composition" mode="fkeyColumn">
+        <xsl:if test="number(multiplicity/maxOccurs) != 1"> <!-- IMPL keys not created for OneToOne -->
         <column>
             <!-- thing that we are pointing to is the parent of the composition -->
             <xsl:variable name="vodml-ref" select="vf:asvodmlref(current()/parent::*)"/>
-            <column_name>{concat('FK_',vf:tapcolumnIndexID($vodml-ref))}</column_name>
-            <xsl:comment>foreign key column for {$vodml-ref}</xsl:comment>
+            <column_name>{vf:tapJoinColumnName(current())}</column_name>
             <datatype>{vf:rdbKeyType($vodml-ref)}</datatype>
-            <description>foreign key column for {$vodml-ref}</description>
+            <description>foreign key column for {$vodml-ref} composition of {datatype/vodml-ref}</description>
             <utype>{$vodml-ref}</utype>
             <indexed>false</indexed><!-- IMPL or true?! -->
             <principal>false</principal><!-- FIXME need a way of actually specifying this -->
             <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
         </column>
+        </xsl:if>
     </xsl:template>
 
     <!-- need to make the columnID unique over whole document - done by prepending the table name
@@ -226,20 +269,19 @@ FIXME This is not yet complete
         <xsl:sequence select="concat($el/parent::*/name,'.',$el/name)"/>
     </xsl:function>
     <!-- make a reference to a column -->
-    <xsl:function name="vf:tapcolumnIndexID" as="xsd:string" >
+    <xsl:function name="vf:tapTargetColumnName" as="xsd:string" >
         <xsl:param name="vodml-ref" as="xsd:string" />
         <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
-        <xsl:variable name="supers" select="($el,vf:baseTypes($vodml-ref))"/>
-        <xsl:choose>
-            <xsl:when test="$supers/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]">
-                <xsl:sequence select="concat($el/name,'.',$supers/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name)"/>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:sequence select="concat($el/name,'.',vf:rdbIDColumnName($el))"/>
-            </xsl:otherwise>
-        </xsl:choose>
+        <xsl:sequence select="concat($el/name,'.',vf:rdbJoinTargetColumnName($vodml-ref))"/>
     </xsl:function>
-    <xsl:function name="vf:tapFkeyID" as="xsd:string" >
+
+    <xsl:function name="vf:tapJoinColumnName" as="xsd:string" >
+        <xsl:param name="comp" as="element()"/><!-- the composition -->
+        <xsl:variable name="parent" select="$comp/parent::*" /><!-- the parent of the composition elemnt -->
+        <xsl:sequence select="concat('FK_',$comp/name,'.',vf:rdbCompositionJoinName($parent))"/>
+    </xsl:function>
+
+    <xsl:function name="vf:tapFkeyID" as="xsd:string" > <!-- generate unique FK id -->
         <xsl:param name="vodml-ref" as="xsd:string" />
         <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
         <xsl:sequence select="concat('FK_',$el/parent::*/name,'.',$el/name)"/>

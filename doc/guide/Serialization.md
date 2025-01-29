@@ -114,5 +114,4 @@ in the binding file for the model.
 
 * DataTypes become embedded as extra columns within the table.
 
-Generating the actual DDL for the database does necessarily depend on some differences between vendors.
-However, running the test will produce DDL.
+The database serialization is described in terms of a TAP schema (as defined in https://github.com/ivoa/TAPSchemaDM).

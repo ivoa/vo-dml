@@ -535,6 +535,11 @@
         <xsl:param name="modelName" as="xsd:string"/>
         <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelName]/rdb[@naturalJoin=true()] )= 1"/>
     </xsl:function>
+    <xsl:function name="vf:rdbODiscriminatorName" as="xsd:string">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
+        <xsl:sequence select="concat($el/name,'_SUBTYPE')"/>
+    </xsl:function>
 
     <xsl:function name="vf:rdbTableName" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/>
@@ -549,7 +554,7 @@
         </xsl:choose>
     </xsl:function>
     <xsl:function name="vf:rdbIDColumnName" as="xsd:string">
-        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:param name="vodml-ref" as="xsd:string"/> <!-- the objectType -->
         <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
         <xsl:choose>
             <xsl:when test="count($mapping/bnd:mappedModels/model[name=substring-before($vodml-ref,':')]/rdb[@naturalJoin=true()])> 0">
@@ -557,6 +562,43 @@
             </xsl:when>
             <xsl:otherwise>
                 <xsl:sequence select="'ID'"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
+    <xsl:function name="vf:rdbJoinTargetColumnName" as="xsd:string">
+        <xsl:param name="vodml-ref" as="xsd:string"/> <!-- the objectType to join to -->
+        <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
+        <xsl:variable name="supers" select="($el,vf:baseTypes($vodml-ref))"/>
+        <xsl:choose>
+            <xsl:when test="$supers/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]">
+                <xsl:sequence select="$supers/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:choose>
+                    <xsl:when test="count($mapping/bnd:mappedModels/model[name=substring-before($vodml-ref,':')]/rdb[@naturalJoin=true()])> 0">
+                        <xsl:sequence select="concat(upper-case($el/name),'_ID')"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="'ID'"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
+
+
+
+    <xsl:function name="vf:rdbCompositionJoinName" as="xsd:string">
+    <xsl:param name="parent" as="element()"/> <!-- the parent of the composition -->
+        <xsl:choose>
+            <xsl:when test="$parent/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
+                <xsl:value-of select="$parent/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="concat(upper-case($parent/name),'_ID')"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>

@@ -15,6 +15,8 @@ of the data model and then [serialize](Serialization.md) in various formats - cu
 * XML
 * JSON
 
+In addition the generated code can serialize model instances to relational databases.
+
 The languages supported are;
 
 * [Java](JavaCodeGeneration.md)
@@ -31,7 +33,7 @@ The gradle task
 ```shell
 gradle vodmlSchema
 ```
-will generate XML and JSON schema for the model. The schema will be generated in the directory defined by the `outputSchemaDir` property (default `build/generated/sources/vodml/schema/`).
+will generate XML, JSON and TAP schema for the model. The schema will be generated in the directory defined by the `outputSchemaDir` property (default `build/generated/sources/vodml/schema/`).
 
 These schema files will automatically be included within the jar file for the model, so that instance validation can be automatically be done without reference to external files.
 

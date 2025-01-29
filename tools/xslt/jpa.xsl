@@ -60,7 +60,7 @@
       </xsl:choose>
   </xsl:if>
     <xsl:if test="count(vf:baseTypes($vodml-ref) )= 0 and(@abstract or $hasChild)">
-    @jakarta.persistence.DiscriminatorColumn( name = "<xsl:value-of select="$discriminatorColumnName"/>", discriminatorType = jakarta.persistence.DiscriminatorType.STRING, length = <xsl:value-of select="$discriminatorColumnLength"/>)
+    @jakarta.persistence.DiscriminatorColumn( name = "<xsl:value-of select="vf:rdbODiscriminatorName($vodml-ref)"/>", discriminatorType = jakarta.persistence.DiscriminatorType.STRING, length = <xsl:value-of select="$discriminatorColumnLength"/>)
     </xsl:if>
     <xsl:if test="$extMod or $hasChild and not(@abstract)">
   @jakarta.persistence.DiscriminatorValue( "<xsl:value-of select="vf:utype(vf:asvodmlref(.))"/>" )
@@ -435,21 +435,11 @@
 /* TODO: [NOT_SUPPORTED_COLLECTION = <xsl:value-of select="name($type)"/>] */
       </xsl:when>
       <xsl:otherwise>
-        <xsl:variable name="joinname">
-            <xsl:choose>
-                <xsl:when test="$parent/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
-                    <xsl:value-of select="$parent/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="concat(upper-case($parent/name),'_ID')"/>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
         <xsl:if test="isOrdered">
 @jakarta.persistence.OrderColumn
         </xsl:if>
 @jakarta.persistence.OneToMany(  cascade = jakarta.persistence.CascadeType.ALL, fetch = <xsl:value-of select="$jpafetch"/>, targetEntity=<xsl:value-of select="concat(vf:JavaType(datatype/vodml-ref),'.class')" />)
-@jakarta.persistence.JoinColumn( name="<xsl:value-of select="$joinname"/>")
+@jakarta.persistence.JoinColumn( name="<xsl:value-of select="vf:rdbCompositionJoinName($parent)"/>")
 @org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
       </xsl:otherwise>
     </xsl:choose>
