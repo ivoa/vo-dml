@@ -3,7 +3,6 @@
 This will produce a tap schema representation of the data model database serialization
 
 FIXME This is not yet complete
-* no datatype mapping to columns not done
 * subsetting rules not done
  -->
 
@@ -61,7 +60,7 @@ FIXME This is not yet complete
        <xsl:apply-templates select="objectType"/>
 
         <xsl:apply-templates select="package"/>
-        <!-- TODO should do imports -->
+        <!-- TODO should do imports as we probably want the whole schema in one hit rather than separately for each model. -->
        </tables>
         </schema>
       </tap:tapschemaModel>
@@ -157,6 +156,8 @@ FIXME This is not yet complete
                </ForeignKey>
 
            </xsl:if>
+           <xsl:apply-templates select="attribute[vf:isDataType(.)]" mode="dtyperef"/>
+
        </fkeys>
    </table>
    </xsl:if>
@@ -171,25 +172,82 @@ FIXME This is not yet complete
             <description>{description}</description>
             <utype>{$vodml-ref}</utype>
             <indexed>{count(constraint[ends-with(@xsi:type,':NaturalKey')])> 0}</indexed>
-            <principal>false</principal><!-- FIXME need a way of actually specifying this -->
+            <principal>false</principal><!-- TODO need a way of actually specifying this -->
             <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
         </column>
     </xsl:template>
 
     <xsl:template match="attribute[vf:isDataType(.)]" mode="defn" >
         <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
-        <!-- FIXME need to deal with datatypes properly -->
+
+        <xsl:variable name="atv">
+            <xsl:apply-templates select="current()" mode="attrovercols2"/>             
+        </xsl:variable>
+<!--        <xsl:message>**** <xsl:copy-of select="$atv" copy-namespaces="no"/></xsl:message>-->
+
+        <xsl:apply-templates select="$atv" mode="dtypeexpandcols"/>
+
+    </xsl:template>
+    <xsl:template match="attribute[vf:isDataType(.)]" mode="dtyperef" >
+        <xsl:variable name="atv">
+            <xsl:apply-templates select="current()" mode="attrovercols2"/>
+        </xsl:variable>
+        <xsl:apply-templates select="$atv" mode="dtypeexpandrefs"/>
+    </xsl:template>
+
+<!-- note  that these templates are matching on the construct created by the attrovercols2 mode on attributes -->
+    <xsl:template match="att[not(*)]" mode="dtypeexpandcols">
+        <xsl:variable name="top-vodml-ref" select="ancestor-or-self::dt[last()]/@v"/>
+        <xsl:variable name="top-el" select="$models/key('ellookup',$top-vodml-ref)"/>
         <column>
-            <column_name>{vf:tapcolumnName($vodml-ref)}</column_name>
-            <xsl:comment>attribute of {vf:typeRole(datatype/vodml-ref)} {datatype/vodml-ref}</xsl:comment>
-            <datatype>DATATYPE</datatype>
-            <description>{description}</description>
-            <utype>{$vodml-ref}</utype>
-            <indexed>{count(constraint[ends-with(@xsi:type,':NaturalKey')])> 0}</indexed>
-            <principal>false</principal><!-- FIXME need a way of actually specifying this -->
+            <column_name><xsl:value-of select="string-join(current()/ancestor-or-self::att/@n,'_')"/></column_name>
+            <xsl:comment>attribute from dtype</xsl:comment>
+            <datatype>{vf:rdbTapType(@type)}</datatype>
+            <description>{$top-el/description}</description><!-- TODO would perhaps like to include datatype description too -->
+            <utype>{$top-vodml-ref}</utype>
+            <indexed>{count($top-el/constraint[ends-with(@xsi:type,':NaturalKey')])> 0}</indexed>
+            <principal>false</principal><!-- TODO need a way of actually specifying this -->
             <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
         </column>
     </xsl:template>
+
+    <xsl:template match="ref" mode="dtypeexpandcols">
+        <xsl:variable name="top-vodml-ref" select="ancestor-or-self::dt[last()]/@v"/>
+        <xsl:variable name="top-el" select="$models/key('ellookup',$top-vodml-ref)"/>
+        <column>
+            <column_name><xsl:value-of select="string-join(current()/(ancestor-or-self::att|ancestor-or-self::ref)/@n,'_')"/></column_name>
+            <xsl:comment>reference from datatype</xsl:comment>
+            <datatype>{vf:rdbKeyType(@type)}</datatype>
+            <description>{$top-el/description}</description><!-- TODO would perhaps like to include datatype description too -->
+            <utype>{@v}</utype>
+            <indexed>true</indexed>
+            <principal>false</principal><!-- TODO need a way of actually specifying this -->
+            <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
+        </column>
+    </xsl:template>
+
+    <xsl:template match="ref" mode="dtypeexpandrefs">
+        <xsl:variable name="top-vodml-ref" select="ancestor-or-self::dt[last()]/@v"/>
+        <xsl:variable name="top-el" select="$models/key('ellookup',$top-vodml-ref)"/>
+        <ForeignKey>
+            <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
+            <key_id>{vf:tapFkeyID($top-vodml-ref)}</key_id>
+            <xsl:comment>reference to {@type}</xsl:comment>
+
+            <description>{$top-el/description}</description>
+            <utype>{$top-vodml-ref}</utype>
+            <columns>
+                <FKColumn>
+                    <from_column><xsl:value-of select="string-join(current()/(ancestor-or-self::att|ancestor-or-self::ref)/@n,'_')"/></from_column>
+                    <target_column>{vf:tapTargetColumnName(@type)}</target_column>
+                </FKColumn>
+            </columns>
+            <target_table>{vf:rdbTableName(@type)}</target_table>
+        </ForeignKey>
+    </xsl:template>
+
+
+
 
     <xsl:template match="reference" mode="defn">
         <column>
@@ -200,7 +258,7 @@ FIXME This is not yet complete
         <description>{description}</description>
         <utype>{$vodml-ref}</utype>
         <indexed>false</indexed><!-- IMPL or true?! -->
-        <principal>false</principal><!-- FIXME need a way of actually specifying this -->
+        <principal>false</principal><!-- TODO need a way of actually specifying this -->
         <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
         </column>
     </xsl:template>
@@ -255,7 +313,7 @@ FIXME This is not yet complete
             <description>foreign key column for {$vodml-ref} composition of {datatype/vodml-ref}</description>
             <utype>{$vodml-ref}</utype>
             <indexed>false</indexed><!-- IMPL or true?! -->
-            <principal>false</principal><!-- FIXME need a way of actually specifying this -->
+            <principal>false</principal><!-- TODO need a way of actually specifying this -->
             <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
         </column>
         </xsl:if>

@@ -200,7 +200,7 @@
             </xsl:when>
             <xsl:when test="name($type) = 'dataType'">
             <xsl:choose>
-              <xsl:when test="xsd:int(multiplicity/maxOccurs) = -1">
+              <xsl:when test="xsd:int(multiplicity/maxOccurs) = -1"> <!--TODO IMPL multiplicity > 1 being supported - but it really should not be modelled this way -->
                   <xsl:variable name="tableName">
                       <xsl:apply-templates select=".." mode="tableName"/><xsl:text>_</xsl:text><xsl:value-of select="$name"/>
                   </xsl:variable>
@@ -242,7 +242,7 @@
                 <xsl:variable name="atv" as="xsd:string*">
                     <xsl:apply-templates select="$models/key('ellookup',current()/datatype/vodml-ref)" mode="attrovercols"><xsl:with-param name="prefix" select="$name"/></xsl:apply-templates>
                 </xsl:variable>
-<!--                <xsl:message><xsl:value-of select="concat('***',$name,'-',$type/name, ' ', name,' overrides -&#45;&#45; ',string-join($atv, ' %%%* '))" /></xsl:message>-->
+                <xsl:message><xsl:value-of select="concat('***',$name,'-',$type/name, ' ', name,' overrides --- ',string-join($atv, ' %%%* '))" /></xsl:message>
                 <xsl:for-each select="$atv">
                     <xsl:variable name="tmp"> <!-- just to make formatting easier  (otherwise each bit is a string seqmnent, and a lot of quotes!) -->
                         <xsl:variable name="attsubst">
@@ -271,58 +271,6 @@
     </xsl:template>
 
 
-    <xsl:template match="dataType" mode="attrovercols" as="xsd:string*">
-        <xsl:param name="prefix" as="xsd:string"/>
-        <!--        <xsl:message>** attrovercolsD <xsl:value-of select="concat(name(),' ',name,' *** ',$prefix, ' refs=', string-join(vf:baseTypes(vf:asvodmlref(current()))/reference/name,','))"/></xsl:message>-->
-        <xsl:for-each select="(attribute, vf:baseTypes(vf:asvodmlref(current()))/attribute)"> <!-- this takes care of dataType inheritance should work https://hibernate.atlassian.net/browse/HHH-12790 -->
-            <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
-            <xsl:apply-templates select="$type" mode="attrovercols">
-                <xsl:with-param name="prefix" select="concat($prefix,'_',name)"/>
-            </xsl:apply-templates>
-        </xsl:for-each>
-    </xsl:template>
-
-
-
-    <!--produces _ separated string with possible last + separated
-    for the type access all _ and + should be changed to .
-    for the column name just drop the + separated if present.
-     -->
-    <xsl:template match="primitiveType" mode="attrovercols" as="xsd:string*">
-        <xsl:param name="prefix" as="xsd:string"/>
-        <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
-<!--        <xsl:message>** attrovercolsP <xsl:value-of select="concat(name(),' ',name,' *** ',$prefix, ' extends=',extends)"/></xsl:message>-->
-            <xsl:choose>
-                <xsl:when test="vf:hasMapping(vf:asvodmlref(current()),'java')">
-                    <xsl:variable name="pmap" select="vf:findmapping(vf:asvodmlref(current()),'java')"/>
-                    <xsl:choose>
-                        <xsl:when test="$pmap/@jpa-atomic">
-                            <xsl:value-of select="$prefix"/>
-                        </xsl:when>
-                        <xsl:when test="$pmap/@primitive-value-field">
-                            <xsl:value-of select="concat($prefix,'+',$pmap/@primitive-value-field)"/>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:value-of select="concat($prefix,'+value')"/>
-                        </xsl:otherwise>
-                    </xsl:choose>
-
-                </xsl:when>
-                <xsl:when test="extends">
-                    <xsl:apply-templates select="$models/key('ellookup',current()/extends/vodml-ref)" mode="attrovercols">
-                        <xsl:with-param name="prefix" select="concat($prefix,'_value')"/>
-                    </xsl:apply-templates>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="$prefix"/> <!--this is the old primitive case -->
-                </xsl:otherwise>
-            </xsl:choose>
-    </xsl:template>
-
-    <xsl:template match="enumeration" mode="attrovercols" as="xsd:string*">
-        <xsl:param name="prefix" as="xsd:string"/>
-        <xsl:value-of select="$prefix"/>
-    </xsl:template>
 
    <!-- do the embedded refs -->
     <xsl:template match="objectType[attribute[vf:isDataType(.)]]" mode="doEmbeddedRefs">
