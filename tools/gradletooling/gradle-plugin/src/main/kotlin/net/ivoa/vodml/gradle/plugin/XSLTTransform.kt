@@ -7,6 +7,7 @@ import net.sf.saxon.s9api.QName
 import net.sf.saxon.s9api.Serializer
 import net.sf.saxon.s9api.XdmAtomicValue
 import net.sf.saxon.s9api.XsltExecutable
+import net.sf.saxon.lib.ResourceResolver
 import org.gradle.api.GradleException
 import org.slf4j.LoggerFactory
 import org.xmlresolver.XMLResolver
@@ -24,16 +25,18 @@ import javax.xml.transform.stream.StreamSource
 abstract class BaseTransformer( val script: String ) {
     protected val logger = LoggerFactory.getLogger(this.javaClass.name)
     protected val processor : Processor
+    protected val defaultResolver: ResourceResolver
     protected val stylesheet: XsltExecutable
     init {
         logger.info("initializing transformer for ${script}")
         processor = Processor(false)
-        processor.underlyingConfiguration.setResourceResolver { href ->
+        defaultResolver = processor.underlyingConfiguration.resourceResolver
+        processor.underlyingConfiguration.setResourceResolver { href -> //IMPL perhaps should use on of the classes from https://www.saxonica.com/documentation12/index.html#!javadoc/net.sf.saxon.lib/ResourceResolver rather than this anonymous...
             logger.debug("XSLT Transform uri resolver rel={} base={} nature={}", href.relativeUri, href.baseUri, href.nature)
-            if(href.relativeUri.endsWith(".xsl"))//IMPL - only the stylesheets that are in their own dir
+            if(href.relativeUri != null && href.relativeUri.endsWith(".xsl"))//IMPL - only the stylesheets that are in their own dir
                  StreamSource(this::class.java.getResourceAsStream("/xslt/${href.relativeUri}"))
             else
-                null //IMPL should use default resolver
+                defaultResolver.resolve(href)
         }
         val compiler = processor.newXsltCompiler()
         val streamSource = StreamSource(this::class.java.getResourceAsStream("/xslt/$script"))
