@@ -584,9 +584,14 @@
         }
 
         };
-
-
-
+        <!-- TODO add this to the model API -->
+        /** the TAP schema for the model. The schema is represented via the <a href="https://github.com/ivoa/TAPSchemaDM">TAPSchemaDM</a> datamodel.
+        @return an InputStream to the XML representation of the model.
+        */
+        public static java.io.InputStream TAPSchema()
+        {
+        return <xsl:value-of select="$ModelClass"/>.class.getResourceAsStream("<xsl:value-of select="concat('/',substring-before(vf:fileNameFromModelName(name),'.xml'),'.tap.xml')"/>");
+        }
 
         /** create a context in preparation for cloning. */
         @SuppressWarnings("rawtypes")
