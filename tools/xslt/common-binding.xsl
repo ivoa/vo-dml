@@ -669,24 +669,29 @@
         </dt>
     </xsl:template>
     <xsl:template match="attribute" mode="attrovercols2" >
-        <att v="{vf:asvodmlref(current())}" n="{name}">
+        <att v="{vf:asvodmlref(current())}" c="{name}">
+            <xsl:if test="not(current()/parent::objectType)">
+                <xsl:attribute name="f" select="name"/>
+            </xsl:if>
             <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
             <xsl:attribute name="type" select="datatype/vodml-ref"/>
             <xsl:apply-templates select="$type" mode="attrovercols2"/>
         </att>
     </xsl:template>
     <xsl:template match="reference" mode="attrovercols2" >
-        <ref v="{vf:asvodmlref(current())}" n="{name}">
+        <ref v="{vf:asvodmlref(current())}" f="{name}" c="{name}">
             <xsl:attribute name="type" select="datatype/vodml-ref"/>
         </ref>
     </xsl:template>
 
     <xsl:template match="primitiveType" mode="attrovercols2" >
+        <xsl:variable name="type" select="current()/datatype/vodml-ref"/>
         <xsl:choose>
             <xsl:when test="extends">
-                <xsl:attribute name="field" select="'value'"/>
+                <att f="value" type="{current()/extends/vodml-ref}" extends="{true()}">
+                <xsl:attribute name="f" select="'value'"/>
                 <xsl:apply-templates select="$models/key('ellookup',current()/extends/vodml-ref)" mode="attrovercols2"/>
-
+                </att>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:choose>
@@ -697,15 +702,17 @@
                                 <xsl:attribute name="atomic" select="true()"/>
                             </xsl:when>
                             <xsl:when test="$pmap/@primitive-value-field">
-                                <xsl:attribute name="field" select="$pmap/@primitive-value-field"/>
+                                <att type="{$type}">
+                                <xsl:attribute name="f" select="$pmap/@primitive-value-field"/>
+                                </att>
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:attribute name="field" select="'value'"/>
+                                <att f="value" type="{$type}"/>
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:attribute name="field" select="'value'"/>
+                        <att f="value" type="{$type}"/>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:otherwise>
@@ -714,64 +721,16 @@
     <xsl:template match="enumeration" mode="attrovercols2" >
         <xsl:attribute name="enumeration" select="true()"/>
         <xsl:attribute name="atomic" select="true()"/>
-        <xsl:attribute name="field" select="'value'"/>
-    </xsl:template>
-
-
-    <!-- attrovercols templates below deprecated -->
-    <xsl:template match="dataType" mode="attrovercols" as="xsd:string*">
-        <xsl:param name="prefix" as="xsd:string"/>
-        <!--        <xsl:message>** attrovercolsD <xsl:value-of select="concat(name(),' ',name,' *** ',$prefix, ' refs=', string-join(vf:baseTypes(vf:asvodmlref(current()))/reference/name,','))"/></xsl:message>-->
-        <xsl:for-each select="(attribute, vf:baseTypes(vf:asvodmlref(current()))/attribute)"> <!-- this takes care of dataType inheritance should work https://hibernate.atlassian.net/browse/HHH-12790 -->
-            <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
-            <xsl:apply-templates select="$type" mode="attrovercols">
-                <xsl:with-param name="prefix" select="concat($prefix,'_',name)"/>
-            </xsl:apply-templates>
-        </xsl:for-each>
-    </xsl:template>
-    <!--produces _ separated string with possible last + separated
-    for the type access all _ and + should be changed to .
-    for the column name just drop the + separated if present.
-     -->
-    <xsl:template match="primitiveType" mode="attrovercols" as="xsd:string*">
-        <xsl:param name="prefix" as="xsd:string"/>
-        <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
-        <!--        <xsl:message>** attrovercolsP <xsl:value-of select="concat(name(),' ',name,' *** ',$prefix, ' extends=',extends)"/></xsl:message>-->
-        <xsl:choose>
-            <xsl:when test="vf:hasMapping(vf:asvodmlref(current()),'java')">
-                <xsl:variable name="pmap" select="vf:findmapping(vf:asvodmlref(current()),'java')"/>
-                <xsl:choose>
-                    <xsl:when test="$pmap/@jpa-atomic">
-                        <xsl:value-of select="$prefix"/>
-                    </xsl:when>
-                    <xsl:when test="$pmap/@primitive-value-field">
-                        <xsl:value-of select="concat($prefix,'+',$pmap/@primitive-value-field)"/>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="concat($prefix,'+value')"/>
-                    </xsl:otherwise>
-                </xsl:choose>
-
-            </xsl:when>
-            <xsl:when test="extends">
-                <xsl:apply-templates select="$models/key('ellookup',current()/extends/vodml-ref)" mode="attrovercols">
-                    <xsl:with-param name="prefix" select="concat($prefix,'_value')"/>
-                </xsl:apply-templates>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:value-of select="$prefix"/> <!--this is the old primitive case -->
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:template>
-
-
-    <xsl:template match="enumeration" mode="attrovercols" as="xsd:string*">
-        <xsl:param name="prefix" as="xsd:string"/>
-        <xsl:value-of select="$prefix"/>
+        <xsl:attribute name="f" select="'value'"/>
     </xsl:template>
 
 
 
+    <xsl:template match="constraint[ends-with(@xsi:type,':SubsettedRole')]"  mode="attrovercols2">
+        <att c="{tokenize(role/vodml-ref,'\.')[last()]}">
+           <xsl:apply-templates select="$models/key('ellookup',current()/datatype/vodml-ref)" mode="attrovercols2"/>
+        </att>
+    </xsl:template>
 
     <!-- end of attribute override code for datatypes -->
 

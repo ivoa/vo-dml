@@ -993,8 +993,6 @@ package <xsl:value-of select="$path"/>;
 
         <xsl:if test="$do_jpa">
         <xsl:call-template name="doEmbeddedJPA">
-            <xsl:with-param name="name" select="$name"/>
-            <xsl:with-param name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
             <xsl:with-param name="nillable" >true</xsl:with-param><!--TODO think if it is possible to do better with nillable value-->
         </xsl:call-template>
 

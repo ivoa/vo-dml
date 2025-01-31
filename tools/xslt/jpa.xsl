@@ -4,7 +4,6 @@
 <!ENTITY cr "<xsl:text>
 </xsl:text>">
 <!ENTITY bl "<xsl:text> </xsl:text>">
-<!ENTITY bl "<xsl:text> </xsl:text>">
 ]>
 
 <xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -210,8 +209,6 @@
               </xsl:when>
               <xsl:otherwise>
                       <xsl:call-template name="doEmbeddedJPA">
-                      <xsl:with-param name="name" select="$name"/>
-                      <xsl:with-param name="type" select="$type"/>
                       <xsl:with-param name="nillable" >
                           <xsl:choose>
                               <xsl:when test="$isRdbSingleInheritance">true</xsl:when><!--IMPL perhaps this is too simplistic -->
@@ -232,47 +229,36 @@
     </xsl:template>
 
     <xsl:template name="doEmbeddedJPA">
-        <xsl:param name="name"/>
-        <xsl:param name="type"/>
         <xsl:param name="nillable"/>
         @jakarta.persistence.Embedded
+        <xsl:if test="current()/parent::objectType">
         <xsl:variable name="attovers" as="xsd:string*">
               <!-- IMPL - this code is a bit ugly - is attempting to deal with the case where a dataType has a dataType member (quite frequent as base model has quantities)
-              it probably can be refactored to be a bit more recursive -->
-                <xsl:variable name="atv" as="xsd:string*">
-                    <xsl:apply-templates select="$models/key('ellookup',current()/datatype/vodml-ref)" mode="attrovercols"><xsl:with-param name="prefix" select="$name"/></xsl:apply-templates>
-                </xsl:variable>
-                <xsl:message><xsl:value-of select="concat('***',$name,'-',$type/name, ' ', name,' overrides --- ',string-join($atv, ' %%%* '))" /></xsl:message>
-                <xsl:for-each select="$atv">
-                    <xsl:variable name="tmp"> <!-- just to make formatting easier  (otherwise each bit is a string seqmnent, and a lot of quotes!) -->
-                        <xsl:variable name="attsubst">
-                            <xsl:value-of select="string-join(tokenize(.,'_|\+')[position() != 1],'.')"/>
-                        </xsl:variable>
-                        <xsl:variable name="colsubs">
-                            <xsl:choose>
-                                <xsl:when test="contains(.,'+')">
-                                    <xsl:value-of select="substring-before(.,'+')"/>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:value-of select="."/>
-                                </xsl:otherwise>
-                            </xsl:choose>
-
-                        </xsl:variable>
-                        @jakarta.persistence.AttributeOverride(name="<xsl:value-of select='$attsubst'/>", column = @jakarta.persistence.Column(name="<xsl:value-of select='$colsubs'/>",  nullable = <xsl:value-of select='$nillable'/> ))
-                    </xsl:variable>
-                    <xsl:value-of select="$tmp"/>
-                </xsl:for-each>
+               -->
+            <xsl:variable name="atv">
+                <xsl:apply-templates select="current()" mode="attrovercols2"/>
+            </xsl:variable>
+<!--                <xsl:message>*** <xsl:value-of select="vf:asvodmlref(current())"/> -&#45;&#45; <xsl:copy-of select="$atv" copy-namespaces="no"/></xsl:message>-->
+                <xsl:apply-templates select="$atv" mode="doAttributeOverride">
+                    <xsl:with-param name="nillable" select="$nillable"/>
+                </xsl:apply-templates>
         </xsl:variable>
         @jakarta.persistence.AttributeOverrides( {
         <xsl:value-of select="string-join($attovers,concat(',',$cr))"/>
         })
+        </xsl:if>
+    </xsl:template>
+    <xsl:template match="att[not(*)]" mode="doAttributeOverride">
+        <xsl:param name="nillable"/>
 
+  <xsl:sequence select="concat('@jakarta.persistence.AttributeOverride(name=',$dq, string-join(current()/ancestor-or-self::att/@f,'.'),$dq,
+        ', column = @jakarta.persistence.Column(name=',$dq,string-join(current()/ancestor-or-self::att/@c,'_'),$dq,
+        ',nullable = ',$nillable,' ))')"/>
     </xsl:template>
 
 
 
-   <!-- do the embedded refs -->
+    <!-- do the embedded refs -->
     <xsl:template match="objectType[attribute[vf:isDataType(.)]]" mode="doEmbeddedRefs">
         <xsl:variable name="attovers" as="xsd:string*">
             <xsl:for-each select="attribute[vf:isDataType(.)]">

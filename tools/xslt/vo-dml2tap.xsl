@@ -200,7 +200,7 @@ FIXME This is not yet complete
         <xsl:variable name="top-vodml-ref" select="ancestor-or-self::dt[last()]/@v"/>
         <xsl:variable name="top-el" select="$models/key('ellookup',$top-vodml-ref)"/>
         <column>
-            <column_name><xsl:value-of select="string-join(current()/ancestor-or-self::att/@n,'_')"/></column_name>
+            <column_name><xsl:value-of select="string-join(current()/ancestor-or-self::att/@c,'_')"/></column_name>
             <xsl:comment>attribute from dtype</xsl:comment>
             <datatype>{vf:rdbTapType(@type)}</datatype>
             <description>{$top-el/description}</description><!-- TODO would perhaps like to include datatype description too -->
@@ -215,7 +215,7 @@ FIXME This is not yet complete
         <xsl:variable name="top-vodml-ref" select="ancestor-or-self::dt[last()]/@v"/>
         <xsl:variable name="top-el" select="$models/key('ellookup',$top-vodml-ref)"/>
         <column>
-            <column_name><xsl:value-of select="string-join(current()/(ancestor-or-self::att|ancestor-or-self::ref)/@n,'_')"/></column_name>
+            <column_name><xsl:value-of select="string-join(current()/(ancestor-or-self::att|ancestor-or-self::ref)/@c,'_')"/></column_name>
             <xsl:comment>reference from datatype</xsl:comment>
             <datatype>{vf:rdbKeyType(@type)}</datatype>
             <description>{$top-el/description}</description><!-- TODO would perhaps like to include datatype description too -->
@@ -238,7 +238,7 @@ FIXME This is not yet complete
             <utype>{$top-vodml-ref}</utype>
             <columns>
                 <FKColumn>
-                    <from_column><xsl:value-of select="string-join(current()/(ancestor-or-self::att|ancestor-or-self::ref)/@n,'_')"/></from_column>
+                    <from_column><xsl:value-of select="string-join(current()/(ancestor-or-self::att|ancestor-or-self::ref)/@c,'_')"/></from_column>
                     <target_column>{vf:tapTargetColumnName(@type)}</target_column>
                 </FKColumn>
             </columns>
