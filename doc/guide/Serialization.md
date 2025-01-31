@@ -114,4 +114,3 @@ in the binding file for the model.
 
 * DataTypes become embedded as extra columns within the table.
 
-The database serialization is described in terms of a TAP schema (as defined in https://github.com/ivoa/TAPSchemaDM).

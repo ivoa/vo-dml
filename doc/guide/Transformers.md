@@ -35,6 +35,8 @@ gradle vodmlSchema
 ```
 will generate XML, JSON and TAP schema for the model. The schema will be generated in the directory defined by the `outputSchemaDir` property (default `build/generated/sources/vodml/schema/`).
 
+The database serialization is described in terms of a TAP schema. The specific  TAP Schema serialization is itself [defined in vodml](https://github.com/ivoa/TAPSchemaDM).
+
 These schema files will automatically be included within the jar file for the model, so that instance validation can be automatically be done without reference to external files.
 
 # Transformation to VO-DML
