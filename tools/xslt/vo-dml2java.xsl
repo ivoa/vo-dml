@@ -960,7 +960,7 @@ package <xsl:value-of select="$path"/>;
     protected <xsl:value-of select="concat($type,'[] ',vf:javaMemberName(name))"/>;
         </xsl:when>
         <xsl:when test="xsd:int(multiplicity/maxOccurs) lt 0"> <!-- IMPL - this is done in db by serializing to delimited string -->
-    protected <xsl:value-of select="concat('java.util.List',$lt,$type,$gt,' ',vf:javaMemberName(name))"/>;
+    protected <xsl:value-of select="concat('java.util.List',$lt,$type,$gt,' ',vf:javaMemberName(name))"/> = new java.util.ArrayList&lt;&gt;();
         </xsl:when>
         <xsl:otherwise>
     protected <xsl:value-of select="concat($type,' ',vf:javaMemberName(name))"/>;
@@ -1102,10 +1102,10 @@ package <xsl:value-of select="$path"/>;
       <xsl:apply-templates select="." mode="openapiAnnotation"/>
       <xsl:choose>
            <xsl:when test="vf:isSubSetted(vf:asvodmlref(.)) "><!--  or $rt/@abstract or vf:hasSubTypes(datatype/vodml-ref)-->
-     protected java.util.List&lt;? extends <xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="vf:javaMemberName(name)"/> = null;
+     protected java.util.List&lt;? extends <xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="vf:javaMemberName(name)"/> = new java.util.ArrayList&lt;&gt;();
           </xsl:when>
           <xsl:otherwise>
-     protected java.util.List&lt;<xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="vf:javaMemberName(name)"/> = null;
+     protected java.util.List&lt;<xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="vf:javaMemberName(name)"/> = new java.util.ArrayList&lt;&gt;();
           </xsl:otherwise>
       </xsl:choose>
 
