@@ -686,14 +686,6 @@
 
     <xsl:template match="primitiveType" mode="attrovercols2" >
         <xsl:variable name="type" select="current()/datatype/vodml-ref"/>
-        <xsl:choose>
-            <xsl:when test="extends">
-                <att f="value" type="{current()/extends/vodml-ref}" extends="{true()}">
-                <xsl:attribute name="f" select="'value'"/>
-                <xsl:apply-templates select="$models/key('ellookup',current()/extends/vodml-ref)" mode="attrovercols2"/>
-                </att>
-            </xsl:when>
-            <xsl:otherwise>
                 <xsl:choose>
                     <xsl:when test="vf:hasMapping(vf:asvodmlref(current()),'java')">
                         <xsl:variable name="pmap" select="vf:findmapping(vf:asvodmlref(current()),'java')"/>
@@ -712,11 +704,19 @@
                         </xsl:choose>
                     </xsl:when>
                     <xsl:otherwise>
-                        <att f="value" type="{$type}"/>
+                        <xsl:choose>
+                            <xsl:when test="extends">
+                                <att f="value" type="{current()/extends/vodml-ref}" extends="{true()}">
+                                    <xsl:attribute name="f" select="'value'"/>
+                                    <xsl:apply-templates select="$models/key('ellookup',current()/extends/vodml-ref)" mode="attrovercols2"/>
+                                </att>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <att f="value" type="{$type}"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </xsl:otherwise>
                 </xsl:choose>
-            </xsl:otherwise>
-        </xsl:choose>
     </xsl:template>
     <xsl:template match="enumeration" mode="attrovercols2" >
         <xsl:attribute name="enumeration" select="true()"/>
