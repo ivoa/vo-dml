@@ -190,6 +190,9 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
       System.err.println("File " + fout.getAbsolutePath());
       result.printValidationErrors(System.err);
     }
+    else {
+        System.out.println("File " + fout.getAbsolutePath());
+    }
     assertTrue(result.isOk, "validation with external schema");
   }
 

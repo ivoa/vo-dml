@@ -72,5 +72,17 @@ open class VodmlSchemaTask  @Inject constructor(ao1: ArchiveOperations) : VodmlB
         )
             )
 
+        logger.info("Generating TAP Schema")
+        vodmlFiles.forEach {
+            val shortname = it.nameWithoutExtension
+            val outfile = schemaDir.file("$shortname.tap.xml")
+            logger.debug("Generating JSON schema from  ${it.name} to ${outfile.get().asFile.absolutePath}")
+            Vodml2TAP.doTransform(it.absoluteFile, mapOf(
+                "binding" to allBinding.joinToString(separator = ",") { it.toURI().toURL().toString() }
+            ),
+                actualCatalog, outfile.get().asFile)
+        }
+
+
     }
 }

@@ -47,7 +47,7 @@
   <xsl:param name="binding"/>
     <xsl:param name="do_jpa" select="true()"/>
   <xsl:param name="write_persistence_xml" select="true()"/>
-  <xsl:param name="pu_name" select="'model_pu'"/>
+  <xsl:param name="pu_name" select="'model_pu'"/> <!--FIXME not used -->
 
     <xsl:param name="isMain"/>
   <xsl:include href="binding_setup.xsl"/>
@@ -115,11 +115,13 @@
       <xsl:if test="$isMain eq 'True'">
           <xsl:if test="$do_jpa ">
             <xsl:call-template name="persistence_xml">
-                <xsl:with-param name="puname" select="$pu_name"/>
                 <xsl:with-param name="doit" select="$write_persistence_xml"/>
             </xsl:call-template>
           </xsl:if>
       </xsl:if>
+      <xsl:call-template name="listVocabs">
+          <xsl:with-param name="outfile" select="'vocabularies.txt'"/>
+      </xsl:call-template>
   </xsl:template>  
 
 
@@ -661,6 +663,7 @@
 
     &bl;{
       <xsl:if test="local-name() eq 'objectType' and not (extends) and not(attribute/constraint[ends-with(@xsi:type,':NaturalKey')])" >
+
           /**
           * inserted database key
           */
@@ -670,7 +673,7 @@
           </xsl:if>
           @jakarta.persistence.Id
           @jakarta.persistence.GeneratedValue
-          @jakarta.persistence.Column(name = "ID")
+          @jakarta.persistence.Column(name = "<xsl:value-of select="vf:rdbIDColumnName($vodml-ref)"/>")
           protected Long _id = (long) 0;
 
           /**
@@ -726,10 +729,13 @@
 
       <xsl:apply-templates select="attribute|reference|composition|constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="getset"/>
 
-      <xsl:if test="vf:referredTo($vodml-ref) and attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
+      <xsl:if test="attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
+
           <!--TODO deal with multiple natural keys -->
           <!-- TODO this assumes that the natural key is a string -->
           <xsl:variable name="nk" select="attribute[ends-with(constraint/@xsi:type,':NaturalKey')]"/>
+          <xsl:variable name="nktype" select="vf:JavaKeyType($vodml-ref)"/>
+          <xsl:if test="vf:referredTo($vodml-ref)" >
           @Override
           public String getXmlId(){
           return <xsl:value-of select="$nk/name"/>;
@@ -744,13 +750,14 @@
           {
           return true;
           }
+      </xsl:if>
           <xsl:if test="$nk/name != 'id'"> <!--only produce this method if the ID is not called ID -->
           /**
           * return the database key id. Note that this is the same as attribute <xsl:value-of select="$nk/name"/>.
           * @return the id
           */
           @Override
-          public String getId() {
+          public <xsl:value-of select="$nktype"/> getId() {
           return <xsl:value-of select="$nk/name"/>;
           }</xsl:if>
 
@@ -762,6 +769,7 @@
 
       <xsl:apply-templates select="." mode="jpawalker"/>
       <xsl:apply-templates select="." mode="jparefs"/>
+      <xsl:apply-templates select="./self::objectType" mode="jpadeleter"/>
 
 <!--      <xsl:if test="local-name() eq 'dataType'">-->
 <!--          <xsl:apply-templates select="." mode="JPAConverter"/>-->
@@ -952,7 +960,7 @@ package <xsl:value-of select="$path"/>;
     protected <xsl:value-of select="concat($type,'[] ',vf:javaMemberName(name))"/>;
         </xsl:when>
         <xsl:when test="xsd:int(multiplicity/maxOccurs) lt 0"> <!-- IMPL - this is done in db by serializing to delimited string -->
-    protected <xsl:value-of select="concat('java.util.List',$lt,$type,$gt,' ',vf:javaMemberName(name))"/>;
+    protected <xsl:value-of select="concat('java.util.List',$lt,$type,$gt,' ',vf:javaMemberName(name))"/> = new java.util.ArrayList&lt;&gt;();
         </xsl:when>
         <xsl:otherwise>
     protected <xsl:value-of select="concat($type,' ',vf:javaMemberName(name))"/>;
@@ -985,8 +993,6 @@ package <xsl:value-of select="$path"/>;
 
         <xsl:if test="$do_jpa">
         <xsl:call-template name="doEmbeddedJPA">
-            <xsl:with-param name="name" select="$name"/>
-            <xsl:with-param name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
             <xsl:with-param name="nillable" >true</xsl:with-param><!--TODO think if it is possible to do better with nillable value-->
         </xsl:call-template>
 
@@ -1043,10 +1049,21 @@ package <xsl:value-of select="$path"/>;
         */
         public void set<xsl:value-of select="$upName"/>(final <xsl:value-of select="$fulltype"/> p<xsl:value-of select="$upName"/>) {
         <xsl:if test="semanticconcept/vocabularyURI">
-            if (!<xsl:value-of select="concat(vf:modelJavaClass(current()),'.isInVocabulary(p',$upName,',',$dq,semanticconcept/vocabularyURI,$dq,')')"/>)
-            {
-            throw new IllegalArgumentException(p<xsl:value-of select="$upName"/>+" is not a value in vocabulary <xsl:value-of select="semanticconcept/vocabularyURI"/> ");
-            }
+            <xsl:choose>
+                <xsl:when test="$mult/maxOccurs = 1">
+                    if (!<xsl:value-of select="concat(vf:modelJavaClass(current()),'.isInVocabulary(p',$upName,',',$dq,semanticconcept/vocabularyURI,$dq,')')"/>)
+                    {
+                    throw new IllegalArgumentException(p<xsl:value-of select="$upName"/>+" is not a value in vocabulary <xsl:value-of select="semanticconcept/vocabularyURI"/> ");
+                    }
+
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:value-of select="concat($fulltype,' _i = p',$upName,'.stream().filter(i-> !',vf:modelJavaClass(current()),'.isInVocabulary(i,',$dq,semanticconcept/vocabularyURI,$dq,')).toList();')"/>
+                   if(!_i.isEmpty()) {
+                    throw new IllegalArgumentException(_i.stream().collect(java.util.stream.Collectors.joining(", ")) +" is not a value in vocabulary <xsl:value-of select="semanticconcept/vocabularyURI"/> ");
+                    }
+                </xsl:otherwise>
+            </xsl:choose>
         </xsl:if>
         this.<xsl:value-of select="vf:javaMemberName($name)"/> = p<xsl:value-of select="$upName"/>;
         }
@@ -1085,10 +1102,10 @@ package <xsl:value-of select="$path"/>;
       <xsl:apply-templates select="." mode="openapiAnnotation"/>
       <xsl:choose>
            <xsl:when test="vf:isSubSetted(vf:asvodmlref(.)) "><!--  or $rt/@abstract or vf:hasSubTypes(datatype/vodml-ref)-->
-     protected java.util.List&lt;? extends <xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="vf:javaMemberName(name)"/> = null;
+     protected java.util.List&lt;? extends <xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="vf:javaMemberName(name)"/> = new java.util.ArrayList&lt;&gt;();
           </xsl:when>
           <xsl:otherwise>
-     protected java.util.List&lt;<xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="vf:javaMemberName(name)"/> = null;
+     protected java.util.List&lt;<xsl:value-of select="$type"/>&gt;&bl;<xsl:value-of select="vf:javaMemberName(name)"/> = new java.util.ArrayList&lt;&gt;();
           </xsl:otherwise>
       </xsl:choose>
 

@@ -24,7 +24,6 @@
   <xsl:variable name="defaultVarcharLength" select="'255'"/>
   <xsl:variable name="unboundedstringtype" select="'TEXT'"/> <!-- SQLServer specific but supported by postgres -->
 
-  <xsl:variable name="discriminatorColumnName" select="'DTYPE'"/>
 
   <xsl:variable name="publisherDIDColumnName" select="'publisherDID'"/>
   <xsl:variable name="publisherDIDColumnLength" select="'256'"/>

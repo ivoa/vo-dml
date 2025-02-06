@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.networknt.schema.output.OutputUnit;
 import jakarta.persistence.EntityManager;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
@@ -61,8 +62,13 @@ public abstract class AbstractBaseValidation {
         String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(model);
         System.out.println("JSON output");
         System.out.println(json);
+        JSONValidator jsonValidator = new JSONValidator(m.management());
+        OutputUnit vresult = jsonValidator.validate(json);
+        if (!vresult.isValid()) {
+            System.err.println(vresult.toString());
+        }
         T retval = mapper.readValue(json, clazz);
-        return new RoundTripResult<T>(true, retval);
+        return new RoundTripResult<T>(vresult.isValid(), retval);
 
     }
 

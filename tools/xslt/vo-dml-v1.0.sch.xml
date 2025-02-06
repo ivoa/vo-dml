@@ -15,7 +15,6 @@
 
     <xsl:include href="classpath:xslt/common-structure-functions.xsl"/>
 
-
 <xsl:function name="fct:vo-dml_element_kind" as="xs:string">
     <!--  returns name of element containing the vodml-id identified by the vodml-ref -->
         <xsl:param name="vodml-ref" />
@@ -71,6 +70,20 @@ all model imports did not succeed (only <sch:value-of select="$count"/>)
                 There is no imported model corresponding to model prefix '<sch:value-of select="$prefix"/>' in this model.
             </sch:assert>
         </sch:rule>
+        <sch:rule context="import">
+            <sch:let name="impname" value="document(url)/vo-dml:model/name"/>
+            <sch:let name="impvers" value="document(url)/vo-dml:model/version"/>
+            <sch:assert test="name = $impname"  flag="error">
+                The imported model namespace <sch:value-of select="concat('&quot;',$impname,'&quot;', ' for import of ', url,' is not the expected &quot;', name,'&quot;')"/>
+            </sch:assert>
+            <sch:assert test="version" flag="warning">
+                the imported model version has not been specified for the import of model '<sch:value-of select="$impname"/>'
+            </sch:assert>
+            <sch:assert test="version = $impvers"  flag="error">
+                The imported model version=<sch:value-of select="concat('&quot;',$impvers,'&quot;', ' for import of ', url,' is not the expected &quot;', version,'&quot;')"/>
+            </sch:assert>
+        </sch:rule>
+
     </sch:pattern>
 
 <sch:pattern name="Unique_vodml-id">
@@ -114,6 +127,7 @@ vodml-id '<sch:value-of select="."/>' is not unique, there are <sch:value-of sel
         </sch:rule>
     </sch:pattern>
 
+  <!-- it is ok to have abstract types for attributes
     <sch:pattern name="no_abstract_attributes">
         <sch:rule context="attribute">
             <sch:let name="atttype" value="$models/key('ellookup',current()/datatype/vodml-ref)"/>
@@ -124,6 +138,8 @@ vodml-id '<sch:value-of select="."/>' is not unique, there are <sch:value-of sel
             </sch:assert>
         </sch:rule>
     </sch:pattern>
+
+  -->
 
     <sch:pattern name="Unique_composition">
         <!-- Note - this is probably really only a problem if the multiply contained thing also contains or references something -->
@@ -196,15 +212,19 @@ Super type <sch:value-of select="vodml-ref"/> of dataType/extends <sch:value-of 
     </sch:assert>
   </sch:rule>
 
-<!-- rule implementing Attribute multiplicity to be either min=0,max=1 or min=max=positive integer-->
+
 <sch:rule context="attribute/multiplicity">
   <sch:let name="owner" value="vf:asvodmlref(current()/parent::*)"/>
+    <sch:let name="type" value="current()/parent::*/datatype/vodml-ref"/>
+  <sch:let name="kind" value="fct:vo-dml_element_kind(current()/parent::*/datatype/vodml-ref)"/>
     <sch:let name="minOccurs" value="./minOccurs"/>
     <sch:let name="maxOccurs" value="./maxOccurs"/>
-<!--   <sch:assert test="($minOccurs = '0' and $maxOccurs = '1') or (($minOccurs = $maxOccurs) and ($maxOccurs != '-1'))" flag="error">  -->
-  <sch:assert test="number($maxOccurs) > 0 and ($minOccurs = '0' or $minOccurs = $maxOccurs)" flag="warning">
-Attribute <sch:value-of select="./../vodml-id"/> has multiplicity <sch:value-of select="concat($minOccurs,'..',$maxOccurs)"/> which is STRONLY DISCOURAGED.
+  <sch:assert test="($kind = 'dataType' and $maxOccurs = '1') or $kind=('primitiveType','enumeration')" flag="error">
+      Attribute <sch:value-of select="./../vodml-id"/> has multiplicity <sch:value-of select="concat($minOccurs,'..',$maxOccurs)"/> for <sch:value-of select="concat($type,' which is a ',$kind)"/>
   </sch:assert>
+  <sch:report test="$kind=('primitiveType','enumeration') and number($maxOccurs) != 1" flag="warning">
+Attribute <sch:value-of select="concat(./../vodml-id,' (type ',$type,' which is a ',$kind,')')"/> has multiplicity <sch:value-of select="concat($minOccurs,'..',$maxOccurs)"/> which is STRONGLY DISCOURAGED but can be supported for primitive types
+  </sch:report>
  </sch:rule>
 
 

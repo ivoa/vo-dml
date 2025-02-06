@@ -11,7 +11,7 @@
         <python-package>org.ivoa.dm.jpatest</python-package>
         <xml-targetnamespace prefix="jpat" schemaFilename="jpatest.xsd">http://ivoa.net/dm/sample/jpatest</xml-targetnamespace>
         <xmllegacy-targetnamespace prefix="jpat" schemaLocation="jpatest.xsd">http://ivoa.net/dm/sample/jpatest</xmllegacy-targetnamespace>
-        <rdb inheritance-strategy="single-table"
+        <rdb inheritance-strategy="joined"
         discriminatorColumnLength="64"/>
     </model>
     <model>

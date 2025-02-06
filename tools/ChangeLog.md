@@ -65,6 +65,27 @@
   * further reference management refinement
 * 0.5.11
   * further reference management tweaks & fixed support for abstract base class cloning.
-  
+* 0.5.12
+  * initial support for automatic RDB entity deletion taking into account need to delete the referrers to the contained references first.
+* 0.5.13
+  * update vodsl to 0.4.9 (inserts name and version into imports)
+  * schematron checks the name and version in the imports
+  * correct embedded reference overrides.
+  * vocabularies downloaded at compile time for inclusion in jar.
+    * default behaviour now is to only consult the compile-time version
+  * add in wrapped XML serialization for compositions with multiplicity > 1
+  * actually do JSON schema validation in the JSON round trip tests
+    * there still needs to be some work in "tightening" the JSON schema.
+* 0.5.14
+  * make site diagrams from plantuml
+  * add naturalJoin style to the ID column naming options
+  * add ability to override table names to the binding.
+  * preliminary tap schema support
+    * initial tap schema produced as part of the vodmlSchema task - the schema is actually the XML serialization of the tap schema as defined in VO-DML https://github.com/ivoa/TAPSchemaDM
+* 0.5.15
+  * fix regression in DataType to column mapping
 
-N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass - fixed in 6.6.1
+ 
+
+
+N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass in same hierarchy - still waiting for a solution

@@ -38,4 +38,4 @@ otype SomeContent "" {
 	con: BaseC @+ as composition ""; 
 }
 
-primitive ivorn -> ivoa:anyURI "a specialization for IVORNs"
+primitive ivoid -> ivoa:anyURI "a specialization for IVOIDs"

@@ -10,12 +10,14 @@
       <version>1.0</version>
       <lastModified>2021-08-23T15:59:30Z</lastModified>
       <import>
-        <name>blah</name><!--not used by schematron any more... -->
+        <name>ivoa</name>
+          <version>1.0</version>
         <url>IVOA-v1.0.vo-dml.xml</url>
     <documentationURL>blah</documentationURL> <!--nor this I reckon -->
       </import>
       <import>
-    <name>blah</name>
+    <name>filter</name>
+          <version>1.0</version>
         <url>Filter.vo-dml.xml</url>
     <documentationURL>blah</documentationURL>
       </import>

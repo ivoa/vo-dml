@@ -9,7 +9,7 @@
       <title></title>
       <author>pharriso</author>
       <version>0.1</version>
-      <lastModified>2024-10-19T13:44:44Z</lastModified>
+      <lastModified>2024-12-19T13:11:08Z</lastModified>
       <import>
         <name>null</name><!--should not be needed in modern vo-dml -->
         <url>IVOA-v1.0.vo-dml.xml</url>
@@ -65,18 +65,6 @@
                    <maxOccurs>1</maxOccurs>
                  </multiplicity>
                </attribute>
-               <reference>
-                 <vodml-id>Contained.refbad2</vodml-id>
-                 <name>refbad2</name>
-                 <description></description>	    
-                 <datatype>
-                   <vodml-ref>lifecycleTest:ReferredLifeCycle</vodml-ref>
-                 </datatype>
-                 <multiplicity>
-                   <minOccurs>1</minOccurs>
-                   <maxOccurs>1</maxOccurs>
-                 </multiplicity>
-               </reference>
             </objectType>
             <objectType>
                <vodml-id>ATest</vodml-id>
@@ -196,7 +184,7 @@
                    <vodml-ref>lifecycleTest:ReferredLifeCycle</vodml-ref>
                  </datatype>
                  <multiplicity>
-                   <minOccurs>1</minOccurs>
+                   <minOccurs>0</minOccurs>
                    <maxOccurs>1</maxOccurs>
                  </multiplicity>
                </reference>

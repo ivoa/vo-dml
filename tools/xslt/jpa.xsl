@@ -4,7 +4,6 @@
 <!ENTITY cr "<xsl:text>
 </xsl:text>">
 <!ENTITY bl "<xsl:text> </xsl:text>">
-<!ENTITY bl "<xsl:text> </xsl:text>">
 ]>
 
 <xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -28,7 +27,7 @@
   <xsl:output name="persistenceInfo" method="xml" encoding="UTF-8" indent="yes"  />
 
   <xsl:template match="objectType" mode="JPAAnnotation">
-    <xsl:variable name="className" select="name" /> <!-- might need to be javaified -->
+    <xsl:variable name="className" select="vf:upperFirst(name)" /> <!-- IMPL has been javaified -->
     <xsl:variable name="vodml-ref" select="concat(ancestor::vo-dml:model/name,':',vodml-id)" />
     <xsl:variable name="hasChild" as="xsd:boolean"
                   select="vf:hasSubTypes($vodml-ref)"/>
@@ -47,7 +46,7 @@
 
   @jakarta.persistence.Entity
   <xsl:if test="not($isRdbSingleInheritance) or ($isRdbSingleInheritance and not(extends))">
-  @jakarta.persistence.Table( name = "<xsl:apply-templates select="." mode="tableName"/>" )
+  @jakarta.persistence.Table( name = "<xsl:value-of select="vf:rdbTableName($vodml-ref)"/>" )
   </xsl:if>
   <xsl:if test="@abstract or $hasChild" >
       <xsl:choose>
@@ -60,7 +59,7 @@
       </xsl:choose>
   </xsl:if>
     <xsl:if test="count(vf:baseTypes($vodml-ref) )= 0 and(@abstract or $hasChild)">
-    @jakarta.persistence.DiscriminatorColumn( name = "<xsl:value-of select="$discriminatorColumnName"/>", discriminatorType = jakarta.persistence.DiscriminatorType.STRING, length = <xsl:value-of select="$discriminatorColumnLength"/>)
+    @jakarta.persistence.DiscriminatorColumn( name = "<xsl:value-of select="vf:rdbODiscriminatorName($vodml-ref)"/>", discriminatorType = jakarta.persistence.DiscriminatorType.STRING, length = <xsl:value-of select="$discriminatorColumnLength"/>)
     </xsl:if>
     <xsl:if test="$extMod or $hasChild and not(@abstract)">
   @jakarta.persistence.DiscriminatorValue( "<xsl:value-of select="vf:utype(vf:asvodmlref(.))"/>" )
@@ -82,6 +81,7 @@
           <!-- TODO need to think about subgraphs -->
           )
       </xsl:if>
+     <xsl:apply-templates select="current()[attribute[vf:isDataType(.)]]" mode="doEmbeddedRefs"/>
 
  </xsl:template>
 
@@ -93,8 +93,8 @@
 
 
   <xsl:template match="dataType" mode="JPAAnnotation">
-    <xsl:text>@jakarta.persistence.Embeddable</xsl:text>&cr;
-    <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
+       <xsl:text>@jakarta.persistence.Embeddable</xsl:text>&cr;
+      <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
     <xsl:if test="vf:hasSubTypes($vodml-ref)"  >
         <xsl:text>@jakarta.persistence.MappedSuperclass</xsl:text>&cr;<!-- this works for hibernate but seem to need at every level not just top in multi-level hierarchy-->
     </xsl:if>
@@ -199,7 +199,7 @@
             </xsl:when>
             <xsl:when test="name($type) = 'dataType'">
             <xsl:choose>
-              <xsl:when test="xsd:int(multiplicity/maxOccurs) = -1">
+              <xsl:when test="xsd:int(multiplicity/maxOccurs) = -1"> <!--TODO IMPL multiplicity > 1 being supported - but it really should not be modelled this way -->
                   <xsl:variable name="tableName">
                       <xsl:apply-templates select=".." mode="tableName"/><xsl:text>_</xsl:text><xsl:value-of select="$name"/>
                   </xsl:variable>
@@ -209,8 +209,6 @@
               </xsl:when>
               <xsl:otherwise>
                       <xsl:call-template name="doEmbeddedJPA">
-                      <xsl:with-param name="name" select="$name"/>
-                      <xsl:with-param name="type" select="$type"/>
                       <xsl:with-param name="nillable" >
                           <xsl:choose>
                               <xsl:when test="$isRdbSingleInheritance">true</xsl:when><!--IMPL perhaps this is too simplistic -->
@@ -231,97 +229,55 @@
     </xsl:template>
 
     <xsl:template name="doEmbeddedJPA">
-        <xsl:param name="name"/>
-        <xsl:param name="type"/>
         <xsl:param name="nillable"/>
         @jakarta.persistence.Embedded
+        <xsl:if test="current()/parent::objectType">
         <xsl:variable name="attovers" as="xsd:string*">
-
-                <xsl:variable name="atv" as="xsd:string*">
-                    <xsl:apply-templates select="$models/key('ellookup',current()/datatype/vodml-ref)" mode="attrovercols"><xsl:with-param name="prefix" select="$name"/></xsl:apply-templates>
-                </xsl:variable>
-<!--                <xsl:message><xsl:value-of select="concat('***',$name,'-',$type/name, ' ', name,' overrides -&#45;&#45; ',string-join($atv, ' %%%* '))" /></xsl:message>-->
-                <xsl:for-each select="$atv">
-                    <xsl:variable name="tmp"> <!-- just to make formatting easier  (otherwise each bit is a string seqmnent, and a lot of quotes!) -->
-                        <xsl:variable name="attsubst">
-                            <xsl:value-of select="string-join(tokenize(.,'_|\+')[position() != 1],'.')"/>
-                        </xsl:variable>
-                        <xsl:variable name="colsubs">
-                            <xsl:choose>
-                                <xsl:when test="contains(.,'+')">
-                                    <xsl:value-of select="substring-before(.,'+')"/>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:value-of select="."/>
-                                </xsl:otherwise>
-                            </xsl:choose>
-
-                        </xsl:variable>
-                        @jakarta.persistence.AttributeOverride(name="<xsl:value-of select='$attsubst'/>", column = @jakarta.persistence.Column(name="<xsl:value-of select='$colsubs'/>",  nullable = <xsl:value-of select='$nillable'/> ))
-                    </xsl:variable>
-                    <xsl:value-of select="$tmp"/>
-                </xsl:for-each>
+              <!-- IMPL - this code is a bit ugly - is attempting to deal with the case where a dataType has a dataType member (quite frequent as base model has quantities)
+               -->
+            <xsl:variable name="atv">
+                <xsl:apply-templates select="current()" mode="attrovercols2"/>
+            </xsl:variable>
+<!--                <xsl:message>*** <xsl:value-of select="vf:asvodmlref(current())"/> -&#45;&#45; <xsl:copy-of select="$atv" copy-namespaces="no"/></xsl:message>-->
+                <xsl:apply-templates select="$atv" mode="doAttributeOverride">
+                    <xsl:with-param name="nillable" select="$nillable"/>
+                </xsl:apply-templates>
         </xsl:variable>
         @jakarta.persistence.AttributeOverrides( {
         <xsl:value-of select="string-join($attovers,concat(',',$cr))"/>
         })
+        </xsl:if>
+    </xsl:template>
+    <xsl:template match="att[not(*)]" mode="doAttributeOverride">
+        <xsl:param name="nillable"/>
 
+  <xsl:sequence select="concat('@jakarta.persistence.AttributeOverride(name=',$dq, string-join(current()/ancestor-or-self::att/@f,'.'),$dq,
+        ', column = @jakarta.persistence.Column(name=',$dq,string-join(current()/ancestor-or-self::att/@c,'_'),$dq,
+        ',nullable = ',$nillable,' ))')"/>
     </xsl:template>
 
-    <xsl:template match="dataType" mode="attrovercols" as="xsd:string*">
-        <xsl:param name="prefix" as="xsd:string"/>
-<!--        <xsl:message>** attrovercolsD <xsl:value-of select="concat(name(),' ',name,' *** ',$prefix, ' refs=', string-join(vf:baseTypes(vf:asvodmlref(current()))/reference/name,','))"/></xsl:message>-->
-        <xsl:for-each select="(attribute, vf:baseTypes(vf:asvodmlref(current()))/attribute)"> <!-- this takes care of dataType inheritance should work https://hibernate.atlassian.net/browse/HHH-12790 -->
-            <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
-            <xsl:apply-templates select="$type" mode="attrovercols">
-                <xsl:with-param name="prefix" select="concat($prefix,'_',name)"/>
-            </xsl:apply-templates>
+
+
+    <!-- do the embedded refs -->
+    <xsl:template match="objectType[attribute[vf:isDataType(.)]]" mode="doEmbeddedRefs">
+        <xsl:variable name="attovers" as="xsd:string*">
+            <xsl:for-each select="attribute[vf:isDataType(.)]">
+               <xsl:apply-templates select="current()" mode="doEmbeddedRefs"/>
+            </xsl:for-each>
+        </xsl:variable>
+        <xsl:if test="not(empty($attovers))">
+            @jakarta.persistence.AssociationOverrides( {
+            <xsl:value-of select="string-join($attovers,concat(',',$cr))"/>
+            })
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template match="attribute" mode="doEmbeddedRefs" as="xsd:string*">
+        <xsl:variable name="thisname" select="name"/>
+        <xsl:for-each select="($models/key('ellookup',current()/datatype/vodml-ref)/reference,vf:baseTypes(current()/datatype/vodml-ref)/reference)">
+            <xsl:value-of select="concat('@jakarta.persistence.AssociationOverride(name=',$dq,$thisname,'.',name,$dq,',joinColumns = { @jakarta.persistence.JoinColumn(name=',$dq,$thisname,'_',name,$dq,  ',nullable =',true(),')})')"/><!--IMPL have to allow null - too difficult to work out when not allowed - see proposalDM ObservingPlatform -->
         </xsl:for-each>
-        <xsl:for-each select="(reference, vf:baseTypes(vf:asvodmlref(current()))/reference)">
-                <xsl:sequence select="concat($prefix,'_',name)"/>
-        </xsl:for-each>
     </xsl:template>
-
-    <!--produces _ separated string with possible last + separated
-    for the type access all _ and + should be changed to .
-    for the column name just drop the + separated if present.
-     -->
-    <xsl:template match="primitiveType" mode="attrovercols" as="xsd:string*">
-        <xsl:param name="prefix" as="xsd:string"/>
-        <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
-<!--        <xsl:message>** attrovercolsP <xsl:value-of select="concat(name(),' ',name,' *** ',$prefix, ' extends=',extends)"/></xsl:message>-->
-            <xsl:choose>
-                <xsl:when test="vf:hasMapping(vf:asvodmlref(current()),'java')">
-                    <xsl:variable name="pmap" select="vf:findmapping(vf:asvodmlref(current()),'java')"/>
-                    <xsl:choose>
-                        <xsl:when test="$pmap/@jpa-atomic">
-                            <xsl:value-of select="$prefix"/>
-                        </xsl:when>
-                        <xsl:when test="$pmap/@primitive-value-field">
-                            <xsl:value-of select="concat($prefix,'+',$pmap/@primitive-value-field)"/>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:value-of select="concat($prefix,'+value')"/>
-                        </xsl:otherwise>
-                    </xsl:choose>
-
-                </xsl:when>
-                <xsl:when test="extends">
-                    <xsl:apply-templates select="$models/key('ellookup',current()/extends/vodml-ref)" mode="attrovercols">
-                        <xsl:with-param name="prefix" select="concat($prefix,'_value')"/>
-                    </xsl:apply-templates>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="$prefix"/> <!--this is the old primitive case -->
-                </xsl:otherwise>
-            </xsl:choose>
-    </xsl:template>
-
-    <xsl:template match="enumeration" mode="attrovercols" as="xsd:string*">
-        <xsl:param name="prefix" as="xsd:string"/>
-        <xsl:value-of select="$prefix"/>
-    </xsl:template>
-
 
 
     <xsl:template match="attribute|reference|composition" mode="nullable">
@@ -379,10 +335,11 @@
 @jakarta.persistence.ManyToMany( cascade = {  jakarta.persistence.CascadeType.REFRESH } )
               </xsl:when>
               <xsl:otherwise>
-<!-- require manual management of references - do not remove referenced entity : do not cascade delete -->
-@jakarta.persistence.ManyToOne( cascade = {  jakarta.persistence.CascadeType.REFRESH } )
-@jakarta.persistence.JoinColumn( nullable = <xsl:apply-templates select="." mode="nullable"/> )
+              <xsl:variable name="colname" select="vf:rdbRefColumnName(vf:asvodmlref(current()))"/>
 
+                  <!-- require manual management of references - do not remove referenced entity : do not cascade delete -->
+@jakarta.persistence.ManyToOne( cascade = {  jakarta.persistence.CascadeType.REFRESH } )
+@jakarta.persistence.JoinColumn( name="<xsl:value-of select="$colname"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
               </xsl:otherwise>
           </xsl:choose>
       </xsl:otherwise>
@@ -392,12 +349,12 @@
 
   <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="JPAAnnotation">
     <xsl:variable name="type" select="$models/key('ellookup', current()/datatype/vodml-ref)"/>
-
+    <xsl:variable name="parent" select="current()/parent::*"/>
     <xsl:choose>
       <xsl:when test="name($type) = 'primitiveType'">
           
       <xsl:variable name="tableName">
-        <xsl:apply-templates select=".." mode="tableName"/><xsl:text>_</xsl:text><xsl:value-of select="name"/>
+        <xsl:value-of select="vf:rdbTableName(vf:asvodmlref(..))"/><xsl:text>_</xsl:text><xsl:value-of select="name"/>
       </xsl:variable>
       <xsl:variable name="columns">
         <xsl:apply-templates select="." mode="columns"/>
@@ -412,12 +369,11 @@
 /* TODO: [NOT_SUPPORTED_COLLECTION = <xsl:value-of select="name($type)"/>] */
       </xsl:when>
       <xsl:otherwise>
-
         <xsl:if test="isOrdered">
 @jakarta.persistence.OrderColumn
         </xsl:if>
 @jakarta.persistence.OneToMany(  cascade = jakarta.persistence.CascadeType.ALL, fetch = <xsl:value-of select="$jpafetch"/>, targetEntity=<xsl:value-of select="concat(vf:JavaType(datatype/vodml-ref),'.class')" />)
-@jakarta.persistence.JoinColumn( name="<xsl:value-of select="concat(upper-case(current()/parent::*/name),'_ID')"/>")
+@jakarta.persistence.JoinColumn( name="<xsl:value-of select="vf:rdbCompositionJoinName($parent)"/>")
 @org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
       </xsl:otherwise>
     </xsl:choose>
@@ -446,7 +402,6 @@
 
   <!-- persistence.xml configuration file -->  
   <xsl:template name="persistence_xml">
-    <xsl:param name="puname"/>
     <xsl:param name="doit"/>
     <xsl:variable name="file" select="'META-INF/persistence.xml'"/>
 
@@ -455,13 +410,18 @@
     <xsl:result-document href="{$file}" format="persistenceInfo">
     <xsl:element name="persistence" namespace="http://java.sun.com/xml/ns/persistence">
       <xsl:attribute name="version" select="'2.0'"/>
+      <xsl:for-each select="$models/vo-dml:model">
       <xsl:element name="persistence-unit" namespace="http://java.sun.com/xml/ns/persistence">
-        <xsl:attribute name="name" select="$puname"/>
+        <xsl:attribute name="name" select="name"/>
         <xsl:comment>we rely on hibernate extensions</xsl:comment>
         <xsl:element name="provider" namespace="http://java.sun.com/xml/ns/persistence">org.hibernate.jpa.HibernatePersistenceProvider<!--org.eclipse.persistence.jpa.PersistenceProvider--></xsl:element>
-        <xsl:apply-templates select="$models/vo-dml:model/*" mode="jpaConfig"/>
+        <xsl:apply-templates select="*" mode="jpaConfig"/>
+        <xsl:for-each select="import/name">
+            <xsl:apply-templates select="$models/vo-dml:model[name=current()]/*" mode="jpaConfig"/>
+        </xsl:for-each>
         <xsl:element name="exclude-unlisted-classes" namespace="http://java.sun.com/xml/ns/persistence">true</xsl:element>
       </xsl:element>
+      </xsl:for-each>
     </xsl:element>
     </xsl:result-document>
    </xsl:if>
@@ -495,7 +455,46 @@
   </xsl:template>
   <xsl:template match="*" mode="jpaConfig"><!-- do nothing --></xsl:template>
 
+  <!-- template to do smart deletion in the case of contained references
+  TODO could also do something better in the case of bulk deletion.-->
+  <xsl:template match="objectType" mode="jpadeleter">
+      <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
+      <xsl:if test="not(@abstract)">
+    /**
+      * {@inheritDoc}
+      */
+      @Override
+      public void delete(jakarta.persistence.EntityManager em) {
+      <xsl:variable name="crefs" select="distinct-values(vf:containedReferencesInContainmentHierarchy($vodml-ref))"/>
 
+      <xsl:choose>
+          <xsl:when test="count($crefs)> 0">
+              //has contained references <xsl:value-of select="string-join($crefs,',')"/>
+              <xsl:variable name="by" select="distinct-values(for $i in $crefs return vf:referredBy($i))"/>
+              //referred to by <xsl:value-of select="concat(string-join($by,','),$nl)"/>
+              <!-- TODO this only deals with referrers same level of containment.... -->
+              <xsl:for-each select="for $v in (vf:baseTypes($vodml-ref),$models/key('ellookup',$vodml-ref)) return $v/(composition)[datatype/vodml-ref= $by]"> <!--assume JPA will deal with attributes OK... -->
+                  <xsl:choose>
+                      <xsl:when test="vf:multiple(current())">
+                          <!-- IMPL perhaps we could do bulk delete to speed things up -->
+                          <xsl:value-of select="vf:javaMemberName(current()/name)"/>.stream().forEach(i -> em.remove(i));
+                      </xsl:when>
+                      <xsl:otherwise>
+                          em.remove(<xsl:value-of select="vf:javaMemberName(current()/name)"/>);
+                      </xsl:otherwise>
+                  </xsl:choose>
+
+              </xsl:for-each>
+              em.remove(this); // finish up with itself.
+          </xsl:when>
+          <xsl:otherwise>
+              em.remove(this); // nothing special to do
+          </xsl:otherwise>
+      </xsl:choose>
+
+      }
+      </xsl:if>
+  </xsl:template>
 
 
 </xsl:stylesheet>

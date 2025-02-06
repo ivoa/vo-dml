@@ -10,6 +10,7 @@
   <lastModified>2018-03-01T08:13:05</lastModified>
   <import>
     <name>ivoa</name>
+    <version>1.0</version>
     <url>IVOA-v1.0.vo-dml.xml</url>
     <documentationURL>IVOA-v1.0.html</documentationURL>
   </import>

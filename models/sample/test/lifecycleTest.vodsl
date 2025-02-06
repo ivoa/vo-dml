@@ -16,7 +16,12 @@
  
  otype Contained "" {
  	test2: ivoa:string "";
- 	refbad2 references ReferredLifeCycle "";/* this is bad because one of the places that Contained could be contained - i.e Atest3 is not in the ReferredLifeCycle containment hierarchy */
+/* below is *really* bad (i.e. breaks the generated code json serialization intention as the
+   it them moves where the referred to things are apparently contained - as the JSON referencing mechanism
+   currently in place will output the real object first and then the reference - so it need to come across the "contained"
+   object first - TODO try to express this restriction in schematron.
+*/
+// 	refbad2 references ReferredLifeCycle "";/* this is bad because one of the places that Contained could be contained - i.e Atest3 is not in the ReferredLifeCycle containment hierarchy */
  }
  
 otype ATest { //this does things as per current rules
@@ -43,7 +48,7 @@ otype ATest3 { /*  fails the "unique composition rule" in schematron if the one 
  *  but this should be unlikely if a contained type instance is created at the same time as its container instance.
 	*/
 	contained : Contained @+ as composition ""; //vodsl tooling does not flag this- but the vodml schematron does.
-	refBad references ReferredLifeCycle ""; //this should be lifecycle warning
+	refBad @? references ReferredLifeCycle ""; //this should be lifecycle warning
 }
 
 otype ATest4 {

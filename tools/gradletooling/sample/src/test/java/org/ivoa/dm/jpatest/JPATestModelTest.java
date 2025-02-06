@@ -20,7 +20,6 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
-import org.ivoa.dm.sample.SampleModel;
 import org.ivoa.vodml.testing.AbstractTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -32,7 +31,7 @@ import org.junit.jupiter.api.Test;
  * @author Paul Harrison (paul.harrison@manchester.ac.uk)
  * @since 21 Oct 2022
  */
-class JPATestModelTest extends AbstractTest {
+class JpatestModelTest extends AbstractTest {
 
   private Parent atest;
 
@@ -88,9 +87,11 @@ class JPATestModelTest extends AbstractTest {
   @Test
   void jpaInitialCreateTest() {
     jakarta.persistence.EntityManager em =
-        setupH2Db(SampleModel.pu_name()); // the persistence unit is all under the one file....
+        setupH2Db(JpatestModel.pu_name()); // the persistence unit is all under the one file....
     em.getTransaction().begin();
-    atest.persistRefs(em); // IMPL need to save references explicitly as they are new.
+    JpatestModel model = new JpatestModel();
+    model.addContent(atest);
+    model.management().persistRefs(em); // IMPL need to save references explicitly as they are new.
     em.persist(atest);
     em.getTransaction().commit();
     Long id = atest.getId();
@@ -98,7 +99,7 @@ class JPATestModelTest extends AbstractTest {
     // flush any existing entities
     em.clear();
     em.getEntityManagerFactory().getCache().evictAll();
-
+    dumpDbData(em, "jpa_test.sql");
     // now read back
     em.getTransaction().begin();
     List<Parent> par =
@@ -115,7 +116,7 @@ class JPATestModelTest extends AbstractTest {
   @Test
   void jpaUpdateOrderedTest() throws JsonProcessingException {
     jakarta.persistence.EntityManager em =
-        setupH2Db(SampleModel.pu_name()); // the persistence unit is all under the one file....
+        setupH2Db(JpatestModel.pu_name()); // the persistence unit is all under the one file....
     em.getTransaction().begin();
     atest.persistRefs(em); // IMPL need to save references explicitly as they are new.
     em.persist(atest);
@@ -139,7 +140,7 @@ class JPATestModelTest extends AbstractTest {
 
     // create an update object
     String injson = "{\"sval\":\"Seconded\",\"ival\":2000,\"_id\":2}"; // assumes the id is 2
-    LChild arepl = SampleModel.jsonMapper().readValue(injson, LChild.class);
+    LChild arepl = JpatestModel.jsonMapper().readValue(injson, LChild.class);
 
     em.getTransaction().begin();
 
@@ -164,7 +165,7 @@ class JPATestModelTest extends AbstractTest {
   @Test
   void jpaAddToListTest() {
        jakarta.persistence.EntityManager em =
-        setupH2Db(SampleModel.pu_name()); // the persistence unit is all under the one file....
+        setupH2Db(JpatestModel.pu_name()); // the persistence unit is all under the one file....
     em.getTransaction().begin();
     atest.persistRefs(em); // IMPL need to save references explicitly as they are new.
     em.persist(atest);

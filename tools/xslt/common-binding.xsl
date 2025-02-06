@@ -44,6 +44,15 @@
     <xsl:copy-of select="$models/vo-dml:model[name=$modelname]"/>
     </xsl:template>
 
+    <xsl:template name="listVocabs">
+        <xsl:param name="outfile"/>
+        <xsl:result-document href="{$outfile}" method="text">
+            <xsl:for-each select="distinct-values($models/vo-dml:model//semanticconcept/vocabularyURI)">
+                <xsl:value-of select="concat(current(),$nl)"/>
+            </xsl:for-each>
+        </xsl:result-document>
+
+    </xsl:template>
 
     <xsl:function name="vf:JavaType" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/>
@@ -518,6 +527,212 @@
         <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelName]/rdb[@inheritance-strategy='single-table'] )= 1"/>
     </xsl:function>
 
+    <xsl:function name="vf:isRdbAddRef" as="xsd:boolean">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelName]/rdb[@useRefInColumnName=true()] )= 1"/>
+    </xsl:function>
+    <xsl:function name="vf:isRdbNaturalJoin" as="xsd:boolean">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelName]/rdb[@naturalJoin=true()] )= 1"/>
+    </xsl:function>
+    <xsl:function name="vf:rdbODiscriminatorName" as="xsd:string">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
+        <xsl:sequence select="concat($el/name,'_SUBTYPE')"/>
+    </xsl:function>
+
+    <xsl:function name="vf:rdbTableName" as="xsd:string">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
+        <xsl:choose>
+            <xsl:when test="$mapping/bnd:mappedModels/model[name=substring-before($vodml-ref,':')]/rdb/rdbmap[@vodml-id=substring-after($vodml-ref,':')]">
+                <xsl:sequence select="$mapping/bnd:mappedModels/model[name=substring-before($vodml-ref,':')]/rdb/rdbmap[@vodml-id=substring-after($vodml-ref,':')]/tableName"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="$el/name"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+    <xsl:function name="vf:rdbIDColumnName" as="xsd:string">
+        <xsl:param name="vodml-ref" as="xsd:string"/> <!-- the objectType -->
+        <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
+        <xsl:choose>
+            <xsl:when test="count($mapping/bnd:mappedModels/model[name=substring-before($vodml-ref,':')]/rdb[@naturalJoin=true()])> 0">
+                <xsl:sequence select="concat(upper-case($el/name),'_ID')"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="'ID'"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
+    <xsl:function name="vf:rdbJoinTargetColumnName" as="xsd:string">
+        <xsl:param name="vodml-ref" as="xsd:string"/> <!-- the objectType to join to -->
+        <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
+        <xsl:variable name="supers" select="($el,vf:baseTypes($vodml-ref))"/>
+        <xsl:choose>
+            <xsl:when test="$supers/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]">
+                <xsl:sequence select="$supers/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:choose>
+                    <xsl:when test="count($mapping/bnd:mappedModels/model[name=substring-before($vodml-ref,':')]/rdb[@naturalJoin=true()])> 0">
+                        <xsl:sequence select="concat(upper-case($el/name),'_ID')"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="'ID'"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
+
+
+
+    <xsl:function name="vf:rdbCompositionJoinName" as="xsd:string">
+    <xsl:param name="parent" as="element()"/> <!-- the parent of the composition -->
+        <xsl:choose>
+            <xsl:when test="$parent/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
+                <xsl:value-of select="$parent/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="concat(upper-case($parent/name),'_ID')"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
+    <xsl:function name="vf:rdbRefColumnName" as="xsd:string">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
+        <xsl:variable name="type" select="$models/key('ellookup',$el/datatype/vodml-ref)"/>
+        <xsl:variable name="modelName" select="$el/ancestor-or-self::vo-dml:model/name"/>
+        <xsl:choose>
+            <xsl:when test="vf:isRdbAddRef($modelName)">
+                <xsl:choose>
+                    <xsl:when test="vf:isRdbNaturalJoin($modelName)">
+                       <xsl:sequence select="concat(upper-case($type/name),'_ID')"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence  select="concat(upper-case($el/name),'_',upper-case($type/name),'_ID')"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="$el/name"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
+
+    <xsl:function name="vf:rdbTapType" as="xsd:string">
+    <xsl:param name="vodml-ref" as="xsd:string"/>
+
+     <xsl:choose>
+         <xsl:when test="vf:typeRole($vodml-ref) = 'enumeration'">VARCHAR</xsl:when>
+         <xsl:otherwise>
+             <xsl:variable name="jtype" select="vf:JavaType($vodml-ref)"/>
+             <!-- IMPL mapping from JavaType for convenience as that will include other primitives not thought of yet - would probably need another mapping in the binding otherwise-->
+             <xsl:choose>
+                 <xsl:when test="$jtype='String'">VARCHAR</xsl:when>
+                 <xsl:when test="$jtype=('Double', 'double')">DOUBLE</xsl:when>
+                 <xsl:when test="$jtype=('Integer','int')">INTEGER</xsl:when>
+                 <xsl:when test="$jtype=('Boolean','boolean')">INTEGER</xsl:when>
+                 <xsl:when test="$jtype=('java.math.BigDecimal')">INTEGER</xsl:when>
+                 <xsl:when test="$jtype=('java.util.Date')">TIMESTAMP</xsl:when>
+                 <!--TODO this is incomplete -->
+                 <xsl:otherwise>UNKNOWN</xsl:otherwise>
+             </xsl:choose>
+         </xsl:otherwise>
+     </xsl:choose>
+
+    </xsl:function>
+
+    <xsl:function name="vf:rdbKeyType" as="xsd:string">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="supers" select="($models/key('ellookup',$vodml-ref),vf:baseTypes($vodml-ref))"/>
+        <xsl:choose>
+            <xsl:when test="$supers/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]">
+                <xsl:value-of select="vf:rdbTapType($supers/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/datatype/vodml-ref)"/>
+            </xsl:when>
+            <xsl:otherwise>BIGINT</xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
+    <!-- beginning of attribute override code for datatypes -->
+    <!-- IMPL this code is still template based rather than function based - it does return a new structure representing the datatypes subtrees though, so templates probably best -->
+    <xsl:template match="dataType" mode="attrovercols2" >
+        <dt v="{vf:asvodmlref(current())}" n="{name}">
+            <xsl:apply-templates select="(attribute|reference, vf:baseTypes(vf:asvodmlref(current()))/(attribute|reference))" mode="attrovercols2"/> <!-- this takes care of dataType inheritance should work https://hibernate.atlassian.net/browse/HHH-12790 -->
+        <!-- FIXME what about subtypes? -->
+        </dt>
+    </xsl:template>
+    <xsl:template match="attribute" mode="attrovercols2" >
+        <att v="{vf:asvodmlref(current())}" c="{name}">
+            <xsl:if test="not(current()/parent::objectType)">
+                <xsl:attribute name="f" select="name"/>
+            </xsl:if>
+            <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
+            <xsl:attribute name="type" select="datatype/vodml-ref"/>
+            <xsl:apply-templates select="$type" mode="attrovercols2"/>
+        </att>
+    </xsl:template>
+    <xsl:template match="reference" mode="attrovercols2" >
+        <ref v="{vf:asvodmlref(current())}" f="{name}" c="{name}">
+            <xsl:attribute name="type" select="datatype/vodml-ref"/>
+        </ref>
+    </xsl:template>
+
+    <xsl:template match="primitiveType" mode="attrovercols2" >
+        <xsl:variable name="type" select="current()/datatype/vodml-ref"/>
+                <xsl:choose>
+                    <xsl:when test="vf:hasMapping(vf:asvodmlref(current()),'java')">
+                        <xsl:variable name="pmap" select="vf:findmapping(vf:asvodmlref(current()),'java')"/>
+                        <xsl:choose>
+                            <xsl:when test="$pmap/@jpa-atomic">
+                                <xsl:attribute name="atomic" select="true()"/>
+                            </xsl:when>
+                            <xsl:when test="$pmap/@primitive-value-field">
+                                <att type="{$type}">
+                                <xsl:attribute name="f" select="$pmap/@primitive-value-field"/>
+                                </att>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <att f="value" type="{$type}"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when test="extends">
+                                <att f="value" type="{current()/extends/vodml-ref}" extends="{true()}">
+                                    <xsl:attribute name="f" select="'value'"/>
+                                    <xsl:apply-templates select="$models/key('ellookup',current()/extends/vodml-ref)" mode="attrovercols2"/>
+                                </att>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <att f="value" type="{$type}"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+    </xsl:template>
+    <xsl:template match="enumeration" mode="attrovercols2" >
+        <xsl:attribute name="enumeration" select="true()"/>
+        <xsl:attribute name="atomic" select="true()"/>
+        <xsl:attribute name="f" select="'value'"/>
+    </xsl:template>
+
+
+
+    <xsl:template match="constraint[ends-with(@xsi:type,':SubsettedRole')]"  mode="attrovercols2">
+        <att c="{tokenize(role/vodml-ref,'\.')[last()]}">
+           <xsl:apply-templates select="$models/key('ellookup',current()/datatype/vodml-ref)" mode="attrovercols2"/>
+        </att>
+    </xsl:template>
+
+    <!-- end of attribute override code for datatypes -->
 
     <xsl:function name="vf:schema-location4model" as="xsd:string">
         <xsl:param name="s" as="xsd:string"/>
@@ -541,5 +756,8 @@
         <xsl:variable name="model" select="$this/ancestor-or-self::vo-dml:model/name"/>
         <xsl:sequence select="concat($mapping/bnd:mappedModels/model[name=$model]/java-package,'.',vf:upperFirst($model),'Model')"/>
     </xsl:function>
+
+
+
 
 </xsl:stylesheet>

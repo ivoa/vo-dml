@@ -3,6 +3,8 @@ package org.ivoa.dm.serializationsample;
 import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Test;
 
+import jakarta.persistence.EntityManager;
+
 /*
  * Created on 16/05/2023 by Paul Harrison (paul.harrison@manchester.ac.uk).
  */
@@ -29,6 +31,13 @@ public class SerializationExampleVocabTest {
                 // TODO Auto-generated method stub
                 throw new UnsupportedOperationException(
                         "Type1728055728713.copyMe() not implemented");
+                
+            }
+
+            @Override
+            public void delete(EntityManager em) {
+                // TODO Auto-generated method stub
+                throw new  UnsupportedOperationException("JPAManipulationsForObjectType<Long>.delete() not implemented");
                 
             }
         }, "eval");

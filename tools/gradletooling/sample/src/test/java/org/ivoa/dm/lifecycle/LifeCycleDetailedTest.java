@@ -47,7 +47,7 @@ public class LifeCycleDetailedTest extends AbstractTest {
     List<ReferredLifeCycle> refcont =
         Arrays.asList(new ReferredLifeCycle("rc1"), new ReferredLifeCycle("rc2"));
     List<Contained> contained =
-        Arrays.asList(new Contained("firstcontained", refcont.get(0)), new Contained("secondContained", refcont.get(1)));
+        Arrays.asList(new Contained("firstcontained"), new Contained("secondContained"));
     
     atest =
         ATest.createATest(
@@ -64,6 +64,8 @@ public class LifeCycleDetailedTest extends AbstractTest {
     model = new LifecycleTestModel();
 //    model.addContent(atest);
     model.addContent(atest2);
+    model.addContent(atest3);
+   
   }
 
   /**
@@ -75,7 +77,7 @@ public class LifeCycleDetailedTest extends AbstractTest {
   @Test
   void MultiContainedJPATest() {
     jakarta.persistence.EntityManager em =
-        setupH2Db(SampleModel.pu_name()); // IMPL build means that everything is in one
+        setupH2Db(LifecycleTestModel.pu_name()); // IMPL build means that everything is in one
     // persistence unit.
     em.getTransaction().begin();
     atest2.persistRefs(em);
@@ -128,7 +130,29 @@ public class LifeCycleDetailedTest extends AbstractTest {
     // references
     assertEquals("rc1", atest2prime.refcont.test3); // should be pointing to above
 
-    // assertEquals("rc1" ,atest3.refBad.test3);//TODO not sure which way we want these to work.
+   //  assertEquals("rc1" ,atest3.refBad.test3);//TODO not sure which way we want these to work - it is actually a failure of design
 
+  }
+  
+  @Test
+  void deleteTest() {
+       jakarta.persistence.EntityManager em =
+        setupH2Db(LifecycleTestModel.pu_name()); // IMPL build means that everything is in one
+    // persistence unit.
+    em.getTransaction().begin();
+    model.management().persistRefs(em);
+    em.persist(atest2);
+    em.getTransaction().commit();
+    Long id = atest2.getId();
+
+    // flush any existing entities
+    em.clear();
+    em.getEntityManagerFactory().getCache().evictAll();
+    ATest2 atest2in = em.createNamedQuery("ATest2.findById", ATest2.class).setParameter("id", id).getSingleResult();
+    assertNotNull(atest2in);
+    em.getTransaction().begin();
+    atest2in.delete(em); //IMPL
+    em.getTransaction().commit();
+    
   }
 }

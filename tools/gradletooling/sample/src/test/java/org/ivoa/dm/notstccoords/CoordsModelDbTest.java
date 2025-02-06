@@ -28,6 +28,7 @@ class CoordsModelDbTest extends AutoDBRoundTripTest<CoordsModel,Long,AnObject> {
   /** logger for this class */
   private static final org.slf4j.Logger logger =
       org.slf4j.LoggerFactory.getLogger(CoordsModelDbTest.class);
+
 private AnObject a;
 
   @Override
@@ -35,6 +36,7 @@ private AnObject a;
     // see
     // https://github.com/mcdittmar/ivoa-dm-examples/blob/master/assets/examples/coords/current/instances/astrocoordsys.jovial for jovial version of this test.
     Unit deg = new Unit("deg");
+    Unit kms = new Unit("kms");
     SpaceSys ICRS_SYS =
         new SpaceSys()
             .withFrame(
@@ -62,7 +64,10 @@ private AnObject a;
                                         p.lat = new RealQuantity(-16.716116, deg);
                                         p.dist = new RealQuantity(8.6, new Unit("ly"));
                                         p.coordSys = ICRS_SYS;
-                                      }));
+                                      }))
+                              .withVelocity(new CartesianPoint(new RealQuantity(5.0,kms), 
+                                      new RealQuantity(5.0,kms), new RealQuantity(5.0,kms), ICRS_SYS));//IMPL cartesianpoint for a velocity!
+                                
                     }));
     GenericSys SPECSYS =
         new GenericSys()
@@ -73,16 +78,14 @@ private AnObject a;
                       f.planetaryEphem = "DE432";
                     }));
 
-
+    SpaceSys GENSYS = null;
 
     // note that this cannot be added directly as it is a dtype...
     LonLatPoint llp = new LonLatPoint(new RealQuantity(45.0, deg), new RealQuantity(15.0, deg), new RealQuantity(1.5, new Unit("Mpc")), ICRS_SYS);
-    a = new AnObject(llp);
+    MJD mjd = new MJD(60310.0, TIMESYS_TT);
+    a = new AnObject(llp,mjd, SPECSYS);
     CoordsModel modelInstance = new CoordsModel();
 
-    modelInstance.addReference(TIMESYS_TT);
-    modelInstance.addReference(SPECSYS);
-    modelInstance.addReference(ICRS_SYS);
     modelInstance.addContent(a);
     
     
@@ -91,14 +94,39 @@ private AnObject a;
     return modelInstance;
   }
 
-  @Override
+  /**
+ * {@inheritDoc}
+ * overrides @see org.ivoa.vodml.validation.AbstractBaseValidation#setDbDumpFile()
+ */
+@Override
+protected String setDbDumpFile() {
+    return "notcoords_dump.sql";
+    
+}
+
+@Override
   public void testModel(CoordsModel coordsModel) {
      List<AnObject> ts = coordsModel.getContent(AnObject.class);
      assertNotNull(ts);
      assertEquals(1, ts.size());
-     AnObject ts1 = ts.get(0);
-     SpaceSys ss = ts1.getPosition().getCoordSys();
+     AnObject ano = ts.get(0);
+     SpaceSys ss = ano.getPosition().getCoordSys();
      assertNotNull(ss);
+     MJD mjd = ano.getTime();
+     assertNotNull(mjd);
+     TimeSys tcsys = mjd.getCoordSys();
+     assertNotNull(tcsys);
+     TimeFrame tframe = tcsys.getFrame();
+     CustomRefLocation rd = (CustomRefLocation)tframe.getRefDirection();
+     LonLatPoint pos = (LonLatPoint)rd.getPosition();
+     assertEquals(-16.716116, pos.getLat().getValue());
+     GenericSys sys = ano.getSys(); 
+     GenericFrame gframe = sys.getFrame();
+     StdRefLocation gref = (StdRefLocation) gframe.getRefPosition();
+     assertEquals("TOPOCENTER",gref.getPosition());
+     
+     
+     
     
   }
 

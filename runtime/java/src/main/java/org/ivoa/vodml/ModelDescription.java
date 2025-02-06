@@ -39,6 +39,12 @@ public interface ModelDescription  {
     String xmlNamespace();
 
     /**
+     * The json schema.
+     * @return the jsonSchema at the head of the model
+     */
+    String jsonSchema();
+
+    /**
      * Get the classes that make up content.
      * @return the list of classes.
      */

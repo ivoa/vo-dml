@@ -137,8 +137,16 @@
 
   <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="JAXBAnnotation">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
-  @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
-      <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref)">
+    <xsl:choose>
+        <xsl:when test="$mapping/bnd:mappedModels/model[name=current()/ancestor-or-self::vo-dml:model/name]/xml/@compositionStyle='unwrapped'">
+@jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+        </xsl:when>
+        <xsl:otherwise>
+@jakarta.xml.bind.annotation.XmlElementWrapper( name = "<xsl:value-of select="name"/>")
+@jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="$models/key('ellookup',current()/datatype/vodml-ref)/name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+        </xsl:otherwise>
+    </xsl:choose>
+       <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref)">
        <xsl:value-of select="$jsontypinfo"/>
       </xsl:if>
   </xsl:template>
@@ -165,7 +173,7 @@
         <xsl:value-of select="vf:upperFirst(name)"/>Model&cr;
       </xsl:if>
       <xsl:for-each select="objectType[not(vf:hasMapping(vf:asvodmlref(.),'java'))]|dataType[not(vf:hasMapping(vf:asvodmlref(.),'java'))]"> <!-- dont put mapped types in - TODO need to find a way to put the mapped types into context-->
-        <xsl:value-of select="name"/>&cr;
+        <xsl:value-of select="vf:upperFirst(name)"/>&cr;<!-- IMPL this is what Java name will be -->
       </xsl:for-each>
     </xsl:result-document> 
   </xsl:template>
@@ -315,7 +323,7 @@
         private static void loadVocabs() {
         vocabs = new HashMap&lt;&gt;();
         <xsl:for-each select="distinct-values($models/vo-dml:model[name=$modelsInScope]//semanticconcept/vocabularyURI)">
-            vocabs.put(<xsl:value-of select="concat($dq,current(),$dq)"/>,Vocabulary.load(<xsl:value-of select="concat($dq,current(),$dq)"/>));
+            vocabs.put(<xsl:value-of select="concat($dq,current(),$dq)"/>,Vocabulary.loadLocal(<xsl:value-of select="concat($dq,current(),$dq)"/>));
         </xsl:for-each>
 
         }
@@ -444,7 +452,7 @@
         * @return the name.
         */
        public static String pu_name(){
-        return "<xsl:value-of select='$pu_name'/>";
+        return "<xsl:value-of select='name'/>";
         }
 
         /**
@@ -555,6 +563,11 @@
 
         }
 
+        @Override
+        public String jsonSchema() {
+        return "<xsl:value-of select="vf:jsonBaseURI(current()/name)"/>";
+        }
+
         /**
         * Return a list of content classes for this model.
         * @return the list.
@@ -571,9 +584,14 @@
         }
 
         };
-
-
-
+        <!-- TODO add this to the model API -->
+        /** the TAP schema for the model. The schema is represented via the <a href="https://github.com/ivoa/TAPSchemaDM">TAPSchemaDM</a> datamodel.
+        @return an InputStream to the XML representation of the model.
+        */
+        public static java.io.InputStream TAPSchema()
+        {
+        return <xsl:value-of select="$ModelClass"/>.class.getResourceAsStream("<xsl:value-of select="concat('/',substring-before(vf:fileNameFromModelName(name),'.xml'),'.tap.xml')"/>");
+        }
 
         /** create a context in preparation for cloning. */
         @SuppressWarnings("rawtypes")
