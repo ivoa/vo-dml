@@ -11,6 +11,8 @@ in place of the gradle command, and it will handle the downloading and running o
 The functionality of the tooling is then encapsulated with a gradle plugin which
 is configured [in the quickstart instructions](QuickStart.md)
 
+## External dependencies
+
 Note the documentation tasks of the tools that produce the overall model diagram also require that [graphviz](https://graphviz.org)  be installed. 
 
-If full documentation site generation is required then [mkdocs material theme](https://squidfunk.github.io/mkdocs-material/getting-started/) is needed as an external installation dependency along with [yq](https://github.com/mikefarah/yq/#install) that can be used to automate the mkdocs navigation menu creation.
+If full documentation site generation is required then [mkdocs material theme](https://squidfunk.github.io/mkdocs-material/getting-started/) and [plantuml](https://plantuml.com/running) is needed as an external installation dependency along with [yq](https://github.com/mikefarah/yq/#install) that can be used to automate the mkdocs navigation menu creation.
