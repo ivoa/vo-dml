@@ -1,5 +1,5 @@
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.5.13"
+    id("net.ivoa.vo-dml.vodmltools") version "0.5.15"
 //    id ("com.diffplug.spotless") version "5.17.1"
     `maven-publish`
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
@@ -9,14 +9,20 @@ plugins {
 
 
 group = "org.javastro.ivoa.vo-dml"
-version = "1.0-SNAPSHOT"
+version = "1.1-SNAPSHOT"
 
 vodml {
     vodmlDir.set(file("vo-dml"))
+    vodslDir.set(file("model"))
     bindingFiles.setFrom(file("vo-dml/ivoa_base.vodml-binding.xml"))
     outputPythonDir.set(layout.projectDirectory.dir("../../tools/gradletooling/sample/pythontest/generated"))
 
 }
+/*
+tasks.named("vodmlJavaGenerate") {
+    dependsOn("vodslToVodml")
+}
+*/
 
 tasks.test {
     useJUnitPlatform()
@@ -38,6 +44,15 @@ dependencies {
 tasks.named<Jar>("jar") {
     exclude("**/persistence.xml")
 }
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+    withJavadocJar()
+//    withSourcesJar()
+}
+
+
 //publishing - IMPL would be nice to factor this out in some way....
 nexusPublishing {
     repositories {
