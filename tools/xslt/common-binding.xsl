@@ -540,12 +540,16 @@
         <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
         <xsl:sequence select="concat($el/name,'_SUBTYPE')"/>
     </xsl:function>
+    <xsl:function name="vf:noTableInComposition" as="xsd:boolean">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=substring-before($vodml-ref,':')]/rdb/rdbmap[@vodml-id=substring-after($vodml-ref,':')and @noTableWhenInComposition=true()] )= 1"/>
+    </xsl:function>
 
     <xsl:function name="vf:rdbTableName" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
         <xsl:choose>
-            <xsl:when test="$mapping/bnd:mappedModels/model[name=substring-before($vodml-ref,':')]/rdb/rdbmap[@vodml-id=substring-after($vodml-ref,':')]">
+            <xsl:when test="$mapping/bnd:mappedModels/model[name=substring-before($vodml-ref,':')]/rdb/rdbmap[@vodml-id=substring-after($vodml-ref,':')]/tableName">
                 <xsl:sequence select="$mapping/bnd:mappedModels/model[name=substring-before($vodml-ref,':')]/rdb/rdbmap[@vodml-id=substring-after($vodml-ref,':')]/tableName"/>
             </xsl:when>
             <xsl:otherwise>

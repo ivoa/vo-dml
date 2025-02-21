@@ -26,6 +26,13 @@
 
   <xsl:output name="persistenceInfo" method="xml" encoding="UTF-8" indent="yes"  />
 
+  <xsl:template match="objectType[vf:noTableInComposition(vf:asvodmlref(.))]" mode="JPAAnnotation">
+     <xsl:if test="$models//composition[datatype/vodml-ref = vf:asvodmlref(current())]/multiplicity/maxOccurs != 1">
+        <xsl:message terminate="yes">ObjectType <xsl:value-of select="vf:asvodmlref(current())"/> exists in a composition with maxOccurs &gt; 1 therefore must have separate table - check binding.</xsl:message>
+     </xsl:if>
+      <xsl:text>@jakarta.persistence.Embeddable</xsl:text>&cr;
+  </xsl:template>
+
   <xsl:template match="objectType" mode="JPAAnnotation">
     <xsl:variable name="className" select="vf:upperFirst(name)" /> <!-- IMPL has been javaified -->
     <xsl:variable name="vodml-ref" select="concat(ancestor::vo-dml:model/name,':',vodml-id)" />
@@ -380,7 +387,15 @@
   </xsl:template>
 
     <xsl:template match="composition[multiplicity/maxOccurs =1]" mode="JPAAnnotation">
-     @jakarta.persistence.OneToOne(cascade = jakarta.persistence.CascadeType.ALL)
+        <xsl:choose>
+            <xsl:when test="vf:noTableInComposition(datatype/vodml-ref)"><!-- FIXME - need to to the attribute mapping too -->
+                @jakarta.persistence.Embedded
+            </xsl:when>
+            <xsl:otherwise>
+                @jakarta.persistence.OneToOne(cascade = jakarta.persistence.CascadeType.ALL)
+            </xsl:otherwise>
+        </xsl:choose>   
+
   </xsl:template>
 
 

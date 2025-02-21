@@ -1,0 +1,20 @@
+model c1vdt (1.0) "This is a small model to test some VO-DML best practices"
+include "https://raw.githubusercontent.com/ivoa/vodsl-models/master/IVOA-v1.0.vodsl"
+
+dtype dt {
+	a : ivoa:string "";
+	b : ivoa:integer "";
+}
+
+otype ot {
+	a : ivoa:string "";
+	b : ivoa:integer "";
+	}
+
+otype o1 {
+	c : dt @? "";
+}
+
+otype o2 {
+	c : ot @? as composition "";
+}
