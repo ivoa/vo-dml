@@ -13,7 +13,9 @@ derived from the vo-dml2gvd.xsl file
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 xmlns:y="http://www.yworks.com/xml/graphml"
                 extension-element-prefixes="exsl"
-                exclude-result-prefixes="vodml" >
+                exclude-result-prefixes="vodml"
+                expand-text="true"
+>
   
   <xsl:import href="common.xsl"/>
   
@@ -150,7 +152,7 @@ derived from the vo-dml2gvd.xsl file
     </xsl:variable>
     <xsl:variable name="stereotype">
       <xsl:choose>
-        <xsl:when test="self::enumeration|self::primitiveType"><xsl:value-of select="local-name()"/></xsl:when>
+        <xsl:when test="not(self::objectType)"><xsl:value-of select="local-name()"/></xsl:when>
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
