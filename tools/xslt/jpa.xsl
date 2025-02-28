@@ -240,12 +240,11 @@
         @jakarta.persistence.Embedded
         <xsl:if test="current()/parent::objectType">
         <xsl:variable name="attovers" as="xsd:string*">
-              <!-- IMPL - this code is a bit ugly - is attempting to deal with the case where a dataType has a dataType member (quite frequent as base model has quantities)
-               -->
+
             <xsl:variable name="atv">
                 <xsl:apply-templates select="current()" mode="attrovercols2"/>
             </xsl:variable>
-<!--                <xsl:message>*** <xsl:value-of select="vf:asvodmlref(current())"/> -&#45;&#45; <xsl:copy-of select="$atv" copy-namespaces="no"/></xsl:message>-->
+<!--                <xsl:message>***D <xsl:value-of select="vf:asvodmlref(current())"/> -&#45;&#45; <xsl:copy-of select="$atv" copy-namespaces="no"/></xsl:message>-->
                 <xsl:apply-templates select="$atv" mode="doAttributeOverride">
                     <xsl:with-param name="nillable" select="$nillable"/>
                 </xsl:apply-templates>
@@ -390,7 +389,28 @@
         <xsl:choose>
             <xsl:when test="vf:noTableInComposition(datatype/vodml-ref)"><!-- FIXME - need to to the attribute mapping too -->
                 @jakarta.persistence.Embedded
-            </xsl:when>
+                <xsl:variable name="attovers" as="xsd:string*">
+
+                    <xsl:variable name="atv">
+                        <xsl:apply-templates select="current()" mode="attrovercols2"/>
+                    </xsl:variable>
+                    <xsl:variable name="nillable" >
+                        <xsl:choose>
+                            <xsl:when test="$isRdbSingleInheritance">true</xsl:when><!--IMPL perhaps this is too simplistic -->
+                            <xsl:otherwise>
+                                <xsl:apply-templates select="current()" mode="nullable"/> <!-- but anyway this does not cope with the case where parts of the dataType are not nullable -->
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:variable>
+
+<!--                    <xsl:message>***O <xsl:value-of select="current()/datatype/vodml-ref"/> -&#45;&#45; <xsl:copy-of select="$atv" copy-namespaces="no"/></xsl:message>-->
+                    <xsl:apply-templates select="$atv" mode="doAttributeOverride">
+                        <xsl:with-param name="nillable" select="$nillable"/>
+                    </xsl:apply-templates>
+                </xsl:variable>
+                @jakarta.persistence.AttributeOverrides( {
+                <xsl:value-of select="string-join($attovers,concat(',',$cr))"/>
+                })            </xsl:when>
             <xsl:otherwise>
                 @jakarta.persistence.OneToOne(cascade = jakarta.persistence.CascadeType.ALL)
             </xsl:otherwise>

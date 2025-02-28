@@ -672,9 +672,21 @@
         <!-- FIXME what about subtypes? -->
         </dt>
     </xsl:template>
+    <xsl:template match="objectType[vf:noTableInComposition(vf:asvodmlref(.))]" mode="attrovercols2" >
+        <ot v="{vf:asvodmlref(current())}" n="{name}" >
+            <xsl:apply-templates select="(attribute|reference, vf:baseTypes(vf:asvodmlref(current()))/(attribute|reference))" mode="attrovercols2"/> <!-- this takes care of dataType inheritance should work https://hibernate.atlassian.net/browse/HHH-12790 -->
+            <!-- FIXME what about subtypes? -->
+        </ot>
+    </xsl:template>
+    <xsl:template match="composition[vf:noTableInComposition(datatype/vodml-ref)]" mode="attrovercols2" >
+        <att v="{vf:asvodmlref(current())}" c="{name}" isComposition="true">
+            <xsl:apply-templates select="$models/key('ellookup',current()/datatype/vodml-ref)" mode="attrovercols2"/> <!-- this takes care of dataType inheritance should work https://hibernate.atlassian.net/browse/HHH-12790 -->
+        </att>
+    </xsl:template>
+
     <xsl:template match="attribute" mode="attrovercols2" >
         <att v="{vf:asvodmlref(current())}" c="{name}">
-            <xsl:if test="not(current()/parent::objectType)">
+            <xsl:if test="not(current()/parent::objectType[not(vf:noTableInComposition(vf:asvodmlref(.)))])">
                 <xsl:attribute name="f" select="name"/>
             </xsl:if>
             <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
