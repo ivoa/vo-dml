@@ -23,7 +23,9 @@ class C1vdtModelTest extends AutoDBRoundTripTest<C1vdtModel,Long,O2> {
     @Override
     public C1vdtModel createModel() {
         model = new C1vdtModel();
-        o2 = new O2(new Ot("otval",1));
+
+        Ref ar =new Ref("a reference");
+        o2 = new O2(new Ot("otval",1, ar));
         model.addContent(o2);
         O1 o1 = new O1(new Dt("dtval", 5));
         model.addContent(o1);

@@ -8,7 +8,7 @@
       <uri/>
       <title></title>
       <version>1.0</version>
-      <lastModified>2025-02-21T15:09:17Z</lastModified>
+      <lastModified>2025-03-01T14:48:10Z</lastModified>
       <import>
         <name>ivoa</name>
         <version>1.0</version>
@@ -72,6 +72,18 @@
                    <maxOccurs>1</maxOccurs>
                  </multiplicity>
                </attribute>
+               <reference>
+                 <vodml-id>ot.ar</vodml-id>
+                 <name>ar</name>
+                 <description></description>	    
+                 <datatype>
+                   <vodml-ref>c1vdt:ref</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </reference>
             </objectType>
             <objectType>
                <vodml-id>o1</vodml-id>
@@ -106,5 +118,22 @@
                    <maxOccurs>1</maxOccurs>
                  </multiplicity>
                </composition>
+            </objectType>
+            <objectType>
+               <vodml-id>ref</vodml-id>
+               <name>ref</name>
+               <description></description>	    
+               <attribute>
+                 <vodml-id>ref.r</vodml-id>
+                 <name>r</name>
+                 <description></description>	    
+                 <datatype>
+                    <vodml-ref>ivoa:string</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </attribute>
             </objectType>
 </vo-dml:model>

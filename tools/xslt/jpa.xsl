@@ -262,7 +262,10 @@
         ',nullable = ',$nillable,' ))')"/>
     </xsl:template>
 
-
+    <xsl:template match="ref" mode="doAssocOverride">
+        <xsl:value-of select="concat('@jakarta.persistence.AssociationOverride(name=',$dq,string-join((current()/@f,current()/ancestor::att/@f),'.'),$dq,
+        ',joinColumns = { @jakarta.persistence.JoinColumn(name=',$dq,string-join((current()/@c,current()/ancestor::att/@c),'_'),$dq,  ',nullable =',true(),')})')"/><!--IMPL have to allow null - too difficult to work out when not allowed - see proposalDM ObservingPlatform -->
+    </xsl:template>
 
     <!-- do the embedded refs -->
     <xsl:template match="objectType[attribute[vf:isDataType(.)]]" mode="doEmbeddedRefs">
@@ -387,13 +390,14 @@
 
     <xsl:template match="composition[multiplicity/maxOccurs =1]" mode="JPAAnnotation">
         <xsl:choose>
-            <xsl:when test="vf:noTableInComposition(datatype/vodml-ref)"><!-- FIXME - need to to the attribute mapping too -->
+            <xsl:when test="vf:noTableInComposition(datatype/vodml-ref)">
                 @jakarta.persistence.Embedded
+                <xsl:variable name="atv">
+                    <xsl:apply-templates select="current()" mode="attrovercols2"/>
+                </xsl:variable>
                 <xsl:variable name="attovers" as="xsd:string*">
 
-                    <xsl:variable name="atv">
-                        <xsl:apply-templates select="current()" mode="attrovercols2"/>
-                    </xsl:variable>
+
                     <xsl:variable name="nillable" >
                         <xsl:choose>
                             <xsl:when test="$isRdbSingleInheritance">true</xsl:when><!--IMPL perhaps this is too simplistic -->
@@ -403,14 +407,22 @@
                         </xsl:choose>
                     </xsl:variable>
 
-<!--                    <xsl:message>***O <xsl:value-of select="current()/datatype/vodml-ref"/> -&#45;&#45; <xsl:copy-of select="$atv" copy-namespaces="no"/></xsl:message>-->
+                    <xsl:message>***O <xsl:value-of select="current()/datatype/vodml-ref"/> --- <xsl:copy-of select="$atv" copy-namespaces="no"/></xsl:message>
                     <xsl:apply-templates select="$atv" mode="doAttributeOverride">
                         <xsl:with-param name="nillable" select="$nillable"/>
                     </xsl:apply-templates>
                 </xsl:variable>
                 @jakarta.persistence.AttributeOverrides( {
                 <xsl:value-of select="string-join($attovers,concat(',',$cr))"/>
-                })            </xsl:when>
+                })
+                <xsl:variable name="assocovers" as="xsd:string*">
+                     <xsl:apply-templates select="$atv" mode="doAssocOverride"/>
+                </xsl:variable>
+                @jakarta.persistence.AssociationOverrides( {
+                <xsl:value-of select="string-join($assocovers,concat(',',$cr))"/>
+                })
+            </xsl:when>
+
             <xsl:otherwise>
                 @jakarta.persistence.OneToOne(cascade = jakarta.persistence.CascadeType.ALL)
             </xsl:otherwise>

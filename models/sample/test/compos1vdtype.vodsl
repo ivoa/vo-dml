@@ -9,6 +9,7 @@ dtype dt {
 otype ot {
 	a : ivoa:string "";
 	b : ivoa:integer "";
+	ar references ref "";
 	}
 
 otype o1 {
@@ -17,4 +18,8 @@ otype o1 {
 
 otype o2 {
 	c : ot @? as composition "";
+}
+
+otype ref {
+   r: ivoa:string "";
 }
