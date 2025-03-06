@@ -73,7 +73,7 @@ FIXME This is not yet complete
   </xsl:template>
 
 
-  <xsl:template match="objectType" >
+  <xsl:template match="objectType[not(vf:noTableInComposition(vf:asvodmlref(.)))]" >
    <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
    <xsl:if test="not(extends and vf:isRdbSingleTable($modelname))">
    <table>
@@ -157,12 +157,15 @@ FIXME This is not yet complete
 
            </xsl:if>
            <xsl:apply-templates select="attribute[vf:isDataType(.)]" mode="dtyperef"/>
+           <xsl:apply-templates select="composition[vf:noTableInComposition(datatype/vodml-ref)]" mode="dtyperef"/>
 
        </fkeys>
    </table>
    </xsl:if>
   </xsl:template>
-
+    <xsl:template match="objectType[vf:noTableInComposition(vf:asvodmlref(.))]" >
+        <!-- IMPL do not create separate table -->
+    </xsl:template>
     <xsl:template match="attribute[not(vf:isDataType(.))]" mode="defn" >
         <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
         <column>
@@ -189,6 +192,12 @@ FIXME This is not yet complete
 
     </xsl:template>
     <xsl:template match="attribute[vf:isDataType(.)]" mode="dtyperef" >
+        <xsl:variable name="atv">
+            <xsl:apply-templates select="current()" mode="attrovercols2"/>
+        </xsl:variable>
+        <xsl:apply-templates select="$atv" mode="dtypeexpandrefs"/>
+    </xsl:template>
+    <xsl:template match="composition[vf:noTableInComposition(datatype/vodml-ref)]" mode="dtyperef" >
         <xsl:variable name="atv">
             <xsl:apply-templates select="current()" mode="attrovercols2"/>
         </xsl:variable>
@@ -262,6 +271,14 @@ FIXME This is not yet complete
         <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
         </column>
     </xsl:template>
+    <xsl:template match="composition[vf:noTableInComposition(datatype/vodml-ref)]" mode="defn">
+        <xsl:variable name="atv">
+            <xsl:apply-templates select="current()" mode="attrovercols2"/>
+        </xsl:variable>
+<!--        <xsl:message>composition <xsl:value-of select="vf:asvodmlref(current())"/> <xsl:copy-of select="$atv" copy-namespaces="no"/></xsl:message>-->
+        <xsl:apply-templates select="$atv" mode="dtypeexpandcols"/>
+    </xsl:template>
+
     <xsl:template match="composition" mode="defn">
     <!-- do nothing if called - it all happens for the type being composed -->
     </xsl:template>

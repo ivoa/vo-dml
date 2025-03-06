@@ -664,16 +664,19 @@
     &bl;{
       <xsl:if test="local-name() eq 'objectType' and not (extends) and not(attribute/constraint[ends-with(@xsi:type,':NaturalKey')])" >
 
+
+          <xsl:if test="not(vf:noTableInComposition($vodml-ref))">
           /**
           * inserted database key
           */
-          <xsl:if test="not(vf:referredTo($vodml-ref))"><!--TODO do we really want to ignore - is this just making everything more complicated - try to do this in conditional way for json depending on use.  see https://github.com/ivoa/vo-dml/issues/30  -->
-          @jakarta.xml.bind.annotation.XmlTransient
-         // @com.fasterxml.jackson.annotation.JsonIgnore
-          </xsl:if>
           @jakarta.persistence.Id
           @jakarta.persistence.GeneratedValue
           @jakarta.persistence.Column(name = "<xsl:value-of select="vf:rdbIDColumnName($vodml-ref)"/>")
+          </xsl:if>
+          <xsl:if test="not(vf:referredTo($vodml-ref))"><!--TODO do we really want to ignore - is this just making everything more complicated - try to do this in conditional way for json depending on use.  see https://github.com/ivoa/vo-dml/issues/30  -->
+              @jakarta.xml.bind.annotation.XmlTransient
+              // @com.fasterxml.jackson.annotation.JsonIgnore
+          </xsl:if>
           protected Long _id = (long) 0;
 
           /**

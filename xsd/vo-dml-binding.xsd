@@ -308,5 +308,9 @@ IMPL - this could be put into the code - especially as the number of JSON built-
         <xsd:element name="tableName" type="xsd:string"></xsd:element>
      </xsd:sequence>
      <xsd:attribute name="vodml-id" type="xsd:string"></xsd:attribute>
+     <xsd:attribute name="noTableWhenInComposition" type="xsd:boolean" default="false">
+        <xsd:annotation>
+           <xsd:documentation>when the type is involved in a composition where maxOccurs = 1 a separate table is not created, but instead it is treated as a DType</xsd:documentation>
+        </xsd:annotation></xsd:attribute>
   </xsd:complexType>
 </xsd:schema>
