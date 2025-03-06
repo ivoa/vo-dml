@@ -1,7 +1,7 @@
 Model Transformation
 ====================
 
-A VO-DML transformation is something that takes the model and expresses it in another way.
+A VO-DML transformation is something that takes the model and expresses it in another way. The parameters that can influence how a particular transformation can occur is specified in a [binding](Binding.md).
 
 # Documentation
 

@@ -93,9 +93,7 @@ This is a minimal sample file for mapping VO-DML models to XSD or Java using the
 </m:mappedModels>
 ```
 
-The [schema](https://github.com/ivoa/vo-dml/tree/master/xsd/vo-dml-binding.xsd) for the binding file shows what elements are allowed. The [binding file for the base IVOA model](https://github.com/ivoa/vo-dml/tree/master/models/ivoa/vo-dml/ivoa_base.vodml-binding.xml)
-shows extensive use of the binding features, where it is possible to ignore the automated code generation entirely and substitute
-hand-written code.
+All of the options possible are described fully in the [binding section](Binding.md).
 
 
 

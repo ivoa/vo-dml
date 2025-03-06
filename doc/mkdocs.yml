@@ -15,6 +15,7 @@ nav:
       - Configuration: QuickStart.md
   - Derived Products:
       - Introduction: Transformers.md
+      - Binding: Binding.md
       - Documentation: Documentation.md
       - Java Generation: JavaCodeGeneration.md
       - Python Generation: PythonCodeGeneration.md
