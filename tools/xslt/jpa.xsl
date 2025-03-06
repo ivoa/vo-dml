@@ -407,7 +407,7 @@
                         </xsl:choose>
                     </xsl:variable>
 
-                    <xsl:message>***O <xsl:value-of select="current()/datatype/vodml-ref"/> --- <xsl:copy-of select="$atv" copy-namespaces="no"/></xsl:message>
+<!--                    <xsl:message>***O <xsl:value-of select="current()/datatype/vodml-ref"/> -&#45;&#45; <xsl:copy-of select="$atv" copy-namespaces="no"/></xsl:message>-->
                     <xsl:apply-templates select="$atv" mode="doAttributeOverride">
                         <xsl:with-param name="nillable" select="$nillable"/>
                     </xsl:apply-templates>
