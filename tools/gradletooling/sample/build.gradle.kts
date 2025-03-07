@@ -6,7 +6,7 @@ import ru.vyarus.gradle.plugin.python.task.PythonTask
  * 
  */
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.5.15"
+    id("net.ivoa.vo-dml.vodmltools") version "0.5.16"
     id("com.diffplug.spotless") version "6.25.0"
     id("ru.vyarus.use-python") version "4.1.0"
 
@@ -30,7 +30,8 @@ vodml {
         vodmlDir.file("like_coords.vo-dml.xml"),
         vodmlDir.file("lifecycleTest.vo-dml.xml"),
         vodmlDir.file("jpatest.vo-dml.xml"),
-        vodmlDir.file("serializationExample.vo-dml.xml")
+        vodmlDir.file("serializationExample.vo-dml.xml"),
+        vodmlDir.file("compos1vdtype.vo-dml.xml")
 
     ))
 
