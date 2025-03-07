@@ -9,11 +9,7 @@
 
 package org.ivoa.vodml.validation;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.*;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,6 +70,17 @@ public class XMLValidator {
         }
     }
 
+    /**
+     * create a validator that will validate VO-DML model definitions themselves.
+     */
+    public XMLValidator() {
+         schemaFiles = new Source[]{new StreamSource(this.getClass().getResourceAsStream("/xsd/vo-dml-v1.0.xsd"))};
+        StringWriter writer = new StringWriter();
+        writer.write("<catalog xmlns=\"urn:oasis:names:tc:entity:xmlns:xml:catalog\">\n");
+        writer.write("</catalog>");
+         schemaCat = writer.toString();
+
+    }
 
 
     static private String makeCatalogue(Map<String, String> schemaMap) {
@@ -143,6 +150,23 @@ public class XMLValidator {
         public void printValidationErrors(PrintStream printStream) {
             errorMap.forEach((kind, errors) -> {
                 errors.stream().forEach(printStream::println);
+            });
+        }
+
+        /**
+         * print the validation errors to a writer.
+         * @param writer the writer to print to.
+         */
+        public void printValidationErrors(Writer writer) {
+            errorMap.forEach((kind, errors) -> {
+                errors.stream().forEach(errorDescription -> {
+                   try {
+                      writer.write(errorDescription.toString());
+                      writer.write(System.lineSeparator());
+                   } catch (IOException e) {
+                      throw new RuntimeException(e);
+                   }
+                });
             });
         }
     }

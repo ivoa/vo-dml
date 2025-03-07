@@ -9,6 +9,9 @@ import org.xmlresolver.ResolverFeature
 import org.xmlresolver.XMLResolverConfiguration
 import javax.inject.Inject
 import javax.xml.transform.stream.StreamSource
+import org.ivoa.vodml.validation.XMLValidator
+import java.io.StringWriter
+import org.gradle.api.GradleException
 
 
 /*
@@ -48,8 +51,17 @@ import javax.xml.transform.stream.StreamSource
 
 
 
+
          vodmlFiles.forEach{
              val shortname = it.nameWithoutExtension
+             val vodmlvalidator = XMLValidator()
+             val vodmlresult = vodmlvalidator.validate(it.absoluteFile)
+             if(!vodmlresult.isOk)
+             {
+                 val sw = StringWriter()
+                 vodmlresult.printValidationErrors(sw)
+                 throw  GradleException("${it} has XML errors\n ${sw.toString()}") // early exit as fatal error.
+             }
              //val outfile = docDir.file(shortname +".validation")
              val result = schematron.validate(StreamSource(it.absoluteFile))
              logger.info("Validating $shortname, result valid=${result.isValid}")
