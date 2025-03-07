@@ -111,7 +111,7 @@ In general if a model is expected to be used a a "base model" then this should p
                  </xsd:restriction>
               </xsd:simpleType>
            </xsd:attribute>
-           <xsd:attribute name="uesRefInColumnName" type="xsd:boolean" default="false">
+           <xsd:attribute name="useRefInColumnName" type="xsd:boolean" default="false">
               <xsd:annotation>
                  <xsd:documentation>
                     if true the column name for a reference will use the referred name in some way (depenedent on naturalJoin)
