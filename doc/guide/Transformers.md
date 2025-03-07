@@ -37,7 +37,13 @@ will generate XML, JSON and TAP schema for the model. The schema will be generat
 
 The database serialization is described in terms of a TAP schema. The specific  TAP Schema serialization is itself [defined in vodml](https://github.com/ivoa/TAPSchemaDM).
 
-These schema files will automatically be included within the jar file for the model, so that instance validation can be automatically be done without reference to external files.
+The schema files are named by adjusting the suffixes in the following fashion - if the original file is called ```model.vo-dml.xml``` 
+
+* ```model.vo-dml.xsd``` for the XML Schema
+* ```model.vo-dml.json``` for the JSON Schema
+* ```model.vo-dml.tap.xml``` for the TAP Schema
+
+These schema files will automatically be included within the jar file for the model, so that instance validation can be automatically done without reference to external files.
 
 # Transformation to VO-DML
 

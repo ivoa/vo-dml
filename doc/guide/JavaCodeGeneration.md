@@ -172,8 +172,12 @@ naturally using the `@MappedSuperclass` annotation - although there is an irrita
 the full flexibility of having optional attributes that are dataTypes is not supported as all columns are 
 made non-nullable - a bug has been submitted https://hibernate.atlassian.net/browse/HHH-14818
 
-There are also eclipselink bugs that mean that the suggested way of doing inherited embeddables does not seem to work.
+### TAP schema
 
+The TAP schema is available as an XML serialization according to the [TAPSchemaDM](https://github.com/ivoa/TAPSchemaDM) using 
+```java
+Model.TAPSchema();
+```
 
 ## Testing models
 
