@@ -84,7 +84,10 @@
     * initial tap schema produced as part of the vodmlSchema task - the schema is actually the XML serialization of the tap schema as defined in VO-DML https://github.com/ivoa/TAPSchemaDM
 * 0.5.15
   * fix regression in DataType to column mapping
-
+* 0.5.16
+  * composition of multiplicity 1 treated as dataType option
+  * make sure that the VO-DML is XML validated
+  * TAP schema generation improved.
  
 
 
