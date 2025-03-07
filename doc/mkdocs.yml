@@ -28,6 +28,7 @@ nav:
       - Generation from other sources : modelling/TransformingToVODML.md
   - Model Design:
       - Introduction : modelling/designIntro.md
+      - Validation: modelling/Validation.md
 
 markdown_extensions:
   - admonition
