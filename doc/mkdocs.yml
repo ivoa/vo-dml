@@ -13,6 +13,7 @@ nav:
   - Getting Started:
       - Installation: Installation.md
       - Configuration: QuickStart.md
+      - Commands: Commands.md
   - Derived Products:
       - Introduction: Transformers.md
       - Binding: Binding.md
