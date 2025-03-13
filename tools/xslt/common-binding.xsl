@@ -509,6 +509,14 @@
         <xsl:sequence select="for $m in vf:allInheritedMembers($vodml-ref) return $models/key('ellookup',$m)/name"/>
     </xsl:function>
 
+    <xsl:function name="vf:XMLunwrapped" as="xsd:boolean">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:sequence select="$mapping/bnd:mappedModels/model[name=$modelName]/xml/@compositionStyle='unwrapped'"/>
+    </xsl:function>
+    <xsl:function name="vf:XMLqualified" as="xsd:boolean">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:sequence select="$mapping/bnd:mappedModels/model[name=$modelName]/xml/@elementFormDefault='qualified'"/>
+    </xsl:function>
     <xsl:function name="vf:xsdNsPrefix" as="xsd:string">
         <xsl:param name="modelName" as="xsd:string"/>
         <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/xml-targetnamespace/@prefix"/>

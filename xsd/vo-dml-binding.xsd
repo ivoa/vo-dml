@@ -46,20 +46,32 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
                    <xsd:documentation>customization of the xml serialization</xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
-           <xsd:attribute name="compositionStyle" default="wrapped">
-              <xsd:annotation>
-                 <xsd:documentation>
-                    whether compositions with multiplicities greater than 1 should have a wrapper element
-                 </xsd:documentation>
-              </xsd:annotation>
-              <xsd:simpleType>
-                 <xsd:restriction base="xsd:string">
-                    <xsd:enumeration value="wrapped"></xsd:enumeration>
-                    <xsd:enumeration value="unwrapped"></xsd:enumeration>
-                 </xsd:restriction>
-              </xsd:simpleType>
-           </xsd:attribute>
-        </xsd:complexType>
+                   <xsd:attribute name="compositionStyle" default="wrapped">
+                      <xsd:annotation>
+                         <xsd:documentation>
+                            whether compositions with multiplicities greater than 1 should have a wrapper element
+                         </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:simpleType>
+                         <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value="wrapped"></xsd:enumeration>
+                            <xsd:enumeration value="unwrapped"></xsd:enumeration>
+                         </xsd:restriction>
+                      </xsd:simpleType>
+                   </xsd:attribute>
+                   <xsd:attribute name="elementFormDefault" default="unqualified">
+                      <xsd:annotation>
+                         <xsd:documentation>whether the individual elements withing a model are namespace qualified.
+This is applied globally</xsd:documentation>
+                      </xsd:annotation>
+                       <xsd:simpleType>
+                         <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value="unqualified"></xsd:enumeration>
+                            <xsd:enumeration value="qualified"></xsd:enumeration>
+                         </xsd:restriction>
+                      </xsd:simpleType>
+                      </xsd:attribute>
+                </xsd:complexType>
      </xsd:element>
      <xsd:element name="json-baseURI" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
      <xsd:element name="json" maxOccurs="1" minOccurs="0">
@@ -328,4 +340,9 @@ IMPL - this could be put into the code - especially as the number of JSON built-
            <xsd:documentation>when the type is involved in a composition where maxOccurs = 1 a separate table is not created, but instead it is treated as a DType</xsd:documentation>
         </xsd:annotation></xsd:attribute>
   </xsd:complexType>
+
+  <xsd:simpleType name="NewSimpleType">
+     <xsd:restriction base="xsd:string"></xsd:restriction>
+  </xsd:simpleType>
+
 </xsd:schema>

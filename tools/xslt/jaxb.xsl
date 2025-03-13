@@ -138,7 +138,7 @@
   <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="JAXBAnnotation">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
     <xsl:choose>
-        <xsl:when test="$mapping/bnd:mappedModels/model[name=current()/ancestor-or-self::vo-dml:model/name]/xml/@compositionStyle='unwrapped'">
+        <xsl:when test="vf:XMLunwrapped(current()/ancestor-or-self::vo-dml:model/name)">
 @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
         </xsl:when>
         <xsl:otherwise>
