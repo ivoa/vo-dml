@@ -60,6 +60,7 @@ class JpatestModelTest extends AbstractTest {
               a.rval = referredTo;
               a.cval = refcont;
               a.lval = ll;
+              a.tval = new DThing(new Point(1.5,3.0), "thing");
             });
   }
 

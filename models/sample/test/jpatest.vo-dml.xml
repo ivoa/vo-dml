@@ -8,7 +8,7 @@
       <uri/>
       <title></title>
       <version>1.0</version>
-      <lastModified>2024-10-07T16:00:35Z</lastModified>
+      <lastModified>2025-03-12T09:06:04Z</lastModified>
       <import>
         <name>ivoa</name>
         <version>1.0</version>
@@ -101,6 +101,64 @@
             <attribute>
               <vodml-id>ADtype.dvals</vodml-id>
               <name>dvals</name>
+              <description></description>	    
+              <datatype>
+                 <vodml-ref>ivoa:string</vodml-ref>
+              </datatype>
+              <multiplicity>
+                <minOccurs>1</minOccurs>
+                <maxOccurs>1</maxOccurs>
+              </multiplicity>
+            </attribute>
+            </dataType>
+            <dataType>
+              <vodml-id>Point</vodml-id>
+              <name>Point</name>
+              <description></description>	    
+            <attribute>
+              <vodml-id>Point.x</vodml-id>
+              <name>x</name>
+              <description></description>	    
+              <datatype>
+                 <vodml-ref>ivoa:real</vodml-ref>
+              </datatype>
+              <multiplicity>
+                <minOccurs>1</minOccurs>
+                <maxOccurs>1</maxOccurs>
+              </multiplicity>
+            </attribute>
+            <attribute>
+              <vodml-id>Point.y</vodml-id>
+              <name>y</name>
+              <description></description>	    
+              <datatype>
+                 <vodml-ref>ivoa:real</vodml-ref>
+              </datatype>
+              <multiplicity>
+                <minOccurs>1</minOccurs>
+                <maxOccurs>1</maxOccurs>
+              </multiplicity>
+            </attribute>
+            </dataType>
+            <dataType>
+              <vodml-id>DThing</vodml-id>
+              <name>DThing</name>
+              <description></description>	    
+            <attribute>
+              <vodml-id>DThing.p</vodml-id>
+              <name>p</name>
+              <description></description>	    
+              <datatype>
+                 <vodml-ref>jpatest:Point</vodml-ref>
+              </datatype>
+              <multiplicity>
+                <minOccurs>1</minOccurs>
+                <maxOccurs>1</maxOccurs>
+              </multiplicity>
+            </attribute>
+            <attribute>
+              <vodml-id>DThing.dt</vodml-id>
+              <name>dt</name>
               <description></description>	    
               <datatype>
                  <vodml-ref>ivoa:string</vodml-ref>
@@ -261,5 +319,37 @@
                  </multiplicity>
                  <isOrdered>true</isOrdered>
                </composition>
+               <attribute>
+                 <vodml-id>Parent.tval</vodml-id>
+                 <name>tval</name>
+                 <description></description>	    
+                 <datatype>
+                    <vodml-ref>jpatest:DThing</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </attribute>
+            </objectType>
+            <objectType>
+               <vodml-id>Sub</vodml-id>
+               <name>Sub</name>
+               <description>an otype subtype</description>	    
+               <extends>
+                  <vodml-ref>jpatest:Parent</vodml-ref>
+               </extends>
+               <attribute>
+                 <vodml-id>Sub.subval</vodml-id>
+                 <name>subval</name>
+                 <description></description>	    
+                 <datatype>
+                    <vodml-ref>ivoa:string</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </attribute>
             </objectType>
 </vo-dml:model>
