@@ -44,6 +44,7 @@ import org.xmlresolver.catalog.entry.EntryCatalog;
  * @since 3 May 2023
  */
 public class XMLValidator {
+    // TODO would really like this to be a xsd 1.1 validator.
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory
             .getLogger(XMLValidator.class);
 
