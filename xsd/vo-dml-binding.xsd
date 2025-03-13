@@ -304,9 +304,24 @@ IMPL - this could be put into the code - especially as the number of JSON built-
 
 
   <xsd:complexType name="rdbmapType">
-     <xsd:sequence>
-        <xsd:element name="tableName" type="xsd:string"></xsd:element>
-     </xsd:sequence>
+    
+     <xsd:choice maxOccurs="1" minOccurs="0">
+        <xsd:element name="tableName" type="xsd:string">
+           <xsd:annotation>
+              <xsd:documentation>The name to be used for the table </xsd:documentation>
+           </xsd:annotation></xsd:element>
+        <xsd:sequence>
+           <xsd:element name="columnName" type="xsd:string">
+              <xsd:annotation>
+                 <xsd:documentation>The name to be used for a column</xsd:documentation>
+              </xsd:annotation></xsd:element>
+           <xsd:element name="columnType" type="xsd:string" maxOccurs="1" minOccurs="0">
+              <xsd:annotation>
+                 <xsd:documentation>The TAPSchema type for the column</xsd:documentation>
+              </xsd:annotation></xsd:element>
+        </xsd:sequence>
+        
+     </xsd:choice>
      <xsd:attribute name="vodml-id" type="xsd:string"></xsd:attribute>
      <xsd:attribute name="noTableWhenInComposition" type="xsd:boolean" default="false">
         <xsd:annotation>
