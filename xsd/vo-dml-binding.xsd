@@ -61,7 +61,19 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
                    </xsd:attribute>
                    <xsd:attribute name="elementFormDefault" default="unqualified">
                       <xsd:annotation>
-                         <xsd:documentation>whether the individual elements withing a model are namespace qualified.
+                         <xsd:documentation>whether the individual elements within a model are namespace qualified.
+This is applied globally</xsd:documentation>
+                      </xsd:annotation>
+                       <xsd:simpleType>
+                         <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value="unqualified"></xsd:enumeration>
+                            <xsd:enumeration value="qualified"></xsd:enumeration>
+                         </xsd:restriction>
+                      </xsd:simpleType>
+                      </xsd:attribute>
+                  <xsd:attribute name="attributeFormDefault" default="unqualified">
+                      <xsd:annotation>
+                         <xsd:documentation>whether the individual attributes within a model are namespace qualified.
 This is applied globally</xsd:documentation>
                       </xsd:annotation>
                        <xsd:simpleType>

@@ -517,6 +517,11 @@
         <xsl:param name="modelName" as="xsd:string"/>
         <xsl:sequence select="$mapping/bnd:mappedModels/model[name=$modelName]/xml/@elementFormDefault='qualified'"/>
     </xsl:function>
+    <xsl:function name="vf:XMLAttributeQualified" as="xsd:boolean">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:sequence select="$mapping/bnd:mappedModels/model[name=$modelName]/xml/@attributeFormDefault='qualified'"/>
+    </xsl:function>
+
     <xsl:function name="vf:xsdNsPrefix" as="xsd:string">
         <xsl:param name="modelName" as="xsd:string"/>
         <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/xml-targetnamespace/@prefix"/>

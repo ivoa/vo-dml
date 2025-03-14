@@ -56,8 +56,8 @@
   </xsl:choose>
 
     <xsl:choose>
-      <xsl:when test="not(vf:isContained(vf:asvodmlref(.))) and not(@abstract = 'true')">
- //   @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>")
+      <xsl:when test="not(vf:isContained(vf:asvodmlref(.))) and not(extends)">
+//@jakarta.xml.bind.annotation.XmlRootElement( name = "<xsl:value-of select="name"/>")
       </xsl:when>
      </xsl:choose>
       <xsl:if test="vf:referredTo(vf:asvodmlref(.)) and not(extends)">
@@ -270,7 +270,7 @@
         /**
         * @param refs the refs to set
         */
-        @XmlElement(required = true)
+        @XmlElement(required = false)
         private void setRefs(References refs) {
         this.refs = refs;
         <xsl:if test="$hasReferences" >

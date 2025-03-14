@@ -60,6 +60,12 @@ note that this schema is substantially different from the era when this code was
         <xsl:otherwise><xsl:value-of select="'unqualified'"/></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
+    <xsl:variable name="attformdefault">
+      <xsl:choose>
+        <xsl:when test="vf:XMLAttributeQualified($modelname)"><xsl:value-of select="'qualified'"/></xsl:when>
+        <xsl:otherwise><xsl:value-of select="'unqualified'"/></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
 
     <xsl:message >Generating XSD for  <xsl:value-of select="$modelname "/> - considering models <xsl:value-of select="string-join($models/vo-dml:model/name,', ')" /></xsl:message>
 
@@ -77,7 +83,9 @@ note that this schema is substantially different from the era when this code was
         <xsl:attribute name="elementFormDefault" >
           <xsl:value-of select="$elformdefault"/>
         </xsl:attribute>
-        <!--  import base schema -->
+        <xsl:attribute name="attributeFormDefault" >
+          <xsl:value-of select="$attformdefault"/>
+        </xsl:attribute> <!--  import base schema -->
         <xsl:apply-templates select="import" mode="xmlns"/>
 
         <xsl:apply-templates select="import" mode="ns-import"/>

@@ -88,7 +88,10 @@
   * composition of multiplicity 1 treated as dataType option
   * make sure that the VO-DML is XML validated
   * TAP schema generation improved.
- 
+* 0.5.17
+  * add support for setting elementFormDefault in XML schema - default is unqualified
+  * add support for setting attributeFormDefault in XML schema - default is unqualified
+
 
 
 N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass in same hierarchy - still waiting for a solution

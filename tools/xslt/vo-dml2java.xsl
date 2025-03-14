@@ -1520,13 +1520,20 @@ package <xsl:value-of select="$path"/>;
               <xsl:otherwise><xsl:value-of select="'UNQUALIFIED'"/></xsl:otherwise>
           </xsl:choose>
       </xsl:variable>
+      <xsl:variable name="attformdefault">
+          <xsl:choose>
+              <xsl:when test="vf:XMLAttributeQualified(current()/ancestor-or-self::vo-dml:model/name)"><xsl:value-of select="'QUALIFIED'"/></xsl:when>
+              <xsl:otherwise><xsl:value-of select="'UNQUALIFIED'"/></xsl:otherwise>
+          </xsl:choose>
+      </xsl:variable>
       <xsl:result-document href="{$file}" >
 
 /**
 * package <xsl:value-of select="name"/>.
 *   <xsl:apply-templates select="." mode="desc" />
 */
-@jakarta.xml.bind.annotation.XmlSchema(namespace = "<xsl:value-of select="normalize-space($ns)"/>",elementFormDefault=XmlNsForm.<xsl:value-of select="$elformdefault"/>, xmlns = {
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "<xsl:value-of select="normalize-space($ns)"/>",elementFormDefault=XmlNsForm.<xsl:value-of select="$elformdefault"/>,
+          attributeFormDefault=XmlNsForm.<xsl:value-of select="$attformdefault"/>, xmlns = {
 @jakarta.xml.bind.annotation.XmlNs(namespaceURI = "<xsl:value-of select="normalize-space($ns)"/>", prefix = "<xsl:value-of select="$ns/@prefix"/>")
   })
 package <xsl:value-of select="$path"/>;
