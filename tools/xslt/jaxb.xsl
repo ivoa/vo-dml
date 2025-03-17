@@ -115,8 +115,9 @@
                     select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
             </xsl:otherwise>
         </xsl:choose>
-
-        <xsl:if test="constraint[ends-with(@xsi:type,':NaturalKey')]"><!-- TODO deal with compound keys -->
+        <!-- IMPL the test against the type actually being referredTo is a bit of a hack to allow CAOM to work as it has uuid natural keys which are not valid NCName -
+         it is actually logical that if not referred to then there is no need for the type to be an XMLID however-->
+        <xsl:if test="constraint[ends-with(@xsi:type,':NaturalKey')] and vf:referredTo(vf:asvodmlref(current()/parent::objectType))"><!-- TODO deal with compound keys -->
             @jakarta.xml.bind.annotation.XmlID
         </xsl:if>
     </xsl:template>
@@ -143,7 +144,7 @@
         </xsl:when>
         <xsl:otherwise>
 @jakarta.xml.bind.annotation.XmlElementWrapper( name = "<xsl:value-of select="name"/>")
-@jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="$models/key('ellookup',current()/datatype/vodml-ref)/name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+@jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="vf:lowerFirst($models/key('ellookup',current()/datatype/vodml-ref)/name)"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
         </xsl:otherwise>
     </xsl:choose>
        <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref)">

@@ -320,7 +320,7 @@ note that this schema is substantially different from the era when this code was
       </xsl:attribute>
       <xsl:attribute name="type" >
         <xsl:choose>
-          <xsl:when test="constraint[ends-with(@xsi:type,':NaturalKey')]">
+          <xsl:when test="constraint[ends-with(@xsi:type,':NaturalKey')] and vf:referredTo(vf:asvodmlref(current()/parent::objectType))">
             <xsl:value-of select="'xsd:ID'"/>
           </xsl:when>
           <xsl:otherwise>
@@ -345,7 +345,7 @@ note that this schema is substantially different from the era when this code was
     </xsl:attribute>
     <xsl:attribute name="type" >
       <xsl:choose>
-        <xsl:when test="constraint[ends-with(@xsi:type,':NaturalKey')]">
+        <xsl:when test="constraint[ends-with(@xsi:type,':NaturalKey')] and vf:referredTo(vf:asvodmlref(current()/parent::objectType))">
           <xsl:value-of select="'xsd:ID'"/>
         </xsl:when>
         <xsl:otherwise>
@@ -389,7 +389,7 @@ note that this schema is substantially different from the era when this code was
         <xsd:sequence>
           <xsd:element>
             <xsl:attribute name="name" >
-              <xsl:value-of select="$models/key('ellookup',current()/datatype/vodml-ref)/name"/>
+              <xsl:value-of select="vf:lowerFirst($models/key('ellookup',current()/datatype/vodml-ref)/name)"/>
             </xsl:attribute>
             <xsl:attribute name="type" >
               <xsl:value-of select="vf:xsdType(current()/datatype/vodml-ref)"/>
