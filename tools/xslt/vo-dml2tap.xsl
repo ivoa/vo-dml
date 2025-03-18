@@ -140,19 +140,19 @@ FIXME This is not yet complete
                <!-- TODO need to do the composition back refs too? -->
            </xsl:if>
            <xsl:if test="not(vf:isRdbSingleTable($modelname)) and extends">
-               <ForeignKey>
+               <foreignKey>
                    <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
                    <key_id>{vf:tapFkeyID($vodml-ref)}</key_id>
                    <description>join back to supertype {extends/vodml-ref}</description>
                    <utype>{$vodml-ref}</utype>
                    <columns>
-                       <FKColumn>
+                       <fKColumn>
                            <from_column>{vf:tapTargetColumnName($vodml-ref)}</from_column>
                            <target_column>{vf:tapTargetColumnName(extends/vodml-ref)}</target_column>
-                       </FKColumn>
+                       </fKColumn>
                    </columns>
                    <target_table>{vf:rdbTableName(extends/vodml-ref)}</target_table>
-               </ForeignKey>
+               </foreignKey>
 
            </xsl:if>
            <xsl:apply-templates select="attribute[vf:isDataType(.)]" mode="dtyperef"/>
@@ -237,7 +237,7 @@ FIXME This is not yet complete
     <xsl:template match="ref" mode="dtypeexpandrefs">
         <xsl:variable name="top-vodml-ref" select="ancestor-or-self::dt[last()]/@v"/>
         <xsl:variable name="top-el" select="$models/key('ellookup',$top-vodml-ref)"/>
-        <ForeignKey>
+        <foreignKey>
             <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
             <key_id>{vf:tapFkeyID($top-vodml-ref)}</key_id>
             <xsl:comment>reference to {@type}</xsl:comment>
@@ -245,13 +245,13 @@ FIXME This is not yet complete
             <description>{$top-el/description}</description>
             <utype>{$top-vodml-ref}</utype>
             <columns>
-                <FKColumn>
+                <fKColumn>
                     <from_column><xsl:value-of select="string-join(current()/(ancestor-or-self::att|ancestor-or-self::ref)/@c,'_')"/></from_column>
                     <target_column>{vf:tapTargetColumnName(@type)}</target_column>
-                </FKColumn>
+                </fKColumn>
             </columns>
             <target_table>{vf:rdbTableName(@type)}</target_table>
-        </ForeignKey>
+        </foreignKey>
     </xsl:template>
 
 
@@ -283,7 +283,7 @@ FIXME This is not yet complete
     </xsl:template>
 
     <xsl:template match="reference" mode="fkey">
-        <ForeignKey>
+        <foreignKey>
             <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
             <key_id>{vf:tapFkeyID($vodml-ref)}</key_id>
             <xsl:comment>reference to {datatype/vodml-ref}</xsl:comment>
@@ -291,18 +291,18 @@ FIXME This is not yet complete
             <description>{description}</description>
             <utype>{$vodml-ref}</utype>
             <columns>
-                <FKColumn>
+                <fKColumn>
                     <from_column>{vf:tapcolumnName($vodml-ref)}</from_column>
                     <target_column>{vf:tapTargetColumnName(datatype/vodml-ref)}</target_column>
-                </FKColumn>
+                </fKColumn>
             </columns>
             <target_table>{vf:rdbTableName(datatype/vodml-ref)}</target_table>
-        </ForeignKey>
+        </foreignKey>
     </xsl:template>
 
     <xsl:template match="composition" mode="fkey">
         <xsl:if test="number(multiplicity/maxOccurs) != 1"> <!-- IMPL keys not created for OneToOne -->
-        <ForeignKey>
+        <foreignKey>
             <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
             <xsl:variable name="target" select="vf:asvodmlref(current()/parent::*)"/>
             <key_id>{vf:tapFkeyID($vodml-ref)}</key_id>
@@ -310,13 +310,13 @@ FIXME This is not yet complete
             <description>foreign key for {datatype/vodml-ref} composition of {$target} </description>
             <utype>{$vodml-ref}</utype> <!-- IMPL not sure is this is the appropriate utype -->
             <columns>
-                <FKColumn>
+                <fKColumn>
                     <from_column>{vf:tapJoinColumnName(current())}</from_column>
                     <target_column>{vf:tapTargetColumnName($target)}</target_column>
-                </FKColumn>
+                </fKColumn>
             </columns>
             <target_table>{vf:rdbTableName($target)}</target_table>
-        </ForeignKey>
+        </foreignKey>
         </xsl:if>
     </xsl:template>
     <xsl:template match="composition" mode="fkeyColumn">
