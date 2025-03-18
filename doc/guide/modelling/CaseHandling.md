@@ -16,5 +16,5 @@ In general the VO-DML tools try to manipulate case as little as possible, but th
 ### XML serialization
 
 * when there is an enclosing element for a composition
-  * The enclosing element takes its name from the composition name
-  * each element in the composition takes its name from the type of the composition - however, this would lead to a mixture of case styles, so the initial letter of the type is transformed to lowercase.
+    - The enclosing element takes its name from the composition name
+    - each element in the composition takes its name from the type of the composition - however, this would lead to a mixture of case styles, so the initial letter of the type is transformed to lowercase.
