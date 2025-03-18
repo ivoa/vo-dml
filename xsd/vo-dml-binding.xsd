@@ -42,48 +42,53 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
         </xsd:annotation>
      </xsd:element>
      <xsd:element name="xml" maxOccurs="1" minOccurs="0">
-                <xsd:annotation>
-                   <xsd:documentation>customization of the xml serialization</xsd:documentation>
-                </xsd:annotation>
-                <xsd:complexType>
-                   <xsd:attribute name="compositionStyle" default="wrapped">
-                      <xsd:annotation>
-                         <xsd:documentation>
-                            whether compositions with multiplicities greater than 1 should have a wrapper element
-                         </xsd:documentation>
-                      </xsd:annotation>
-                      <xsd:simpleType>
-                         <xsd:restriction base="xsd:string">
-                            <xsd:enumeration value="wrapped"></xsd:enumeration>
-                            <xsd:enumeration value="unwrapped"></xsd:enumeration>
-                         </xsd:restriction>
-                      </xsd:simpleType>
-                   </xsd:attribute>
-                   <xsd:attribute name="elementFormDefault" default="unqualified">
-                      <xsd:annotation>
-                         <xsd:documentation>whether the individual elements within a model are namespace qualified.
-This is applied globally</xsd:documentation>
-                      </xsd:annotation>
-                       <xsd:simpleType>
-                         <xsd:restriction base="xsd:string">
-                            <xsd:enumeration value="unqualified"></xsd:enumeration>
-                            <xsd:enumeration value="qualified"></xsd:enumeration>
-                         </xsd:restriction>
-                      </xsd:simpleType>
-                      </xsd:attribute>
-                  <xsd:attribute name="attributeFormDefault" default="unqualified">
-                      <xsd:annotation>
-                         <xsd:documentation>whether the individual attributes within a model are namespace qualified.
-This is applied globally</xsd:documentation>
-                      </xsd:annotation>
-                       <xsd:simpleType>
-                         <xsd:restriction base="xsd:string">
-                            <xsd:enumeration value="unqualified"></xsd:enumeration>
-                            <xsd:enumeration value="qualified"></xsd:enumeration>
-                         </xsd:restriction>
-                      </xsd:simpleType>
-                      </xsd:attribute>
-                </xsd:complexType>
+        <xsd:annotation>
+           <xsd:documentation>customization of the xml serialization</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+           <xsd:attribute name="compositionStyle" default="wrapped">
+              <xsd:annotation>
+                 <xsd:documentation>
+                    whether compositions with multiplicities greater than 1 should have a wrapper element
+
+ when wrapped the default behaviour is to take the wrapper element name from the name of the attribute and the element name for each of the elements object type name (with the initial letter lowerCased)
+                 
+                 </xsd:documentation>
+              </xsd:annotation>
+              <xsd:simpleType>
+                 <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="wrapped"></xsd:enumeration>
+                    <xsd:enumeration value="unwrapped"></xsd:enumeration>
+                 </xsd:restriction>
+              </xsd:simpleType>
+           </xsd:attribute>
+           <xsd:attribute name="elementFormDefault" default="unqualified">
+              <xsd:annotation>
+                 <xsd:documentation>
+                    whether the individual elements within a model are namespace qualified. This is applied globally
+                 </xsd:documentation>
+              </xsd:annotation>
+              <xsd:simpleType>
+                 <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="unqualified"></xsd:enumeration>
+                    <xsd:enumeration value="qualified"></xsd:enumeration>
+                 </xsd:restriction>
+              </xsd:simpleType>
+           </xsd:attribute>
+           <xsd:attribute name="attributeFormDefault" default="unqualified">
+              <xsd:annotation>
+                 <xsd:documentation>
+                    whether the individual attributes within a model are namespace qualified. This is applied globally
+                 </xsd:documentation>
+              </xsd:annotation>
+              <xsd:simpleType>
+                 <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="unqualified"></xsd:enumeration>
+                    <xsd:enumeration value="qualified"></xsd:enumeration>
+                 </xsd:restriction>
+              </xsd:simpleType>
+           </xsd:attribute>
+        </xsd:complexType>
      </xsd:element>
      <xsd:element name="json-baseURI" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
      <xsd:element name="json" maxOccurs="1" minOccurs="0">
@@ -93,12 +98,14 @@ This is applied globally</xsd:documentation>
         <xsd:complexType>
            <xsd:attribute name="lax" type="xsd:boolean" use="optional" default="false">
               <xsd:annotation>
-                 <xsd:documentation>whether definitions in the schema model should be "closed off" with "additionalProperties": false - if a type definition is expected to be extended, then this cannot be done
-
-The default is false which indicates that types should be "closed off".
-
-In general if a model is expected to be used a a "base model" then this should probably be set to true for the model.</xsd:documentation>
-              </xsd:annotation></xsd:attribute>
+                 <xsd:documentation>
+                    whether definitions in the schema model should be "closed off" with "additionalProperties": false - if a type
+                    definition is expected to be extended, then this cannot be done The default is false which indicates that
+                    types should be "closed off". In general if a model is expected to be used a a "base model" then this should
+                    probably be set to true for the model.
+                 </xsd:documentation>
+              </xsd:annotation>
+           </xsd:attribute>
         </xsd:complexType>
      </xsd:element>
      <xsd:element name="rdb" minOccurs="0" maxOccurs="1">

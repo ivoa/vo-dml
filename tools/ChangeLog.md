@@ -91,6 +91,9 @@
 * 0.5.17
   * add support for setting elementFormDefault in XML schema - default is unqualified
   * add support for setting attributeFormDefault in XML schema - default is unqualified
+* 0.5.18
+  * add a small tweak to case handling in the XML serialization of compositions
+  * only make naturalkeys  XMLIDs if actually necessary (i.e. referred to)
 
 
 

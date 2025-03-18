@@ -30,6 +30,7 @@ nav:
   - Model Design:
       - Introduction : modelling/designIntro.md
       - Validation: modelling/Validation.md
+      - Case Handling: modelling/CaseHandling.md
 
 markdown_extensions:
   - admonition
