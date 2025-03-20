@@ -3,7 +3,7 @@ Vocabularies
 
 VO-DML supports vocabularies via the `<semanticconcept>` construct which can reference a vocabulary with its `<vocabularyURI>` element.
 
-The tooling will add support for vocabularies in the generated Java code in that it generates code that checks if the values of attribute with an attached vocabulary does actually only contain terms from the vocabulary. There is support for the IVOA vocabularies that are published at https://www.ivoa.net/rdf/, but the tooling currently only supports the IVOA specific [desise format](https://www.ivoa.net/documents/Vocabularies/20230206/REC-Vocabularies-2.1.html#tth_sEc3.2.1).
+The tooling will add support for vocabularies in the generated Java code in that it generates code that checks if the values of attribute with an attached vocabulary does actually only contain terms from the vocabulary. There is support for the IVOA vocabularies that are published at [https://www.ivoa.net/rdf/](https://www.ivoa.net/rdf/), but the tooling currently only supports the IVOA specific [desise format](https://www.ivoa.net/documents/Vocabularies/20230206/REC-Vocabularies-2.1.html#tth_sEc3.2.1).
 
 ## Local Vocabularies
 
