@@ -1,0 +1,31 @@
+{
+  "uri": "urn:vo-dml:MyModel!vocab:myvocab",
+  "flavour": "RDF Class",
+  "terms": {
+    "ATERM": {
+      "label": "A Term",
+      "description": "Umbrella term all terms",
+      "wider": [],
+      "narrower": [
+        "N1",
+        "N2"
+      ]
+    },
+    "N1": {
+      "label": "Narrow 1",
+      "description": "A narrower term",
+      "wider": [
+        "ATERM"
+      ],
+      "narrower": []
+    },
+    "N2": {
+      "label": "Narrow 2",
+      "description": "Another narrower term",
+      "wider": [
+        "ATERM"
+      ],
+      "narrower": []
+    }
+  }
+}

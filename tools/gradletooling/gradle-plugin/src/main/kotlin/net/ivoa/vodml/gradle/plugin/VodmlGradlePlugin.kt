@@ -210,6 +210,13 @@ class VodmlGradlePlugin: Plugin<Project> {
                 extension.vodmlFiles
         )
         task.vodmlDir.set(extension.vodmlDir)
+        task.vocabularyDir.set(if (extension.vocabularyDir.isPresent)
+            extension.vocabularyDir
+            else
+            extension.vodmlDir
+
+        )
+
         task.catalogFile.set(extension.catalogFile)
         task.bindingFiles.setFrom(if (extension.bindingFiles.isEmpty)
             project.projectDir.listFiles{f -> f.name.endsWith("vodml-binding.xml")}

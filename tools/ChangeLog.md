@@ -94,7 +94,8 @@
 * 0.5.18
   * add a small tweak to case handling in the XML serialization of compositions
   * only make naturalkeys  XMLIDs if actually necessary (i.e. referred to)
-
+* 0.5.19
+  * Add support for local vocabularies
 
 
 N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass in same hierarchy - still waiting for a solution
