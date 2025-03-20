@@ -3,11 +3,11 @@ Model Transformation
 
 A VO-DML transformation is something that takes the model and expresses it in another way. The parameters that can influence how a particular transformation can occur is specified in a [binding](Binding.md).
 
-# Documentation
+## Documentation
 
 The most basic form of transformation is to make [human-readable documentation](Documentation.md).
 
-# Code Generation
+## Code Generation
 
 Here the model is transformed into source code in various languages, which can then be used to hold instances
 of the data model and then [serialize](Serialization.md) in various formats - currently supported
@@ -22,7 +22,7 @@ The languages supported are;
 * [Java](JavaCodeGeneration.md)
 * [Python](PythonCodeGeneration.md)
 
-# Schema
+## Schema
 
 The models are also transformed into schema that describe the various serializations. The overall aim of the 
 VO-DML tooling is to be able to exchange instances of the models between different computer languages, with 
@@ -45,6 +45,6 @@ The schema files are named by adjusting the suffixes in the following fashion - 
 
 These schema files will automatically be included within the jar file for the model, so that instance validation can be automatically done without reference to external files.
 
-# Transformation to VO-DML
+## Transformation to VO-DML
 
 The transformation of other data model representations to VO-DML is [discussed elsewhere](modelling/TransformingToVODML.md). 
