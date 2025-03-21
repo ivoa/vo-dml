@@ -100,7 +100,7 @@
   </xsl:template>
 
   <!-- template attribute : adds JAXB annotations for primitive types, data types & enumerations -->
-    <xsl:template match="attribute|composition[multiplicity/maxOccurs = 1]" mode="JAXBAnnotation">
+    <xsl:template match="attribute[multiplicity/maxOccurs = 1]|composition[multiplicity/maxOccurs = 1]" mode="JAXBAnnotation">
         <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
         <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/name() != 'primitiveType' and ($models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref))">
             <xsl:value-of select="$jsontypinfo"/>
@@ -122,6 +122,37 @@
         </xsl:if>
     </xsl:template>
 
+    <xsl:template match="attribute[multiplicity/maxOccurs != 1]" mode="JAXBAnnotation"> <!-- multiplicity gt 1 not recommended -  manipulations have to be made to support wrapped elements -->
+        <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
+        <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/name() != 'primitiveType' and ($models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref))">
+            <xsl:value-of select="$jsontypinfo"/>
+        </xsl:if>
+        <xsl:choose>
+            <xsl:when test=" vf:findTypeDetail(vf:asvodmlref(current()))/isAttribute">
+               <xsl:message terminate="yes">cannot map <xsl:value-of select="vf:asvodmlref(current())"/> to attribute with multiplicity &gt; 1 </xsl:message>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:choose>
+                    <xsl:when test="vf:XMLunwrapped(current()/ancestor-or-self::vo-dml:model/name)">
+                        @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose> <!-- IMPL rather crude heuristic on naming of plurals - only for english and even then does not cover "unusual" plurals -->
+                            <xsl:when test="ends-with(name,'s')">
+                                @jakarta.xml.bind.annotation.XmlElementWrapper( name = "<xsl:value-of select="name"/>")
+                                @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="substring(name,1,string-length(name)-1)"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+                            </xsl:when>
+                            <xsl:otherwise>
+                                @jakarta.xml.bind.annotation.XmlElementWrapper( name = "<xsl:value-of select="concat(name,'s')"/>")
+                                @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:template>
   <!-- reference resolved via JAXB -->
   <xsl:template match="reference" mode="JAXBAnnotation">
       <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>

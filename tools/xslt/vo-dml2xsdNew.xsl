@@ -294,7 +294,6 @@ note that this schema is substantially different from the era when this code was
     <xsd:enumeration>
       <xsl:attribute name="value"><xsl:value-of select="name"/></xsl:attribute>
       <xsl:call-template name="add_annotation"/>
-
     </xsd:enumeration>
   </xsl:template>
 
@@ -335,10 +334,10 @@ note that this schema is substantially different from the era when this code was
         </xsl:choose>
       </xsl:attribute>
       <xsl:call-template name="add_annotation"/>
-
     </xsd:attribute>
    </xsl:template>
-  <xsl:template match="attribute[not(vf:findTypeDetail(vf:asvodmlref(.))/isAttribute)]" >
+
+  <xsl:template match="attribute[not(vf:findTypeDetail(vf:asvodmlref(.))/isAttribute) and (vf:XMLunwrapped(ancestor::vo-dml:model/name) or multiplicity/maxOccurs = 1)]" >
   <xsd:element>
     <xsl:attribute name="name" >
       <xsl:value-of select="name"/>
@@ -355,11 +354,57 @@ note that this schema is substantially different from the era when this code was
     </xsl:attribute>
     <xsl:apply-templates select="multiplicity"/>
     <xsl:call-template name="add_annotation"/>
-
   </xsd:element>
   </xsl:template>
 
-  
+
+<xsl:template match="attribute[multiplicity/maxOccurs != 1 and not(vf:XMLunwrapped(ancestor::vo-dml:model/name))]" >
+    <xsd:element>
+      <xsl:attribute name="minOccurs">
+        <xsl:value-of select="multiplicity/minOccurs"/>
+      </xsl:attribute>
+      <xsl:attribute name="name" >
+        <xsl:choose>
+          <xsl:when test="not(ends-with(name,'s'))">
+            <xsl:value-of select="concat(name,'s')"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="name"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:attribute>
+      <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element>
+      <xsl:attribute name="name" >
+        <xsl:choose>
+        <xsl:when test="ends-with(name,'s')">
+          <xsl:value-of select="substring(name,1, string-length(name)-1)"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="name"/>
+        </xsl:otherwise>
+        </xsl:choose>
+      </xsl:attribute>
+      <xsl:attribute name="type" >
+        <xsl:choose>
+          <xsl:when test="constraint[ends-with(@xsi:type,':NaturalKey')] and vf:referredTo(vf:asvodmlref(current()/parent::objectType))">
+            <xsl:value-of select="'xsd:ID'"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="vf:xsdType(datatype/vodml-ref)"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:attribute>
+     <xsl:apply-templates select="multiplicity"/>
+      <xsl:call-template name="add_annotation"/>
+        </xsd:element>
+      </xsd:sequence>
+      </xsd:complexType>
+    </xsd:element>
+  </xsl:template>
+
+
 
   <xsl:template match="multiplicity">
     <!--  only legal values: 0..1   1   0..*   1..* -->
