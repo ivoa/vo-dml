@@ -90,7 +90,7 @@ tasks.test {
 dependencies {
     implementation("org.javastro.ivoa.vo-dml:ivoa-base")
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.3")
-    testImplementation("com.networknt:json-schema-validator:1.4.0")
+    testImplementation("com.networknt:json-schema-validator:1.5.6")
     implementation("org.slf4j:slf4j-api:2.0.9")
     testRuntimeOnly("ch.qos.logback:logback-classic:1.4.12")
     testImplementation("com.h2database:h2:2.3.232") // try out h2
