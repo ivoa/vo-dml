@@ -714,7 +714,7 @@
     </xsl:template>
 
     <xsl:template match="primitiveType" mode="attrovercols2" >
-        <xsl:variable name="type" select="current()/datatype/vodml-ref"/>
+        <xsl:variable name="type" select="vf:asvodmlref(current())"/>
                 <xsl:choose>
                     <xsl:when test="vf:hasMapping(vf:asvodmlref(current()),'java')">
                         <xsl:variable name="pmap" select="vf:findmapping(vf:asvodmlref(current()),'java')"/>
