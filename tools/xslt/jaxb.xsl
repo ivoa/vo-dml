@@ -360,6 +360,7 @@
 
         }
         <!--- TODO possibly put this in the model management interface -->
+        <!-- TODO this returns true for value==null so that non-mandatory values can be built - responsibility should be further up in the builder logic -->
         /**
         * Test if a term is in the vocabulary.
         * @param value the value to test
@@ -374,6 +375,7 @@
         loadVocabs();
         }
         }
+        if(value == null) return true;
         if(vocabs.containsKey(vocabulary))
         {
         return vocabs.get(vocabulary).hasTerm(value);
