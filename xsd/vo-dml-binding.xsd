@@ -42,20 +42,49 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
         </xsd:annotation>
      </xsd:element>
      <xsd:element name="xml" maxOccurs="1" minOccurs="0">
-                <xsd:annotation>
-                   <xsd:documentation>customization of the xml serialization</xsd:documentation>
-                </xsd:annotation>
-                <xsd:complexType>
+        <xsd:annotation>
+           <xsd:documentation>customization of the xml serialization</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
            <xsd:attribute name="compositionStyle" default="wrapped">
               <xsd:annotation>
                  <xsd:documentation>
                     whether compositions with multiplicities greater than 1 should have a wrapper element
+
+ when wrapped the default behaviour is to take the wrapper element name from the name of the attribute and the element name for each of the elements object type name (with the initial letter lowerCased)
+                 
                  </xsd:documentation>
               </xsd:annotation>
               <xsd:simpleType>
                  <xsd:restriction base="xsd:string">
                     <xsd:enumeration value="wrapped"></xsd:enumeration>
                     <xsd:enumeration value="unwrapped"></xsd:enumeration>
+                 </xsd:restriction>
+              </xsd:simpleType>
+           </xsd:attribute>
+           <xsd:attribute name="elementFormDefault" default="unqualified">
+              <xsd:annotation>
+                 <xsd:documentation>
+                    whether the individual elements within a model are namespace qualified. This is applied globally
+                 </xsd:documentation>
+              </xsd:annotation>
+              <xsd:simpleType>
+                 <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="unqualified"></xsd:enumeration>
+                    <xsd:enumeration value="qualified"></xsd:enumeration>
+                 </xsd:restriction>
+              </xsd:simpleType>
+           </xsd:attribute>
+           <xsd:attribute name="attributeFormDefault" default="unqualified">
+              <xsd:annotation>
+                 <xsd:documentation>
+                    whether the individual attributes within a model are namespace qualified. This is applied globally
+                 </xsd:documentation>
+              </xsd:annotation>
+              <xsd:simpleType>
+                 <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="unqualified"></xsd:enumeration>
+                    <xsd:enumeration value="qualified"></xsd:enumeration>
                  </xsd:restriction>
               </xsd:simpleType>
            </xsd:attribute>
@@ -69,12 +98,14 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
         <xsd:complexType>
            <xsd:attribute name="lax" type="xsd:boolean" use="optional" default="false">
               <xsd:annotation>
-                 <xsd:documentation>whether definitions in the schema model should be "closed off" with "additionalProperties": false - if a type definition is expected to be extended, then this cannot be done
-
-The default is false which indicates that types should be "closed off".
-
-In general if a model is expected to be used a a "base model" then this should probably be set to true for the model.</xsd:documentation>
-              </xsd:annotation></xsd:attribute>
+                 <xsd:documentation>
+                    whether definitions in the schema model should be "closed off" with "additionalProperties": false - if a type
+                    definition is expected to be extended, then this cannot be done The default is false which indicates that
+                    types should be "closed off". In general if a model is expected to be used a a "base model" then this should
+                    probably be set to true for the model.
+                 </xsd:documentation>
+              </xsd:annotation>
+           </xsd:attribute>
         </xsd:complexType>
      </xsd:element>
      <xsd:element name="rdb" minOccurs="0" maxOccurs="1">
@@ -111,7 +142,7 @@ In general if a model is expected to be used a a "base model" then this should p
                  </xsd:restriction>
               </xsd:simpleType>
            </xsd:attribute>
-           <xsd:attribute name="uesRefInColumnName" type="xsd:boolean" default="false">
+           <xsd:attribute name="useRefInColumnName" type="xsd:boolean" default="false">
               <xsd:annotation>
                  <xsd:documentation>
                     if true the column name for a reference will use the referred name in some way (depenedent on naturalJoin)
@@ -304,9 +335,33 @@ IMPL - this could be put into the code - especially as the number of JSON built-
 
 
   <xsd:complexType name="rdbmapType">
-     <xsd:sequence>
-        <xsd:element name="tableName" type="xsd:string"></xsd:element>
-     </xsd:sequence>
+    
+     <xsd:choice maxOccurs="1" minOccurs="0">
+        <xsd:element name="tableName" type="xsd:string">
+           <xsd:annotation>
+              <xsd:documentation>The name to be used for the table </xsd:documentation>
+           </xsd:annotation></xsd:element>
+        <xsd:sequence>
+           <xsd:element name="columnName" type="xsd:string">
+              <xsd:annotation>
+                 <xsd:documentation>The name to be used for a column</xsd:documentation>
+              </xsd:annotation></xsd:element>
+           <xsd:element name="columnType" type="xsd:string" maxOccurs="1" minOccurs="0">
+              <xsd:annotation>
+                 <xsd:documentation>The TAPSchema type for the column</xsd:documentation>
+              </xsd:annotation></xsd:element>
+        </xsd:sequence>
+        
+     </xsd:choice>
      <xsd:attribute name="vodml-id" type="xsd:string"></xsd:attribute>
+     <xsd:attribute name="noTableWhenInComposition" type="xsd:boolean" default="false">
+        <xsd:annotation>
+           <xsd:documentation>when the type is involved in a composition where maxOccurs = 1 a separate table is not created, but instead it is treated as a DType</xsd:documentation>
+        </xsd:annotation></xsd:attribute>
   </xsd:complexType>
+
+  <xsd:simpleType name="NewSimpleType">
+     <xsd:restriction base="xsd:string"></xsd:restriction>
+  </xsd:simpleType>
+
 </xsd:schema>

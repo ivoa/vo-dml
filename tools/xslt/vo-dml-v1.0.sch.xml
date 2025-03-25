@@ -95,13 +95,13 @@ vodml-id '<sch:value-of select="."/>' is not unique, there are <sch:value-of sel
   </sch:rule>
 </sch:pattern>
 
-    <!-- test that the vodml-id follows standard format - looks like a UTYPE ;-) -->
+    <!-- test that the vodml-id follows standard format - looks like a vodml-ref ;-) -->
     <sch:pattern name="vodml-id_form">
         <sch:rule context="vodml-id[not(../name() = 'vo-dml:model')]">
             <!-- original intention was / between packages? -->
             <sch:let name="form" value="string-join(ancestor::*/name[not(../name() = 'vo-dml:model')], '.')"/>
             <sch:assert test="$form = ." flag="error">
-                vodml-id '<sch:value-of select="."/>' does not follow standard form '<sch:value-of select="$form"/>'
+                vodml-id '<sch:value-of select="."/>' does not follow standard form '<sch:value-of select="$form"/>' - only allowable for legacy models/UTypes
             </sch:assert>
         </sch:rule>
     </sch:pattern>

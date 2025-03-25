@@ -9,8 +9,10 @@ gradle vodmlDoc
 
 will generate standard documentation into the directory `build/generated/docs/vodml/` (this can be changed with the `outputDocDir` setting)
 
-This will produce a model diagram, latex and html formatted documentation, as well as a graphml representation of the model
+This will produce a model diagram, latex and html formatted documentation, as well as a graphml  representation of the model (a file with a `.graphml` extension)
 that can be hand edited with [yEd](https://www.yworks.com/products/yed) for nicer looking model diagrams.
+
+![yed](images/yed.png)
 
 ## Site
 
@@ -48,5 +50,7 @@ nav:
 ```
 
 
-The [DataModel Template](https://github.com/ivoa/DataModelTemplate/) has an example setup.
+The [DataModel Template](https://github.com/ivoa/DataModelTemplate/) has an example setup, and the [ProposalDM](https://ivoa.github.io/ProposalDM/) has a mature example with many objects.
+
+![proposal site](images/site_example.png)
 

@@ -9,7 +9,7 @@
         <file>jpatest.vo-dml.xml</file>
         <java-package>org.ivoa.dm.jpatest</java-package>
         <python-package>org.ivoa.dm.jpatest</python-package>
-        <xml-targetnamespace prefix="jpat" schemaFilename="jpatest.xsd">http://ivoa.net/dm/sample/jpatest</xml-targetnamespace>
+        <xml-targetnamespace prefix="jpat">http://ivoa.net/dm/sample/jpatest</xml-targetnamespace>
         <xmllegacy-targetnamespace prefix="jpat" schemaLocation="jpatest.xsd">http://ivoa.net/dm/sample/jpatest</xmllegacy-targetnamespace>
         <rdb inheritance-strategy="joined"
         discriminatorColumnLength="64"/>
@@ -34,5 +34,18 @@
         <rdb inheritance-strategy="single-table"
              discriminatorColumnLength="64"/>
     </model>
+    <model>
+        <name>c1vdt</name>
+        <file>compos1vdtype.vo-dml.xml</file>
+        <java-package>org.ivoa.dm.c1vdt</java-package>
+        <python-package>org.ivoa.dm.c1vdt</python-package>
+        <xml-targetnamespace prefix="c1vdt" >http://ivoa.net/dm/sample/c1vdt</xml-targetnamespace>
+        <rdb inheritance-strategy="joined"
+             discriminatorColumnLength="64"
+        >
+            <rdbmap vodml-id="ot" noTableWhenInComposition="true"/>
 
+
+        </rdb>
+    </model>
 </m:mappedModels>

@@ -29,6 +29,7 @@ open class VodmlExtension @Inject constructor(objects: ObjectFactory, layout: Pr
     override val modelsToDocument: Property<String> = objects.property(String::class.java)
     override val vodslDir: DirectoryProperty = objects.directoryProperty()
     override val vodslFiles = objects.fileCollection()
+    override val vocabularyDir: DirectoryProperty = objects.directoryProperty()
 
 
 
@@ -61,6 +62,7 @@ open class VodmlExtension @Inject constructor(objects: ObjectFactory, layout: Pr
                 catalogFile.set(this@VodmlExtension.catalogFile)
                 modelsToDocument.set("")
                 vodslDir.set(this@VodmlExtension.vodslDir)
+
             }
         }
 

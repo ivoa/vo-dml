@@ -14,7 +14,9 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.nio.charset.StandardCharsets
+import java.nio.file.Files
 import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 import java.util.jar.JarInputStream
 import javax.inject.Inject
 
@@ -80,13 +82,26 @@ import javax.inject.Inject
 
 
          }
+         fun loadLocalVocab(location: String) {
+
+             val inpath = vocabularyDir.file(location.substringAfterLast(':')+".json").get().asFile.toPath()
+             logger.info("loading local Vocab $inpath")
+             val outpath = javaGenDir.file(URLEncoder.encode(location, StandardCharsets.UTF_8)).get().asFile.toPath()
+             Files.copy(inpath, outpath, StandardCopyOption.REPLACE_EXISTING)
+
+         }
          fun loadVocabs (file:File) {
              file.bufferedReader().useLines { lines ->
                  lines.forEach { line ->
-                     loadVocab(line) // Process each line here
+                     when {
+                         // local vocabs have the form urn:vo-dml:MyModel!vocab:myvocab
+                       line.startsWith("urn:vo-dml:") -> loadLocalVocab(line)
+                         else -> loadVocab(line)
+                     }
                  }
              }
          }
+
          logger.debug("loading vocabularies")
          loadVocabs(javaGenDir.file("vocabularies.txt").get().asFile)
 

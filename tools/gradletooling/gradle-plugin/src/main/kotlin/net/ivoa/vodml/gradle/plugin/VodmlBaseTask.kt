@@ -20,8 +20,12 @@ import java.util.jar.JarInputStream
  */
 abstract class VodmlBaseTask(@Internal protected val ao: ArchiveOperations) : DefaultTask() {
 
+
     @get:[InputDirectory PathSensitive(PathSensitivity.RELATIVE)]
     val vodmlDir: DirectoryProperty = project.objects.directoryProperty()
+
+    @get:[InputDirectory PathSensitive(PathSensitivity.RELATIVE)]
+    val vocabularyDir: DirectoryProperty = project.objects.directoryProperty()
 
     @get:InputFiles
     val vodmlFiles: ConfigurableFileCollection = project.objects.fileCollection()

@@ -29,7 +29,7 @@ private Refb refb;
     refa = new Refa("a value");
     refb = new Refb("naturalkey", "another val");
 
-    List<BaseC> clist = List.of(new Dcont("a D", "dval"), new Econt("cube", "eval"));
+    List<BaseC> clist = List.of(new Dcont("N1", "dval"), new Econt("cube", "eval"));
 
     someContent = new SomeContent(refa, refb, List.of("some","z","values"), clist);
     themodel.addContent(someContent);

@@ -122,6 +122,13 @@ VODML Tooling TODO
   * modern usage https://blogs.oracle.com/javamagazine/post/java-json-serialization-jackson
   * It might be best to generate schema even for imported models as it is difficult to decide what to do for `"additionalProperties": false` without context of how a particular type is being derived from.
 
+# Binding refactoring
+* jpa-atomic vs built-in
+* perhaps encapsulate the 
+* still keep the separation of mapping vs style?
+* UseRefInColumnName (is it just opposite of NaturalJoin)
+* always refer to @vodml-id as attribute
+* change rdbMapType/TableName to rdbMapType/Name so that column names can be mapped too.
 
 # Python production
 

@@ -25,7 +25,7 @@ abstract otype BaseC {
 }
 
 otype Dcont -> BaseC {
-	dval: ivoa:string "";
+	dval: ivoa:string "" semantic in "urn:vo-dml:MyModel!vocab:myvocab";
 }
 
 otype Econt -> BaseC {

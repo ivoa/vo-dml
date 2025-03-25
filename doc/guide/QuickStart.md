@@ -57,7 +57,8 @@ The various sub-properties that can be set are
 * _outputSiteDir_ - where the [mkdocs](https://www.mkdocs.org) suitable model description is created by the `gradle vodmlSite` command - default `build/generated/docs/vodml-site`.
 * _outputJavaDir_ - where the generated Java is created - the default is `build/generated/sources/vodml/java/` and it should not 
   be necessary to ever alter this as gradle will integrate this automatically into the various source paths.
-* _outputSchemaDir_ - where the XML and JSON schema are generated to - the default is `build/generated/sources/vodml/schema/` - this is automatically included in the classpath and the output jar.
+* _outputSchemaDir_ - where the [XML, JSON and TAP schema]() are generated to - the default is `build/generated/sources/vodml/schema/` - this is automatically included in the classpath and the output jar.
+* _vocabularyDir_ the directory where local vocabulary definitions are stored - the default  whatever _vodmlDir_ is set to. See [here](./modelling/Vocabularies.md) for more discussion of the use of vocabularies.
 * _catalogFile_ - in general it is not necessary to set this, as the plugin will create a catalogue file automatically from the vodmlDir and vodmlFiles properties (as well as including files in any dependencies that also contain VO-DML models)
   A catalogue file is necessary as the rest of the tooling is designed to use only the filename (no path) for inclusions and references.
   If it is desired to create a file manually for a special purpose, then the file should have the format as below - it should be noted that all references to model files will have to be specified if this is done.
@@ -93,9 +94,7 @@ This is a minimal sample file for mapping VO-DML models to XSD or Java using the
 </m:mappedModels>
 ```
 
-The [schema](https://github.com/ivoa/vo-dml/tree/master/xsd/vo-dml-binding.xsd) for the binding file shows what elements are allowed. The [binding file for the base IVOA model](https://github.com/ivoa/vo-dml/tree/master/models/ivoa/vo-dml/ivoa_base.vodml-binding.xml)
-shows extensive use of the binding features, where it is possible to ignore the automated code generation entirely and substitute
-hand-written code.
+All of the options possible are described fully in the [binding section](Binding.md).
 
 
 

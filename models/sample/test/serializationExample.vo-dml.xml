@@ -8,17 +8,17 @@
       <uri/>
       <title></title>
       <version>1.0</version>
-      <lastModified>2024-10-07T08:26:18Z</lastModified>
+      <lastModified>2025-03-19T08:07:00Z</lastModified>
       <import>
         <name>ivoa</name>
-          <version>1.0</version>
+        <version>1.0</version>
         <url>IVOA-v1.0.vo-dml.xml</url>
         <documentationURL>not known</documentationURL>
       </import>
       <primitiveType >
       <vodml-id>ivoid</vodml-id>
       <name>ivoid</name>
-      <description>a specialization for IVOIDs</description>
+      <description>a specialization for IVOIDs</description>	    
       <extends>
          <vodml-ref>ivoa:anyURI</vodml-ref>
       </extends>
@@ -108,6 +108,9 @@
                    <minOccurs>1</minOccurs>
                    <maxOccurs>1</maxOccurs>
                  </multiplicity>
+               <semanticconcept>
+                 <vocabularyURI>urn:vo-dml:MyModel!vocab:myvocab</vocabularyURI>
+               </semanticconcept>
                </attribute>
             </objectType>
             <objectType>

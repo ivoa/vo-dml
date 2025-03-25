@@ -509,6 +509,19 @@
         <xsl:sequence select="for $m in vf:allInheritedMembers($vodml-ref) return $models/key('ellookup',$m)/name"/>
     </xsl:function>
 
+    <xsl:function name="vf:XMLunwrapped" as="xsd:boolean">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:sequence select="$mapping/bnd:mappedModels/model[name=$modelName]/xml/@compositionStyle='unwrapped'"/>
+    </xsl:function>
+    <xsl:function name="vf:XMLqualified" as="xsd:boolean">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:sequence select="$mapping/bnd:mappedModels/model[name=$modelName]/xml/@elementFormDefault='qualified'"/>
+    </xsl:function>
+    <xsl:function name="vf:XMLAttributeQualified" as="xsd:boolean">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:sequence select="$mapping/bnd:mappedModels/model[name=$modelName]/xml/@attributeFormDefault='qualified'"/>
+    </xsl:function>
+
     <xsl:function name="vf:xsdNsPrefix" as="xsd:string">
         <xsl:param name="modelName" as="xsd:string"/>
         <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/xml-targetnamespace/@prefix"/>
@@ -540,12 +553,16 @@
         <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
         <xsl:sequence select="concat($el/name,'_SUBTYPE')"/>
     </xsl:function>
+    <xsl:function name="vf:noTableInComposition" as="xsd:boolean">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=substring-before($vodml-ref,':')]/rdb/rdbmap[@vodml-id=substring-after($vodml-ref,':')and @noTableWhenInComposition=true()] )= 1"/>
+    </xsl:function>
 
     <xsl:function name="vf:rdbTableName" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
         <xsl:choose>
-            <xsl:when test="$mapping/bnd:mappedModels/model[name=substring-before($vodml-ref,':')]/rdb/rdbmap[@vodml-id=substring-after($vodml-ref,':')]">
+            <xsl:when test="$mapping/bnd:mappedModels/model[name=substring-before($vodml-ref,':')]/rdb/rdbmap[@vodml-id=substring-after($vodml-ref,':')]/tableName">
                 <xsl:sequence select="$mapping/bnd:mappedModels/model[name=substring-before($vodml-ref,':')]/rdb/rdbmap[@vodml-id=substring-after($vodml-ref,':')]/tableName"/>
             </xsl:when>
             <xsl:otherwise>
@@ -668,9 +685,21 @@
         <!-- FIXME what about subtypes? -->
         </dt>
     </xsl:template>
+    <xsl:template match="objectType[vf:noTableInComposition(vf:asvodmlref(.))]" mode="attrovercols2" >
+        <dt v="{vf:asvodmlref(current())}" n="{name}"  isObjectType="true">
+            <xsl:apply-templates select="(attribute|reference, vf:baseTypes(vf:asvodmlref(current()))/(attribute|reference))" mode="attrovercols2"/> <!-- this takes care of dataType inheritance should work https://hibernate.atlassian.net/browse/HHH-12790 -->
+            <!-- FIXME what about subtypes? -->
+        </dt>
+    </xsl:template>
+    <xsl:template match="composition[vf:noTableInComposition(datatype/vodml-ref)]" mode="attrovercols2" >
+        <att v="{vf:asvodmlref(current())}" c="{name}" isComposition="true">
+            <xsl:apply-templates select="$models/key('ellookup',current()/datatype/vodml-ref)" mode="attrovercols2"/> <!-- this takes care of dataType inheritance should work https://hibernate.atlassian.net/browse/HHH-12790 -->
+        </att>
+    </xsl:template>
+
     <xsl:template match="attribute" mode="attrovercols2" >
         <att v="{vf:asvodmlref(current())}" c="{name}">
-            <xsl:if test="not(current()/parent::objectType)">
+            <xsl:if test="not(current()/parent::objectType[not(vf:noTableInComposition(vf:asvodmlref(.)))])">
                 <xsl:attribute name="f" select="name"/>
             </xsl:if>
             <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
@@ -685,7 +714,7 @@
     </xsl:template>
 
     <xsl:template match="primitiveType" mode="attrovercols2" >
-        <xsl:variable name="type" select="current()/datatype/vodml-ref"/>
+        <xsl:variable name="type" select="vf:asvodmlref(current())"/>
                 <xsl:choose>
                     <xsl:when test="vf:hasMapping(vf:asvodmlref(current()),'java')">
                         <xsl:variable name="pmap" select="vf:findmapping(vf:asvodmlref(current()),'java')"/>

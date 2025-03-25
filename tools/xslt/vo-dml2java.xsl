@@ -664,16 +664,19 @@
     &bl;{
       <xsl:if test="local-name() eq 'objectType' and not (extends) and not(attribute/constraint[ends-with(@xsi:type,':NaturalKey')])" >
 
+
+          <xsl:if test="not(vf:noTableInComposition($vodml-ref))">
           /**
           * inserted database key
           */
-          <xsl:if test="not(vf:referredTo($vodml-ref))"><!--TODO do we really want to ignore - is this just making everything more complicated - try to do this in conditional way for json depending on use.  see https://github.com/ivoa/vo-dml/issues/30  -->
-          @jakarta.xml.bind.annotation.XmlTransient
-         // @com.fasterxml.jackson.annotation.JsonIgnore
-          </xsl:if>
           @jakarta.persistence.Id
           @jakarta.persistence.GeneratedValue
           @jakarta.persistence.Column(name = "<xsl:value-of select="vf:rdbIDColumnName($vodml-ref)"/>")
+          </xsl:if>
+          <xsl:if test="not(vf:referredTo($vodml-ref))"><!--TODO do we really want to ignore - is this just making everything more complicated - try to do this in conditional way for json depending on use.  see https://github.com/ivoa/vo-dml/issues/30  -->
+              @jakarta.xml.bind.annotation.XmlTransient
+              // @com.fasterxml.jackson.annotation.JsonIgnore
+          </xsl:if>
           protected Long _id = (long) 0;
 
           /**
@@ -1511,12 +1514,26 @@ package <xsl:value-of select="$path"/>;
       <!-- open file for this class -->
       <xsl:message >Writing package info file <xsl:value-of select="$file"/></xsl:message>
       <xsl:variable name="ns" select="$mapping/bnd:mappedModels/model[name=current()/ancestor-or-self::vo-dml:model/name]/xml-targetnamespace"/>
+      <xsl:variable name="elformdefault">
+          <xsl:choose>
+              <xsl:when test="vf:XMLqualified(current()/ancestor-or-self::vo-dml:model/name)"><xsl:value-of select="'QUALIFIED'"/></xsl:when>
+              <xsl:otherwise><xsl:value-of select="'UNQUALIFIED'"/></xsl:otherwise>
+          </xsl:choose>
+      </xsl:variable>
+      <xsl:variable name="attformdefault">
+          <xsl:choose>
+              <xsl:when test="vf:XMLAttributeQualified(current()/ancestor-or-self::vo-dml:model/name)"><xsl:value-of select="'QUALIFIED'"/></xsl:when>
+              <xsl:otherwise><xsl:value-of select="'UNQUALIFIED'"/></xsl:otherwise>
+          </xsl:choose>
+      </xsl:variable>
       <xsl:result-document href="{$file}" >
+
 /**
 * package <xsl:value-of select="name"/>.
 *   <xsl:apply-templates select="." mode="desc" />
 */
-@jakarta.xml.bind.annotation.XmlSchema(namespace = "<xsl:value-of select="normalize-space($ns)"/>",elementFormDefault=XmlNsForm.UNQUALIFIED, xmlns = {
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "<xsl:value-of select="normalize-space($ns)"/>",elementFormDefault=XmlNsForm.<xsl:value-of select="$elformdefault"/>,
+          attributeFormDefault=XmlNsForm.<xsl:value-of select="$attformdefault"/>, xmlns = {
 @jakarta.xml.bind.annotation.XmlNs(namespaceURI = "<xsl:value-of select="normalize-space($ns)"/>", prefix = "<xsl:value-of select="$ns/@prefix"/>")
   })
 package <xsl:value-of select="$path"/>;

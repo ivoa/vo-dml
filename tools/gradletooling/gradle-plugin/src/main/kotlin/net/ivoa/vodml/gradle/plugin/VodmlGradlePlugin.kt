@@ -165,9 +165,9 @@ class VodmlGradlePlugin: Plugin<Project> {
 
 
         //add the dependencies for JAXB and JPA - using the hibernate implementation
-       listOf("org.javastro.ivoa.vo-dml:vodml-runtime:0.8.4",
+       listOf("org.javastro.ivoa.vo-dml:vodml-runtime:0.8.5",
             "jakarta.xml.bind:jakarta.xml.bind-api:4.0.0",
-            "org.glassfish.jaxb:jaxb-runtime:4.0.2",
+            "org.glassfish.jaxb:jaxb-runtime:4.0.5",
 //             "org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.10",  // supports JPA 2.2
 //            "org.eclipse.persistence:org.eclipse.persistence.moxy:3.0.2", //alternative Jaxb runtime...
              "org.hibernate.orm:hibernate-core:6.5.3.Final"
@@ -210,6 +210,13 @@ class VodmlGradlePlugin: Plugin<Project> {
                 extension.vodmlFiles
         )
         task.vodmlDir.set(extension.vodmlDir)
+        task.vocabularyDir.set(if (extension.vocabularyDir.isPresent)
+            extension.vocabularyDir
+            else
+            extension.vodmlDir
+
+        )
+
         task.catalogFile.set(extension.catalogFile)
         task.bindingFiles.setFrom(if (extension.bindingFiles.isEmpty)
             project.projectDir.listFiles{f -> f.name.endsWith("vodml-binding.xml")}

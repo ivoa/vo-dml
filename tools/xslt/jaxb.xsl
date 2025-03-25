@@ -56,8 +56,8 @@
   </xsl:choose>
 
     <xsl:choose>
-      <xsl:when test="not(vf:isContained(vf:asvodmlref(.))) and not(@abstract = 'true')">
- //   @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>")
+      <xsl:when test="not(vf:isContained(vf:asvodmlref(.))) and not(extends)">
+//@jakarta.xml.bind.annotation.XmlRootElement( name = "<xsl:value-of select="name"/>")
       </xsl:when>
      </xsl:choose>
       <xsl:if test="vf:referredTo(vf:asvodmlref(.)) and not(extends)">
@@ -100,7 +100,7 @@
   </xsl:template>
 
   <!-- template attribute : adds JAXB annotations for primitive types, data types & enumerations -->
-    <xsl:template match="attribute|composition[multiplicity/maxOccurs = 1]" mode="JAXBAnnotation">
+    <xsl:template match="attribute[multiplicity/maxOccurs = 1]|composition[multiplicity/maxOccurs = 1]" mode="JAXBAnnotation">
         <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
         <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/name() != 'primitiveType' and ($models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref))">
             <xsl:value-of select="$jsontypinfo"/>
@@ -115,12 +115,44 @@
                     select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
             </xsl:otherwise>
         </xsl:choose>
-
-        <xsl:if test="constraint[ends-with(@xsi:type,':NaturalKey')]"><!-- TODO deal with compound keys -->
+        <!-- IMPL the test against the type actually being referredTo is a bit of a hack to allow CAOM to work as it has uuid natural keys which are not valid NCName -
+         it is actually logical that if not referred to then there is no need for the type to be an XMLID however-->
+        <xsl:if test="constraint[ends-with(@xsi:type,':NaturalKey')] and vf:referredTo(vf:asvodmlref(current()/parent::objectType))"><!-- TODO deal with compound keys -->
             @jakarta.xml.bind.annotation.XmlID
         </xsl:if>
     </xsl:template>
 
+    <xsl:template match="attribute[multiplicity/maxOccurs != 1]" mode="JAXBAnnotation"> <!-- multiplicity gt 1 not recommended -  manipulations have to be made to support wrapped elements -->
+        <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
+        <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/name() != 'primitiveType' and ($models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref))">
+            <xsl:value-of select="$jsontypinfo"/>
+        </xsl:if>
+        <xsl:choose>
+            <xsl:when test=" vf:findTypeDetail(vf:asvodmlref(current()))/isAttribute">
+               <xsl:message terminate="yes">cannot map <xsl:value-of select="vf:asvodmlref(current())"/> to attribute with multiplicity &gt; 1 </xsl:message>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:choose>
+                    <xsl:when test="vf:XMLunwrapped(current()/ancestor-or-self::vo-dml:model/name)">
+                        @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose> <!-- IMPL rather crude heuristic on naming of plurals - only for english and even then does not cover "unusual" plurals -->
+                            <xsl:when test="ends-with(name,'s')">
+                                @jakarta.xml.bind.annotation.XmlElementWrapper( name = "<xsl:value-of select="name"/>")
+                                @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="substring(name,1,string-length(name)-1)"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+                            </xsl:when>
+                            <xsl:otherwise>
+                                @jakarta.xml.bind.annotation.XmlElementWrapper( name = "<xsl:value-of select="concat(name,'s')"/>")
+                                @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:template>
   <!-- reference resolved via JAXB -->
   <xsl:template match="reference" mode="JAXBAnnotation">
       <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
@@ -138,12 +170,12 @@
   <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="JAXBAnnotation">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
     <xsl:choose>
-        <xsl:when test="$mapping/bnd:mappedModels/model[name=current()/ancestor-or-self::vo-dml:model/name]/xml/@compositionStyle='unwrapped'">
+        <xsl:when test="vf:XMLunwrapped(current()/ancestor-or-self::vo-dml:model/name)">
 @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
         </xsl:when>
         <xsl:otherwise>
 @jakarta.xml.bind.annotation.XmlElementWrapper( name = "<xsl:value-of select="name"/>")
-@jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="$models/key('ellookup',current()/datatype/vodml-ref)/name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+@jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="vf:lowerFirst($models/key('ellookup',current()/datatype/vodml-ref)/name)"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
         </xsl:otherwise>
     </xsl:choose>
        <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref)">
@@ -270,7 +302,7 @@
         /**
         * @param refs the refs to set
         */
-        @XmlElement(required = true)
+        @XmlElement(required = false)
         private void setRefs(References refs) {
         this.refs = refs;
         <xsl:if test="$hasReferences" >
@@ -328,6 +360,7 @@
 
         }
         <!--- TODO possibly put this in the model management interface -->
+        <!-- TODO this returns true for value==null so that non-mandatory values can be built - responsibility should be further up in the builder logic -->
         /**
         * Test if a term is in the vocabulary.
         * @param value the value to test
@@ -342,6 +375,7 @@
         loadVocabs();
         }
         }
+        if(value == null) return true;
         if(vocabs.containsKey(vocabulary))
         {
         return vocabs.get(vocabulary).hasTerm(value);

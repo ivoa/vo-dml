@@ -26,6 +26,13 @@
 
   <xsl:output name="persistenceInfo" method="xml" encoding="UTF-8" indent="yes"  />
 
+  <xsl:template match="objectType[vf:noTableInComposition(vf:asvodmlref(.))]" mode="JPAAnnotation">
+     <xsl:if test="$models//composition[datatype/vodml-ref = vf:asvodmlref(current())]/multiplicity/maxOccurs != 1">
+        <xsl:message terminate="yes">ObjectType <xsl:value-of select="vf:asvodmlref(current())"/> exists in a composition with maxOccurs &gt; 1 therefore must have separate table - check binding.</xsl:message>
+     </xsl:if>
+      <xsl:text>@jakarta.persistence.Embeddable</xsl:text>&cr;
+  </xsl:template>
+
   <xsl:template match="objectType" mode="JPAAnnotation">
     <xsl:variable name="className" select="vf:upperFirst(name)" /> <!-- IMPL has been javaified -->
     <xsl:variable name="vodml-ref" select="concat(ancestor::vo-dml:model/name,':',vodml-id)" />
@@ -164,7 +171,11 @@
                     </xsl:choose>
                 </xsl:variable>
                 @jakarta.persistence.Convert(converter=org.ivoa.vodml.jpa.AttributeConverters.<xsl:value-of select="$converterClass"/>.class)
-                @jakarta.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
+                @jakarta.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/>
+                        <xsl:if test="vf:findTypeDetail($vodml-ref)/length">
+                            , length=<xsl:value-of select="vf:findTypeDetail($vodml-ref)/length"/>
+                        </xsl:if>
+                        )
                     </xsl:when>
                     <xsl:when test="xsd:int(multiplicity/maxOccurs) gt 1">
         //FIXME - how to do arrays for JPA.
@@ -233,12 +244,11 @@
         @jakarta.persistence.Embedded
         <xsl:if test="current()/parent::objectType">
         <xsl:variable name="attovers" as="xsd:string*">
-              <!-- IMPL - this code is a bit ugly - is attempting to deal with the case where a dataType has a dataType member (quite frequent as base model has quantities)
-               -->
+
             <xsl:variable name="atv">
                 <xsl:apply-templates select="current()" mode="attrovercols2"/>
             </xsl:variable>
-<!--                <xsl:message>*** <xsl:value-of select="vf:asvodmlref(current())"/> -&#45;&#45; <xsl:copy-of select="$atv" copy-namespaces="no"/></xsl:message>-->
+<!--                <xsl:message>***D <xsl:value-of select="vf:asvodmlref(current())"/> -&#45;&#45; <xsl:copy-of select="$atv" copy-namespaces="no"/></xsl:message>-->
                 <xsl:apply-templates select="$atv" mode="doAttributeOverride">
                     <xsl:with-param name="nillable" select="$nillable"/>
                 </xsl:apply-templates>
@@ -256,7 +266,10 @@
         ',nullable = ',$nillable,' ))')"/>
     </xsl:template>
 
-
+    <xsl:template match="ref" mode="doAssocOverride">
+        <xsl:value-of select="concat('@jakarta.persistence.AssociationOverride(name=',$dq,string-join((current()/@f,current()/ancestor::att/@f),'.'),$dq,
+        ',joinColumns = { @jakarta.persistence.JoinColumn(name=',$dq,string-join((current()/@c,current()/ancestor::att/@c),'_'),$dq,  ',nullable =',true(),')})')"/><!--IMPL have to allow null - too difficult to work out when not allowed - see proposalDM ObservingPlatform -->
+    </xsl:template>
 
     <!-- do the embedded refs -->
     <xsl:template match="objectType[attribute[vf:isDataType(.)]]" mode="doEmbeddedRefs">
@@ -380,7 +393,45 @@
   </xsl:template>
 
     <xsl:template match="composition[multiplicity/maxOccurs =1]" mode="JPAAnnotation">
-     @jakarta.persistence.OneToOne(cascade = jakarta.persistence.CascadeType.ALL)
+        <xsl:choose>
+            <xsl:when test="vf:noTableInComposition(datatype/vodml-ref)">
+                @jakarta.persistence.Embedded
+                <xsl:variable name="atv">
+                    <xsl:apply-templates select="current()" mode="attrovercols2"/>
+                </xsl:variable>
+                <xsl:variable name="attovers" as="xsd:string*">
+
+
+                    <xsl:variable name="nillable" >
+                        <xsl:choose>
+                            <xsl:when test="$isRdbSingleInheritance">true</xsl:when><!--IMPL perhaps this is too simplistic -->
+                            <xsl:otherwise>
+                                <xsl:apply-templates select="current()" mode="nullable"/> <!-- but anyway this does not cope with the case where parts of the dataType are not nullable -->
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:variable>
+
+<!--                    <xsl:message>***O <xsl:value-of select="current()/datatype/vodml-ref"/> -&#45;&#45; <xsl:copy-of select="$atv" copy-namespaces="no"/></xsl:message>-->
+                    <xsl:apply-templates select="$atv" mode="doAttributeOverride">
+                        <xsl:with-param name="nillable" select="$nillable"/>
+                    </xsl:apply-templates>
+                </xsl:variable>
+                @jakarta.persistence.AttributeOverrides( {
+                <xsl:value-of select="string-join($attovers,concat(',',$cr))"/>
+                })
+                <xsl:variable name="assocovers" as="xsd:string*">
+                     <xsl:apply-templates select="$atv" mode="doAssocOverride"/>
+                </xsl:variable>
+                @jakarta.persistence.AssociationOverrides( {
+                <xsl:value-of select="string-join($assocovers,concat(',',$cr))"/>
+                })
+            </xsl:when>
+
+            <xsl:otherwise>
+                @jakarta.persistence.OneToOne(cascade = jakarta.persistence.CascadeType.ALL)
+            </xsl:otherwise>
+        </xsl:choose>   
+
   </xsl:template>
 
 

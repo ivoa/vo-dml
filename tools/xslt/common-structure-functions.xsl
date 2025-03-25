@@ -565,7 +565,7 @@ note - only define functions in here as it is included in the schematron rules
         <xsl:choose>
             <xsl:when test="$models/key('ellookup',$vodml-ref)">
                 <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
-                <xsl:value-of select="$vodml-ref"/><!-- TODO is this true? -->
+                <xsl:value-of select="concat($el/ancestor-or-self::vo-dml:model/name,':',$el/vodml-id)"/><!-- FIXME - this is not sufficient for a UType in all circumstances -->
             </xsl:when>
             <xsl:otherwise>
                 <xsl:message terminate="yes">type '<xsl:value-of select="$vodml-ref"/>' not in considered models</xsl:message>
