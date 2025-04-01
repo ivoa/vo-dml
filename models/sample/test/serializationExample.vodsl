@@ -20,6 +20,7 @@ otype Refb  ""
 	
 }
 
+package types "" {
 abstract otype BaseC {
 	bname: ivoa:string "" UCD "instr.calib";
 }
@@ -31,11 +32,12 @@ otype Dcont -> BaseC {
 otype Econt -> BaseC {
 	evalue: ivoa:string "" semantic in "http://www.ivoa.net/rdf/product-type"; 
 }
+}
 otype SomeContent "" {
 	ref1 references Refa "";
 	ref2 references Refb "";
 	zval : ivoa:string @+ "";
-	con: BaseC @+ as composition ""; 
+	con: types:BaseC @+ as composition ""; 
 }
 
 primitive ivoid -> ivoa:anyURI "a specialization for IVOIDs"

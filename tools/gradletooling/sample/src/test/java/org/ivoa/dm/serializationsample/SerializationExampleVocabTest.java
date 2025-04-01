@@ -1,6 +1,9 @@
 package org.ivoa.dm.serializationsample;
 
 import static org.junit.jupiter.api.Assertions.fail;
+
+import org.ivoa.dm.serializationsample.types.BaseC;
+import org.ivoa.dm.serializationsample.types.Econt;
 import org.junit.jupiter.api.Test;
 
 import jakarta.persistence.EntityManager;

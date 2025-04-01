@@ -8,6 +8,9 @@ import java.util.List;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.ivoa.dm.serializationsample.types.BaseC;
+import org.ivoa.dm.serializationsample.types.Dcont;
+import org.ivoa.dm.serializationsample.types.Econt;
 import org.junit.jupiter.api.Test;
 
 import jakarta.persistence.EntityManager;

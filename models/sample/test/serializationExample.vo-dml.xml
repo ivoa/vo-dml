@@ -8,7 +8,7 @@
       <uri/>
       <title></title>
       <version>1.0</version>
-      <lastModified>2025-03-19T08:07:00Z</lastModified>
+      <lastModified>2025-04-01T08:00:01Z</lastModified>
       <import>
         <name>ivoa</name>
         <version>1.0</version>
@@ -72,70 +72,6 @@
                  </multiplicity>
                </attribute>
             </objectType>
-            <objectType abstract="true">
-               <vodml-id>BaseC</vodml-id>
-               <name>BaseC</name>
-               <description></description>	    
-               <attribute>
-                 <vodml-id>BaseC.bname</vodml-id>
-                 <name>bname</name>
-                 <description></description>	    
-                 <datatype>
-                    <vodml-ref>ivoa:string</vodml-ref>
-                 </datatype>
-                 <multiplicity>
-                   <minOccurs>1</minOccurs>
-                   <maxOccurs>1</maxOccurs>
-                 </multiplicity>
-                   <UCD>instr.calib</UCD>
-               </attribute>
-            </objectType>
-            <objectType>
-               <vodml-id>Dcont</vodml-id>
-               <name>Dcont</name>
-               <description></description>	    
-               <extends>
-                  <vodml-ref>MyModel:BaseC</vodml-ref>
-               </extends>
-               <attribute>
-                 <vodml-id>Dcont.dval</vodml-id>
-                 <name>dval</name>
-                 <description></description>	    
-                 <datatype>
-                    <vodml-ref>ivoa:string</vodml-ref>
-                 </datatype>
-                 <multiplicity>
-                   <minOccurs>1</minOccurs>
-                   <maxOccurs>1</maxOccurs>
-                 </multiplicity>
-               <semanticconcept>
-                 <vocabularyURI>urn:vo-dml:MyModel!vocab:myvocab</vocabularyURI>
-               </semanticconcept>
-               </attribute>
-            </objectType>
-            <objectType>
-               <vodml-id>Econt</vodml-id>
-               <name>Econt</name>
-               <description></description>	    
-               <extends>
-                  <vodml-ref>MyModel:BaseC</vodml-ref>
-               </extends>
-               <attribute>
-                 <vodml-id>Econt.evalue</vodml-id>
-                 <name>evalue</name>
-                 <description></description>	    
-                 <datatype>
-                    <vodml-ref>ivoa:string</vodml-ref>
-                 </datatype>
-                 <multiplicity>
-                   <minOccurs>1</minOccurs>
-                   <maxOccurs>1</maxOccurs>
-                 </multiplicity>
-               <semanticconcept>
-                 <vocabularyURI>http://www.ivoa.net/rdf/product-type</vocabularyURI>
-               </semanticconcept>
-               </attribute>
-            </objectType>
             <objectType>
                <vodml-id>SomeContent</vodml-id>
                <name>SomeContent</name>
@@ -181,7 +117,7 @@
                  <name>con</name>
                  <description></description>	    
                  <datatype>
-                    <vodml-ref>MyModel:BaseC</vodml-ref>
+                    <vodml-ref>MyModel:types.BaseC</vodml-ref>
                  </datatype>
                  <multiplicity>
                    <minOccurs>1</minOccurs>
@@ -189,4 +125,73 @@
                  </multiplicity>
                </composition>
             </objectType>
+            <package>
+               <vodml-id>types</vodml-id>
+               <name>types</name>
+               <description></description>	    
+                         <objectType abstract="true">
+                            <vodml-id>types.BaseC</vodml-id>
+                            <name>BaseC</name>
+                            <description></description>	    
+                            <attribute>
+                              <vodml-id>types.BaseC.bname</vodml-id>
+                              <name>bname</name>
+                              <description></description>	    
+                              <datatype>
+                                 <vodml-ref>ivoa:string</vodml-ref>
+                              </datatype>
+                              <multiplicity>
+                                <minOccurs>1</minOccurs>
+                                <maxOccurs>1</maxOccurs>
+                              </multiplicity>
+                                <UCD>instr.calib</UCD>
+                            </attribute>
+                         </objectType>
+                         <objectType>
+                            <vodml-id>types.Dcont</vodml-id>
+                            <name>Dcont</name>
+                            <description></description>	    
+                            <extends>
+                               <vodml-ref>MyModel:types.BaseC</vodml-ref>
+                            </extends>
+                            <attribute>
+                              <vodml-id>types.Dcont.dval</vodml-id>
+                              <name>dval</name>
+                              <description></description>	    
+                              <datatype>
+                                 <vodml-ref>ivoa:string</vodml-ref>
+                              </datatype>
+                              <multiplicity>
+                                <minOccurs>1</minOccurs>
+                                <maxOccurs>1</maxOccurs>
+                              </multiplicity>
+                            <semanticconcept>
+                              <vocabularyURI>urn:vo-dml:MyModel!vocab:myvocab</vocabularyURI>
+                            </semanticconcept>
+                            </attribute>
+                         </objectType>
+                         <objectType>
+                            <vodml-id>types.Econt</vodml-id>
+                            <name>Econt</name>
+                            <description></description>	    
+                            <extends>
+                               <vodml-ref>MyModel:types.BaseC</vodml-ref>
+                            </extends>
+                            <attribute>
+                              <vodml-id>types.Econt.evalue</vodml-id>
+                              <name>evalue</name>
+                              <description></description>	    
+                              <datatype>
+                                 <vodml-ref>ivoa:string</vodml-ref>
+                              </datatype>
+                              <multiplicity>
+                                <minOccurs>1</minOccurs>
+                                <maxOccurs>1</maxOccurs>
+                              </multiplicity>
+                            <semanticconcept>
+                              <vocabularyURI>http://www.ivoa.net/rdf/product-type</vocabularyURI>
+                            </semanticconcept>
+                            </attribute>
+                         </objectType>
+            </package>
 </vo-dml:model>
