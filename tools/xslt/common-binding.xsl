@@ -249,14 +249,22 @@
         <xsl:param name="vodml-ref" as="xsd:string"/> <!-- assumed to be fully qualified! i.e. also for elements in local model, the prefix is included! -->
         <xsl:variable name="type">
             <xsl:variable name="mappedtype" select="vf:findmapping($vodml-ref,'xsd')"/>
+            <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
             <xsl:choose>
                 <xsl:when test="$mappedtype != ''">
                     <xsl:value-of select="$mappedtype"/>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:variable name="modelname" select="substring-before($vodml-ref,':')"/>
+                    <xsl:variable name="modelname" select="$el/ancestor-or-self::vo-dml:model/name"/>
                     <xsl:variable name="root" select="vf:xsdNsPrefix($modelname)"/>
-                    <xsl:value-of select="concat($root,':',substring-after($vodml-ref,':'))"/>
+                    <xsl:choose>
+                        <xsl:when test="vf:XMLIgnorePackages($modelname)">
+                            <xsl:value-of select="concat($root,':',$el/name)"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="concat($root,':',substring-after($vodml-ref,':'))"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
@@ -265,7 +273,16 @@
 
     <xsl:function name="vf:jaxbType" as="xsd:string">
     <xsl:param name="vodml-ref" as="xsd:string"/>
-        <xsl:value-of select="substring-after($vodml-ref,':')"/>
+        <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
+        <xsl:choose>
+            <xsl:when test="vf:XMLIgnorePackages($el/ancestor-or-self::vo-dml:model/name)">
+                <xsl:value-of select="$el/name"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="substring-after($vodml-ref,':')"/>
+            </xsl:otherwise>
+        </xsl:choose>
+
     </xsl:function>
 
 
@@ -521,6 +538,12 @@
         <xsl:param name="modelName" as="xsd:string"/>
         <xsl:sequence select="$mapping/bnd:mappedModels/model[name=$modelName]/xml/@attributeFormDefault='qualified'"/>
     </xsl:function>
+    <xsl:function name="vf:XMLIgnorePackages" as="xsd:boolean">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:sequence select="$mapping/bnd:mappedModels/model[name=$modelName]/xml/@packageHandling='ignore'"/>
+    </xsl:function>
+
+
 
     <xsl:function name="vf:xsdNsPrefix" as="xsd:string">
         <xsl:param name="modelName" as="xsd:string"/>

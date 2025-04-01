@@ -31,8 +31,11 @@
         <python-package>org.ivoa.dm.serializationsample</python-package>
         <xml-targetnamespace prefix="ser">http://ivoa.net/vodml/sample/serialization</xml-targetnamespace>
         <xmllegacy-targetnamespace prefix="ser" schemaLocation="serialization.xsd">http://ivoa.net/dm/sample/serialization</xmllegacy-targetnamespace>
+        <xml packageHandling="ignore"/>
         <rdb inheritance-strategy="single-table"
              discriminatorColumnLength="64"/>
+
+
     </model>
     <model>
         <name>c1vdt</name>

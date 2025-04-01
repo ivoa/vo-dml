@@ -49,10 +49,9 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
            <xsd:attribute name="compositionStyle" default="wrapped">
               <xsd:annotation>
                  <xsd:documentation>
-                    whether compositions with multiplicities greater than 1 should have a wrapper element
-
- when wrapped the default behaviour is to take the wrapper element name from the name of the attribute and the element name for each of the elements object type name (with the initial letter lowerCased)
-                 
+                    whether compositions with multiplicities greater than 1 should have a wrapper element when wrapped the default
+                    behaviour is to take the wrapper element name from the name of the attribute and the element name for each of
+                    the elements object type name (with the initial letter lowerCased)
                  </xsd:documentation>
               </xsd:annotation>
               <xsd:simpleType>
@@ -85,6 +84,21 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
                  <xsd:restriction base="xsd:string">
                     <xsd:enumeration value="unqualified"></xsd:enumeration>
                     <xsd:enumeration value="qualified"></xsd:enumeration>
+                 </xsd:restriction>
+              </xsd:simpleType>
+           </xsd:attribute>
+           <xsd:attribute name="packageHandling" use="optional" default="qualified">
+                        <xsd:annotation>
+                           <xsd:documentation>specify how to translate the VO-DML package namespaces into XML namespaces</xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:annotation>
+                               <xsd:documentation>qualified - all of the names appear in the assigned top level XML namespace, but any names that are in VO-DML packages are prefixed with the package name with "." used as a separator
+ignore - all the names are placed in the top level namespace.(This might result in clashes).</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="qualified"></xsd:enumeration>
+                    <xsd:enumeration value="ignore"></xsd:enumeration>
                  </xsd:restriction>
               </xsd:simpleType>
            </xsd:attribute>
@@ -363,5 +377,6 @@ IMPL - this could be put into the code - especially as the number of JSON built-
   <xsd:simpleType name="NewSimpleType">
      <xsd:restriction base="xsd:string"></xsd:restriction>
   </xsd:simpleType>
+
 
 </xsd:schema>
