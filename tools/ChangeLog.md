@@ -97,6 +97,8 @@
 * 0.5.19
   * Add support for local vocabularies
   * Add XML schema support for wrapped attributes with multiplicity > 1
+* 0.5.20
+  * add binding option to ignore packages in XML serialization
 
 
 N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass in same hierarchy - still waiting for a solution

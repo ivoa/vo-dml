@@ -6,7 +6,7 @@ import ru.vyarus.gradle.plugin.python.task.PythonTask
  * 
  */
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.5.19"
+    id("net.ivoa.vo-dml.vodmltools") version "0.5.20"
     id("com.diffplug.spotless") version "6.25.0"
     id("ru.vyarus.use-python") version "4.1.0"
 
@@ -96,6 +96,9 @@ dependencies {
     testImplementation("com.h2database:h2:2.3.232") // try out h2
 //    testImplementation("org.apache.derby:derby:10.14.2.0")
     compileOnly("com.google.googlejavaformat:google-java-format:1.22.0")
+    // initial testing with hibernate spatial
+//    implementation("org.hibernate:hibernate-spatial:6.5.3-final")
+//    testImplementation("org.orbisgis:h2gis:2.2.3")
 }
 
 python {

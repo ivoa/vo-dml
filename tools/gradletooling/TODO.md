@@ -84,8 +84,8 @@ VODML Tooling TODO
 * references
   * would be nice if the tooling warned when contained references are created bare.... - e.g. the filters in the original sample.
 * Vocabularies
-  * would be good to add in off-line capability - store the desise at generation time and read that if the on-line not accessible
-  * only does run-time checking - perhaps compile-time would be good?
+  * ~~would be good to add in off-line capability - store the desise at generation time and read that if the on-line not accessible~~
+  * ~~only does run-time checking - perhaps compile-time would be good?~~
 * JAXB
   * ~~idrefs referred to objects are not being output - http://stackoverflow.com/questions/12914382/marshalling-unmarshalling-fields-to-tag-with-attributes-using-jaxb~~
   * make the subsets create substitution group xml (i.e. have elements rather than xsi:type) http://blog.bdoughan.com/2010/11/jaxb-and-inheritance-using-substitution.html
