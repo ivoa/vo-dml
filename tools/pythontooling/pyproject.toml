@@ -22,6 +22,11 @@ requires = ["setuptools >= 77.0.3"
     "saxonche"]
 build-backend = "setuptools.build_meta"
 
+install_requires=[
+    'click',
+    'saxonche'
+]
+
 [project.scripts]
 vodml = "vodmltools.cli:app"
 
