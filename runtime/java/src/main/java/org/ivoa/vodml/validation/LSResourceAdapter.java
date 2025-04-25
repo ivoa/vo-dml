@@ -13,8 +13,9 @@ import org.xmlresolver.sources.ResolverLSInput;
  * API for users of {@link XMLResolver} who don't use it.</p>
  * 
  * This is modified from the similarly named class in XMLResolver because it does not do namspace lookup
- */
-
+ * @deprecated the main release is now fixed https://github.com/xmlresolver/xmlresolver/issues/180
+ **/
+@Deprecated
 public class LSResourceAdapter implements LSResourceResolver {
     private final XMLResolver resolver;
     private final ResolverLogger logger;

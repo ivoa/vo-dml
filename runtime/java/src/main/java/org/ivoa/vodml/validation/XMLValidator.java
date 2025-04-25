@@ -340,7 +340,7 @@ public class XMLValidator {
         errorMap = new HashMap<>();
         SchemaFactory schemaFactory = SchemaFactory
                 .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        schemaFactory.setResourceResolver(new LSResourceAdapter(makeXMLResolver()));
+        schemaFactory.setResourceResolver(makeXMLResolver().getLSResourceResolver());
         Schema schema = schemaFactory.newSchema(schemaFiles);
         Validator validator = schema.newValidator();
         validator.setErrorHandler(new SimpleErrorHandler());
@@ -350,9 +350,9 @@ public class XMLValidator {
     XMLResolver makeXMLResolver() {
         XMLResolverConfiguration config = new XMLResolverConfiguration();
         config.setFeature(ResolverFeature.DEFAULT_LOGGER_LOG_LEVEL, "info");
-        config.setFeature(ResolverFeature.ACCESS_EXTERNAL_DOCUMENT, "");
+        config.setFeature(ResolverFeature.ACCESS_EXTERNAL_DOCUMENT, "all");// it would be nice if this actually did stop external lookups as suggested
         config.setFeature(ResolverFeature.THROW_URI_EXCEPTIONS, true);
-        config.setFeature(ResolverFeature.ALWAYS_RESOLVE, false);
+        config.setFeature(ResolverFeature.ALWAYS_RESOLVE, true);
         config.setFeature(ResolverFeature.PREFER_PUBLIC, false);
         config.setFeature(ResolverFeature.CLASSPATH_CATALOGS, true);
         config.setFeature(ResolverFeature.CLASSLOADER, ClassLoader.getSystemClassLoader());//trying to get a classloader that will load resources from inside jar...
