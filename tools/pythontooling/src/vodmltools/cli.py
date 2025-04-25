@@ -1,6 +1,7 @@
 import os
 import click
 from vodmltools.vodml import *
+from vodmltools.schematron import *
 
 
 
@@ -11,7 +12,7 @@ def app():
 
 @app.command("schema")
 @click.option("--binding",type=str, help="binding files")
-@click.option("--deps",type=str, help="location dependent models")# TODO decide if deps is bettter repeatable.
+@click.option("--deps",type=str, help="location dependent models")# TODO decide if deps is better repeatable.
 @click.argument("vodmlfile")
 def schema(binding,vodmlfile, deps ):
     """generates schema from the VODML
@@ -33,5 +34,16 @@ def doc(vodmlfile, binding):
     VODML - the VO-DML file definition"""
     click.echo(f'generating doc for {vodmlfile}')
 
-
-
+@app.command("validate")
+@click.argument("vodmlfile")
+@click.option("--deps",type=str, help="location dependent models")# TODO decide if deps is better repeatable.
+def validate(vodmlfile,deps):
+   """
+   validates the VO-DML file with schematron rules
+   
+   :param vodmlfile: 
+   :return: 
+   """
+   tmpcat = "tmpcat.xml"
+   createCatalog(tmpcat,[vodmlfile] +deps.split(","))
+   Schematron().validate(vodmlfile)

@@ -13,7 +13,7 @@ class XSLTTransformer:
 
 
     def setCatalog(self,catalog):
-        self.proc.set_catalog_files([os.path.abspath(catalog)])
+        self.proc.set_catalog_files([os.path.abspath(catalog)])# TODO the catalog can be fixed though - see comment below
         self.xsltproc = self.proc.new_xslt30_processor() # unfortunately compared to the java version the catalog has to be set before stylesheet compilation - so what would otherwise be done in the constuctor is done here.
         inp_file = impresources.files(xslt) / self.script
         self.executable = self.xsltproc.compile_stylesheet(stylesheet_file=str(inp_file))
@@ -56,7 +56,9 @@ def createCatalog(cat, vodmlFiles):
         for v in vodmlFiles:
             p = PurePath(os.path.abspath(v))
             f.write(f"   <uri name=\"{p.name}\" uri=\"{p.as_uri()}\"/>\n")
-
+        csf = "common-structure-functions.xsl"
+        pos = impresources.files(xslt) / csf
+        f.write(f"   <uri name=\"{csf}\" uri=\"{pos.as_uri()}\"/>\n")
         f.write("""
                         </group>
                      </catalog>
