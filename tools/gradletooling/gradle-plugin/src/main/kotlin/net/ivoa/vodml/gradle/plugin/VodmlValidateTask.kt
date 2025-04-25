@@ -41,6 +41,8 @@ import org.gradle.api.GradleException
          config.setFeature(ResolverFeature.PREFER_PUBLIC, false)
 
          config.setFeature(ResolverFeature.URI_FOR_SYSTEM, true) // fall through to URI
+
+         config.setFeature(ResolverFeature.MASK_JAR_URIS, false) // needed for classpath to work in the catalog for schematron include
          val resolver = XMLResolver(config)
 
          val transformerFactory = net.sf.saxon.TransformerFactoryImpl()

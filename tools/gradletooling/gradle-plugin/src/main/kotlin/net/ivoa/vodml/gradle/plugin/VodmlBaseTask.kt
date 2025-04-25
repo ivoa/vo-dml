@@ -120,6 +120,7 @@ class ExternalModelHelper constructor (private val project: Project, private val
             v.forEach {
                 out.write("   <uri name=\"${it.name}\" uri=\"${java.nio.file.Paths.get(it.toURI()).toUri()}\"/>\n") //IMPL note that the File.toURI() does not produce a legal file: URI!
             }
+            out.write(" <uri name=\"common-structure-functions.xsl\" uri=\"classpath:xslt/common-structure-functions.xsl\"/>\n")
             out.write(
                 """
                         </group>

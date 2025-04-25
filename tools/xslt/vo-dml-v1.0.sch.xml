@@ -13,7 +13,7 @@
 
 <sch:title>Schematron VO-DML Validator</sch:title>
 
-    <xsl:include href="classpath:xslt/common-structure-functions.xsl"/>
+    <xsl:include href="common-structure-functions.xsl"/>
 
 <xsl:function name="fct:vo-dml_element_kind" as="xs:string">
     <!--  returns name of element containing the vodml-id identified by the vodml-ref -->
