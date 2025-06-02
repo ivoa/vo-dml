@@ -1608,10 +1608,12 @@ import jakarta.xml.bind.annotation.XmlNsForm;
       </xsl:choose>
  </xsl:template>
     <xsl:template match="*" mode="openapiAnnotation">
+        <!-- note that the transformation of the description text contains some heuristics to make it legal java string  - notably that if there are any backslash characters in the
+         vodml description text then they are doubled so as not to appear as java character escape codes.-->
         <xsl:variable name="AllowedSymbols" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789()*%$#@!,.?[]=- +   /\'''"/>
 
         @org.eclipse.microprofile.openapi.annotations.media.Schema(description="<xsl:if test="current()/name()='reference'"><xsl:value-of
-            select="'A reference to - '"/></xsl:if><xsl:value-of select="translate(string-join(for $s in description/text() return normalize-space($s),' '),'&quot;','''')"/>")
+            select="'A reference to - '"/></xsl:if><xsl:value-of select="translate(string-join(for $s in description/text() return replace(normalize-space($s),'\\','\\\\'),' '),'&quot;','''')"/>")
     </xsl:template>
 
 
