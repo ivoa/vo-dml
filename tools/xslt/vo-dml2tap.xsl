@@ -4,6 +4,10 @@ This will produce a tap schema representation of the data model database seriali
 
 FIXME This is not yet complete
 * subsetting rules not done
+
+
+note the need to make the columnID unique over whole document (as it is an XML ID) - done by prepending the table name and a .
+   -  this should be removed before writing DDL for an actual RDB
  -->
 
 
