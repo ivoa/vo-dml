@@ -15,11 +15,11 @@
      <xsl:value-of select="table_name"/>
      <xsl:text> (</xsl:text>
      <xsl:apply-templates select="columns/column"/>
-     <xsl:apply-templates select="columns/column[indexed = 'true']"/>
+     <xsl:apply-templates select="parent::tables/table/fkeys/foreignKey[target_table = current()/table_name]" mode="primarykey"/>
      <xsl:text>);&#xa;</xsl:text>
    </xsl:template>
-   <xsl:template match="column[indexed = 'true']">
-     <xsl:value-of select="concat('primary key ',vft:columnNameNormalisation(column_name))"></xsl:value-of>
+   <xsl:template match="foreignKey" mode="primarykey">
+     <xsl:value-of select="concat('primary key ', string-join(distinct-values(for $c in columns/fKColumn/target_column return vft:columnNameNormalisation($c),',')))"></xsl:value-of>
    </xsl:template>
    <xsl:template match="column">
      <xsl:value-of select="concat(vft:columnNameNormalisation(column_name),' ', datatype,', ')"></xsl:value-of>
