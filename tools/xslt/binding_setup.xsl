@@ -52,7 +52,16 @@
     <xsl:variable name="lt">&lt;</xsl:variable>
     <xsl:variable name="gt">&gt;</xsl:variable>
     <xsl:variable name="isRdbSingleInheritance" as="xsd:boolean" select="vf:isRdbSingleTable(/vo-dml:model/name)"/>
-    <xsl:variable name="RdbSchemaName" as="xsd:string" select="vf:rdbSchemaName(/vo-dml:model/name)"/>
+    <xsl:variable name="RdbSchemaName" as="xsd:string" >
+        <xsl:choose>
+            <xsl:when test="$mapping/bnd:mappedModels/model[name=/vo-dml:model/name]/rdb/@schema">
+                <xsd:sequence select="$mapping/bnd:mappedModels/model[name=/vo-dml:model/name]/rdb/@schema"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsd:sequence select="/vo-dml:model/name"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
     <xsl:variable name="isRDBUseColRef" as="xsd:boolean" select="vf:isRdbAddRef(/vo-dml:model/name)"/>
     <xsl:variable name="isRDBNaturalJoin" as="xsd:boolean" select="vf:isRdbNaturalJoin(/vo-dml:model/name)"/>
     <xsl:variable name="discriminatorColumnLength" as="xsd:int">
