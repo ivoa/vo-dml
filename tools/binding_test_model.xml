@@ -11,7 +11,7 @@
         <python-package>org.ivoa.dm.jpatest</python-package>
         <xml-targetnamespace prefix="jpat">http://ivoa.net/dm/sample/jpatest</xml-targetnamespace>
         <xmllegacy-targetnamespace prefix="jpat" schemaLocation="jpatest.xsd">http://ivoa.net/dm/sample/jpatest</xmllegacy-targetnamespace>
-        <rdb inheritance-strategy="joined"
+        <rdb inheritance-strategy="joined" schema="rdbtest"
         discriminatorColumnLength="64"/>
     </model>
     <model>
@@ -21,7 +21,7 @@
         <python-package>org.ivoa.dm.lifecycle</python-package>
         <xml-targetnamespace prefix="life">http://ivoa.net/vodml/sample/lifecycle</xml-targetnamespace>
         <xmllegacy-targetnamespace prefix="life" schemaLocation="lifecycletest.xsd">http://ivoa.net/dm/sample/lifecycle</xmllegacy-targetnamespace>
-        <rdb inheritance-strategy="single-table"
+        <rdb inheritance-strategy="single-table" schema="lifecycle"
              discriminatorColumnLength="64"/>
     </model>
     <model>

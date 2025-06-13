@@ -216,6 +216,7 @@ public abstract class AbstractBaseValidation {
         props.put("jakarta.persistence.schema-generation.scripts.create-target", "test.sql");
         props.put("jakarta.persistence.schema-generation.scripts.drop-target", "test-drop.sql");
         props.put("hibernate.hbm2ddl.schema-generation.script.append", "false");
+        props.put("jakarta.persistence.create-database-schemas", "true");
 
         props.put("jakarta.persistence.schema-generation.create-source", "metadata");
         props.put("jakarta.persistence.schema-generation.database.action", "drop-and-create");

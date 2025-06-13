@@ -563,7 +563,12 @@
         <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelName]/rdb[@inheritance-strategy='single-table'] )= 1"/>
     </xsl:function>
 
-    <xsl:function name="vf:isRdbAddRef" as="xsd:boolean">
+    <xsl:function name="vf:rdbSchemaName" as="xsd:string">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/rdb/@schema"/>
+    </xsl:function>
+
+   <xsl:function name="vf:isRdbAddRef" as="xsd:boolean">
         <xsl:param name="modelName" as="xsd:string"/>
         <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelName]/rdb[@useRefInColumnName=true()] )= 1"/>
     </xsl:function>

@@ -53,7 +53,7 @@
 
   @jakarta.persistence.Entity
   <xsl:if test="not($isRdbSingleInheritance) or ($isRdbSingleInheritance and not(extends))">
-  @jakarta.persistence.Table( name = "<xsl:value-of select="vf:rdbTableName($vodml-ref)"/>" )
+  @jakarta.persistence.Table( name = "<xsl:value-of select="vf:rdbTableName($vodml-ref)"/>" ,schema="<xsl:value-of select="$RdbSchemaName"/>" )
   </xsl:if>
   <xsl:if test="@abstract or $hasChild" >
       <xsl:choose>
