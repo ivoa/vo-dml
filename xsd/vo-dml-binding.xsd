@@ -172,6 +172,11 @@ ignore - all the names are placed in the top level namespace.(This might result 
                  </xsd:documentation>
               </xsd:annotation>
            </xsd:attribute>
+            <xsd:attribute name="schema" type="xsd:string" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>If present then the generated tables will be put in the given schema - otherwise the default is to put the tables in a schema with the same name as the model</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
         </xsd:complexType>
      </xsd:element>
      <xsd:element name="type-mapping" type="TypeMapping" minOccurs="0" maxOccurs="unbounded">
@@ -377,10 +382,6 @@ IMPL - this could be put into the code - especially as the number of JSON built-
            </xsd:documentation>
         </xsd:annotation>
      </xsd:attribute>
-     <xsd:attribute name="schema" type="xsd:string" use="optional">
-        <xsd:annotation>
-           <xsd:documentation>If present then the generated tables will be put in the given schema - otherwise the default is to put the tables in a schema with the same name as the model</xsd:documentation>
-        </xsd:annotation></xsd:attribute>
   </xsd:complexType>
   <xsd:simpleType name="NewSimpleType">
      <xsd:restriction base="xsd:string"></xsd:restriction>
