@@ -348,11 +348,31 @@
 @jakarta.persistence.ManyToMany( cascade = {  jakarta.persistence.CascadeType.REFRESH } )
               </xsl:when>
               <xsl:otherwise>
-              <xsl:variable name="colname" select="vf:rdbRefColumnName(vf:asvodmlref(current()))"/>
-
                   <!-- require manual management of references - do not remove referenced entity : do not cascade delete -->
-@jakarta.persistence.ManyToOne( cascade = {  jakarta.persistence.CascadeType.REFRESH } )
-@jakarta.persistence.JoinColumn( name="<xsl:value-of select="$colname"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
+                  @jakarta.persistence.ManyToOne( cascade = {  jakarta.persistence.CascadeType.REFRESH } )
+
+                  <!--IMPL this is somewhat hacky to deal with the tap schema case specifically not the general case of multiple natural keys -->
+                  <xsl:variable name="refObj" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
+                  <xsl:if test=" $refObj/attribute/constraint[ends-with(@xsi:type,':NaturalKey') and position='2']
+               and count($refObj/attribute/constraint[ends-with(@xsi:type,':NaturalKey')])=1" >
+                      <xsl:variable name="containers" select="vf:ContainerHierarchyInOwnModel(current()/datatype/vodml-ref)"/>
+                      <!--          <xsl:message>containers <xsl:value-of select="string-join($containers,',')"/> first=<xsl:value-of-->
+                      <!--                  select="$containers[1]"/></xsl:message>-->
+                      <xsl:choose>
+                          <xsl:when test="count($containers) > 0 and $models/key('ellookup',$containers[1])/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
+@jakarta.persistence.JoinColumn( name="<xsl:value-of select="concat(vf:rdbRefColumnName(vf:asvodmlref(current())),'_',lower-case($models/key('ellookup',$containers[1])/name))"/>", <!-- IMPL making the same as the referred to column name for now -->
+                              referencedColumnName ="<xsl:value-of select="vf:rdbJoinTargetColumnName($containers[1])"/>",
+                              nullable = false)
+
+                          </xsl:when>
+                          <xsl:otherwise>
+                              <xsl:message terminate="yes">the model does not satisfy the limited conditions for composite primary keys</xsl:message>
+                          </xsl:otherwise>
+                      </xsl:choose>
+                  </xsl:if>
+@jakarta.persistence.JoinColumn( name="<xsl:value-of select="vf:rdbRefColumnName(vf:asvodmlref(current()))"/>",
+                  referencedColumnName ="<xsl:value-of select="vf:rdbJoinTargetColumnName(current()/datatype/vodml-ref)"/>",
+                  nullable = <xsl:apply-templates select="." mode="nullable"/> )
               </xsl:otherwise>
           </xsl:choose>
       </xsl:otherwise>

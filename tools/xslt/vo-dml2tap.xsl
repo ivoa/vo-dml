@@ -344,19 +344,19 @@ note the need to make the columnID unique over whole document (as it is an XML I
     <xsl:function name="vf:tapcolumnName" as="xsd:string" >
         <xsl:param name="vodml-ref" as="xsd:string" />
         <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
-        <xsl:sequence select="concat($el/parent::*/name,'.',$el/name)"/>
+        <xsl:sequence select="concat(vf:rdbTableName(vf:asvodmlref($el/parent::*)),'.',$el/name)"/>
     </xsl:function>
     <!-- make a reference to a column -->
     <xsl:function name="vf:tapTargetColumnName" as="xsd:string" >
         <xsl:param name="vodml-ref" as="xsd:string" />
         <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
-        <xsl:sequence select="concat($el/name,'.',vf:rdbJoinTargetColumnName($vodml-ref))"/>
+        <xsl:sequence select="concat(vf:rdbTableName($vodml-ref),'.',vf:rdbJoinTargetColumnName($vodml-ref))"/>
     </xsl:function>
 
     <xsl:function name="vf:tapJoinColumnName" as="xsd:string" >
         <xsl:param name="comp" as="element()"/><!-- the composition -->
         <xsl:variable name="parent" select="$comp/parent::*" /><!-- the parent of the composition elemnt -->
-        <xsl:sequence select="concat('FK_',$comp/name,'.',vf:rdbCompositionJoinName($parent))"/>
+        <xsl:sequence select="concat(vf:rdbTableName($comp/datatype/vodml-ref),'.',vf:rdbCompositionJoinName($parent))"/>
     </xsl:function>
 
     <xsl:function name="vf:tapFkeyID" as="xsd:string" > <!-- generate unique FK id -->

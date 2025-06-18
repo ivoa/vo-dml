@@ -509,7 +509,7 @@
             <xsl:sequence select="for $s in $supers return vf:javaLocalDefines(vf:asvodmlref($s))"/>
     </xsl:function>
 
-
+<!-- IMPL - this does not have a natural generalisation to multiple natural keys so should be deprecated -->
     <xsl:function name="vf:JavaKeyType" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:variable name="supers" select="($models/key('ellookup',$vodml-ref),vf:baseTypes($vodml-ref))"/>
@@ -598,7 +598,7 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
-    <xsl:function name="vf:rdbIDColumnName" as="xsd:string">
+    <xsl:function name="vf:rdbIDColumnName" as="xsd:string"> <!-- TODO - is there a usecase for this being different from rdbJoinTargetColumnName? it misses out natural keys.... -->
         <xsl:param name="vodml-ref" as="xsd:string"/> <!-- the objectType -->
         <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
         <xsl:choose>
@@ -636,7 +636,7 @@
 
 
 
-    <xsl:function name="vf:rdbCompositionJoinName" as="xsd:string">
+    <xsl:function name="vf:rdbCompositionJoinName" as="xsd:string">  <!-- TODO - is there a usecase for this being different from rdbJoinTargetColumnName? -->
     <xsl:param name="parent" as="element()"/> <!-- the parent of the composition -->
         <xsl:choose>
             <xsl:when test="$parent/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
@@ -649,7 +649,7 @@
     </xsl:function>
 
     <xsl:function name="vf:rdbRefColumnName" as="xsd:string">
-        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:param name="vodml-ref" as="xsd:string"/> <!-- this is the Reference -->
         <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
         <xsl:variable name="type" select="$models/key('ellookup',$el/datatype/vodml-ref)"/>
         <xsl:variable name="modelName" select="$el/ancestor-or-self::vo-dml:model/name"/>
