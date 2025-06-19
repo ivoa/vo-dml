@@ -198,8 +198,7 @@ that allow for successful JSON round tripping.
         ,"properties" : {
         "$comment" : "placeholder to make commas easier!"
         ,"@type" : { "type": "string"}
-        <xsl:apply-templates select="attribute"/>
-        <xsl:apply-templates select="reference"/>
+        <xsl:apply-templates select="attribute|reference"/>
         }
         <xsl:call-template name="required"/>
         <xsl:if test="extends">

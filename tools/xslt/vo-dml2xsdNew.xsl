@@ -218,9 +218,7 @@ note that this schema is substantially different from the era when this code was
     <xsl:variable name="numprops" select="count(attribute|reference[not(subsets)]|composition)"/>
     <xsl:if test="number($numprops) > 0">
       <xsd:sequence>
-        <xsl:apply-templates select="attribute[not(vf:findTypeDetail(vf:asvodmlref(.))/isAttribute)]"/>
-        <xsl:apply-templates select="composition[not(subsets)]"/>
-        <xsl:apply-templates select="reference[not(subsets)]"/>
+        <xsl:apply-templates select="attribute[not(vf:findTypeDetail(vf:asvodmlref(.))/isAttribute)]|composition[not(subsets)]|reference[not(subsets)]"/>
       </xsd:sequence>
       <xsl:apply-templates select="attribute[vf:findTypeDetail(vf:asvodmlref(.))/isAttribute]"/>
     </xsl:if>
@@ -265,8 +263,7 @@ note that this schema is substantially different from the era when this code was
     <xsl:variable name="numprops" select="count(attribute|reference[not(subsets)])"/>
     <xsl:if test="number($numprops) > 0">
       <xsd:sequence>
-        <xsl:apply-templates select="attribute[not(vf:findTypeDetail(vf:asvodmlref(.))/isAttribute)]"/>
-        <xsl:apply-templates select="reference[not(subsets)]"/>
+        <xsl:apply-templates select="attribute[not(vf:findTypeDetail(vf:asvodmlref(.))/isAttribute)]|reference[not(subsets)]"/>
       </xsd:sequence>
       <xsl:apply-templates select="attribute[vf:findTypeDetail(vf:asvodmlref(.))/isAttribute]"/>
     </xsl:if>

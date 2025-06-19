@@ -760,10 +760,8 @@
       private static final long serialVersionUID = LAST_MODIFICATION_DATE;
  -->
       <xsl:variable name="localdefs" select="vf:javaLocalDefines($vodml-ref)"/>
-      <xsl:apply-templates select="attribute" mode="declare" />
-      <xsl:apply-templates select="constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="declare" />
-      <xsl:apply-templates select="composition" mode="declare" />
-      <xsl:apply-templates select="reference" mode="declare" />
+      <xsl:apply-templates select="attribute|reference|composition|constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="declare" />
+
       /**
        * Creates a new <xsl:value-of select="name"/>
        */
