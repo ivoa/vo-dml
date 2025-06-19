@@ -80,7 +80,7 @@ note the need to make the columnID unique over whole document (as it is an XML I
    <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
    <xsl:if test="not(extends and vf:isRdbSingleTable($modelname))">
    <table>
-     <table_name>{vf:rdbTableName($vodml-ref)}</table_name>
+     <table_name>{vf:tapTableName($vodml-ref)}</table_name>
        <table_type>table</table_type>
        <utype>{$vodml-ref}</utype>
        <description>{description}</description>
@@ -147,7 +147,7 @@ note the need to make the columnID unique over whole document (as it is an XML I
                <foreignKey>
                    <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
                    <key_id>{vf:tapFkeyID($vodml-ref)}</key_id>
-                   <target_table>{vf:rdbTableName(extends/vodml-ref)}</target_table>
+                   <target_table>{vf:tapTableName(extends/vodml-ref)}</target_table>
                    <description>join back to supertype {extends/vodml-ref}</description>
                    <utype>{$vodml-ref}</utype>
                    <columns>
@@ -244,7 +244,7 @@ note the need to make the columnID unique over whole document (as it is an XML I
         <foreignKey>
             <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
             <key_id>{vf:tapFkeyID($top-vodml-ref)}</key_id>
-            <target_table>{vf:rdbTableName(@type)}</target_table>
+            <target_table>{vf:tapTableName(@type)}</target_table>
             <xsl:comment>reference to {@type}</xsl:comment>
 
             <description>{$top-el/description}</description>
@@ -292,7 +292,7 @@ note the need to make the columnID unique over whole document (as it is an XML I
             <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
             <key_id>{vf:tapFkeyID($vodml-ref)}</key_id>
             <xsl:comment>reference to {datatype/vodml-ref}</xsl:comment>
-            <target_table>{vf:rdbTableName(datatype/vodml-ref)}</target_table>
+            <target_table>{vf:tapTableName(datatype/vodml-ref)}</target_table>
             <description>{description}</description>
             <utype>{$vodml-ref}</utype>
             <columns>
@@ -312,7 +312,7 @@ note the need to make the columnID unique over whole document (as it is an XML I
             <xsl:variable name="target" select="vf:asvodmlref(current()/parent::*)"/>
             <key_id>{vf:tapFkeyID($vodml-ref)}</key_id>
             <xsl:comment>back reference to {datatype/vodml-ref} composition of {$target} </xsl:comment>
-            <target_table>{vf:rdbTableName($target)}</target_table>
+            <target_table>{vf:tapTableName($target)}</target_table>
             <description>foreign key for {datatype/vodml-ref} composition of {$target} </description>
             <utype>{$vodml-ref}</utype> <!-- IMPL not sure is this is the appropriate utype -->
             <columns>
@@ -341,23 +341,27 @@ note the need to make the columnID unique over whole document (as it is an XML I
         </xsl:if>
     </xsl:template>
 
+    <xsl:function name="vf:tapTableName">
+        <xsl:param name="vodml-ref" as="xsd:string" />
+        <xsl:sequence select="concat($RdbSchemaName,'.',vf:rdbTableName($vodml-ref))"/>
+    </xsl:function>
     <!-- need to make the columnID unique over whole document - done by prepending the table name
     this will have to be removed before writing to tapschema db -->
     <xsl:function name="vf:tapcolumnName" as="xsd:string" >
         <xsl:param name="vodml-ref" as="xsd:string" />
         <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
-        <xsl:sequence select="concat(vf:rdbTableName(vf:asvodmlref($el/parent::*)),'.',$el/name)"/>
+        <xsl:sequence select="concat($RdbSchemaName,'.',vf:rdbTableName(vf:asvodmlref($el/parent::*)),'.',$el/name)"/>
     </xsl:function>
     <!-- make a reference to a column -->
     <xsl:function name="vf:tapTargetColumnName" as="xsd:string" >
         <xsl:param name="vodml-ref" as="xsd:string" />
         <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
-        <xsl:sequence select="concat(vf:rdbTableName($vodml-ref),'.',vf:rdbJoinTargetColumnName($vodml-ref))"/>
+        <xsl:sequence select="concat($RdbSchemaName,'.',vf:rdbTableName($vodml-ref),'.',vf:rdbJoinTargetColumnName($vodml-ref))"/>
     </xsl:function>
 
     <xsl:function name="vf:tapJoinColumnName" as="xsd:string" >
         <xsl:param name="comp" as="element()"/><!-- the composition/reference -->
-        <xsl:sequence select="concat(vf:rdbTableName($comp/datatype/vodml-ref),'.',vf:rdbJoinColumnName($comp))"/>
+        <xsl:sequence select="concat($RdbSchemaName,'.',vf:rdbTableName($comp/datatype/vodml-ref),'.',vf:rdbJoinColumnName($comp))"/>
     </xsl:function>
 
     <xsl:function name="vf:tapFkeyID" as="xsd:string" > <!-- generate unique FK id -->
