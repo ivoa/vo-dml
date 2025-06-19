@@ -360,7 +360,7 @@
                       <!--                  select="$containers[1]"/></xsl:message>-->
                       <xsl:choose>
                           <xsl:when test="count($containers) > 0 and $models/key('ellookup',$containers[1])/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
-@jakarta.persistence.JoinColumn( name="<xsl:value-of select="concat(vf:rdbRefColumnName(vf:asvodmlref(current())),'_',lower-case($models/key('ellookup',$containers[1])/name))"/>", <!-- IMPL making the same as the referred to column name for now -->
+@jakarta.persistence.JoinColumn( name="<xsl:value-of select="concat(vf:rdbJoinColumnName(current()),'_',lower-case($models/key('ellookup',$containers[1])/name))"/>", <!-- IMPL making the same as the referred to column name for now -->
                               referencedColumnName ="<xsl:value-of select="vf:rdbJoinTargetColumnName($containers[1])"/>",
                               nullable = false)
 
@@ -370,7 +370,7 @@
                           </xsl:otherwise>
                       </xsl:choose>
                   </xsl:if>
-@jakarta.persistence.JoinColumn( name="<xsl:value-of select="vf:rdbRefColumnName(vf:asvodmlref(current()))"/>",
+@jakarta.persistence.JoinColumn( name="<xsl:value-of select="vf:rdbJoinColumnName(current())"/>",
                   referencedColumnName ="<xsl:value-of select="vf:rdbJoinTargetColumnName(current()/datatype/vodml-ref)"/>",
                   nullable = <xsl:apply-templates select="." mode="nullable"/> )
               </xsl:otherwise>
@@ -406,7 +406,7 @@
 @jakarta.persistence.OrderColumn
         </xsl:if>
 @jakarta.persistence.OneToMany(  cascade = jakarta.persistence.CascadeType.ALL, fetch = <xsl:value-of select="$jpafetch"/>, targetEntity=<xsl:value-of select="concat(vf:JavaType(datatype/vodml-ref),'.class')" />)
-@jakarta.persistence.JoinColumn( name="<xsl:value-of select="vf:rdbCompositionJoinName($parent)"/>")
+@jakarta.persistence.JoinColumn( name="<xsl:value-of select="vf:rdbJoinColumnName(current())"/>")
 @org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
       </xsl:otherwise>
     </xsl:choose>

@@ -611,6 +611,44 @@
         </xsl:choose>
     </xsl:function>
 
+    <xsl:function name="vf:rdbJoinColumnName" as="xsd:string">
+        <xsl:param name="el" as="element()"/>
+        <xsl:choose>
+            <xsl:when test="$el/name()='reference'">
+                <xsl:variable name="type" select="$models/key('ellookup',$el/datatype/vodml-ref)"/>
+                <xsl:variable name="modelName" select="$el/ancestor-or-self::vo-dml:model/name"/>
+                <xsl:choose>
+                    <xsl:when test="vf:isRdbAddRef($modelName)">
+                        <xsl:choose>
+                            <xsl:when test="vf:isRdbNaturalJoin($modelName)">
+                                <xsl:sequence select="concat(upper-case($type/name),'_ID')"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:sequence  select="concat(upper-case($el/name),'_',upper-case($type/name),'_ID')"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="$el/name"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:when test="$el/name() = 'composition'">
+                <xsl:variable name="parent" select="$el/parent::*"/>
+                <xsl:choose>
+                    <xsl:when test="$parent/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
+                        <xsl:value-of select="$parent/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="concat(upper-case($parent/name),'_ID')"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise><xsl:message terminate="yes">join column name not covered</xsl:message> </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
+
     <xsl:function name="vf:rdbJoinTargetColumnName" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/> <!-- the objectType to join to -->
         <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
@@ -636,39 +674,6 @@
 
 
 
-    <xsl:function name="vf:rdbCompositionJoinName" as="xsd:string">  <!-- TODO - is there a usecase for this being different from rdbJoinTargetColumnName? -->
-    <xsl:param name="parent" as="element()"/> <!-- the parent of the composition -->
-        <xsl:choose>
-            <xsl:when test="$parent/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
-                <xsl:value-of select="$parent/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"/>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:value-of select="concat(upper-case($parent/name),'_ID')"/>
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:function>
-
-    <xsl:function name="vf:rdbRefColumnName" as="xsd:string">
-        <xsl:param name="vodml-ref" as="xsd:string"/> <!-- this is the Reference -->
-        <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
-        <xsl:variable name="type" select="$models/key('ellookup',$el/datatype/vodml-ref)"/>
-        <xsl:variable name="modelName" select="$el/ancestor-or-self::vo-dml:model/name"/>
-        <xsl:choose>
-            <xsl:when test="vf:isRdbAddRef($modelName)">
-                <xsl:choose>
-                    <xsl:when test="vf:isRdbNaturalJoin($modelName)">
-                       <xsl:sequence select="concat(upper-case($type/name),'_ID')"/>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence  select="concat(upper-case($el/name),'_',upper-case($type/name),'_ID')"/>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:sequence select="$el/name"/>
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:function>
 
 
     <xsl:function name="vf:rdbTapType" as="xsd:string">
