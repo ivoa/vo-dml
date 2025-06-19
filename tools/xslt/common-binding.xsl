@@ -613,10 +613,10 @@
 
     <xsl:function name="vf:rdbJoinColumnName" as="xsd:string">
         <xsl:param name="el" as="element()"/>
+        <xsl:variable name="type" select="$models/key('ellookup',$el/datatype/vodml-ref)"/>
+        <xsl:variable name="modelName" select="$el/ancestor-or-self::vo-dml:model/name"/>
         <xsl:choose>
             <xsl:when test="$el/name()='reference'">
-                <xsl:variable name="type" select="$models/key('ellookup',$el/datatype/vodml-ref)"/>
-                <xsl:variable name="modelName" select="$el/ancestor-or-self::vo-dml:model/name"/>
                 <xsl:choose>
                     <xsl:when test="vf:isRdbAddRef($modelName)">
                         <xsl:choose>
@@ -635,7 +635,11 @@
             </xsl:when>
             <xsl:when test="$el/name() = 'composition'">
                 <xsl:variable name="parent" select="$el/parent::*"/>
+                <xsl:message>joinname <xsl:value-of select="concat('parent=',$parent/name,' comp=',$el/datatype/vodml-ref, '  ')"/> <xsl:copy-of select="$mapping/bnd:mappedModels/model[name=$modelName]/rdb/rdbmap[@vodml-id=substring-after($el/datatype/vodml-ref,':')]"/> </xsl:message>
                 <xsl:choose>
+                    <xsl:when test="$mapping/bnd:mappedModels/model[name=$modelName]/rdb/rdbmap[@vodml-id=substring-after($el/datatype/vodml-ref,':') and @joinColumnName]">
+                        <xsl:sequence select="$mapping/bnd:mappedModels/model[name=$modelName]/rdb/rdbmap[@vodml-id=substring-after($el/datatype/vodml-ref,':')]/@joinColumnName"/>
+                    </xsl:when>
                     <xsl:when test="$parent/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
                         <xsl:value-of select="$parent/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"/>
                     </xsl:when>

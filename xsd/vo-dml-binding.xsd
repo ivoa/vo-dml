@@ -382,6 +382,10 @@ IMPL - this could be put into the code - especially as the number of JSON built-
            </xsd:documentation>
         </xsd:annotation>
      </xsd:attribute>
+     <xsd:attribute name="joinColumnName" type="xsd:string">
+        <xsd:annotation>
+           <xsd:documentation>This can be used to override the default behaviours of join column naming for this type</xsd:documentation>
+        </xsd:annotation></xsd:attribute>
   </xsd:complexType>
   <xsd:simpleType name="NewSimpleType">
      <xsd:restriction base="xsd:string"></xsd:restriction>

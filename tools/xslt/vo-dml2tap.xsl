@@ -354,7 +354,7 @@ note the need to make the columnID unique over whole document (as it is an XML I
     </xsl:function>
 
     <xsl:function name="vf:tapJoinColumnName" as="xsd:string" >
-        <xsl:param name="comp" as="element()"/><!-- the composition -->
+        <xsl:param name="comp" as="element()"/><!-- the composition/reference -->
         <xsl:sequence select="concat(vf:rdbTableName($comp/datatype/vodml-ref),'.',vf:rdbJoinColumnName($comp))"/>
     </xsl:function>
 

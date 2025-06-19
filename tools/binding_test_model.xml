@@ -12,7 +12,9 @@
         <xml-targetnamespace prefix="jpat">http://ivoa.net/dm/sample/jpatest</xml-targetnamespace>
         <xmllegacy-targetnamespace prefix="jpat" schemaLocation="jpatest.xsd">http://ivoa.net/dm/sample/jpatest</xmllegacy-targetnamespace>
         <rdb inheritance-strategy="joined" schema="rdbtest"
-        discriminatorColumnLength="64"/>
+        discriminatorColumnLength="64">
+            <rdbmap vodml-id="LChild" joinColumnName="altered_join"/>
+        </rdb>
     </model>
     <model>
         <name>lifecycleTest</name>
