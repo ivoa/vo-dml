@@ -147,6 +147,7 @@ note the need to make the columnID unique over whole document (as it is an XML I
                <foreignKey>
                    <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
                    <key_id>{vf:tapFkeyID($vodml-ref)}</key_id>
+                   <target_table>{vf:rdbTableName(extends/vodml-ref)}</target_table>
                    <description>join back to supertype {extends/vodml-ref}</description>
                    <utype>{$vodml-ref}</utype>
                    <columns>
@@ -155,7 +156,6 @@ note the need to make the columnID unique over whole document (as it is an XML I
                            <target_column>{vf:tapTargetColumnName(extends/vodml-ref)}</target_column>
                        </fKColumn>
                    </columns>
-                   <target_table>{vf:rdbTableName(extends/vodml-ref)}</target_table>
                </foreignKey>
 
            </xsl:if>
@@ -244,6 +244,7 @@ note the need to make the columnID unique over whole document (as it is an XML I
         <foreignKey>
             <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
             <key_id>{vf:tapFkeyID($top-vodml-ref)}</key_id>
+            <target_table>{vf:rdbTableName(@type)}</target_table>
             <xsl:comment>reference to {@type}</xsl:comment>
 
             <description>{$top-el/description}</description>
@@ -254,7 +255,7 @@ note the need to make the columnID unique over whole document (as it is an XML I
                     <target_column>{vf:tapTargetColumnName(@type)}</target_column>
                 </fKColumn>
             </columns>
-            <target_table>{vf:rdbTableName(@type)}</target_table>
+
         </foreignKey>
     </xsl:template>
 
@@ -291,7 +292,7 @@ note the need to make the columnID unique over whole document (as it is an XML I
             <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
             <key_id>{vf:tapFkeyID($vodml-ref)}</key_id>
             <xsl:comment>reference to {datatype/vodml-ref}</xsl:comment>
-
+            <target_table>{vf:rdbTableName(datatype/vodml-ref)}</target_table>
             <description>{description}</description>
             <utype>{$vodml-ref}</utype>
             <columns>
@@ -300,7 +301,7 @@ note the need to make the columnID unique over whole document (as it is an XML I
                     <target_column>{vf:tapTargetColumnName(datatype/vodml-ref)}</target_column>
                 </fKColumn>
             </columns>
-            <target_table>{vf:rdbTableName(datatype/vodml-ref)}</target_table>
+
         </foreignKey>
     </xsl:template>
 
@@ -311,6 +312,7 @@ note the need to make the columnID unique over whole document (as it is an XML I
             <xsl:variable name="target" select="vf:asvodmlref(current()/parent::*)"/>
             <key_id>{vf:tapFkeyID($vodml-ref)}</key_id>
             <xsl:comment>back reference to {datatype/vodml-ref} composition of {$target} </xsl:comment>
+            <target_table>{vf:rdbTableName($target)}</target_table>
             <description>foreign key for {datatype/vodml-ref} composition of {$target} </description>
             <utype>{$vodml-ref}</utype> <!-- IMPL not sure is this is the appropriate utype -->
             <columns>
@@ -319,7 +321,7 @@ note the need to make the columnID unique over whole document (as it is an XML I
                     <target_column>{vf:tapTargetColumnName($target)}</target_column>
                 </fKColumn>
             </columns>
-            <target_table>{vf:rdbTableName($target)}</target_table>
+
         </foreignKey>
         </xsl:if>
     </xsl:template>
