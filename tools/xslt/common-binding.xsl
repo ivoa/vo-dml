@@ -635,7 +635,7 @@
             </xsl:when>
             <xsl:when test="$el/name() = 'composition'">
                 <xsl:variable name="parent" select="$el/parent::*"/>
-                <xsl:message>joinname <xsl:value-of select="concat('parent=',$parent/name,' comp=',$el/datatype/vodml-ref, '  ')"/> <xsl:copy-of select="$mapping/bnd:mappedModels/model[name=$modelName]/rdb/rdbmap[@vodml-id=substring-after($el/datatype/vodml-ref,':')]"/> </xsl:message>
+<!--                <xsl:message>joinname <xsl:value-of select="concat('parent=',$parent/name,' comp=',$el/datatype/vodml-ref, '  ')"/> <xsl:copy-of select="$mapping/bnd:mappedModels/model[name=$modelName]/rdb/rdbmap[@vodml-id=substring-after($el/datatype/vodml-ref,':')]"/> </xsl:message>-->
                 <xsl:choose>
                     <xsl:when test="$mapping/bnd:mappedModels/model[name=$modelName]/rdb/rdbmap[@vodml-id=substring-after($el/datatype/vodml-ref,':') and @joinColumnName]">
                         <xsl:sequence select="$mapping/bnd:mappedModels/model[name=$modelName]/rdb/rdbmap[@vodml-id=substring-after($el/datatype/vodml-ref,':')]/@joinColumnName"/>
