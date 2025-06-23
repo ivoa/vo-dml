@@ -9,16 +9,28 @@
 
 package org.ivoa.vodml.jpa;
 
+import java.io.Serializable;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.usertype.ParameterizedType;
+import org.hibernate.usertype.UserType;
+import org.hibernate.usertype.UserTypeSupport;
 
 import jakarta.persistence.AttributeConverter;
 
 /**
- * JPA Attribute converters to convert lists to comma separated strings.
+ * Hibernate converters to convert lists to delimited strings.
+ * Delimiter is passed as parameter annotation.
  * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
  */
 /**
@@ -28,131 +40,267 @@ import jakarta.persistence.AttributeConverter;
  */
 public class AttributeConverters {
 
-    private static final String SPLIT_CHAR = ";";
     /**
-     * A  .
+     * List converter that uses Hibernate @Type annotation.
+     */
+    public static abstract class  ListConcatenatedType<T> implements UserType<List<T>>,ParameterizedType {
+
+        protected String concatenationChar;                
+
+        /**
+         * {@inheritDoc}
+         * overrides @see org.hibernate.usertype.ParameterizedType#setParameterValues(java.util.Properties)
+         */
+        @Override
+        public void setParameterValues(Properties parameters) {
+            java.lang.String sep = parameters.getProperty("separator"); 
+            if (sep != null) {
+                concatenationChar = sep;
+            }
+            else {
+                concatenationChar = ";";
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         * overrides @see org.hibernate.usertype.UserType#getSqlType()
+         */
+        @Override
+        public int getSqlType() {
+            return Types.VARCHAR;
+        }
+
+
+
+        /**
+         * {@inheritDoc}
+         * overrides @see org.hibernate.usertype.UserType#returnedClass()
+         */
+        @Override
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        public Class<List<T>> returnedClass() {
+            return (Class<List<T>>) ((Class)List.class);
+        }
+
+
+
+        /**
+         * {@inheritDoc}
+         * overrides @see org.hibernate.usertype.UserType#equals(java.lang.Object, java.lang.Object)
+         */
+        @Override
+        public boolean equals(List<T> x, List<T> y) {
+            return  x.equals(y);            
+        }
+
+
+
+
+        /**
+         * {@inheritDoc}
+         * overrides @see org.hibernate.usertype.UserType#hashCode(java.lang.Object)
+         */
+        @Override
+        public int hashCode(List<T> x) {
+            return x.hashCode();            
+        }
+
+
+    /**
+         * {@inheritDoc}
+         * overrides @see org.hibernate.usertype.UserType#nullSafeSet(java.sql.PreparedStatement, java.lang.Object, int, org.hibernate.engine.spi.SharedSessionContractImplementor)
+         */
+        @Override
+        public void nullSafeSet(PreparedStatement st, List<T> value,
+                int index, SharedSessionContractImplementor session)
+                        throws SQLException {
+            if (value == null || value.isEmpty())
+            {
+                st.setNull(index, Types.VARCHAR);
+            }
+            else {
+                String dbval = value.stream().map(T::toString).collect(Collectors.joining (concatenationChar)); 
+                st.setString(index, dbval);
+            }
+
+        }
+
+
+
+  
+
+
+        /**
+         * {@inheritDoc}
+         * overrides @see org.hibernate.usertype.UserType#isMutable()
+         */
+        @Override
+        public boolean isMutable() {
+
+            return false;            
+        }
+
+        /**
+         * {@inheritDoc}
+         * overrides @see org.hibernate.usertype.UserType#disassemble(java.lang.Object)
+         */
+        @Override
+        public Serializable disassemble(List<T> value) {
+            // TODO Auto-generated method stub
+            throw new  UnsupportedOperationException("UserType<List<String>>.disassemble() not implemented");
+
+        }
+
+        /**
+         * {@inheritDoc}
+         * overrides @see org.hibernate.usertype.UserType#assemble(java.io.Serializable, java.lang.Object)
+         */
+        @Override
+        public List<T> assemble(Serializable cached, Object owner) {
+            // TODO Auto-generated method stub
+            throw new  UnsupportedOperationException("UserType<List<String>>.assemble() not implemented");
+
+        }
+
+
+
+
+    }
+
+    /**
+     * A converter for string lists .
      * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
      * 
      */
-    public static class StringListConverter implements AttributeConverter<List<String>, String> {
+    public static class StringListConverter extends ListConcatenatedType<String> {
 
-       
         /**
          * {@inheritDoc}
-         * overrides @see jakarta.persistence.AttributeConverter#convertToDatabaseColumn(java.lang.Object)
+         * overrides @see org.hibernate.usertype.UserType#nullSafeGet(java.sql.ResultSet, int, org.hibernate.engine.spi.SharedSessionContractImplementor, java.lang.Object)
          */
+
         @Override
-        public String convertToDatabaseColumn(List<String> attribute) {
-            return attribute != null ? String.join(SPLIT_CHAR, attribute) : "";
+        public List<String> nullSafeGet(ResultSet rs, int position,
+                SharedSessionContractImplementor session, Object owner)
+                        throws SQLException {
+            String dbData = rs.getString(position);
+            return dbData != null ? Arrays.asList(dbData.split(concatenationChar)) : new ArrayList<String>() ;
+
+
         }
 
         /**
          * {@inheritDoc}
-         * overrides @see jakarta.persistence.AttributeConverter#convertToEntityAttribute(java.lang.Object)
+         * overrides @see org.hibernate.usertype.UserType#deepCopy(java.lang.Object)
          */
         @Override
-        public List<String> convertToEntityAttribute(String dbData) {
-           return dbData != null ? Arrays.asList(dbData.split(SPLIT_CHAR)) : new ArrayList<String>() ;
+        public List<String> deepCopy(List<String> value) {
+                 return value.stream().map(String::new).collect(Collectors.toList());
         }
-        
+  
+
+
     }
-    
-    /**
-     *  The base class for converters.
-     * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
-     *
-     */
-    public static abstract class NumberListConverter <T> implements AttributeConverter<List<T>, String> {
 
-        /**
-         * {@inheritDoc}
-         * overrides @see jakarta.persistence.AttributeConverter#convertToDatabaseColumn(java.lang.Object)
-         */
-        @Override
-        public String convertToDatabaseColumn(List<T> attribute) {
-            
-            if(attribute!= null)
-            {
-               return attribute.stream().map(T::toString).collect(Collectors.joining (SPLIT_CHAR)); 
-            }
-            else
-            {
-                return "";
-            }
-        }
-
-    
-    }
+   
     /**
      * A converter for Integers.
      * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
      * 
      */
-    public static class IntListConverter extends NumberListConverter<Integer>
+    public static class IntListConverter extends ListConcatenatedType<Integer>
     {
 
-        /**
+         /**
          * {@inheritDoc}
-         * overrides @see jakarta.persistence.AttributeConverter#convertToEntityAttribute(java.lang.Object)
+         * overrides @see org.hibernate.usertype.UserType#deepCopy(java.lang.Object)
          */
         @Override
-        public List<Integer> convertToEntityAttribute(String dbData) {
-           if (dbData != null)
-           {
-               return Stream.of(dbData.split(SPLIT_CHAR)).map(Integer::parseInt).toList();
-           }
-           else return new ArrayList<>();
-            
+        public List<Integer> deepCopy(List<Integer> value) {
+                 return value.stream().map(Integer::valueOf).collect(Collectors.toList());
         }
-        
+  
+         /**
+         * {@inheritDoc}
+         * overrides @see org.hibernate.usertype.UserType#nullSafeGet(java.sql.ResultSet, int, org.hibernate.engine.spi.SharedSessionContractImplementor, java.lang.Object)
+         */
+
+        @Override
+        public List<Integer> nullSafeGet(ResultSet rs, int position,
+                SharedSessionContractImplementor session, Object owner)
+                        throws SQLException {
+            String dbData = rs.getString(position);
+            return dbData != null ?  Stream.of(dbData.split(concatenationChar)).map(Integer::parseInt).toList() : new ArrayList<Integer>() ;
+
+        }
+   
     }
     /**
      *  A converter for doubles.
      * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
      * 
      */
-    public static class DoubleListConverter extends NumberListConverter<Double>
+    public static class DoubleListConverter extends ListConcatenatedType<Double>
     {
 
-        /**
+         /**
          * {@inheritDoc}
-         * overrides @see jakarta.persistence.AttributeConverter#convertToEntityAttribute(java.lang.Object)
+         * overrides @see org.hibernate.usertype.UserType#deepCopy(java.lang.Object)
          */
         @Override
-        public List<Double> convertToEntityAttribute(String dbData) {
-           if (dbData != null)
-           {
-               return Stream.of(dbData.split(SPLIT_CHAR)).map(Double::parseDouble).toList();
-           }
-           else return new ArrayList<>();
-            
+        public List<Double> deepCopy(List<Double> value) {
+                 return value.stream().map(Double::valueOf).collect(Collectors.toList());
         }
-        
+  
+         /**
+         * {@inheritDoc}
+         * overrides @see org.hibernate.usertype.UserType#nullSafeGet(java.sql.ResultSet, int, org.hibernate.engine.spi.SharedSessionContractImplementor, java.lang.Object)
+         */
+
+        @Override
+        public List<Double> nullSafeGet(ResultSet rs, int position,
+                SharedSessionContractImplementor session, Object owner)
+                        throws SQLException {
+            String dbData = rs.getString(position);
+            return dbData != null ?  Stream.of(dbData.split(concatenationChar)).map(Double::parseDouble).toList() : new ArrayList<Double>() ;
+
+        }
+ 
     }
-    
+
     /**
      * A converter for booleans.
      * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
      * 
      */
-    public static class BooleanListConverter extends NumberListConverter<Boolean> 
+    public static class BooleanListConverter extends ListConcatenatedType<Boolean> 
     {
 
-        /**
+         /**
          * {@inheritDoc}
-         * overrides @see jakarta.persistence.AttributeConverter#convertToEntityAttribute(java.lang.Object)
+         * overrides @see org.hibernate.usertype.UserType#deepCopy(java.lang.Object)
          */
         @Override
-        public List<Boolean> convertToEntityAttribute(String dbData) {
-            if (dbData != null)
-           {
-               return Stream.of(dbData.split(SPLIT_CHAR)).map(Boolean::parseBoolean).toList();
-           }
-           else return new ArrayList<>();
-            
-          
+        public List<Boolean> deepCopy(List<Boolean> value) {
+                 return value.stream().map(Boolean::valueOf).collect(Collectors.toList());
         }
-        
+  
+         /**
+         * {@inheritDoc}
+         * overrides @see org.hibernate.usertype.UserType#nullSafeGet(java.sql.ResultSet, int, org.hibernate.engine.spi.SharedSessionContractImplementor, java.lang.Object)
+         */
+
+        @Override
+        public List<Boolean> nullSafeGet(ResultSet rs, int position,
+                SharedSessionContractImplementor session, Object owner)
+                        throws SQLException {
+            String dbData = rs.getString(position);
+            return dbData != null ?  Stream.of(dbData.split(concatenationChar)).map(Boolean::parseBoolean).toList() : new ArrayList<Boolean>() ;
+
+        }
+ 
+
     }
 }
 
