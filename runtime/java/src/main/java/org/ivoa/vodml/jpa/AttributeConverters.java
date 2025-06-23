@@ -33,11 +33,6 @@ import jakarta.persistence.AttributeConverter;
  * Delimiter is passed as parameter annotation.
  * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
  */
-/**
- *  .
- * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
- * @since 21 Oct 2024
- */
 public class AttributeConverters {
 
     /**
@@ -45,7 +40,8 @@ public class AttributeConverters {
      */
     public static abstract class  ListConcatenatedType<T> implements UserType<List<T>>,ParameterizedType {
 
-        protected String concatenationChar;                
+        protected String concatenationChar;
+        protected String regexp;
 
         /**
          * {@inheritDoc}
@@ -56,9 +52,16 @@ public class AttributeConverters {
             java.lang.String sep = parameters.getProperty("separator"); 
             if (sep != null) {
                 concatenationChar = sep;
+               if (concatenationChar.matches("[|+*=\\-]")) {//IMPL note that backslash itself is not allowed - just too complicated to deal with!
+                  regexp = "\\"+concatenationChar;
+               } else {
+                  regexp = concatenationChar;
+               }
+
             }
             else {
                 concatenationChar = ";";
+                regexp = ";";
             }
         }
 
@@ -185,7 +188,7 @@ public class AttributeConverters {
                 SharedSessionContractImplementor session, Object owner)
                         throws SQLException {
             String dbData = rs.getString(position);
-            return dbData != null ? Arrays.asList(dbData.split(concatenationChar)) : new ArrayList<String>() ;
+            return dbData != null ? Arrays.asList(dbData.split(regexp)) : new ArrayList<String>() ;
 
 
         }
@@ -231,7 +234,7 @@ public class AttributeConverters {
                 SharedSessionContractImplementor session, Object owner)
                         throws SQLException {
             String dbData = rs.getString(position);
-            return dbData != null ?  Stream.of(dbData.split(concatenationChar)).map(Integer::parseInt).toList() : new ArrayList<Integer>() ;
+            return dbData != null ?  Stream.of(dbData.split(regexp)).map(Integer::parseInt).toList() : new ArrayList<Integer>() ;
 
         }
    
@@ -263,7 +266,7 @@ public class AttributeConverters {
                 SharedSessionContractImplementor session, Object owner)
                         throws SQLException {
             String dbData = rs.getString(position);
-            return dbData != null ?  Stream.of(dbData.split(concatenationChar)).map(Double::parseDouble).toList() : new ArrayList<Double>() ;
+            return dbData != null ?  Stream.of(dbData.split(regexp)).map(Double::parseDouble).toList() : new ArrayList<Double>() ;
 
         }
  
@@ -296,7 +299,7 @@ public class AttributeConverters {
                 SharedSessionContractImplementor session, Object owner)
                         throws SQLException {
             String dbData = rs.getString(position);
-            return dbData != null ?  Stream.of(dbData.split(concatenationChar)).map(Boolean::parseBoolean).toList() : new ArrayList<Boolean>() ;
+            return dbData != null ?  Stream.of(dbData.split(regexp)).map(Boolean::parseBoolean).toList() : new ArrayList<Boolean>() ;
 
         }
  

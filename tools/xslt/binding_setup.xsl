@@ -66,6 +66,7 @@
 
     <xsl:variable name="isRDBUseColRef" as="xsd:boolean" select="vf:isRdbAddRef(/vo-dml:model/name)"/>
     <xsl:variable name="isRDBNaturalJoin" as="xsd:boolean" select="vf:isRdbNaturalJoin(/vo-dml:model/name)"/>
+    <xsl:variable name="RdbListDelimiter" as="xsd:string" select="vf:rdbListDelimiter(/vo-dml:model/name)"/>
     <xsl:variable name="discriminatorColumnLength" as="xsd:int">
         <xsl:choose>
             <xsl:when test="$mapping/bnd:mappedModels/model[name=$themodelname]/rdb/@discriminatorColumnLength">

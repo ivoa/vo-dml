@@ -576,6 +576,18 @@
         <xsl:param name="modelName" as="xsd:string"/>
         <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelName]/rdb[@naturalJoin=true()] )= 1"/>
     </xsl:function>
+    <xsl:function name="vf:rdbListDelimiter" as="xsd:string">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:choose>
+            <xsl:when test="$mapping/bnd:mappedModels/model[name=$modelName]/rdb[@listConcatenationDelimiter]">
+                <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/rdb/@listConcatenationDelimiter"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="';'"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
     <xsl:function name="vf:rdbODiscriminatorName" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>

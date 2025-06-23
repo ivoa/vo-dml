@@ -172,11 +172,19 @@ ignore - all the names are placed in the top level namespace.(This might result 
                  </xsd:documentation>
               </xsd:annotation>
            </xsd:attribute>
-            <xsd:attribute name="schema" type="xsd:string" use="optional">
-                <xsd:annotation>
-                    <xsd:documentation>If present then the generated tables will be put in the given schema - otherwise the default is to put the tables in a schema with the same name as the model</xsd:documentation>
-                </xsd:annotation>
-            </xsd:attribute>
+           <xsd:attribute name="schema" type="xsd:string" use="optional">
+              <xsd:annotation>
+                 <xsd:documentation>
+                    If present then the generated tables will be put in the given schema - otherwise the default is to put the
+                    tables in a schema with the same name as the model
+                 </xsd:documentation>
+              </xsd:annotation>
+           </xsd:attribute>
+           <xsd:attribute name="listConcatenationDelimiter" type="xsd:string" default=";">
+              <xsd:annotation>
+                 <xsd:documentation>The delimiter that is used when lists are concatenated to a single string columns</xsd:documentation>
+              </xsd:annotation>
+           </xsd:attribute>
         </xsd:complexType>
      </xsd:element>
      <xsd:element name="type-mapping" type="TypeMapping" minOccurs="0" maxOccurs="unbounded">

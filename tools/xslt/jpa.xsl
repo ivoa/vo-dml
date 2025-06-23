@@ -170,7 +170,8 @@
                         <xsl:otherwise><xsl:sequence select="'StringListConverter'"/></xsl:otherwise>
                     </xsl:choose>
                 </xsl:variable>
-                @jakarta.persistence.Convert(converter=org.ivoa.vodml.jpa.AttributeConverters.<xsl:value-of select="$converterClass"/>.class)
+                @org.hibernate.annotations.Type(value=org.ivoa.vodml.jpa.AttributeConverters.<xsl:value-of select="$converterClass"/>.class,
+                        parameters={@org.hibernate.annotations.Parameter(name="separator",value="<xsl:value-of select="$RdbListDelimiter"/>")})
                 @jakarta.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/>
                         <xsl:if test="vf:findTypeDetail($vodml-ref)/length">
                             , length=<xsl:value-of select="vf:findTypeDetail($vodml-ref)/length"/>

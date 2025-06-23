@@ -13,8 +13,6 @@ import org.ivoa.dm.serializationsample.types.Dcont;
 import org.ivoa.dm.serializationsample.types.Econt;
 import org.junit.jupiter.api.Test;
 
-import jakarta.persistence.EntityManager;
-
 /*
  * Created on 16/05/2023 by Paul Harrison (paul.harrison@manchester.ac.uk).
  */
@@ -42,7 +40,11 @@ private Refb refb;
 
   @Override
   public void testModel(org.ivoa.dm.serializationsample.MyModelModel myModelModel) {
-      //should test the model integrity
+     SomeContent cont = myModelModel.getContent(SomeContent.class).get(0);
+     assertNotNull(cont);
+     List<String> z = cont.getZval();
+     assertNotNull(z);
+     assertEquals(3, z.size(),"z val should be array of size 3");
   }
 
  

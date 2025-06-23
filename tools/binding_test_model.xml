@@ -35,8 +35,8 @@
         <xmllegacy-targetnamespace prefix="ser" schemaLocation="serialization.xsd">http://ivoa.net/dm/sample/serialization</xmllegacy-targetnamespace>
         <xml packageHandling="ignore"/>
         <rdb inheritance-strategy="single-table"
-             discriminatorColumnLength="64"/>
-
+             discriminatorColumnLength="64"
+             listConcatenationDelimiter="|"/>
 
     </model>
     <model>
