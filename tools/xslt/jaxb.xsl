@@ -576,7 +576,7 @@
         public Map&lt;String, Class&gt; utypeToClassMap() {
         final HashMap&lt;String, Class&gt; retval = new HashMap&lt;&gt;();
         <xsl:for-each select="$models/vo-dml:model[name = $modelsInScope ]//(objectType|dataType)">
-            <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"></xsl:variable>
+            <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
         retval.put("<xsl:value-of select="vf:utype($vodml-ref)"/>", <xsl:value-of select="vf:QualifiedJavaType($vodml-ref)"/>.class);
         </xsl:for-each>
         return retval;

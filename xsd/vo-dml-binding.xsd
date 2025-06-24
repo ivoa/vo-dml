@@ -56,8 +56,8 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
               </xsd:annotation>
               <xsd:simpleType>
                  <xsd:restriction base="xsd:string">
-                    <xsd:enumeration value="wrapped"></xsd:enumeration>
-                    <xsd:enumeration value="unwrapped"></xsd:enumeration>
+                    <xsd:enumeration value="wrapped"/>
+                    <xsd:enumeration value="unwrapped"/>
                  </xsd:restriction>
               </xsd:simpleType>
            </xsd:attribute>
@@ -69,8 +69,8 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
               </xsd:annotation>
               <xsd:simpleType>
                  <xsd:restriction base="xsd:string">
-                    <xsd:enumeration value="unqualified"></xsd:enumeration>
-                    <xsd:enumeration value="qualified"></xsd:enumeration>
+                    <xsd:enumeration value="unqualified"/>
+                    <xsd:enumeration value="qualified"/>
                  </xsd:restriction>
               </xsd:simpleType>
            </xsd:attribute>
@@ -82,8 +82,8 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
               </xsd:annotation>
               <xsd:simpleType>
                  <xsd:restriction base="xsd:string">
-                    <xsd:enumeration value="unqualified"></xsd:enumeration>
-                    <xsd:enumeration value="qualified"></xsd:enumeration>
+                    <xsd:enumeration value="unqualified"/>
+                    <xsd:enumeration value="qualified"/>
                  </xsd:restriction>
               </xsd:simpleType>
            </xsd:attribute>
@@ -97,14 +97,14 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
 ignore - all the names are placed in the top level namespace.(This might result in clashes).</xsd:documentation>
                             </xsd:annotation>
                             <xsd:restriction base="xsd:string">
-                    <xsd:enumeration value="qualified"></xsd:enumeration>
-                    <xsd:enumeration value="ignore"></xsd:enumeration>
+                    <xsd:enumeration value="qualified"/>
+                    <xsd:enumeration value="ignore"/>
                  </xsd:restriction>
               </xsd:simpleType>
            </xsd:attribute>
         </xsd:complexType>
      </xsd:element>
-     <xsd:element name="json-baseURI" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
+     <xsd:element name="json-baseURI" type="xsd:string" maxOccurs="1" minOccurs="0"/>
      <xsd:element name="json" maxOccurs="1" minOccurs="0">
         <xsd:annotation>
            <xsd:documentation>customization of the JSON serialization</xsd:documentation>
@@ -125,7 +125,7 @@ ignore - all the names are placed in the top level namespace.(This might result 
      <xsd:element name="rdb" minOccurs="0" maxOccurs="1">
         <xsd:complexType>
            <xsd:sequence>
-              <xsd:element name="rdbmap" type="rdbmapType" maxOccurs="unbounded" minOccurs="0"></xsd:element>
+              <xsd:element name="rdbmap" type="rdbmapType" maxOccurs="unbounded" minOccurs="0"/>
            </xsd:sequence>
            <xsd:attribute name="inheritance-strategy">
               <xsd:annotation>
@@ -133,8 +133,8 @@ ignore - all the names are placed in the top level namespace.(This might result 
               </xsd:annotation>
               <xsd:simpleType>
                  <xsd:restriction base="xsd:string">
-                    <xsd:enumeration value="joined"></xsd:enumeration>
-                    <xsd:enumeration value="single-table"></xsd:enumeration>
+                    <xsd:enumeration value="joined"/>
+                    <xsd:enumeration value="single-table"/>
                  </xsd:restriction>
               </xsd:simpleType>
            </xsd:attribute>
@@ -151,8 +151,8 @@ ignore - all the names are placed in the top level namespace.(This might result 
               </xsd:annotation>
               <xsd:simpleType>
                  <xsd:restriction base="xsd:string">
-                    <xsd:enumeration value="lazy"></xsd:enumeration>
-                    <xsd:enumeration value="eager"></xsd:enumeration>
+                    <xsd:enumeration value="lazy"/>
+                    <xsd:enumeration value="eager"/>
                  </xsd:restriction>
               </xsd:simpleType>
            </xsd:attribute>
@@ -248,7 +248,7 @@ In general it must be used to map primitive types to various languages, but it c
                  </xsd:documentation>
               </xsd:annotation>
            </xsd:element>
-           <xsd:element name="json-type" type="JsonMapping" maxOccurs="1" minOccurs="0"></xsd:element>
+           <xsd:element name="json-type" type="JsonMapping" maxOccurs="1" minOccurs="0"/>
         </xsd:sequence>
 </xsd:complexType>
 
@@ -340,13 +340,13 @@ In general it must be used to map primitive types to various languages, but it c
               </xsd:annotation>
            </xsd:element></xsd:all>
     
-     <xsd:attribute name="vodml-id" type="xsd:string"></xsd:attribute>
+     <xsd:attribute name="vodml-id" type="xsd:string"/>
   </xsd:complexType>
 
   <xsd:complexType name="JsonMapping">
      <xsd:simpleContent>
         <xsd:extension base="xsd:string">
-           <xsd:attribute name="format" type="xsd:string" use="optional"></xsd:attribute>
+           <xsd:attribute name="format" type="xsd:string" use="optional"/>
            <xsd:attribute name="built-in" type="xsd:boolean" use="optional" default="false">
               <xsd:annotation>
                  <xsd:documentation>whether the type is a JSON built-in type
@@ -381,7 +381,7 @@ IMPL - this could be put into the code - especially as the number of JSON built-
            </xsd:element>
         </xsd:sequence>
      </xsd:choice>
-     <xsd:attribute name="vodml-id" type="xsd:string"></xsd:attribute>
+     <xsd:attribute name="vodml-id" type="xsd:string"/>
      <xsd:attribute name="noTableWhenInComposition" type="xsd:boolean" default="false">
         <xsd:annotation>
            <xsd:documentation>
@@ -396,7 +396,7 @@ IMPL - this could be put into the code - especially as the number of JSON built-
         </xsd:annotation></xsd:attribute>
   </xsd:complexType>
   <xsd:simpleType name="NewSimpleType">
-     <xsd:restriction base="xsd:string"></xsd:restriction>
+     <xsd:restriction base="xsd:string"/>
   </xsd:simpleType>
 
 
