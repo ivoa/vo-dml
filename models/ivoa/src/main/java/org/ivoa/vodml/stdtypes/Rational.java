@@ -81,8 +81,5 @@ public class Rational  implements JPAManipulations {
     }
 
    
-    @Override
-    public void persistRefs(EntityManager em) {
-       // nothing to do.
-    }
+
 }

@@ -67,8 +67,4 @@ public class Duration implements JPAManipulations {
 
    
 
-    @Override
-    public void persistRefs(EntityManager em) {
-        // nothing to do.
-    }
 }
