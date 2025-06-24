@@ -11,7 +11,7 @@
       <uri/>
       <title></title>
       <version>1.1</version>
-      <lastModified>2025-06-24T15:57:04Z</lastModified>
+      <lastModified>2025-06-24T16:16:23Z</lastModified>
       <primitiveType >
       <vodml-id>Unit</vodml-id>
       <name>Unit</name>
@@ -97,6 +97,11 @@
       <extends>
          <vodml-ref>ivoa:anyURI</vodml-ref>
       </extends>
+      </primitiveType>
+      <primitiveType >
+      <vodml-id>uuid</vodml-id>
+      <name>uuid</name>
+      <description>represents a 128-bit binary ID in the canonical ascii UUID format</description>	    
       </primitiveType>
             <dataType>
               <vodml-id>IntegerQuantity</vodml-id>
