@@ -53,9 +53,9 @@ The runtime is published to the `org.javastro` owned part of the maven central r
 In the top directory the following will create a staging repository
 
 ```shell
-gradle :java:publishToSonatype :java:closeSonatypeStagingRepository
+gradle :java:publish :java:closeSonatypeStagingRepository
 ```
 
-which can then be checked and released in the https://oss.sonatype.org/ GUI.
+which can then be checked and released in the https://central.sonatype.com/publishing/deployments GUI.
 
 [![Maven Central](https://img.shields.io/maven-central/v/org.javastro.ivoa.vo-dml/vodml-runtime.svg?label=VODML%20Runtime)](https://search.maven.org/search?q=g:%22org.javastro.ivoa.vo-dml%22%20AND%20a:%22vodml-runtime%22)
