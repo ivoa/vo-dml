@@ -14,10 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -40,7 +37,9 @@ public class AttributeConverters {
      */
     public static abstract class  ListConcatenatedType<T> implements UserType<List<T>>,ParameterizedType {
 
+        /** the concatenation character that will be used to store the list */
         protected String concatenationChar;
+        /** the regexp that will be used to split the single string into a list */
         protected String regexp;
 
         /**
@@ -52,6 +51,7 @@ public class AttributeConverters {
             java.lang.String sep = parameters.getProperty("separator"); 
             if (sep != null) {
                 concatenationChar = sep;
+                //some heuristics to derive suitable regex for splitting.
                if (concatenationChar.matches("[|+*=\\-]")) {//IMPL note that backslash itself is not allowed - just too complicated to deal with!
                   regexp = "\\"+concatenationChar;
                } else {
@@ -94,7 +94,7 @@ public class AttributeConverters {
          */
         @Override
         public boolean equals(List<T> x, List<T> y) {
-            return  x.equals(y);            
+            return Objects.equals(x, y);
         }
 
 
@@ -106,7 +106,7 @@ public class AttributeConverters {
          */
         @Override
         public int hashCode(List<T> x) {
-            return x.hashCode();            
+            return Objects.hashCode(x);
         }
 
 
@@ -150,7 +150,7 @@ public class AttributeConverters {
          */
         @Override
         public Serializable disassemble(List<T> value) {
-            // TODO Auto-generated method stub
+            // not implemented on purpose
             throw new  UnsupportedOperationException("UserType<List<String>>.disassemble() not implemented");
 
         }
@@ -161,7 +161,7 @@ public class AttributeConverters {
          */
         @Override
         public List<T> assemble(Serializable cached, Object owner) {
-            // TODO Auto-generated method stub
+            // not implemented on purpose
             throw new  UnsupportedOperationException("UserType<List<String>>.assemble() not implemented");
 
         }
@@ -199,7 +199,8 @@ public class AttributeConverters {
          */
         @Override
         public List<String> deepCopy(List<String> value) {
-                 return value.stream().map(String::new).collect(Collectors.toList());
+
+                 return value!= null ? value.stream().map(String::new).collect(Collectors.toList()): null;
         }
   
 
