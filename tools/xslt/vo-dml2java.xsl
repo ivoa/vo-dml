@@ -811,7 +811,6 @@
       </xsl:if>
 
       <xsl:apply-templates select="." mode="jpawalker"/>
-      <xsl:apply-templates select="." mode="jparefs"/>
       <xsl:apply-templates select="./self::objectType" mode="jpadeleter"/>
 
 <!--      <xsl:if test="local-name() eq 'dataType'">-->
@@ -1284,41 +1283,7 @@ package <xsl:value-of select="$path"/>;
         }
     </xsl:template>
 
-<!-- jparefs-->
-    <xsl:template match="objectType|dataType" mode="jparefs">
-        /**
-        * {@inheritDoc}
-        * @deprecated generally better to use the model level reference persistence as only this can deal with "contained" references properly. */
-        @Override
-        @Deprecated
-        public void persistRefs(jakarta.persistence.EntityManager _em) {
-          <xsl:variable name="localdefs" select="vf:javaLocalDefines(vf:asvodmlref(current()))"/>
-          <xsl:apply-templates select="composition[vf:asvodmlref(.) = $localdefs]
-                          |reference[vf:asvodmlref(.) = $localdefs]
-                          |attribute[vf:attributeIsDtype(.) and vf:asvodmlref(.) = $localdefs]
-                          |constraint[ends-with(@xsi:type,':SubsettedRole') and
-                          role[vodml-ref = $localdefs]]" mode="jparefs"/>
-          <xsl:if test="extends">super.persistRefs(_em);</xsl:if>
-          <xsl:if test="vf:referredTo(vf:asvodmlref(current())) and not(extends)">
-              _em.persist(this);
-          </xsl:if>
-        }
-    </xsl:template>
-    <xsl:template match="composition[multiplicity/maxOccurs != 1]|attribute[multiplicity/maxOccurs != 1]|reference[multiplicity/maxOccurs != 1]" mode="jparefs" >
-        if( <xsl:value-of select="vf:javaMemberName(name)"/> != null ) {
-          for( <xsl:value-of select="vf:FullJavaType(datatype/vodml-ref, true())"/> _c : <xsl:value-of select="vf:javaMemberName(name)"/> ) {
-            _c.persistRefs(_em);
-          }
-        }
 
-    </xsl:template>
-    <xsl:template match="composition|reference|attribute" mode="jparefs">
-        if( <xsl:value-of select="vf:javaMemberName(name)"/> != null ) <xsl:value-of select="vf:javaMemberName(name)"/>.persistRefs(_em);
-    </xsl:template>
-    <xsl:template match="constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="jparefs">
-        <xsl:variable name="ss" select="$models/key('ellookup',current()/role/vodml-ref)"/>
-        if( <xsl:value-of select="vf:javaMemberName($ss/name)"/> != null ) <xsl:value-of select="vf:javaMemberName($ss/name)"/>.persistRefs(_em);
-    </xsl:template>
 
 
 

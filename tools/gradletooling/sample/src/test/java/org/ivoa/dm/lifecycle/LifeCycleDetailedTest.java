@@ -80,8 +80,7 @@ public class LifeCycleDetailedTest extends AbstractTest {
         setupH2Db(LifecycleTestModel.pu_name()); // IMPL build means that everything is in one
     // persistence unit.
     em.getTransaction().begin();
-    atest2.persistRefs(em);
-    atest.persistRefs(em);
+    model.management().persistRefs(em);
     em.persist(atest2);
     em.persist(atest);
     em.persist(atest3);

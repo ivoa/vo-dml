@@ -123,9 +123,13 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
 
   @org.junit.jupiter.api.Test
   void listManipulationTest() {
+    SampleModel model = new SampleModel();
     jakarta.persistence.EntityManager em = setupH2Db(SampleModel.pu_name());
     em.getTransaction().begin();
-    sc.persistRefs(em);
+    model.addContent(ps);
+    model.addContent(sc);
+    model.management().persistRefs(em);
+    em.persist(ps);
     em.persist(sc);
     em.getTransaction().commit();
     List<AbstractSource> ls = sc.getEntry();
