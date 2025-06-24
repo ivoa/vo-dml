@@ -1,0 +1,35 @@
+[project]
+name = "vodmltools"
+version = "0.1"
+authors = [
+    { name="Paul Harrison", email="paul.harrison@manchester.ac.uk" },
+]
+description = "a set of tools for creating and manipulating VO-DML"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/ivoa/vo-dml"
+Issues = "https://github.com/ivoa/vo-dml/issues"
+
+[build-system]
+requires = ["setuptools >= 77.0.3"
+    ,"click",
+    "saxonche"]
+build-backend = "setuptools.build_meta"
+
+
+
+[project.scripts]
+vodml = "vodmltools.cli:app"
+
+[tool.setuptools]
+include-package-data = true
+
+
+[tool.setuptools.package-data]
+"vodmltools.xslt" = ["*"]

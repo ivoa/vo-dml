@@ -52,8 +52,21 @@
     <xsl:variable name="lt">&lt;</xsl:variable>
     <xsl:variable name="gt">&gt;</xsl:variable>
     <xsl:variable name="isRdbSingleInheritance" as="xsd:boolean" select="vf:isRdbSingleTable(/vo-dml:model/name)"/>
+    <xsl:variable name="RdbSchemaName">
+        <xsl:choose>
+            <xsl:when test="$mapping/bnd:mappedModels/model[name=$themodelname]/rdb/@schema">
+                <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$themodelname]/rdb/@schema"/>
+<!--                <xsl:message>custom tap schema =<xsl:value-of select="$mapping/bnd:mappedModels/model[name=$themodelname]/rdb/@schema"/></xsl:message>-->
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="$themodelname"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+
     <xsl:variable name="isRDBUseColRef" as="xsd:boolean" select="vf:isRdbAddRef(/vo-dml:model/name)"/>
     <xsl:variable name="isRDBNaturalJoin" as="xsd:boolean" select="vf:isRdbNaturalJoin(/vo-dml:model/name)"/>
+    <xsl:variable name="RdbListDelimiter" as="xsd:string" select="vf:rdbListDelimiter(/vo-dml:model/name)"/>
     <xsl:variable name="discriminatorColumnLength" as="xsd:int">
         <xsl:choose>
             <xsl:when test="$mapping/bnd:mappedModels/model[name=$themodelname]/rdb/@discriminatorColumnLength">

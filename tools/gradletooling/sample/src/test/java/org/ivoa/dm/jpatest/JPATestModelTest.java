@@ -119,7 +119,9 @@ class JpatestModelTest extends AbstractTest {
     jakarta.persistence.EntityManager em =
         setupH2Db(JpatestModel.pu_name()); // the persistence unit is all under the one file....
     em.getTransaction().begin();
-    atest.persistRefs(em); // IMPL need to save references explicitly as they are new.
+    JpatestModel model = new JpatestModel();
+    model.addContent(atest);
+    model.management().persistRefs(em); // IMPL need to save references explicitly as they are new.
     em.persist(atest);
     em.getTransaction().commit();
     Long id = atest.getId();
@@ -168,7 +170,9 @@ class JpatestModelTest extends AbstractTest {
        jakarta.persistence.EntityManager em =
         setupH2Db(JpatestModel.pu_name()); // the persistence unit is all under the one file....
     em.getTransaction().begin();
-    atest.persistRefs(em); // IMPL need to save references explicitly as they are new.
+    JpatestModel model = new JpatestModel();
+    model.addContent(atest);
+    model.management().persistRefs(em); // IMPL need to save references explicitly as they are new.
     em.persist(atest);
     em.getTransaction().commit();
     em.getTransaction().begin();

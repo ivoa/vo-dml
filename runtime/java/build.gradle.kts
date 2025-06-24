@@ -6,12 +6,12 @@ plugins {
     signing
 }
 group = "org.javastro.ivoa.vo-dml"
-version = "0.8.5"
+version = "0.8.7"
 
 
 dependencies {
 //    xjcPlugins("net.codesup.util:jaxb2-rich-contract-plugin:2.1.0")
-    implementation("org.xmlresolver:xmlresolver:6.0.9") // for xml catalogues - note that the apache xml-commons resolver is out of date
+    implementation("org.xmlresolver:xmlresolver:6.0.14") // for xml catalogues - note that the apache xml-commons resolver is out of date
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.0")
 //    implementation("org.glassfish.jaxb:jaxb-runtime:2.3.6")
     implementation("jakarta.persistence:jakarta.persistence-api:3.1.0")
@@ -66,10 +66,14 @@ tasks.named("sourcesJar") //explicitly add the fact that sources jar depends on 
 //publishing
 nexusPublishing {
     repositories {
-        sonatype()
+        //TODO this is a rather unsatisfactory kludge, but still seems better than the suggested JReleaser which is not really gradle friendly
+        // see https://central.sonatype.org/publish/publish-portal-ossrh-staging-api/#configuration
+        sonatype {
+            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
+        }
     }
 }
-
 
 publishing {
     publications {

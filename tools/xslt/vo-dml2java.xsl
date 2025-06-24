@@ -650,7 +650,21 @@
 *
 * <xsl:value-of select="$vodmlauthor"/>
 */
-      <xsl:if test="$do_jpa"><xsl:apply-templates select="." mode="JPAAnnotation"/></xsl:if>
+      <xsl:if test="$do_jpa"><xsl:apply-templates select="." mode="JPAAnnotation"/>
+      <!--IMPL this is somewhat hacky to deal with the tap schema case specifically not the general case of multiple natural keys -->
+      <xsl:if test="local-name() eq 'objectType' and not (extends) and attribute/constraint[ends-with(@xsi:type,':NaturalKey') and position='2']
+               and count(attribute/constraint[ends-with(@xsi:type,':NaturalKey')])=1" >
+          <xsl:variable name="containers" select="vf:ContainerHierarchyInOwnModel($vodml-ref)"/>
+          <!--          <xsl:message>containers <xsl:value-of select="string-join($containers,',')"/> first=<xsl:value-of-->
+          <!--                  select="$containers[1]"/></xsl:message>-->
+          <xsl:choose>
+          <xsl:when test="count($containers) > 0 and $models/key('ellookup',$containers[1])/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
+          <xsl:value-of select="concat('@jakarta.persistence.IdClass(',vf:capitalize(name),'.',vf:capitalize(name),'_PK.class)')"/>
+          </xsl:when>
+
+          </xsl:choose>
+      </xsl:if>
+      </xsl:if>
     <xsl:apply-templates select="." mode="JAXBAnnotation"/>
     <xsl:call-template name="vodmlAnnotation"/>
       <xsl:apply-templates select="." mode="openapiAnnotation"/>
@@ -713,15 +727,41 @@
 
 
       </xsl:if>
+
+      <!--IMPL this is somewhat hacky to deal with the tap schema case specifically not the general case of multiple natural keys -->
+      <xsl:if test="local-name() eq 'objectType' and not (extends) and attribute/constraint[ends-with(@xsi:type,':NaturalKey') and position='2']
+               and count(attribute/constraint[ends-with(@xsi:type,':NaturalKey')])=1" >
+          <xsl:variable name="containers" select="vf:ContainerHierarchyInOwnModel($vodml-ref)"/>
+<!--          <xsl:message>containers <xsl:value-of select="string-join($containers,',')"/> first=<xsl:value-of-->
+<!--                  select="$containers[1]"/></xsl:message>-->
+          <xsl:choose>
+              <xsl:when test="count($containers) > 0 and $models/key('ellookup',$containers[1])/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
+                  <xsl:variable name="nk" select="$models/key('ellookup',$containers[1])/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]"/>
+                  <xsl:variable name="nktype" select="vf:JavaKeyType($containers[1])"/>
+                  /** Composite key for <xsl:value-of select="vf:capitalize(name)"/>.  */
+                  public static class  <xsl:value-of select="concat(vf:capitalize(name),'_PK')"/>{
+                  <xsl:value-of select="concat($nktype,' ',$nk/name)"/>;
+                  <xsl:value-of select="concat(vf:JavaKeyType($vodml-ref),' ',current()/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name)"/>;
+                  }
+                  /** additional key to parent of composition. */
+                  @jakarta.persistence.Id
+                  @jakarta.xml.bind.annotation.XmlTransient
+                  protected <xsl:value-of select="concat($nktype,' ',$nk/name)"/>;
+
+              </xsl:when>
+              <xsl:otherwise>
+                  <xsl:message terminate="yes">the containing type does not have a natural key </xsl:message>
+              </xsl:otherwise>
+          </xsl:choose>
+
+      </xsl:if>
 <!-- 
       /** serial uid = last modification date of the UML model */
       private static final long serialVersionUID = LAST_MODIFICATION_DATE;
  -->
       <xsl:variable name="localdefs" select="vf:javaLocalDefines($vodml-ref)"/>
-      <xsl:apply-templates select="attribute" mode="declare" />
-      <xsl:apply-templates select="constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="declare" />
-      <xsl:apply-templates select="composition" mode="declare" />
-      <xsl:apply-templates select="reference" mode="declare" />
+      <xsl:apply-templates select="attribute|reference|composition|constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="declare" />
+
       /**
        * Creates a new <xsl:value-of select="name"/>
        */
@@ -771,7 +811,6 @@
       </xsl:if>
 
       <xsl:apply-templates select="." mode="jpawalker"/>
-      <xsl:apply-templates select="." mode="jparefs"/>
       <xsl:apply-templates select="./self::objectType" mode="jpadeleter"/>
 
 <!--      <xsl:if test="local-name() eq 'dataType'">-->
@@ -1244,41 +1283,7 @@ package <xsl:value-of select="$path"/>;
         }
     </xsl:template>
 
-<!-- jparefs-->
-    <xsl:template match="objectType|dataType" mode="jparefs">
-        /**
-        * {@inheritDoc}
-        * @deprecated generally better to use the model level reference persistence as only this can deal with "contained" references properly. */
-        @Override
-        @Deprecated
-        public void persistRefs(jakarta.persistence.EntityManager _em) {
-          <xsl:variable name="localdefs" select="vf:javaLocalDefines(vf:asvodmlref(current()))"/>
-          <xsl:apply-templates select="composition[vf:asvodmlref(.) = $localdefs]
-                          |reference[vf:asvodmlref(.) = $localdefs]
-                          |attribute[vf:attributeIsDtype(.) and vf:asvodmlref(.) = $localdefs]
-                          |constraint[ends-with(@xsi:type,':SubsettedRole') and
-                          role[vodml-ref = $localdefs]]" mode="jparefs"/>
-          <xsl:if test="extends">super.persistRefs(_em);</xsl:if>
-          <xsl:if test="vf:referredTo(vf:asvodmlref(current())) and not(extends)">
-              _em.persist(this);
-          </xsl:if>
-        }
-    </xsl:template>
-    <xsl:template match="composition[multiplicity/maxOccurs != 1]|attribute[multiplicity/maxOccurs != 1]|reference[multiplicity/maxOccurs != 1]" mode="jparefs" >
-        if( <xsl:value-of select="vf:javaMemberName(name)"/> != null ) {
-          for( <xsl:value-of select="vf:FullJavaType(datatype/vodml-ref, true())"/> _c : <xsl:value-of select="vf:javaMemberName(name)"/> ) {
-            _c.persistRefs(_em);
-          }
-        }
 
-    </xsl:template>
-    <xsl:template match="composition|reference|attribute" mode="jparefs">
-        if( <xsl:value-of select="vf:javaMemberName(name)"/> != null ) <xsl:value-of select="vf:javaMemberName(name)"/>.persistRefs(_em);
-    </xsl:template>
-    <xsl:template match="constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="jparefs">
-        <xsl:variable name="ss" select="$models/key('ellookup',current()/role/vodml-ref)"/>
-        if( <xsl:value-of select="vf:javaMemberName($ss/name)"/> != null ) <xsl:value-of select="vf:javaMemberName($ss/name)"/>.persistRefs(_em);
-    </xsl:template>
 
 
 
@@ -1608,10 +1613,12 @@ import jakarta.xml.bind.annotation.XmlNsForm;
       </xsl:choose>
  </xsl:template>
     <xsl:template match="*" mode="openapiAnnotation">
+        <!-- note that the transformation of the description text contains some heuristics to make it legal java string  - notably that if there are any backslash characters in the
+         vodml description text then they are doubled so as not to appear as java character escape codes.-->
         <xsl:variable name="AllowedSymbols" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789()*%$#@!,.?[]=- +   /\'''"/>
 
         @org.eclipse.microprofile.openapi.annotations.media.Schema(description="<xsl:if test="current()/name()='reference'"><xsl:value-of
-            select="'A reference to - '"/></xsl:if><xsl:value-of select="translate(string-join(for $s in description/text() return normalize-space($s),' '),'&quot;','''')"/>")
+            select="'A reference to - '"/></xsl:if><xsl:value-of select="translate(string-join(for $s in description/text() return replace(normalize-space($s),'\\','\\\\'),' '),'&quot;','''')"/>")
     </xsl:template>
 
 

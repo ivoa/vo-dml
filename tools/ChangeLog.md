@@ -97,6 +97,17 @@
 * 0.5.19
   * Add support for local vocabularies
   * Add XML schema support for wrapped attributes with multiplicity > 1
-
+* 0.5.20
+  * add binding option to ignore packages in XML serialization
+* 0.5.21
+  * some internal XSLT reorganisation to be compatible with python tooling
+  * be able to specify the rdb schema for model in binding - the new default is to use the model name as the schema name
+* 0.5.22
+  * fix up mistake in tap schema naming
+  * add some preliminary composite natural key handing - works for the tapschemaDM case, but needs to be further generalised.
+  * add ability to customize join column name in binding.
+  * make sure that Object/DataType members do appear in VO-DML declaration order
+  * for list concatenation, add ability to specify delimiting character in binding.
+  * remove the element level persistRefs - must be done at the top level - model.management().persistRefs(em)
 
 N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass in same hierarchy - still waiting for a solution

@@ -6,7 +6,7 @@ import ru.vyarus.gradle.plugin.python.task.PythonTask
  * 
  */
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.5.19"
+    id("net.ivoa.vo-dml.vodmltools") version "0.5.22"
     id("com.diffplug.spotless") version "6.25.0"
     id("ru.vyarus.use-python") version "4.1.0"
 
@@ -68,7 +68,7 @@ spotless {
         target(vodml.outputJavaDir.asFileTree.matching(
             PatternSet().include("**/*.java")
         ))
-        googleJavaFormat("1.12.0")
+        googleJavaFormat("1.17.0")
     }
 }
 
@@ -89,13 +89,18 @@ tasks.test {
 
 dependencies {
     implementation("org.javastro.ivoa.vo-dml:ivoa-base")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.11.3")
+    testImplementation(platform("org.junit:junit-bom:5.12.2"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher") //Needed to override gradle built-in
     testImplementation("com.networknt:json-schema-validator:1.5.6")
     implementation("org.slf4j:slf4j-api:2.0.9")
-    testRuntimeOnly("ch.qos.logback:logback-classic:1.4.12")
+    testRuntimeOnly("ch.qos.logback:logback-classic:1.5.13")
     testImplementation("com.h2database:h2:2.3.232") // try out h2
 //    testImplementation("org.apache.derby:derby:10.14.2.0")
     compileOnly("com.google.googlejavaformat:google-java-format:1.22.0")
+    // initial testing with hibernate spatial
+//    implementation("org.hibernate:hibernate-spatial:6.5.3-final")
+//    testImplementation("org.orbisgis:h2gis:2.2.3")
 }
 
 python {

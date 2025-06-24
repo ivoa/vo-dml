@@ -11,8 +11,10 @@
         <python-package>org.ivoa.dm.jpatest</python-package>
         <xml-targetnamespace prefix="jpat">http://ivoa.net/dm/sample/jpatest</xml-targetnamespace>
         <xmllegacy-targetnamespace prefix="jpat" schemaLocation="jpatest.xsd">http://ivoa.net/dm/sample/jpatest</xmllegacy-targetnamespace>
-        <rdb inheritance-strategy="joined"
-        discriminatorColumnLength="64"/>
+        <rdb inheritance-strategy="joined" schema="rdbtest"
+        discriminatorColumnLength="64">
+            <rdbmap vodml-id="LChild" joinColumnName="altered_join"/>
+        </rdb>
     </model>
     <model>
         <name>lifecycleTest</name>
@@ -21,7 +23,7 @@
         <python-package>org.ivoa.dm.lifecycle</python-package>
         <xml-targetnamespace prefix="life">http://ivoa.net/vodml/sample/lifecycle</xml-targetnamespace>
         <xmllegacy-targetnamespace prefix="life" schemaLocation="lifecycletest.xsd">http://ivoa.net/dm/sample/lifecycle</xmllegacy-targetnamespace>
-        <rdb inheritance-strategy="single-table"
+        <rdb inheritance-strategy="single-table" schema="lifecycle"
              discriminatorColumnLength="64"/>
     </model>
     <model>
@@ -31,8 +33,11 @@
         <python-package>org.ivoa.dm.serializationsample</python-package>
         <xml-targetnamespace prefix="ser">http://ivoa.net/vodml/sample/serialization</xml-targetnamespace>
         <xmllegacy-targetnamespace prefix="ser" schemaLocation="serialization.xsd">http://ivoa.net/dm/sample/serialization</xmllegacy-targetnamespace>
+        <xml packageHandling="ignore"/>
         <rdb inheritance-strategy="single-table"
-             discriminatorColumnLength="64"/>
+             discriminatorColumnLength="64"
+             listConcatenationDelimiter="|"/>
+
     </model>
     <model>
         <name>c1vdt</name>

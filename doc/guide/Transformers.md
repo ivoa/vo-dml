@@ -35,7 +35,7 @@ gradle vodmlSchema
 ```
 will generate XML, JSON and TAP schema for the model. The schema will be generated in the directory defined by the `outputSchemaDir` property (default `build/generated/sources/vodml/schema/`).
 
-The database serialization is described in terms of a TAP schema. The specific  TAP Schema serialization is itself [defined in vodml](https://github.com/ivoa/TAPSchemaDM).
+The database serialization is described in terms of a TAP schema. The specific  TAP Schema serialization is itself [defined in vodml](https://github.com/ivoa/TAPSchemaDM). The XML serialization prefixes all of the column names with the table name and a '.' - this is done because the column names are XMLIDs and the prefix is required to ensure that they IDs are unique in the whole serialization document - The consequence of this is that when creating DDL it is expected that this table name would be removed. There is an [initial template xslt](https://github.com/ivoa/vo-dml/blob/master/tools/xslt/tap2posgresql.xsl) that will transform a tap definition into DDL for PostgreSQL - this might need adjusting for your particular environment - in particular it does not deal with DDL schema. 
 
 The schema files are named by adjusting the suffixes in the following fashion - if the original file is called ```model.vo-dml.xml``` 
 

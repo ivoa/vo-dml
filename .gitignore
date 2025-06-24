@@ -19,3 +19,5 @@ __pycache__/
 /runtime/java/bin/
 /tools/gradletooling/sample/tmp/
 /tools/gradletooling/gradle-plugin/gradle/
+/tools/pythontooling/.venv/
+/tools/pythontooling/src/vodmltools/schxslt/

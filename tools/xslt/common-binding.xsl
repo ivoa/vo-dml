@@ -249,14 +249,22 @@
         <xsl:param name="vodml-ref" as="xsd:string"/> <!-- assumed to be fully qualified! i.e. also for elements in local model, the prefix is included! -->
         <xsl:variable name="type">
             <xsl:variable name="mappedtype" select="vf:findmapping($vodml-ref,'xsd')"/>
+            <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
             <xsl:choose>
                 <xsl:when test="$mappedtype != ''">
                     <xsl:value-of select="$mappedtype"/>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:variable name="modelname" select="substring-before($vodml-ref,':')"/>
+                    <xsl:variable name="modelname" select="$el/ancestor-or-self::vo-dml:model/name"/>
                     <xsl:variable name="root" select="vf:xsdNsPrefix($modelname)"/>
-                    <xsl:value-of select="concat($root,':',substring-after($vodml-ref,':'))"/>
+                    <xsl:choose>
+                        <xsl:when test="vf:XMLIgnorePackages($modelname)">
+                            <xsl:value-of select="concat($root,':',$el/name)"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="concat($root,':',substring-after($vodml-ref,':'))"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
@@ -265,7 +273,16 @@
 
     <xsl:function name="vf:jaxbType" as="xsd:string">
     <xsl:param name="vodml-ref" as="xsd:string"/>
-        <xsl:value-of select="substring-after($vodml-ref,':')"/>
+        <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
+        <xsl:choose>
+            <xsl:when test="vf:XMLIgnorePackages($el/ancestor-or-self::vo-dml:model/name)">
+                <xsl:value-of select="$el/name"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="substring-after($vodml-ref,':')"/>
+            </xsl:otherwise>
+        </xsl:choose>
+
     </xsl:function>
 
 
@@ -492,7 +509,7 @@
             <xsl:sequence select="for $s in $supers return vf:javaLocalDefines(vf:asvodmlref($s))"/>
     </xsl:function>
 
-
+<!-- IMPL - this does not have a natural generalisation to multiple natural keys so should be deprecated -->
     <xsl:function name="vf:JavaKeyType" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:variable name="supers" select="($models/key('ellookup',$vodml-ref),vf:baseTypes($vodml-ref))"/>
@@ -521,6 +538,12 @@
         <xsl:param name="modelName" as="xsd:string"/>
         <xsl:sequence select="$mapping/bnd:mappedModels/model[name=$modelName]/xml/@attributeFormDefault='qualified'"/>
     </xsl:function>
+    <xsl:function name="vf:XMLIgnorePackages" as="xsd:boolean">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:sequence select="$mapping/bnd:mappedModels/model[name=$modelName]/xml/@packageHandling='ignore'"/>
+    </xsl:function>
+
+
 
     <xsl:function name="vf:xsdNsPrefix" as="xsd:string">
         <xsl:param name="modelName" as="xsd:string"/>
@@ -540,7 +563,12 @@
         <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelName]/rdb[@inheritance-strategy='single-table'] )= 1"/>
     </xsl:function>
 
-    <xsl:function name="vf:isRdbAddRef" as="xsd:boolean">
+    <xsl:function name="vf:rdbSchemaName" as="xsd:string">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/rdb/@schema"/>
+    </xsl:function>
+
+   <xsl:function name="vf:isRdbAddRef" as="xsd:boolean">
         <xsl:param name="modelName" as="xsd:string"/>
         <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelName]/rdb[@useRefInColumnName=true()] )= 1"/>
     </xsl:function>
@@ -548,6 +576,18 @@
         <xsl:param name="modelName" as="xsd:string"/>
         <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelName]/rdb[@naturalJoin=true()] )= 1"/>
     </xsl:function>
+    <xsl:function name="vf:rdbListDelimiter" as="xsd:string">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:choose>
+            <xsl:when test="$mapping/bnd:mappedModels/model[name=$modelName]/rdb[@listConcatenationDelimiter]">
+                <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/rdb/@listConcatenationDelimiter"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="';'"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
     <xsl:function name="vf:rdbODiscriminatorName" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
@@ -570,7 +610,7 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
-    <xsl:function name="vf:rdbIDColumnName" as="xsd:string">
+    <xsl:function name="vf:rdbIDColumnName" as="xsd:string"> <!-- TODO - is there a usecase for this being different from rdbJoinTargetColumnName? it misses out natural keys.... -->
         <xsl:param name="vodml-ref" as="xsd:string"/> <!-- the objectType -->
         <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
         <xsl:choose>
@@ -582,6 +622,48 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
+
+    <xsl:function name="vf:rdbJoinColumnName" as="xsd:string">
+        <xsl:param name="el" as="element()"/>
+        <xsl:variable name="type" select="$models/key('ellookup',$el/datatype/vodml-ref)"/>
+        <xsl:variable name="modelName" select="$el/ancestor-or-self::vo-dml:model/name"/>
+        <xsl:choose>
+            <xsl:when test="$el/name()='reference'">
+                <xsl:choose>
+                    <xsl:when test="vf:isRdbAddRef($modelName)">
+                        <xsl:choose>
+                            <xsl:when test="vf:isRdbNaturalJoin($modelName)">
+                                <xsl:sequence select="concat(upper-case($type/name),'_ID')"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:sequence  select="concat(upper-case($el/name),'_',upper-case($type/name),'_ID')"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="$el/name"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:when test="$el/name() = 'composition'">
+                <xsl:variable name="parent" select="$el/parent::*"/>
+<!--                <xsl:message>joinname <xsl:value-of select="concat('parent=',$parent/name,' comp=',$el/datatype/vodml-ref, '  ')"/> <xsl:copy-of select="$mapping/bnd:mappedModels/model[name=$modelName]/rdb/rdbmap[@vodml-id=substring-after($el/datatype/vodml-ref,':')]"/> </xsl:message>-->
+                <xsl:choose>
+                    <xsl:when test="$mapping/bnd:mappedModels/model[name=$modelName]/rdb/rdbmap[@vodml-id=substring-after($el/datatype/vodml-ref,':') and @joinColumnName]">
+                        <xsl:sequence select="$mapping/bnd:mappedModels/model[name=$modelName]/rdb/rdbmap[@vodml-id=substring-after($el/datatype/vodml-ref,':')]/@joinColumnName"/>
+                    </xsl:when>
+                    <xsl:when test="$parent/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
+                        <xsl:value-of select="$parent/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="concat(upper-case($parent/name),'_ID')"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise><xsl:message terminate="yes">join column name not covered</xsl:message> </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
 
     <xsl:function name="vf:rdbJoinTargetColumnName" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/> <!-- the objectType to join to -->
@@ -608,39 +690,6 @@
 
 
 
-    <xsl:function name="vf:rdbCompositionJoinName" as="xsd:string">
-    <xsl:param name="parent" as="element()"/> <!-- the parent of the composition -->
-        <xsl:choose>
-            <xsl:when test="$parent/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
-                <xsl:value-of select="$parent/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"/>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:value-of select="concat(upper-case($parent/name),'_ID')"/>
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:function>
-
-    <xsl:function name="vf:rdbRefColumnName" as="xsd:string">
-        <xsl:param name="vodml-ref" as="xsd:string"/>
-        <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
-        <xsl:variable name="type" select="$models/key('ellookup',$el/datatype/vodml-ref)"/>
-        <xsl:variable name="modelName" select="$el/ancestor-or-self::vo-dml:model/name"/>
-        <xsl:choose>
-            <xsl:when test="vf:isRdbAddRef($modelName)">
-                <xsl:choose>
-                    <xsl:when test="vf:isRdbNaturalJoin($modelName)">
-                       <xsl:sequence select="concat(upper-case($type/name),'_ID')"/>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence  select="concat(upper-case($el/name),'_',upper-case($type/name),'_ID')"/>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:sequence select="$el/name"/>
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:function>
 
 
     <xsl:function name="vf:rdbTapType" as="xsd:string">

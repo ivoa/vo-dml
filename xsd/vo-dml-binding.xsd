@@ -49,16 +49,15 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
            <xsd:attribute name="compositionStyle" default="wrapped">
               <xsd:annotation>
                  <xsd:documentation>
-                    whether compositions with multiplicities greater than 1 should have a wrapper element
-
- when wrapped the default behaviour is to take the wrapper element name from the name of the attribute and the element name for each of the elements object type name (with the initial letter lowerCased)
-                 
+                    whether compositions with multiplicities greater than 1 should have a wrapper element when wrapped the default
+                    behaviour is to take the wrapper element name from the name of the attribute and the element name for each of
+                    the elements object type name (with the initial letter lowerCased)
                  </xsd:documentation>
               </xsd:annotation>
               <xsd:simpleType>
                  <xsd:restriction base="xsd:string">
-                    <xsd:enumeration value="wrapped"></xsd:enumeration>
-                    <xsd:enumeration value="unwrapped"></xsd:enumeration>
+                    <xsd:enumeration value="wrapped"/>
+                    <xsd:enumeration value="unwrapped"/>
                  </xsd:restriction>
               </xsd:simpleType>
            </xsd:attribute>
@@ -70,8 +69,8 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
               </xsd:annotation>
               <xsd:simpleType>
                  <xsd:restriction base="xsd:string">
-                    <xsd:enumeration value="unqualified"></xsd:enumeration>
-                    <xsd:enumeration value="qualified"></xsd:enumeration>
+                    <xsd:enumeration value="unqualified"/>
+                    <xsd:enumeration value="qualified"/>
                  </xsd:restriction>
               </xsd:simpleType>
            </xsd:attribute>
@@ -83,14 +82,29 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
               </xsd:annotation>
               <xsd:simpleType>
                  <xsd:restriction base="xsd:string">
-                    <xsd:enumeration value="unqualified"></xsd:enumeration>
-                    <xsd:enumeration value="qualified"></xsd:enumeration>
+                    <xsd:enumeration value="unqualified"/>
+                    <xsd:enumeration value="qualified"/>
+                 </xsd:restriction>
+              </xsd:simpleType>
+           </xsd:attribute>
+           <xsd:attribute name="packageHandling" use="optional" default="qualified">
+                        <xsd:annotation>
+                           <xsd:documentation>specify how to translate the VO-DML package namespaces into XML namespaces</xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:annotation>
+                               <xsd:documentation>qualified - all of the names appear in the assigned top level XML namespace, but any names that are in VO-DML packages are prefixed with the package name with "." used as a separator
+ignore - all the names are placed in the top level namespace.(This might result in clashes).</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="qualified"/>
+                    <xsd:enumeration value="ignore"/>
                  </xsd:restriction>
               </xsd:simpleType>
            </xsd:attribute>
         </xsd:complexType>
      </xsd:element>
-     <xsd:element name="json-baseURI" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
+     <xsd:element name="json-baseURI" type="xsd:string" maxOccurs="1" minOccurs="0"/>
      <xsd:element name="json" maxOccurs="1" minOccurs="0">
         <xsd:annotation>
            <xsd:documentation>customization of the JSON serialization</xsd:documentation>
@@ -111,7 +125,7 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
      <xsd:element name="rdb" minOccurs="0" maxOccurs="1">
         <xsd:complexType>
            <xsd:sequence>
-              <xsd:element name="rdbmap" type="rdbmapType" maxOccurs="unbounded" minOccurs="0"></xsd:element>
+              <xsd:element name="rdbmap" type="rdbmapType" maxOccurs="unbounded" minOccurs="0"/>
            </xsd:sequence>
            <xsd:attribute name="inheritance-strategy">
               <xsd:annotation>
@@ -119,8 +133,8 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
               </xsd:annotation>
               <xsd:simpleType>
                  <xsd:restriction base="xsd:string">
-                    <xsd:enumeration value="joined"></xsd:enumeration>
-                    <xsd:enumeration value="single-table"></xsd:enumeration>
+                    <xsd:enumeration value="joined"/>
+                    <xsd:enumeration value="single-table"/>
                  </xsd:restriction>
               </xsd:simpleType>
            </xsd:attribute>
@@ -137,8 +151,8 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
               </xsd:annotation>
               <xsd:simpleType>
                  <xsd:restriction base="xsd:string">
-                    <xsd:enumeration value="lazy"></xsd:enumeration>
-                    <xsd:enumeration value="eager"></xsd:enumeration>
+                    <xsd:enumeration value="lazy"/>
+                    <xsd:enumeration value="eager"/>
                  </xsd:restriction>
               </xsd:simpleType>
            </xsd:attribute>
@@ -156,6 +170,19 @@ targetNamespace="http://www.ivoa.net/xml/vodml-binding/v0.9.1" attributeFormDefa
                     if true then primary keys will have a name that includes the table name so that natural joins might be made -
                     otherwise the default is that surrogate primary keys as just called ID
                  </xsd:documentation>
+              </xsd:annotation>
+           </xsd:attribute>
+           <xsd:attribute name="schema" type="xsd:string" use="optional">
+              <xsd:annotation>
+                 <xsd:documentation>
+                    If present then the generated tables will be put in the given schema - otherwise the default is to put the
+                    tables in a schema with the same name as the model
+                 </xsd:documentation>
+              </xsd:annotation>
+           </xsd:attribute>
+           <xsd:attribute name="listConcatenationDelimiter" type="xsd:string" default=";">
+              <xsd:annotation>
+                 <xsd:documentation>The delimiter that is used when lists are concatenated to a single string columns</xsd:documentation>
               </xsd:annotation>
            </xsd:attribute>
         </xsd:complexType>
@@ -221,7 +248,7 @@ In general it must be used to map primitive types to various languages, but it c
                  </xsd:documentation>
               </xsd:annotation>
            </xsd:element>
-           <xsd:element name="json-type" type="JsonMapping" maxOccurs="1" minOccurs="0"></xsd:element>
+           <xsd:element name="json-type" type="JsonMapping" maxOccurs="1" minOccurs="0"/>
         </xsd:sequence>
 </xsd:complexType>
 
@@ -313,13 +340,13 @@ In general it must be used to map primitive types to various languages, but it c
               </xsd:annotation>
            </xsd:element></xsd:all>
     
-     <xsd:attribute name="vodml-id" type="xsd:string"></xsd:attribute>
+     <xsd:attribute name="vodml-id" type="xsd:string"/>
   </xsd:complexType>
 
   <xsd:complexType name="JsonMapping">
      <xsd:simpleContent>
         <xsd:extension base="xsd:string">
-           <xsd:attribute name="format" type="xsd:string" use="optional"></xsd:attribute>
+           <xsd:attribute name="format" type="xsd:string" use="optional"/>
            <xsd:attribute name="built-in" type="xsd:boolean" use="optional" default="false">
               <xsd:annotation>
                  <xsd:documentation>whether the type is a JSON built-in type
@@ -335,33 +362,42 @@ IMPL - this could be put into the code - especially as the number of JSON built-
 
 
   <xsd:complexType name="rdbmapType">
-    
      <xsd:choice maxOccurs="1" minOccurs="0">
         <xsd:element name="tableName" type="xsd:string">
            <xsd:annotation>
-              <xsd:documentation>The name to be used for the table </xsd:documentation>
-           </xsd:annotation></xsd:element>
+              <xsd:documentation>The name to be used for the table</xsd:documentation>
+           </xsd:annotation>
+        </xsd:element>
         <xsd:sequence>
            <xsd:element name="columnName" type="xsd:string">
               <xsd:annotation>
                  <xsd:documentation>The name to be used for a column</xsd:documentation>
-              </xsd:annotation></xsd:element>
+              </xsd:annotation>
+           </xsd:element>
            <xsd:element name="columnType" type="xsd:string" maxOccurs="1" minOccurs="0">
               <xsd:annotation>
                  <xsd:documentation>The TAPSchema type for the column</xsd:documentation>
-              </xsd:annotation></xsd:element>
+              </xsd:annotation>
+           </xsd:element>
         </xsd:sequence>
-        
      </xsd:choice>
-     <xsd:attribute name="vodml-id" type="xsd:string"></xsd:attribute>
+     <xsd:attribute name="vodml-id" type="xsd:string"/>
      <xsd:attribute name="noTableWhenInComposition" type="xsd:boolean" default="false">
         <xsd:annotation>
-           <xsd:documentation>when the type is involved in a composition where maxOccurs = 1 a separate table is not created, but instead it is treated as a DType</xsd:documentation>
+           <xsd:documentation>
+              when the type is involved in a composition where maxOccurs = 1 a separate table is not created, but instead it is
+              treated as a DType
+           </xsd:documentation>
+        </xsd:annotation>
+     </xsd:attribute>
+     <xsd:attribute name="joinColumnName" type="xsd:string">
+        <xsd:annotation>
+           <xsd:documentation>This can be used to override the default behaviours of join column naming for this type</xsd:documentation>
         </xsd:annotation></xsd:attribute>
   </xsd:complexType>
-
   <xsd:simpleType name="NewSimpleType">
-     <xsd:restriction base="xsd:string"></xsd:restriction>
+     <xsd:restriction base="xsd:string"/>
   </xsd:simpleType>
+
 
 </xsd:schema>

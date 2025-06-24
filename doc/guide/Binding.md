@@ -69,6 +69,16 @@ in the XML serialization this determines  whether compositions with multipliciti
 * unwrapped
 
 and the default is wrapped.
+
+
+#### packageHandling
+This controls how VO-DML packages are translated into XML namespaces and names - the options are
+
+* qualified (the default)
+* ignore
+
+In both cases the  base namespace of the XML serialization is controlled by ```<xml-targetnamespace prefix="...">``` and this option then controls how names are created in this namespace - the "qualified" option means that the names are created by prefixing the VO-DML package names to the VO-DML type names using "." as a separator - the "ignore" option simply used the VO-DML type names without any package prefixes (note that this might result in errors if all names within the model are not unique).
+
 ### JSON serialization
 #### lax
 
@@ -76,7 +86,7 @@ whether definitions in the schema model should be "closed off" with "additionalP
 
 The default is false which indicates that types should be "closed off".
 
-In general if a model is expected to be used a a "base model" then this should probably be set to true for the model.
+In general if a model is expected to be used as a "base model" then this should probably be set to true for the model.
 
 ## RDB mapping for TAP schema
 There are various stylistic choices that can be made about how to map a VO-DML model to a relational database. The binding makes these choices concreate for a particular model.
