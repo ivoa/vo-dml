@@ -5,12 +5,18 @@ package org.ivoa.vodml.validation;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.URL;
 import java.sql.PreparedStatement;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import com.networknt.schema.output.OutputUnit;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.SharedCacheMode;
+import jakarta.persistence.ValidationMode;
+import jakarta.persistence.spi.ClassTransformer;
+import jakarta.persistence.spi.PersistenceUnitInfo;
+import jakarta.persistence.spi.PersistenceUnitTransactionType;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
@@ -19,6 +25,8 @@ import jakarta.xml.bind.PropertyException;
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.ValidationEvent;
 import jakarta.xml.bind.util.ValidationEventCollector;
+
+import javax.sql.DataSource;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -33,6 +41,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.hibernate.Session;
+import org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl;
+import org.hibernate.jpa.boot.internal.PersistenceUnitInfoDescriptor;
 import org.ivoa.vodml.ModelDescription;
 import org.ivoa.vodml.ModelManagement;
 import org.ivoa.vodml.VodmlModel;
@@ -163,7 +173,7 @@ public abstract class AbstractBaseValidation {
     protected <M, I, T extends JPAManipulationsForObjectType<I>> RoundTripResult<T> roundtripRDB(ModelManagement<M> modelManagement, T  entity)
     {
        
-        jakarta.persistence.EntityManager em = setupH2Db(modelManagement.pu_name());
+        jakarta.persistence.EntityManager em = setupH2Db(modelManagement.pu_name(), modelManagement.description().allClassNames());
         em.getTransaction().begin();
         modelManagement.persistRefs(em);
         em.persist(entity);
@@ -187,50 +197,20 @@ public abstract class AbstractBaseValidation {
     /**
      * Create an Entity manager for a memory-based test database;
      * @param puname the persistence unit name of the JPA DB.
+     * @param classNames the list of classes managed by the persistence unit.
      * @return the EntityManager for the database.
      */
-    protected EntityManager setupH2Db(String puname){
-        Map<String, String> props = new HashMap<>();
-
-        //
-
-        //derby
-        //      props.put("jakarta.persistence.jdbc.url", "jdbc:derby:memory:"+puname+";create=true");//IMPL differenrt DB for each PU to stop interactions
-        //        props.put(PersistenceUnitProperties.JDBC_URL, "jdbc:derby:emerlindb;create=true;traceFile=derbytrace.out;traceLevel=-1;traceDirectory=/tmp");
-        //      props.put("jakarta.persistence.jdbc.driver", "org.apache.derby.jdbc.EmbeddedDriver");
-        // props.put(PersistenceUnitProperties.TARGET_DATABASE, "org.eclipse.persistence.platform.database.DerbyPlatform");
-
-        //        //h2
-        props.put("jakarta.persistence.jdbc.url", "jdbc:h2:mem:"+puname+";DB_CLOSE_DELAY=-1");//IMPL differenrt DB for each PU to stop interactions
-        props.put("jakarta.persistence.jdbc.driver", "org.h2.Driver");
-        props.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
-        //        props.put(PersistenceUnitProperties.TARGET_DATABASE, "org.eclipse.persistence.platform.database.H2Platform");
-        //
-        //        //hsqldb
-        //        props.put(PersistenceUnitProperties.JDBC_URL, "jdbc:hsqldb:mem:"+puname+";");//IMPL differenrt DB for each PU to stop interactions
-        //        props.put(PersistenceUnitProperties.JDBC_DRIVER, "org.hsqldb.jdbcDriver");
-        //        props.put(PersistenceUnitProperties.TARGET_DATABASE, "org.eclipse.persistence.platform.database.HSQLPlatform");
+    protected EntityManager setupH2Db(String puname, List<String> classNames) {
 
 
-        // props.put(PersistenceUnitProperties.DDL_GENERATION_MODE, PersistenceUnitProperties.DDL_BOTH_GENERATION);
-        props.put("jakarta.persistence.schema-generation.scripts.create-target", "test.sql");
-        props.put("jakarta.persistence.schema-generation.scripts.drop-target", "test-drop.sql");
-        props.put("hibernate.hbm2ddl.schema-generation.script.append", "false");
-        props.put("jakarta.persistence.create-database-schemas", "true");
-
-        props.put("jakarta.persistence.schema-generation.create-source", "metadata");
-        props.put("jakarta.persistence.schema-generation.database.action", "drop-and-create");
-        props.put("jakarta.persistence.schema-generation.scripts.action", "drop-and-create");
-        props.put("jakarta.persistence.jdbc.user", "");
-        //        props.put(PersistenceUnitProperties.CACHE_SHARED_, "false");
-
-
-        jakarta.persistence.EntityManagerFactory emf = jakarta.persistence.Persistence.createEntityManagerFactory(puname, props);
-
-        jakarta.persistence.EntityManager em = emf.createEntityManager();
-        return em;
-
+        PersistenceUnitInfo persistenceUnitInfo = new HibernatePersistenceUnitInfo(puname, classNames);
+        Map<String, Object> configuration = new HashMap<>();
+        return new EntityManagerFactoryBuilderImpl(
+              new PersistenceUnitInfoDescriptor(persistenceUnitInfo), configuration)
+              .build().createEntityManager();
     }
+
+
 
     /**
      * Validate a model instance. This is done via JAXB.
@@ -269,4 +249,215 @@ public abstract class AbstractBaseValidation {
         return  null;
     }
 
+
+    private static class HibernatePersistenceUnitInfo implements PersistenceUnitInfo {
+
+        public static String JPA_VERSION = "2.1";
+        private String persistenceUnitName;
+        private PersistenceUnitTransactionType transactionType
+              = PersistenceUnitTransactionType.RESOURCE_LOCAL;
+        private List<String> managedClassNames;
+        private List<String> mappingFileNames = new ArrayList<>();
+        private Properties properties;
+        private DataSource jtaDataSource;
+        private DataSource nonjtaDataSource;
+        private List<ClassTransformer> transformers = new ArrayList<>();
+
+        public HibernatePersistenceUnitInfo(
+              String persistenceUnitName, List<String> managedClassNames) {
+            this.persistenceUnitName = persistenceUnitName;
+            this.managedClassNames = managedClassNames;
+            this.properties = new Properties();
+            //derby
+            //      properties.put("jakarta.persistence.jdbc.url", "jdbc:derby:memory:"+puname+";create=true");//IMPL differenrt DB for each PU to stop interactions
+            //        properties.put(PersistenceUnitProperties.JDBC_URL, "jdbc:derby:emerlindb;create=true;traceFile=derbytrace.out;traceLevel=-1;traceDirectory=/tmp");
+            //      properties.put("jakarta.persistence.jdbc.driver", "org.apache.derby.jdbc.EmbeddedDriver");
+            // properties.put(PersistenceUnitProperties.TARGET_DATABASE, "org.eclipse.persistence.platform.database.DerbyPlatform");
+
+            //        //h2
+            properties.put("jakarta.persistence.jdbc.url", "jdbc:h2:mem:"+persistenceUnitName+";DB_CLOSE_DELAY=-1");//IMPL differenrt DB for each PU to stop interactions
+            properties.put("jakarta.persistence.jdbc.driver", "org.h2.Driver");
+            properties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+            //        properties.put(PersistenceUnitProperties.TARGET_DATABASE, "org.eclipse.persistence.platform.database.H2Platform");
+            //
+            //        //hsqldb
+            //        properties.put(PersistenceUnitProperties.JDBC_URL, "jdbc:hsqldb:mem:"+puname+";");//IMPL differenrt DB for each PU to stop interactions
+            //        properties.put(PersistenceUnitProperties.JDBC_DRIVER, "org.hsqldb.jdbcDriver");
+            //        properties.put(PersistenceUnitProperties.TARGET_DATABASE, "org.eclipse.persistence.platform.database.HSQLPlatform");
+
+
+            // properties.put(PersistenceUnitProperties.DDL_GENERATION_MODE, PersistenceUnitProperties.DDL_BOTH_GENERATION);
+            properties.put("jakarta.persistence.schema-generation.scripts.create-target", "test.sql");
+            properties.put("jakarta.persistence.schema-generation.scripts.drop-target", "test-drop.sql");
+            properties.put("hibernate.hbm2ddl.schema-generation.script.append", "false");
+            properties.put("jakarta.persistence.create-database-schemas", "true");
+
+            properties.put("jakarta.persistence.schema-generation.create-source", "metadata");
+            properties.put("jakarta.persistence.schema-generation.database.action", "drop-and-create");
+            properties.put("jakarta.persistence.schema-generation.scripts.action", "drop-and-create");
+            properties.put("jakarta.persistence.jdbc.user", "");
+            //        properties.put(PersistenceUnitProperties.CACHE_SHARED_, "false");
+
+        }
+
+        /**
+         * {@inheritDoc}
+         * overrides @see jakarta.persistence.spi.PersistenceUnitInfo#getPersistenceUnitName()
+         */
+        @Override
+        public String getPersistenceUnitName() {
+            return persistenceUnitName;
+        }
+
+        /**
+         * {@inheritDoc}
+         * overrides @see jakarta.persistence.spi.PersistenceUnitInfo#getPersistenceProviderClassName()
+         */
+        @Override
+        public String getPersistenceProviderClassName() {
+            return "org.hibernate.jpa.HibernatePersistenceProvider";
+        }
+
+        /**
+         * {@inheritDoc}
+         * overrides @see jakarta.persistence.spi.PersistenceUnitInfo#getTransactionType()
+         */
+        @Override
+        public PersistenceUnitTransactionType getTransactionType() {
+            return  transactionType;     
+        }
+
+        /**
+         * {@inheritDoc}
+         * overrides @see jakarta.persistence.spi.PersistenceUnitInfo#getJtaDataSource()
+         */
+        @Override
+        public DataSource getJtaDataSource() {
+           return null;
+            
+        }
+
+        /**
+         * {@inheritDoc}
+         * overrides @see jakarta.persistence.spi.PersistenceUnitInfo#getNonJtaDataSource()
+         */
+        @Override
+        public DataSource getNonJtaDataSource() {
+            return null;
+        }
+
+        /**
+         * {@inheritDoc}
+         * overrides @see jakarta.persistence.spi.PersistenceUnitInfo#getMappingFileNames()
+         */
+        @Override
+        public List<String> getMappingFileNames() {
+            return mappingFileNames;
+        }
+
+        /**
+         * {@inheritDoc}
+         * overrides @see jakarta.persistence.spi.PersistenceUnitInfo#getJarFileUrls()
+         */
+        @Override
+        public List<URL> getJarFileUrls() {
+           return Collections.emptyList();
+            
+        }
+
+        /**
+         * {@inheritDoc}
+         * overrides @see jakarta.persistence.spi.PersistenceUnitInfo#getPersistenceUnitRootUrl()
+         */
+        @Override
+        public URL getPersistenceUnitRootUrl() {
+           return null;
+        }
+
+        /**
+         * {@inheritDoc}
+         * overrides @see jakarta.persistence.spi.PersistenceUnitInfo#getManagedClassNames()
+         */
+        @Override
+        public List<String> getManagedClassNames() {
+            return managedClassNames;            
+        }
+
+        /**
+         * {@inheritDoc}
+         * overrides @see jakarta.persistence.spi.PersistenceUnitInfo#excludeUnlistedClasses()
+         */
+        @Override
+        public boolean excludeUnlistedClasses() {
+            return true;           
+        }
+
+        /**
+         * {@inheritDoc}
+         * overrides @see jakarta.persistence.spi.PersistenceUnitInfo#getSharedCacheMode()
+         */
+        @Override
+        public SharedCacheMode getSharedCacheMode() {
+            return SharedCacheMode.ALL;//IMPL is this good?
+            
+        }
+        /**
+         * {@inheritDoc}
+         * overrides @see jakarta.persistence.spi.PersistenceUnitInfo#getValidationMode()
+         */
+        @Override
+        public ValidationMode getValidationMode() {
+            return ValidationMode.AUTO;
+                
+        }
+
+        /**
+         * {@inheritDoc}
+         * overrides @see jakarta.persistence.spi.PersistenceUnitInfo#getProperties()
+         */
+        @Override
+        public Properties getProperties() {
+            return properties;
+            
+        }
+
+        /**
+         * {@inheritDoc}
+         * overrides @see jakarta.persistence.spi.PersistenceUnitInfo#getPersistenceXMLSchemaVersion()
+         */
+        @Override
+        public String getPersistenceXMLSchemaVersion() {
+            return JPA_VERSION;
+        }
+
+        /**
+         * {@inheritDoc}
+         * overrides @see jakarta.persistence.spi.PersistenceUnitInfo#getClassLoader()
+         */
+        @Override
+        public ClassLoader getClassLoader() {
+          return Thread.currentThread().getContextClassLoader(); //IMPL ??
+        }
+
+        /**
+         * {@inheritDoc}
+         * overrides @see jakarta.persistence.spi.PersistenceUnitInfo#addTransformer(jakarta.persistence.spi.ClassTransformer)
+         */
+        @Override
+        public void addTransformer(ClassTransformer transformer) {
+            // TODO Auto-generated method stub
+            throw new  UnsupportedOperationException("PersistenceUnitInfo.addTransformer() not implemented");
+            
+        }
+
+        /**
+         * {@inheritDoc}
+         * overrides @see jakarta.persistence.spi.PersistenceUnitInfo#getNewTempClassLoader()
+         */
+        @Override
+        public ClassLoader getNewTempClassLoader() {
+            return null;// return Thread.currentThread().getContextClassLoader(); //IMPL or null
+
+        }
+   }
 }

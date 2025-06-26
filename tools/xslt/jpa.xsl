@@ -454,9 +454,6 @@
         </xsl:choose>   
 
   </xsl:template>
-
-
-
     <xsl:template name="enumPattern">
     <xsl:param name="columnName"/>
 
@@ -464,12 +461,6 @@
     @jakarta.persistence.Enumerated( jakarta.persistence.EnumType.STRING )
     @jakarta.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
   </xsl:template>
-
-
-
-
-
-
 
 
   <!-- persistence.xml configuration file -->  
@@ -527,8 +518,23 @@
   </xsl:template>
   <xsl:template match="*" mode="jpaConfig"><!-- do nothing --></xsl:template>
 
-  <!-- template to do smart deletion in the case of contained references
-  TODO could also do something better in the case of bulk deletion.-->
+    <xsl:template match="package" mode="jpaClasslist" >
+        <xsl:apply-templates select="*" mode="jpaClasslist"/>
+    </xsl:template>
+
+    <xsl:template match="objectType|dataType|primitiveType" mode="jpaClasslist">
+        <xsl:variable name="vodml-ref" select="concat(./ancestor::vo-dml:model/name,':',vodml-id)"/>
+        <!--      <xsl:message>JPA persistence.xml <xsl:value-of select="concat($vodml-ref, ' ', $mapping/key('maplookup',$vodml-ref)/java-type)"/> </xsl:message>-->
+        <xsl:if test="not($mapping/key('maplookup',$vodml-ref)/java-type/@jpa-atomic)">
+            <xsl:sequence select="vf:QualifiedJavaType($vodml-ref)"/>
+        </xsl:if>
+    </xsl:template>
+    <xsl:template match="*" mode="jpaClasslist"><!-- do nothing --></xsl:template>
+
+
+
+    <!-- template to do smart deletion in the case of contained references
+    TODO could also do something better in the case of bulk deletion.-->
   <xsl:template match="objectType" mode="jpadeleter">
       <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
       <xsl:if test="not(@abstract)">

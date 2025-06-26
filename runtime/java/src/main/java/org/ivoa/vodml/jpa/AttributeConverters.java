@@ -21,9 +21,6 @@ import java.util.stream.Stream;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.ParameterizedType;
 import org.hibernate.usertype.UserType;
-import org.hibernate.usertype.UserTypeSupport;
-
-import jakarta.persistence.AttributeConverter;
 
 /**
  * Hibernate converters to convert lists to delimited strings.

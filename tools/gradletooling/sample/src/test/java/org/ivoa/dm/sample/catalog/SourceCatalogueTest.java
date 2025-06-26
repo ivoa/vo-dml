@@ -52,7 +52,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
 
   @org.junit.jupiter.api.Test
   void sourceCatJPATest() {
-    jakarta.persistence.EntityManager em = setupH2Db(SampleModel.pu_name());
+    jakarta.persistence.EntityManager em = setupH2Db(SampleModel.pu_name(),SampleModel.modelDescription.allClassNames());
     SampleModel omodel = new SampleModel();
     omodel.addContent(sc);
     omodel.addContent(ps);
@@ -124,7 +124,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
   @org.junit.jupiter.api.Test
   void listManipulationTest() {
     SampleModel model = new SampleModel();
-    jakarta.persistence.EntityManager em = setupH2Db(SampleModel.pu_name());
+    jakarta.persistence.EntityManager em = setupH2Db(SampleModel.pu_name(),SampleModel.modelDescription.allClassNames());
     em.getTransaction().begin();
     model.addContent(ps);
     model.addContent(sc);

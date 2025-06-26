@@ -88,7 +88,7 @@ class JpatestModelTest extends AbstractTest {
   @Test
   void jpaInitialCreateTest() {
     jakarta.persistence.EntityManager em =
-        setupH2Db(JpatestModel.pu_name()); // the persistence unit is all under the one file....
+        setupH2Db(JpatestModel.pu_name(),JpatestModel.modelDescription.allClassNames()); // the persistence unit is all under the one file....
     em.getTransaction().begin();
     JpatestModel model = new JpatestModel();
     model.addContent(atest);
@@ -117,7 +117,7 @@ class JpatestModelTest extends AbstractTest {
   @Test
   void jpaUpdateOrderedTest() throws JsonProcessingException {
     jakarta.persistence.EntityManager em =
-        setupH2Db(JpatestModel.pu_name()); // the persistence unit is all under the one file....
+        setupH2Db(JpatestModel.pu_name(),JpatestModel.modelDescription.allClassNames()); // the persistence unit is all under the one file....
     em.getTransaction().begin();
     JpatestModel model = new JpatestModel();
     model.addContent(atest);
@@ -168,7 +168,7 @@ class JpatestModelTest extends AbstractTest {
   @Test
   void jpaAddToListTest() {
        jakarta.persistence.EntityManager em =
-        setupH2Db(JpatestModel.pu_name()); // the persistence unit is all under the one file....
+        setupH2Db(JpatestModel.pu_name(),JpatestModel.modelDescription.allClassNames()); // the persistence unit is all under the one file....
     em.getTransaction().begin();
     JpatestModel model = new JpatestModel();
     model.addContent(atest);

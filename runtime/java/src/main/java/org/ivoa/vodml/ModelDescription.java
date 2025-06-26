@@ -50,6 +50,12 @@ public interface ModelDescription  {
      */
     @SuppressWarnings("rawtypes")
     List<Class> contentClasses();
+
+    /**
+     * Return the list of class names that make up this model and any included ones.
+     * @return The list of class names.
+     */
+    List<String> allClassNames();
 }
 
 
