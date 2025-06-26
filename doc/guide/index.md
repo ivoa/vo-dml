@@ -12,4 +12,11 @@ The purpose of writing data models is two-fold
   instances of the model to be transported, stored and queried.
 
 
-[Start Modelling](Installation.md)
+[Start Modelling](Installation.md) and learn about [model design](modelling/designIntro.md)
+
+## Features of VO-DML tooling
+
+* easy to install - create a dependency on this project rather than checking it out [see template](https://github.com/ivoa/DataModelTemplate)
+* [model validation](modelling/Validation.md)
+* auto-generation of XML, JSON and TAP Schema
+* auto-generation of [Java](JavaCodeGeneration.md) and [Python](PythonCodeGeneration.md) code that [serializes](Serialization.md) to these schema.
