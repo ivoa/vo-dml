@@ -6,7 +6,7 @@ FIXME This is not yet complete
 * subsetting rules not done
 
 
-note the need to make the columnID unique over whole document (as it is an XML ID) - done by prepending the table name and a .
+note the need to make the columnID unique over whole document (as it is an XML ID) - done by prepending the schema and table names delimited with "."
    -  this should be removed before writing DDL for an actual RDB
  -->
 
@@ -85,13 +85,14 @@ note the need to make the columnID unique over whole document (as it is an XML I
        <utype>{$vodml-ref}</utype>
        <description>{description}</description>
        <columns>
-           <xsl:if test="count(attribute/constraint[ends-with(@xsi:type,':NaturalKey')]) = 0">
-             <!--add the primary key column -->
+           <!--add the primary key column if necessary - note subtyping handled below-->
+           <xsl:if test="count(attribute/constraint[ends-with(@xsi:type,':NaturalKey')]) = 0 and not(extends)">
+
              <column>
-                 <column_name>{vf:rdbIDColumnName($vodml-ref)}</column_name>
+                 <column_name>{string-join(($RdbSchemaName,vf:rdbTableName($vodml-ref),vf:rdbIDColumnName($vodml-ref)),'.')}</column_name>
                  <xsl:comment>primary key</xsl:comment>
                  <datatype>BIGINT</datatype>
-                 <description>primary key for {name}</description>
+                 <description>primary key for {vf:rdbTableName($vodml-ref)}</description>
                  <indexed>true</indexed>
                  <principal>false</principal>
                  <std>true</std> <!--IMPL if generated from VO-DML - should be a standard -->
@@ -103,7 +104,7 @@ note the need to make the columnID unique over whole document (as it is an XML I
                    <xsl:choose>
                        <xsl:when test="vf:hasSubTypes($vodml-ref)  and not(extends)"> <!-- base type-->
                             <column>
-                                <column_name>{concat(name,'.',vf:rdbODiscriminatorName($vodml-ref))}</column_name>
+                                <column_name>{concat($RdbSchemaName,'.',name,'.',vf:rdbODiscriminatorName($vodml-ref))}</column_name>
                                 <datatype>VARCHAR</datatype>
                                 <description>discriminator column for {$vodml-ref} sub-types</description>
                                 <utype>{$vodml-ref}</utype>
@@ -126,7 +127,15 @@ note the need to make the columnID unique over whole document (as it is an XML I
                            <xsl:apply-templates select="(attribute|reference|composition)" mode="defn"/>
                        </xsl:when>
                        <xsl:when test="extends">
-                           <!-- FIXME - need to add the fkey -->
+                           <column>
+                               <column_name>{string-join(($RdbSchemaName,vf:rdbTableName($vodml-ref),vf:rdbJoinTargetColumnName($vodml-ref)),'.')}</column_name>
+                               <xsl:comment>primary/join key for subtype</xsl:comment>
+                               <datatype>BIGINT</datatype>
+                               <description>primary/join key for {vf:rdbTableName($vodml-ref)}</description>
+                               <indexed>true</indexed>
+                               <principal>false</principal>
+                               <std>true</std> <!--IMPL if generated from VO-DML - should be a standard -->
+                           </column>
                            <xsl:apply-templates select="(attribute|reference|composition)" mode="defn"/>
                        </xsl:when>
                        <xsl:otherwise>
@@ -191,32 +200,39 @@ note the need to make the columnID unique over whole document (as it is an XML I
         </xsl:variable>
 <!--        <xsl:message>**** <xsl:copy-of select="$atv" copy-namespaces="no"/></xsl:message>-->
 
-        <xsl:apply-templates select="$atv" mode="dtypeexpandcols"/>
+        <xsl:apply-templates select="$atv" mode="dtypeexpandcols">
+            <xsl:with-param name="tableName" select="vf:rdbTableName(vf:asvodmlref(current()/parent::*))"/>
+        </xsl:apply-templates>
 
     </xsl:template>
     <xsl:template match="attribute[vf:isDataType(.)]" mode="dtyperef" >
         <xsl:variable name="atv">
             <xsl:apply-templates select="current()" mode="attrovercols2"/>
         </xsl:variable>
-        <xsl:apply-templates select="$atv" mode="dtypeexpandrefs"/>
+        <xsl:apply-templates select="$atv" mode="dtypeexpandrefs">
+            <xsl:with-param name="tableName" select="vf:rdbTableName(vf:asvodmlref(current()/parent::*))"/>
+        </xsl:apply-templates>
     </xsl:template>
     <xsl:template match="composition[vf:noTableInComposition(datatype/vodml-ref)]" mode="dtyperef" >
         <xsl:variable name="atv">
             <xsl:apply-templates select="current()" mode="attrovercols2"/>
         </xsl:variable>
-        <xsl:apply-templates select="$atv" mode="dtypeexpandrefs"/>
+        <xsl:apply-templates select="$atv" mode="dtypeexpandrefs">
+            <xsl:with-param name="tableName" select="vf:rdbTableName(vf:asvodmlref(current()/parent::*))"/>
+        </xsl:apply-templates>
     </xsl:template>
 
 <!-- note  that these templates are matching on the construct created by the attrovercols2 mode on attributes -->
     <xsl:template match="att[not(*)]" mode="dtypeexpandcols">
+        <xsl:param name="tableName"/>
         <xsl:variable name="top-vodml-ref" select="ancestor-or-self::dt[last()]/@v"/>
         <xsl:variable name="top-el" select="$models/key('ellookup',$top-vodml-ref)"/>
         <column>
-            <column_name><xsl:value-of select="string-join(current()/ancestor-or-self::att/@c,'_')"/></column_name>
+            <column_name><xsl:value-of select="concat($RdbSchemaName,'.',$tableName,'.',string-join(current()/ancestor-or-self::att/@c,'_'))"/></column_name>
             <xsl:comment>attribute from dtype</xsl:comment>
             <datatype>{vf:rdbTapType(@type)}</datatype>
             <description>{$top-el/description}</description><!-- TODO would perhaps like to include datatype description too -->
-            <utype>{$top-vodml-ref}</utype>
+            <utype>{$top-vodml-ref}</utype> <!--FIXME almost certainly not the "correct" UType - but UTypes are broken -->
             <indexed>{count($top-el/constraint[ends-with(@xsi:type,':NaturalKey')])> 0}</indexed>
             <principal>false</principal><!-- TODO need a way of actually specifying this -->
             <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
@@ -224,10 +240,11 @@ note the need to make the columnID unique over whole document (as it is an XML I
     </xsl:template>
 
     <xsl:template match="ref" mode="dtypeexpandcols">
+        <xsl:param name="tableName"/>
         <xsl:variable name="top-vodml-ref" select="ancestor-or-self::dt[last()]/@v"/>
         <xsl:variable name="top-el" select="$models/key('ellookup',$top-vodml-ref)"/>
         <column>
-            <column_name><xsl:value-of select="string-join(current()/(ancestor-or-self::att|ancestor-or-self::ref)/@c,'_')"/></column_name>
+            <column_name><xsl:value-of select="concat($RdbSchemaName,'.',$tableName,'.',string-join(current()/(ancestor-or-self::att|ancestor-or-self::ref)/@c,'_'))"/></column_name>
             <xsl:comment>reference from datatype</xsl:comment>
             <datatype>{vf:rdbKeyType(@type)}</datatype>
             <description>{$top-el/description}</description><!-- TODO would perhaps like to include datatype description too -->
@@ -239,19 +256,20 @@ note the need to make the columnID unique over whole document (as it is an XML I
     </xsl:template>
 
     <xsl:template match="ref" mode="dtypeexpandrefs">
+        <xsl:param name="tableName"/>
         <xsl:variable name="top-vodml-ref" select="ancestor-or-self::dt[last()]/@v"/>
         <xsl:variable name="top-el" select="$models/key('ellookup',$top-vodml-ref)"/>
         <foreignKey>
             <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
             <key_id>{vf:tapFkeyID($top-vodml-ref)}</key_id>
             <target_table>{vf:tapTableName(@type)}</target_table>
-            <xsl:comment>reference to {@type}</xsl:comment>
+            <xsl:comment>dtype reference to {@type}</xsl:comment>
 
             <description>{$top-el/description}</description>
             <utype>{$top-vodml-ref}</utype>
             <columns>
                 <fKColumn>
-                    <from_column><xsl:value-of select="string-join(current()/(ancestor-or-self::att|ancestor-or-self::ref)/@c,'_')"/></from_column>
+                    <from_column><xsl:value-of select="concat($RdbSchemaName,'.',$tableName,'.',string-join(current()/(ancestor-or-self::att|ancestor-or-self::ref)/@c,'_'))"/></from_column>
                     <target_column>{vf:tapTargetColumnName(@type)}</target_column>
                 </fKColumn>
             </columns>
@@ -280,7 +298,9 @@ note the need to make the columnID unique over whole document (as it is an XML I
             <xsl:apply-templates select="current()" mode="attrovercols2"/>
         </xsl:variable>
 <!--        <xsl:message>composition <xsl:value-of select="vf:asvodmlref(current())"/> <xsl:copy-of select="$atv" copy-namespaces="no"/></xsl:message>-->
-        <xsl:apply-templates select="$atv" mode="dtypeexpandcols"/>
+        <xsl:apply-templates select="$atv" mode="dtypeexpandcols">
+            <xsl:with-param name="tableName" select="vf:rdbTableName(vf:asvodmlref(current()/parent::*))"/>
+        </xsl:apply-templates>
     </xsl:template>
 
     <xsl:template match="composition" mode="defn">
