@@ -109,5 +109,9 @@
   * make sure that Object/DataType members do appear in VO-DML declaration order
   * for list concatenation, add ability to specify delimiting character in binding.
   * remove the element level persistRefs - must be done at the top level - model.management().persistRefs(em)
+* 0.5.23
+  * fixed some TAPSchema generation errors
+  * added the ability to run tests without persistence.xml
+  * move the TAPSchema to DDL XSLT into the TAPSchemaDM project
 
 N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass in same hierarchy - still waiting for a solution
