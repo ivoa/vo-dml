@@ -5,6 +5,7 @@ import java.util.Date;
 
 import org.ivoa.vodml.annotation.VoDml;
 import org.ivoa.vodml.annotation.VodmlRole;
+import org.ivoa.vodml.jpa.JPAManipulations;
 
 import jakarta.persistence.*;
 
@@ -20,7 +21,7 @@ import jakarta.persistence.*;
  */
 @Embeddable
 @VoDml(id = "ivoa:duration", role=VodmlRole.primitiveType, type = "ivoa:duration" )
-public class Duration  {
+public class Duration implements JPAManipulations {
 //TODO not sure that this is the best representation - PAH - better to use java internal type esp. JDK8+
     /** string representation */
     private Date from;
@@ -58,4 +59,12 @@ public class Duration  {
     public void setTo(Date to) {
         this.to = to;
     }
+
+    @Override
+    public void forceLoad() {
+        // nothing to do
+    }
+
+   
+
 }
