@@ -3,8 +3,7 @@ name: Standard Document PDF Preview generation
 on:
   push:
     branches: [20-update-vo-dml-standard-document]
-  pull_request:
-    branches: [20-update-vo-dml-standard-document]
+
 jobs:
    build:
      runs-on: ubuntu-24.04
