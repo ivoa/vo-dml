@@ -1,8 +1,8 @@
-name: Standard Document PDF Preview generation
+name: WD 1.1 cumulative PDF Preview generation
 
 on:
   push:
-    branches: [20-update-vo-dml-standard-document]
+    branches: [WD_1_1_cumulative]
 
 jobs:
    build:
@@ -22,12 +22,12 @@ jobs:
        - name: upload the std doc
          uses: actions/upload-artifact@v4
          with:
-           name: VO-DML-WD
+           name: VO-DML-WD-proposed
            path: doc/std/VO-DML.pdf
        - name: Creates a release in GitHub and uploads attachments
          env:
            GITHUB_TOKEN: ${{ github.TOKEN }}
            shell: bash
          run: |
-           gh release delete WD-1.1  --cleanup-tag -y
-           gh release -n "latest working draft" create WD-1.1 doc/std/VO-DML.pdf 
+           gh release delete WD-1.1-proposed  --cleanup-tag -y
+           gh release -n "cumulative proposals for working draft" create WD-1.1-proposed doc/std/VO-DML.pdf 
