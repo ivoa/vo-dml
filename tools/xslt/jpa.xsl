@@ -296,44 +296,15 @@
 
     <xsl:template match="attribute|reference|composition" mode="nullable">
 <!--      <xsl:message>nullability - <xsl:value-of select="concat(name,' parent=',./parent::*/name, ' type=',./parent::*/name())"/> </xsl:message>-->
-      <xsl:variable name="vodml-ref" select="vf:asvodmlref(./parent::*)"/>
-      <xsl:choose>
-          <xsl:when test="./parent::*/name()='dataType'">
-              <xsl:text>true</xsl:text> <!-- TODO could be less restrictive - non-inherited datatypes not in type hierarchies could still have restrictions-->
-          </xsl:when>
-          <xsl:otherwise>
-              <xsl:choose>
-                  <xsl:when test="$isRdbSingleInheritance">
-                      <xsl:choose>
-                          <xsl:when test="count(current()/parent::*/extends) > 0 ">
-                              <!--and count($models/key('ellookup',current()/parent::*/extends/vodml-ref)[@abstract='true']) = 0 -->
-                              <xsl:text>true</xsl:text>
-                          </xsl:when>
-                          <xsl:otherwise>
-                              <xsl:choose>
-                                  <xsl:when test="starts-with(multiplicity, '0')">true</xsl:when>
-                                  <xsl:otherwise>false</xsl:otherwise>
-                              </xsl:choose>
-                          </xsl:otherwise>
-                      </xsl:choose>
-                  </xsl:when>
-                  <xsl:otherwise>
-                      <xsl:choose>
-                          <xsl:when test="starts-with(multiplicity, '0')">true</xsl:when>
-                          <xsl:otherwise>false</xsl:otherwise>
-                      </xsl:choose>
-                  </xsl:otherwise>
-              </xsl:choose>
-
-          </xsl:otherwise>
-      </xsl:choose>
- </xsl:template>
+         <xsl:value-of select="vf:nullable(current())"/>
+    </xsl:template>
 
 
 
 
   <xsl:template match="reference" mode="JPAAnnotation">
     <xsl:variable name="type" select="$models/key('ellookup', datatype/vodml-ref)"/>
+    <xsl:variable name="this" select="current()"/>
 
     <xsl:choose>
       <xsl:when test="name($type) = 'primitiveType' or name($type) = 'enumeration'">
@@ -354,17 +325,18 @@
 
                   <!--IMPL this is somewhat hacky to deal with the tap schema case specifically not the general case of multiple natural keys -->
                   <xsl:variable name="refObj" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
-                  <xsl:if test=" $refObj/attribute/constraint[ends-with(@xsi:type,':NaturalKey') and position='2']
+                  <xsl:if test=" $refObj/attribute/constraint[ends-with(@xsi:type,':NaturalKey') and position='0']
                and count($refObj/attribute/constraint[ends-with(@xsi:type,':NaturalKey')])=1" >
                       <xsl:variable name="containers" select="vf:ContainerHierarchyInOwnModel(current()/datatype/vodml-ref)"/>
                       <!--          <xsl:message>containers <xsl:value-of select="string-join($containers,',')"/> first=<xsl:value-of-->
                       <!--                  select="$containers[1]"/></xsl:message>-->
                       <xsl:choose>
                           <xsl:when test="count($containers) > 0 and $models/key('ellookup',$containers[1])/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
-@jakarta.persistence.JoinColumn( name="<xsl:value-of select="concat(vf:rdbJoinColumnName(current()),'_',lower-case($models/key('ellookup',$containers[1])/name))"/>", <!-- IMPL making the same as the referred to column name for now -->
-                              referencedColumnName ="<xsl:value-of select="vf:rdbJoinTargetColumnName($containers[1])"/>",
+                              <xsl:for-each select="reverse($containers)">
+@jakarta.persistence.JoinColumn( name="<xsl:value-of select="concat($this/name, '_',vf:rdbJoinTargetColumnName(current()))"/>", <!-- IMPL making the same as the referred to column name for now -->
+                              referencedColumnName ="<xsl:value-of select="vf:rdbJoinTargetColumnName(current())"/>",
                               nullable = false)
-
+                              </xsl:for-each>
                           </xsl:when>
                           <xsl:otherwise>
                               <xsl:message terminate="yes">the model does not satisfy the limited conditions for composite primary keys</xsl:message>
@@ -383,6 +355,8 @@
 
   <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="JPAAnnotation">
     <xsl:variable name="type" select="$models/key('ellookup', current()/datatype/vodml-ref)"/>
+    <xsl:variable name="this" select="current()"/>
+    <xsl:variable name="nullable" select="vf:nullable(current())"/>
     <xsl:variable name="parent" select="current()/parent::*"/>
     <xsl:choose>
       <xsl:when test="name($type) = 'primitiveType'">
@@ -407,7 +381,30 @@
 @jakarta.persistence.OrderColumn
         </xsl:if>
 @jakarta.persistence.OneToMany(  cascade = jakarta.persistence.CascadeType.ALL, fetch = <xsl:value-of select="$jpafetch"/>, targetEntity=<xsl:value-of select="concat(vf:JavaType(datatype/vodml-ref),'.class')" />)
-@jakarta.persistence.JoinColumn( name="<xsl:value-of select="vf:rdbJoinColumnName(current())"/>")
+          <xsl:if test="$parent/attribute/constraint[ends-with(@xsi:type,':NaturalKey') and position='0']
+               and count($parent/attribute/constraint[ends-with(@xsi:type,':NaturalKey')])=1" >
+              <xsl:variable name="containers" select="vf:ContainerHierarchyInOwnModel(current()/datatype/vodml-ref)"/>
+              <!--          <xsl:message>containers <xsl:value-of select="string-join($containers,',')"/> first=<xsl:value-of-->
+              <!--                  select="$containers[1]"/></xsl:message>-->
+              <xsl:choose>
+                  <xsl:when test="count($containers) > 1 and $models/key('ellookup',$containers[1])/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
+                      <!-- IMPL  note that this is all a bit on the edge of JPA spec - https://en.wikibooks.org/wiki/Java_Persistence/OneToOne#Target_Foreign_Keys,_Primary_Key_Join_Columns,_Cascade_Primary_Keys -->
+                      <xsl:for-each select="reverse($containers[position() != 1])"><!--IMPL putting in nullable constaint below makes stuff go wrong in hibernate -->
+                          @jakarta.persistence.JoinColumn( name="<xsl:value-of select="concat(vf:rdbJoinColumnName($this), '_',vf:rdbJoinTargetColumnName(current()))"/>", <!-- IMPL making the same as the referred to column name for now -->
+                          referencedColumnName ="<xsl:value-of select="vf:rdbJoinTargetColumnName(current())"/>",
+                          insertable=false,updatable=false)
+                      </xsl:for-each>
+                  </xsl:when>
+                  <xsl:otherwise>
+                      <xsl:message terminate="yes">the model does not satisfy the limited conditions for composite primary keys</xsl:message>
+                  </xsl:otherwise>
+              </xsl:choose>
+          </xsl:if> <!--IMPL putting in nullable constaint below makes stuff go wrong in hibernate -->
+@jakarta.persistence.JoinColumn( name="<xsl:value-of select="vf:rdbJoinColumnName(current())"/>", referencedColumnName = "<xsl:value-of select="vf:rdbJoinTargetColumnName(vf:asvodmlref($parent))"/>"
+      <xsl:if test="$parent/attribute/constraint[ends-with(@xsi:type,':NaturalKey') and position='0']"> <!--TODO this is not as full as the tests above - but when there are no natural keys then needs to be insertable and updable -->
+          ,insertable=false, updatable=false
+      </xsl:if>
+           )
 @org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
       </xsl:otherwise>
     </xsl:choose>

@@ -363,7 +363,7 @@ note the need to make the columnID unique over whole document (as it is an XML I
 
     <xsl:function name="vf:tapTableName">
         <xsl:param name="vodml-ref" as="xsd:string" />
-        <xsl:sequence select="concat($RdbSchemaName,'.',vf:rdbTableName($vodml-ref))"/>
+        <xsl:sequence select="vf:rdbTableName($vodml-ref)"/>
     </xsl:function>
     <!-- need to make the columnID unique over whole document - done by prepending the table name
     this will have to be removed before writing to tapschema db -->

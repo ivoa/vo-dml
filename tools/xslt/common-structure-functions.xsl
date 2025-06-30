@@ -18,6 +18,7 @@ note - only define functions in here as it is included in the schematron rules
         <xsl:sequence select="count($models/key('ellookup',$vodml-ref)) =1 " />
     </xsl:function>
 
+
     <!-- return the base types for current type - note that this does not return the types in strict hierarchy order (not sure why!) -->
     <xsl:function name="vf:baseTypes" as="element()*">
         <xsl:param name="vodml-ref"/>

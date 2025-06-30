@@ -652,7 +652,7 @@
 */
       <xsl:if test="$do_jpa"><xsl:apply-templates select="." mode="JPAAnnotation"/>
       <!--IMPL this is somewhat hacky to deal with the tap schema case specifically not the general case of multiple natural keys -->
-      <xsl:if test="local-name() eq 'objectType' and not (extends) and attribute/constraint[ends-with(@xsi:type,':NaturalKey') and position='2']
+      <xsl:if test="local-name() eq 'objectType' and not (extends) and attribute/constraint[ends-with(@xsi:type,':NaturalKey') and position='0']
                and count(attribute/constraint[ends-with(@xsi:type,':NaturalKey')])=1" >
           <xsl:variable name="containers" select="vf:ContainerHierarchyInOwnModel($vodml-ref)"/>
           <!--          <xsl:message>containers <xsl:value-of select="string-join($containers,',')"/> first=<xsl:value-of-->
@@ -729,24 +729,33 @@
       </xsl:if>
 
       <!--IMPL this is somewhat hacky to deal with the tap schema case specifically not the general case of multiple natural keys -->
-      <xsl:if test="local-name() eq 'objectType' and not (extends) and attribute/constraint[ends-with(@xsi:type,':NaturalKey') and position='2']
+      <xsl:if test="local-name() eq 'objectType' and not (extends) and attribute/constraint[ends-with(@xsi:type,':NaturalKey') and position='0']
                and count(attribute/constraint[ends-with(@xsi:type,':NaturalKey')])=1" >
           <xsl:variable name="containers" select="vf:ContainerHierarchyInOwnModel($vodml-ref)"/>
 <!--          <xsl:message>containers <xsl:value-of select="string-join($containers,',')"/> first=<xsl:value-of-->
 <!--                  select="$containers[1]"/></xsl:message>-->
           <xsl:choose>
               <xsl:when test="count($containers) > 0 and $models/key('ellookup',$containers[1])/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
-                  <xsl:variable name="nk" select="$models/key('ellookup',$containers[1])/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]"/>
-                  <xsl:variable name="nktype" select="vf:JavaKeyType($containers[1])"/>
+
                   /** Composite key for <xsl:value-of select="vf:capitalize(name)"/>.  */
                   public static class  <xsl:value-of select="concat(vf:capitalize(name),'_PK')"/>{
-                  <xsl:value-of select="concat($nktype,' ',$nk/name)"/>;
+                  <xsl:for-each select="reverse($containers)">
+                      <xsl:variable name="nk" select="$models/key('ellookup',current())/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]"/>
+                      <xsl:variable name="nktype" select="vf:JavaKeyType(current())"/>
+                      <xsl:value-of select="concat($nktype,' ',$nk/name)"/>;
+                  </xsl:for-each>
                   <xsl:value-of select="concat(vf:JavaKeyType($vodml-ref),' ',current()/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name)"/>;
                   }
-                  /** additional key to parent of composition. */
-                  @jakarta.persistence.Id
-                  @jakarta.xml.bind.annotation.XmlTransient
+
+                  <xsl:for-each select="reverse($containers)">
+                      /** additional key to parent of composition(s). */
+                      @jakarta.persistence.Id
+                      @jakarta.xml.bind.annotation.XmlTransient
+                      @jakarta.persistence.Column(insertable = false, updatable = false)
+                  <xsl:variable name="nk" select="$models/key('ellookup',current())/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]"/>
+                  <xsl:variable name="nktype" select="vf:JavaKeyType(current())"/>
                   protected <xsl:value-of select="concat($nktype,' ',$nk/name)"/>;
+                  </xsl:for-each>
 
               </xsl:when>
               <xsl:otherwise>
