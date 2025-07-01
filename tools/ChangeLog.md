@@ -113,5 +113,8 @@
   * fixed some TAPSchema generation errors
   * added the ability to run tests without persistence.xml - switch off generation of persistence.xml
   * move the TAPSchema to DDL XSLT into the TAPSchemaDM project
+* 0.5.24
+  * make the tap table name not include the schema in tapschema generation
+    * supports composite natural keys from the composition hierarchy 
 
 N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass in same hierarchy - still waiting for a solution
