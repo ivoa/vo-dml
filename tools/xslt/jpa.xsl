@@ -390,9 +390,9 @@
                   <xsl:when test="count($containers) > 1 and $models/key('ellookup',$containers[1])/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
                       <!-- IMPL  note that this is all a bit on the edge of JPA spec - https://en.wikibooks.org/wiki/Java_Persistence/OneToOne#Target_Foreign_Keys,_Primary_Key_Join_Columns,_Cascade_Primary_Keys -->
                       <xsl:for-each select="reverse($containers[position() != 1])"><!--IMPL putting in nullable constaint below makes stuff go wrong in hibernate -->
-                          @jakarta.persistence.JoinColumn( name="<xsl:value-of select="concat(vf:rdbJoinColumnName($this), '_',vf:rdbJoinTargetColumnName(current()))"/>", <!-- IMPL making the same as the referred to column name for now -->
-                          referencedColumnName ="<xsl:value-of select="vf:rdbJoinTargetColumnName(current())"/>",
-                          insertable=false,updatable=false)
+                                  @jakarta.persistence.JoinColumn( name="<xsl:value-of select="vf:rdbJoinTargetColumnName(current())"/>", <!-- IMPL making the same as the referred to column name for now -->
+                                  referencedColumnName ="<xsl:value-of select="vf:rdbJoinTargetColumnName(current())"/>",
+                                  insertable=false,updatable=false)
                       </xsl:for-each>
                   </xsl:when>
                   <xsl:otherwise>

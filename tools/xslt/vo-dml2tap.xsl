@@ -206,7 +206,7 @@ note the need to make the columnID unique over whole document (as it is an XML I
                 <xsl:comment>attribute of {vf:typeRole($nk/datatype/vodml-ref)} {$nk/datatype/vodml-ref} composite key from {current()}</xsl:comment>
                 <datatype>{vf:rdbTapType($nk/datatype/vodml-ref)}</datatype>
                 <description>{$nk/description}</description>
-                <utype>{$vodml-ref}</utype> <!-- wrong -->
+                <utype>{vf:asvodmlref($nk)}</utype>
                 <indexed>true</indexed>
                 <principal>false</principal><!-- TODO need a way of actually specifying this -->
                 <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
@@ -438,7 +438,7 @@ note the need to make the columnID unique over whole document (as it is an XML I
                     <xsl:for-each select="reverse($containers)">
                        <xsl:variable name="nk" select="$models/key('ellookup',current())/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]"/>
                         <fKColumn>
-                            <from_column>{concat($RdbSchemaName,'.',vf:rdbTableName($this/datatype/vodml-ref),'.',vf:rdbJoinColumnName($this),'_',$nk/name)}</from_column>
+                            <from_column>{concat($RdbSchemaName,'.',vf:rdbTableName($this/datatype/vodml-ref),'.',$nk/name)}</from_column>
                             <target_column>{concat($RdbSchemaName,'.',vf:rdbTableName($target),'.',$nk/name)}</target_column>
                         </fKColumn>
                     </xsl:for-each>
@@ -454,18 +454,21 @@ note the need to make the columnID unique over whole document (as it is an XML I
     </xsl:template>
     <xsl:template match="composition" mode="fkeyColumn">
         <xsl:variable name="this" select="current()"/>
+
         <xsl:if test="number(multiplicity/maxOccurs) != 1" > <!-- IMPL fkeys not created for OneToOne -->
             <!-- thing that we are pointing to is the parent of the composition -->
             <xsl:variable name="vodml-ref" select="vf:asvodmlref(current()/parent::*)"/>
+
+            <xsl:if test="not($models/key('ellookup',current()/datatype/vodml-ref)/attribute/constraint[ends-with(@xsi:type,':NaturalKey') and position='0'])">
             <xsl:if test="$models/key('ellookup',$vodml-ref)/attribute/constraint[ends-with(@xsi:type,':NaturalKey') and position='0']">
                 <xsl:variable name="containers" select="vf:ContainerHierarchyInOwnModel($vodml-ref)"/>
                 <xsl:for-each select="reverse($containers)">
                     <xsl:variable name="nk" select="$models/key('ellookup',current())/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]"/>
                     <column>
-                        <column_name>{concat($RdbSchemaName,'.',vf:rdbTableName($vodml-ref),'.',vf:rdbJoinColumnName($this), '_',vf:rdbJoinTargetColumnName(current()))}</column_name>
+                        <column_name>{concat($RdbSchemaName,'.',vf:rdbTableName($this/datatype/vodml-ref),'.',vf:rdbJoinTargetColumnName(current()))}</column_name>
                         <datatype>{vf:rdbTapType($nk/datatype/vodml-ref)}</datatype>
                         <description>foreign key column for {$vodml-ref} composition of {$this/datatype/vodml-ref} composite key</description>
-                        <utype>{$vodml-ref}</utype>
+                        <utype>{vf:asvodmlref($nk)}</utype>
                         <indexed>false</indexed><!-- IMPL or true?! -->
                         <principal>false</principal><!-- TODO need a way of actually specifying this -->
                         <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
@@ -473,6 +476,7 @@ note the need to make the columnID unique over whole document (as it is an XML I
 
                 </xsl:for-each>
             </xsl:if>
+
             <column>
                 <column_name>{vf:tapJoinColumnName(current())}</column_name>
                 <datatype>{vf:rdbKeyType($vodml-ref)}</datatype>
@@ -482,6 +486,7 @@ note the need to make the columnID unique over whole document (as it is an XML I
                 <principal>false</principal><!-- TODO need a way of actually specifying this -->
                 <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
             </column>
+        </xsl:if>
         </xsl:if>
     </xsl:template>
 
