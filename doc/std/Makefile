@@ -35,4 +35,4 @@ $(DOCNAME).html: $(DOCNAME).md template.html
 	pandoc VO-DML.md -s --css=https://www.ivoa.net/misc/ivoa_wd.css --template=template.html --toc -N  -o VO-DML.html
 
 $(DOCNAME).pdf: $(DOCNAME).md template.html
-	pandoc VO-DML.md -s --css=https://www.ivoa.net/misc/ivoa_wd.css --template=template.html --to html --toc -N  -o VO-DML.pdf
+	pandoc VO-DML.md -s --css=https://www.ivoa.net/misc/ivoa_wd.css --template=template.html --to html --pdf-engine-opt="-u ." --toc -N  -o VO-DML.pdf
