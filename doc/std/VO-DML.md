@@ -2629,6 +2629,12 @@ a **semanticconcept** with a **topConcept** defined on it, the subtype
 may restrict the values to a narrower concept than that assigned to it
 on the super-type.
 
+## NaturalKey extends Constraint
+
+This is a special class of constraint that can be used to indicate that an **Attribute** is naturally the identifier
+for its owning **ObjectType**. If so constrained then the **Attribute** would be expected to be globally unique for each **ObjectType** within the domain of the model. This has particular relevance in serializations of the model instances to relational databases, where it can be used to indicate the primary key for the **ObjectType** rather than using a surrogate key.
+
+
 # The *ivoa* base model \[Normative\]
 
 Ultimately all types in a VO-DML model are defined as hierarchies of
