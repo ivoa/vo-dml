@@ -391,20 +391,17 @@
                       <!-- IMPL  note that this is all a bit on the edge of JPA spec - https://en.wikibooks.org/wiki/Java_Persistence/OneToOne#Target_Foreign_Keys,_Primary_Key_Join_Columns,_Cascade_Primary_Keys -->
                       <xsl:for-each select="reverse($containers[position() != 1])"><!--IMPL putting in nullable constaint below makes stuff go wrong in hibernate -->
                                   @jakarta.persistence.JoinColumn( name="<xsl:value-of select="vf:rdbJoinTargetColumnName(current())"/>", <!-- IMPL making the same as the referred to column name for now -->
-                                  referencedColumnName ="<xsl:value-of select="vf:rdbJoinTargetColumnName(current())"/>",
-                                  insertable=false,updatable=false)
+                                  referencedColumnName ="<xsl:value-of select="vf:rdbJoinTargetColumnName(current())"/>"
+                                  )
                       </xsl:for-each>
                   </xsl:when>
                   <xsl:otherwise>
                       <xsl:message terminate="yes">the model does not satisfy the limited conditions for composite primary keys</xsl:message>
                   </xsl:otherwise>
               </xsl:choose>
-          </xsl:if> <!--IMPL putting in nullable constaint below makes stuff go wrong in hibernate -->
+          </xsl:if> <!--IMPL putting in nullable consrtaint below makes stuff go wrong in hibernate -->
 @jakarta.persistence.JoinColumn( name="<xsl:value-of select="vf:rdbJoinColumnName(current())"/>", referencedColumnName = "<xsl:value-of select="vf:rdbJoinTargetColumnName(vf:asvodmlref($parent))"/>"
-      <xsl:if test="$parent/attribute/constraint[ends-with(@xsi:type,':NaturalKey') and position='0']"> <!--TODO this is not as full as the tests above - but when there are no natural keys then needs to be insertable and updable -->
-          ,insertable=false, updatable=false
-      </xsl:if>
-           )
+          )
 @org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
       </xsl:otherwise>
     </xsl:choose>
