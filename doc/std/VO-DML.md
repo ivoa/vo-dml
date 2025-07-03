@@ -715,6 +715,49 @@ the XML schema:
 The value assigned to an element MUST be unique in the document and is
 case sensitive.
 
+The only requirement on the \<vodml-id\>
+identifying model elements is that it is unique within the context of
+the model. However, it may be useful for such IDs to be human-readable,
+so to intuitively provide information about the elements they identify.
+This specification states that vodml-id SHOULD be made human-readable
+according to specific rules that represent the location of the
+identified element in the model, encoded in the grammar presented below.
+
+In the past[^42] rules have been defined for generating such unique
+identifiers for elements in a data model, and the following grammar is
+built starting from that previous attempt. Note that uniqueness depends
+on rules on the uniqueness of names in a particular context, here
+represented by a location in a hierarchy:
+
+```bnf
+vodml-id := package-vodml-id | type-vodml-id |
+
+attribute-vodml-id | composition-vodml-id |
+
+reference-vodml-id | container-vodml-id
+
+package-vodml-id := <package-name>
+["." <package-name>]*
+
+type-vodml-id := [package-vodml-id "."] <type-name>
+
+attribute-vodml-id := type-vodml-id "." <attribute-name>
+
+composition-vodml-id :=
+
+type-vodml-id "." <composition-name>
+
+reference-vodml-id := type-vodml-id "." <reference-name>
+
+container-vodml-id := "vo-dml:Object.CONTAINER"
+
+vodml-ref := <model-name> ":" vodml-id
+```
+
+The grammar for the vodml-ref reference to an element identified by the
+vodml-id identifier is also included above for convenience.
+
+
 ### name : xsd:NCName \[1\]
 
 The name of the model element. The name MUST conform to the following
@@ -3422,49 +3465,6 @@ proto-type used in the Simulation Data Model \[8\] effort.
                           package representing the model.
   -----------------------------------------------------------------------
 
-# vodml-id generation rules  {#vodml-id-generation-rules .Appendix-A}
-
-The only requirement on the \<[vodml-id](#vodml-id-vodmlid-1)\>
-identifying model elements is that it is unique within the context of
-the model. However, it may be useful for such IDs to be human-readable,
-so to intuitively provide information about the elements they identify.
-This specification states that vodml-id SHOULD be made human-readable
-according to specific rules that represent the location of the
-identified element in the model, encoded in the grammar presented below.
-
-In the past[^42] rules have been defined for generating such unique
-identifiers for elements in a data model, and the following grammar is
-built starting from that previous attempt. Note that uniqueness depends
-on rules on the uniqueness of names in a particular context, here
-represented by a location in a hierarchy:
-
-```bnf
-vodml-id := package-vodml-id | type-vodml-id |
-
-attribute-vodml-id | composition-vodml-id |
-
-reference-vodml-id | container-vodml-id
-
-package-vodml-id := <package-name>
-["." <package-name>]*
-
-type-vodml-id := [package-vodml-id "."] <type-name>
-
-attribute-vodml-id := type-vodml-id "." <attribute-name>
-
-composition-vodml-id :=
-
-type-vodml-id "." <composition-name>
-
-reference-vodml-id := type-vodml-id "." <reference-name>
-
-container-vodml-id := "vo-dml:Object.CONTAINER"
-
-vodml-ref := <model-name> ":" vodml-id
-```
-
-The grammar for the vodml-ref reference to an element identified by the
-vodml-id identifier is also included above for convenience.
 
 # Example Source data model {#example-source-data-model .Appendix-A}
 
@@ -3677,6 +3677,10 @@ standard -->
 ```
 
 ## Change log {#change-log .unnumbered}
+
+**Version 1.1 WD**
+
+* Made the format of the vodml-id normative -i.e. moved from an appendix to the main vodml-id section.
 
 **Version 20161222**
 
