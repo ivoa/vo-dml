@@ -3808,7 +3808,7 @@ standard -->
 
 [^27]: http://www.uml-diagrams.org/package-diagrams/model.html
 
-[^28]: But see [ModelImport](#ModelImport).
+[^28]: But see [ModelImport](#modelimport).
 
 [^29]: See section 6 on registration of data models below for more
     details.
