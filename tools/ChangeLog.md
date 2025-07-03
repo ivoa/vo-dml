@@ -116,5 +116,7 @@
 * 0.5.24
   * make the tap table name not include the schema in tapschema generation
     * supports composite natural keys from the composition hierarchy 
+* 0.5.25
+  * bug fix with tap schema generation.
 
 N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass in same hierarchy - still waiting for a solution
