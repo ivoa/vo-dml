@@ -29,6 +29,7 @@ nav:
       - Generation from other sources : modelling/TransformingToVODML.md
   - Model Design:
       - Introduction : modelling/designIntro.md
+      - Design Tips: modelling/ModelStructure.md
       - Validation: modelling/Validation.md
       - Vocabularies: modelling/Vocabularies.md
       - Case Handling: modelling/CaseHandling.md

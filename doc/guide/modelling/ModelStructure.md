@@ -8,14 +8,14 @@ interprets and makes choices in the expression of various serializations of the 
 ## ObjectType or DataType
 
 * ObjectTypes are expressed as a table in RDB cf DataTypes are typically columns in a table.
-  * In XML and JSON the differences are not so obvious
+    - In XML and JSON the differences are not so obvious
 * ObjectTypes can be composed
-  * this can often just
+    - This will result in foreign key references in RDBs, but in XML and JSON will usually result in child lists.
 
 * ObjectTypes have separate identity
-  * Means that they need an identifying key in RDB.
-    * can use the NaturalKey constraint to use an attribute as a key
-  * Though they do not necessarily need an identifying key in XML and JSON unless they are referred to.
+    - Means that they need an identifying key in RDB.
+        * can use the NaturalKey constraint to use an attribute as a key
+    - Though they do not necessarily need an identifying key in XML and JSON unless they are referred to.
 
 
 ## References
