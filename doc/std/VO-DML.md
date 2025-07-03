@@ -2771,6 +2771,12 @@ value must be an [ivoa:real.](#real)
 
 # Procedure for defining data models in the IVOA
 
+## VO-DML Tools
+
+In addition to this standard that defines VO-DML there is some tooling ("VO-DML tools")
+to assist with the definition and validation of models created in VO-DML. This tooling is maintained
+in the IVOA GitHub project and has [on-line documentation](https://ivoa.github.io/vo-dml/).
+
 ## IVOA-standardized data models
 
 A data model specified in VO-DML can be endorsed by the IVOA to become a
