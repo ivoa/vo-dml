@@ -1,0 +1,14 @@
+/* sizing for the PDF */
+@media print
+{
+    @page {
+        size: A4; /* DIN A4 standard, Europe */
+        font-size: 9pt; /* this is not working on mac */
+        margin-top: 0.2cm;
+        margin-left: 0;
+        margin-right: 0.5cm;
+        @bottom-center {
+            content: counter(page);
+        }
+    }
+}
