@@ -91,7 +91,7 @@ note the need to make the columnID unique over whole document (as it is an XML I
 
              <column>
                  <column_name>{string-join(($RdbSchemaName,vf:rdbTableName($vodml-ref),vf:rdbIDColumnName($vodml-ref)),'.')}</column_name>
-                 <xsl:comment>primary key</xsl:comment>
+                 <xsl:comment>primary key (surrogate)</xsl:comment>
                  <datatype>BIGINT</datatype>
                  <description>primary key for {vf:rdbTableName($vodml-ref)}</description>
                  <indexed>true</indexed>
@@ -131,7 +131,7 @@ note the need to make the columnID unique over whole document (as it is an XML I
                            <column>
                                <column_name>{string-join(($RdbSchemaName,vf:rdbTableName($vodml-ref),vf:rdbJoinTargetColumnName($vodml-ref)),'.')}</column_name>
                                <xsl:comment>primary/join key for subtype</xsl:comment>
-                               <datatype>BIGINT</datatype>
+                               <datatype>{vf:rdbKeyType($vodml-ref)}</datatype>
                                <description>primary/join key for {vf:rdbTableName($vodml-ref)}</description>
                                <indexed>true</indexed>
                                <principal>false</principal>
