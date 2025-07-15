@@ -118,5 +118,8 @@
     * supports composite natural keys from the composition hierarchy 
 * 0.5.25
   * bug fix with tap schema generation.
+* 0.5.26
+  * Fix the key type in tap schema for sub-types
+  * Add composedBy and referredTo links in the site diagrams
 
 N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass in same hierarchy - still waiting for a solution

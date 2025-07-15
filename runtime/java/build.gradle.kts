@@ -11,7 +11,7 @@ version = "0.8.8"
 
 dependencies {
 //    xjcPlugins("net.codesup.util:jaxb2-rich-contract-plugin:2.1.0")
-    implementation("org.xmlresolver:xmlresolver:6.0.14") // for xml catalogues - note that the apache xml-commons resolver is out of date
+    implementation("org.xmlresolver:xmlresolver:6.0.18") // for xml catalogues - note that the apache xml-commons resolver is out of date
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.0")
 //    implementation("org.glassfish.jaxb:jaxb-runtime:2.3.6")
     implementation("jakarta.persistence:jakarta.persistence-api:3.1.0")
