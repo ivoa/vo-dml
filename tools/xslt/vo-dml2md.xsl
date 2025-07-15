@@ -52,7 +52,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 
 
     </xsl:variable>
-  
+    <xsl:variable name="modelsInScope" select="(/vo-dml:model/name,vf:importedModelNames(/vo-dml:model/name))"/>
 
   <xsl:template match="/">
     <xsl:message>Starting Markdown documentation for <xsl:value-of select="vo-dml:model/name"/> </xsl:message>
@@ -374,6 +374,8 @@ hide empty members
         <xsl:call-template name="doSubs"><xsl:with-param name="vodml-ref" select="$vodml-ref"/> </xsl:call-template>
         <xsl:call-template name="doRefs"/>
         <xsl:call-template name="doComposition"/>
+        <xsl:call-template name="doComposedBy"/>
+        <xsl:call-template name="doReferredTo"/>
         <xsl:call-template name="doDiagLinks"><xsl:with-param name="vodml-ref" select="$vodml-ref"/> </xsl:call-template>
 
     </xsl:template>
@@ -515,9 +517,11 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
         </xsl:variable>
         <xsl:variable name="classIds" as="xsd:string*">
             <xsl:sequence  select="vf:baseTypeIds($vodml-ref)"/>
-            <xsl:sequence select="for $x in //*[extends/vodml-ref = $vodml-ref] return vf:asvodmlref($x)"/>
+            <xsl:sequence select="for $x in $models/vo-dml:model[name = $modelsInScope ]//*[extends/vodml-ref = $vodml-ref] return vf:asvodmlref($x)"/>
             <xsl:sequence select="$thisClass/reference/datatype/vodml-ref"/>
             <xsl:sequence select="$thisClass/composition/datatype/vodml-ref"/>
+            <xsl:sequence select="distinct-values(for $x in $models/vo-dml:model[name = $modelsInScope ]//objectType[composition/datatype/vodml-ref = $vodml-ref] return vf:asvodmlref($x))"/>
+            <xsl:sequence select="distinct-values(for $x in $models/vo-dml:model[name = $modelsInScope ]//objectType[reference/datatype/vodml-ref = $vodml-ref] return vf:asvodmlref($x))"/>
         </xsl:variable>
         <xsl:for-each select="$classIds">
             <xsl:choose>
@@ -557,6 +561,26 @@ Subsets <xsl:value-of select="concat(vf:nameFromVodmlref(role/vodml-ref), ' in '
             <xsl:for-each select="composition">
 
                 <xsl:value-of select="concat(vf:diagclassdef(current()/datatype/vodml-ref),$nl,$thisClass,' *-[#blue]- ',vf:multiplicityForDiagram(current()/multiplicity),' ',vf:nameFromVodmlref(current()/datatype/vodml-ref),' : ',current()/name,$nl)"/>
+            </xsl:for-each>
+        </xsl:if>
+    </xsl:template>
+    <xsl:template name="doComposedBy">
+        <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
+        <xsl:variable name="thisClass" select="current()/name"/>
+        <xsl:if test="$models/vo-dml:model[name = $modelsInScope ]//composition/datatype[vodml-ref=$vodml-ref]">
+            <xsl:for-each select="$models/vo-dml:model[name = $modelsInScope ]//objectType/composition[datatype/vodml-ref=$vodml-ref]">
+
+                <xsl:value-of select="concat(vf:diagclassdef(vf:asvodmlref(current()/parent::objectType)),$nl,current()/parent::objectType/name,' *-[#blue]- ',vf:multiplicityForDiagram(current()/multiplicity),' ',$thisClass,' : ',current()/name,$nl)"/>
+            </xsl:for-each>
+        </xsl:if>
+    </xsl:template>
+    <xsl:template name="doReferredTo">
+        <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
+        <xsl:variable name="thisClass" select="current()/name"/>
+        <xsl:if test="$models/vo-dml:model[name = $modelsInScope ]//reference/datatype[vodml-ref=$vodml-ref]">
+            <xsl:for-each select="$models/vo-dml:model[name = $modelsInScope ]//objectType/reference[datatype/vodml-ref=$vodml-ref]">
+
+                <xsl:value-of select="concat(vf:diagclassdef(vf:asvodmlref(current()/parent::objectType)),$nl,current()/parent::objectType/name,' -[#green]-',$gt,' ',vf:multiplicityForDiagram(current()/multiplicity),' ',$thisClass,' : ',current()/name,$nl)"/>
             </xsl:for-each>
         </xsl:if>
     </xsl:template>
