@@ -121,5 +121,6 @@
 * 0.5.26
   * Fix the key type in tap schema for sub-types
   * Add composedBy and referredTo links in the site diagrams
+* 0.6.0
+  * support hibernate 6.6 embeddable inheritance hierarchies https://docs.jboss.org/hibernate/orm/6.6/userguide/html_single/Hibernate_User_Guide.html#embeddable-inheritance - this is the first time that true dataType polymorphism is supported in RDB serialization.
 
-N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass in same hierarchy - still waiting for a solution

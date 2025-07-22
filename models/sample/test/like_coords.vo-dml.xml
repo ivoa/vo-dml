@@ -10,9 +10,10 @@
       <title></title>
       <author>Arnold Rots, Mark Cresitello-Dittmar, Omar Laurino</author>
       <version>1.0</version>
-      <lastModified>2024-12-06T07:20:16Z</lastModified>
+      <lastModified>2025-07-21T10:42:05Z</lastModified>
       <import>
-        <name>null</name><!--should not be needed in modern vo-dml -->
+        <name>ivoa</name>
+        <version>1.0</version>
         <url>IVOA-v1.0.vo-dml.xml</url>
         <documentationURL>not known</documentationURL>
       </import>

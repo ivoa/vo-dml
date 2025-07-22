@@ -106,7 +106,7 @@
    the intention of a class hierarchy is only some convenience sharing - TODO need schematron rules to match...-->
       <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
     <xsl:choose>
-        <xsl:when test="vf:hasSubTypes($vodml-ref) and not(vf:dtypeUsedDirectly($vodml-ref))"><!--TODO this is not sufficient - I think that the trigger is sibling classes at same level in hinheritance hierarcy. -->
+        <xsl:when test="vf:hasSubTypes($vodml-ref) and not(vf:dtypeHierarchyUsedPolymorphically($vodml-ref))">
             <xsl:text>@jakarta.persistence.MappedSuperclass</xsl:text>&cr;
         </xsl:when>
         <xsl:otherwise>

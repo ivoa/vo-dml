@@ -64,6 +64,7 @@ otype LChild "" {
 
 otype Parent "top level type" {
 	dval : ADtype "";
+	eval : AEtype "";
 	rval references ReferredTo1 "";
 	cval : Child  as composition "";	
 	lval : LChild @+ as ordered composition ""; // test out the ordering....

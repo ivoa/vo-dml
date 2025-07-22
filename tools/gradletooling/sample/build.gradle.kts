@@ -6,7 +6,7 @@ import ru.vyarus.gradle.plugin.python.task.PythonTask
  * 
  */
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.5.26"
+    id("net.ivoa.vo-dml.vodmltools") version "0.6.0"
     id("com.diffplug.spotless") version "6.25.0"
     id("ru.vyarus.use-python") version "4.1.0"
 
@@ -92,7 +92,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.12.2")
     testImplementation("com.networknt:json-schema-validator:1.5.6")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher") //Needed to override gradle built-in
-    testRuntimeOnly("org.hibernate.orm:hibernate-testing:6.6.3.Final")
+    testRuntimeOnly("org.hibernate.orm:hibernate-testing:6.6.22.Final")
     testRuntimeOnly("ch.qos.logback:logback-classic:1.5.13")
     testImplementation("com.h2database:h2:2.3.232") // try out h2
 //    testImplementation("org.apache.derby:derby:10.14.2.0")

@@ -53,15 +53,17 @@ class JpatestModelTest extends AbstractTest {
         List.of(new LChild("First", 1), new LChild("Second", 2), new LChild("Third", 3)));
 
     atest =
-        Parent.createParent(
-            a -> {
-              ReferredTo3 ref3 = new ReferredTo3(3,"ref in dtype");
-              a.dval = new ADtype(1.1, "astring","intatt", "base", ref3);
-              a.rval = referredTo;
-              a.cval = refcont;
-              a.lval = ll;
-              a.tval = new DThing(new Point(1.5,3.0), "thing");
-            });
+            Parent.createParent(
+                    a -> {
+                        ReferredTo3 ref3 = new ReferredTo3(3,"ref in dtype");
+                        a.dval = new ADtype(1.1, "astring","intatt", "base", ref3);
+                        a.eval = new AEtype(1.2, "evals", "intatt_e", "basestre_e", ref3);
+
+                        a.rval = referredTo;
+                        a.cval = refcont;
+                        a.lval = ll;
+                        a.tval = new DThing(new Point(1.5,3.0), "thing");
+                    });
   }
 
   /**
@@ -100,7 +102,6 @@ class JpatestModelTest extends AbstractTest {
     // flush any existing entities
     em.clear();
     em.getEntityManagerFactory().getCache().evictAll();
-    dumpDbData(em, "jpa_test.sql");
     // now read back
     em.getTransaction().begin();
     List<Parent> par =

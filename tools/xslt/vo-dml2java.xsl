@@ -589,7 +589,8 @@
             </xsl:when>
             <xsl:otherwise>
                 <xsl:if test="not($t/@abstract)">
-                    if<xsl:value-of select="concat(' (other.',vf:javaMemberName($m/name),' != null )this.',vf:javaMemberName($m/name),'= new ',$jt,'(other.',vf:javaMemberName($m/name),')')"/>;
+                    <!-- IMPL the cast has been added to cope with the polymorphic DataType where the declaration is forced to be the base class-->
+                    if<xsl:value-of select="concat(' (other.',vf:javaMemberName($m/name),' != null )this.',vf:javaMemberName($m/name),'= new ',$jt,'((',$jt,')other.',vf:javaMemberName($m/name),')')"/>;
                 </xsl:if>
             </xsl:otherwise>
         </xsl:choose>
@@ -987,11 +988,33 @@ package <xsl:value-of select="$path"/>;
 
 
   <xsl:template match="attribute" mode="declare">
-    <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
       <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
+      <xsl:variable name="dpoly" as="xsd:boolean">
+          <xsl:choose>
+              <xsl:when test="not(vf:isSubSetted(current()/datatype/vodml-ref))
+            and vf:attributeIsDtype(current()) and vf:hasSuperTypes(current()/datatype/vodml-ref)
+            and vf:dtypeHierarchyUsedPolymorphically(current()/datatype/vodml-ref)">
+                  <xsl:value-of select="true()"/>
+              </xsl:when>
+              <xsl:otherwise>
+                  <xsl:value-of select="false()"/>
+              </xsl:otherwise>
+          </xsl:choose>
+      </xsl:variable>
+    <xsl:variable name="type" >
+        <xsl:choose>
+            <xsl:when test="$dpoly">
+               <xsl:value-of select="vf:JavaType(vf:baseTypeId(datatype/vodml-ref))"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="vf:JavaType(datatype/vodml-ref)"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+
 
     /**
-    * <xsl:apply-templates select="." mode="desc" /> : Attribute <xsl:value-of select="vf:javaMemberName(name)"/> : multiplicity <xsl:apply-templates select="multiplicity" mode="tostring"/>
+    * <xsl:apply-templates select="." mode="desc" /> : Attribute <xsl:value-of select="concat(vf:javaMemberName(name),' type ',datatype/vodml-ref)"/> : multiplicity <xsl:apply-templates select="multiplicity" mode="tostring"/>
     *
     */
     <xsl:call-template name="vodmlAnnotation"/>
@@ -1014,7 +1037,7 @@ package <xsl:value-of select="$path"/>;
     protected <xsl:value-of select="concat('java.util.List',$lt,$type,$gt,' ',vf:javaMemberName(name))"/> = new java.util.ArrayList&lt;&gt;();
         </xsl:when>
         <xsl:otherwise>
-    protected <xsl:value-of select="concat($type,' ',vf:javaMemberName(name))"/>;
+    protected <xsl:value-of select="concat($type,' ',vf:javaMemberName(name))"/>;<xsl:if test="$dpoly">// IMPL  base type used due to Datatype polymorphism</xsl:if>
         </xsl:otherwise>
     </xsl:choose>
 
