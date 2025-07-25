@@ -10,7 +10,7 @@
       <title></title>
       <author>Arnold Rots, Mark Cresitello-Dittmar, Omar Laurino</author>
       <version>1.0</version>
-      <lastModified>2025-07-21T10:42:05Z</lastModified>
+      <lastModified>2025-07-24T15:32:49Z</lastModified>
       <import>
         <name>ivoa</name>
         <version>1.0</version>
@@ -354,38 +354,6 @@
                          <vodml-ref>coords:TimeSys</vodml-ref>
                       </datatype>
                    </constraint>
-            </dataType>
-            <dataType>
-              <vodml-id>TimeOffset</vodml-id>
-              <name>TimeOffset</name>
-              <description>Time is given as an offset from a specific point in time (time0).</description>	    
-               <extends>
-                  <vodml-ref>coords:TimeStamp</vodml-ref>
-               </extends>
-            <attribute>
-              <vodml-id>TimeOffset.time</vodml-id>
-              <name>time</name>
-              <description>The TimeOffset coordinate value.</description>	    
-              <datatype>
-                 <vodml-ref>ivoa:RealQuantity</vodml-ref>
-              </datatype>
-              <multiplicity>
-                <minOccurs>1</minOccurs>
-                <maxOccurs>1</maxOccurs>
-              </multiplicity>
-            </attribute>
-            <attribute>
-              <vodml-id>TimeOffset.time0</vodml-id>
-              <name>time0</name>
-              <description>The reference time from which the offset is calculated.  This MUST be given as a TimeInstant (e.g.: JD, MJD, ISOTime).</description>	    
-              <datatype>
-                 <vodml-ref>coords:TimeInstant</vodml-ref>
-              </datatype>
-              <multiplicity>
-                <minOccurs>1</minOccurs>
-                <maxOccurs>1</maxOccurs>
-              </multiplicity>
-            </attribute>
             </dataType>
             <dataType abstract="true">
               <vodml-id>TimeInstant</vodml-id>

@@ -90,11 +90,12 @@ abstract dtype TimeStamp  -> Coordinate "This is the abstract basis for a set of
      subset coords:Coordinate.coordSys as coords:TimeSys;
   }
 
-dtype TimeOffset  -> TimeStamp "Time is given as an offset from a specific point in time (time0)."
-  {   
-        time: ivoa:RealQuantity   "The TimeOffset coordinate value.";
-        time0: TimeInstant   "The reference time from which the offset is calculated.  This MUST be given as a TimeInstant (e.g.: JD, MJD, ISOTime).";
-  }
+// removed below pending resolution of https://hibernate.atlassian.net/browse/HHH-19648
+//dtype TimeOffset  -> TimeStamp "Time is given as an offset from a specific point in time (time0)."
+//  {   
+//        time: ivoa:RealQuantity   "The TimeOffset coordinate value.";
+//        time0: TimeInstant   "The reference time from which the offset is calculated.  This MUST be given as a TimeInstant (e.g.: JD, MJD, ISOTime).";
+//  }
 
 abstract dtype TimeInstant  -> TimeStamp "TimeStamps which specify a specific instant in time.  We define three subtypes (ISOTime, JD, MJD), which allow users to explicitly identify the representation and interpretation of the TimeInstant."
   {   
