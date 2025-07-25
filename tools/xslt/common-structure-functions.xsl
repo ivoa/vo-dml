@@ -644,11 +644,11 @@ note - only define functions in here as it is included in the schematron rules
         <xsl:variable name="name" select="$models/key('ellookup',$vodml-ref)/ancestor-or-self::vo-dml:model/name"/>
         <xsl:variable name="modelsInScope" select="($name,vf:importedModelNames($name))"/>
         <xsl:variable name="typeTree" select="(reverse(vf:baseTypeIds($vodml-ref)),$vodml-ref,vf:subTypeIds($vodml-ref))"/>
-        <xsl:message>dtype polymorphism=<xsl:value-of select="$vodml-ref"/>  tree=<xsl:value-of select="string-join($typeTree,',')"/></xsl:message>
-       <!-- TODO - need to actually work out the cases where polymorphish required
+<!--        <xsl:message>dtype polymorphism=<xsl:value-of select="$vodml-ref"/>  tree=<xsl:value-of select="string-join($typeTree,',')"/></xsl:message>-->
+       <!-- TODO - need to actually work out the cases where polymorphism required
         really need to establish whether only leaf types are used-->
         <xsl:choose>
-            <xsl:when test="count(vf:baseTypeIds($typeTree[last()]))> 1"> <!--FIXME this is a very crude heuristic - essentially going polymorphic if more than one level of inheritance on the last subtype
+            <xsl:when test="vf:typeRole($vodml-ref)='dataType' and count(vf:baseTypeIds($typeTree[last()]))> 1"> <!--FIXME this is a very crude heuristic - essentially going polymorphic if more than one level of inheritance on the last subtype
              found, but even this might not resent the deepest subtype if a wide tree...-->
                 <xsl:sequence select="true()"/>
             </xsl:when>

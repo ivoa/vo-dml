@@ -764,15 +764,29 @@
     <!-- beginning of attribute override code for datatypes -->
     <!-- IMPL this code is still template based rather than function based - it does return a new structure representing the datatypes subtrees though, so templates probably best -->
     <xsl:template match="dataType" mode="attrovercols2" >
-        <dt v="{vf:asvodmlref(current())}" n="{name}">
-            <xsl:apply-templates select="(attribute|reference, vf:baseTypes(vf:asvodmlref(current()))/(attribute|reference))" mode="attrovercols2"/> <!-- this takes care of dataType inheritance should work https://hibernate.atlassian.net/browse/HHH-12790 -->
-        <!-- FIXME what about subtypes? -->
+        <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
+        <dt v="{$vodml-ref}" n="{name}">
+
+<!--            <xsl:apply-templates select="(attribute|reference, vf:baseTypes(vf:asvodmlref(current()))/(attribute|reference))" mode="attrovercols2"/> -->
+
+        <xsl:choose>
+            <xsl:when test="extends and vf:dtypeHierarchyUsedPolymorphically($vodml-ref)" >
+                <xsl:variable name="theBase" select="vf:baseTypeId($vodml-ref)"/>
+                <xsl:apply-templates select="($models/key('ellookup',$theBase)/(attribute|reference),vf:subTypes($theBase)/(attribute|reference))" mode="attrovercols2"/>
+            </xsl:when>
+            <xsl:when test="extends and not(vf:dtypeHierarchyUsedPolymorphically($vodml-ref))">
+                <xsl:apply-templates select="(attribute|reference, vf:baseTypes(vf:asvodmlref(current()))/(attribute|reference))" mode="attrovercols2"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:apply-templates select="(attribute|reference, vf:subTypes($vodml-ref)/(attribute|reference))" mode="attrovercols2"/>
+            </xsl:otherwise>
+        </xsl:choose>
         </dt>
     </xsl:template>
     <xsl:template match="objectType[vf:noTableInComposition(vf:asvodmlref(.))]" mode="attrovercols2" >
         <dt v="{vf:asvodmlref(current())}" n="{name}"  isObjectType="true">
             <xsl:apply-templates select="(attribute|reference, vf:baseTypes(vf:asvodmlref(current()))/(attribute|reference))" mode="attrovercols2"/> <!-- this takes care of dataType inheritance should work https://hibernate.atlassian.net/browse/HHH-12790 -->
-            <!-- FIXME what about subtypes? -->
+            <!-- TODO perhaps should do the same as for DataTypes above for polymorphism -->
         </dt>
     </xsl:template>
     <xsl:template match="composition[vf:noTableInComposition(datatype/vodml-ref)]" mode="attrovercols2" >
