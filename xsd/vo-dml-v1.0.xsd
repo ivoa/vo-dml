@@ -911,16 +911,20 @@ TBD continue based on VO-DML specification document.
              This constraint is used to indicate that an attribute is a natural key for its owning ObjectType, meaning that the
              attribute value should be globally unique. This may be applied multiple times to indicate that only a composition
              of several attributes make the globally unique key.
+
+             If the value is 0 then the primary key is made out of the  natural keys of the containing types.
           </xsd:documentation>
        </xsd:annotation>
        <xsd:complexContent>
           <xsd:extension base="Constraint">
              <xsd:sequence>
-                <xsd:element name="position" type="xsd:positiveInteger">
-                        <xsd:annotation>
-                           <xsd:documentation>In the case where multiple attribute values make up the natural key, this
-                           value indicates the ordinal number of this particular key in the compound key.</xsd:documentation>
-                        </xsd:annotation>
+                <xsd:element name="position" type="xsd:nonNegativeInteger">
+                   <xsd:annotation>
+                      <xsd:documentation>
+                         In the case where multiple attribute values make up the natural key, this value indicates the ordinal
+                         number of this particular key in the compound key.
+                      </xsd:documentation>
+                   </xsd:annotation>
                 </xsd:element>
              </xsd:sequence>
           </xsd:extension>

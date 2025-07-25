@@ -3,7 +3,7 @@ Binding
 
 When generating various products from the VO-DML there is often a choice to be made in translating the VO-DML into a concrete representation - the definition of these choices is called binding.
 
-The mechanism for specifying the binding is via an XML file that conforms to the [binding schema](https://github.com/ivoa/vo-dml/blob/b72031d944afd2d7d66613552ab8df2146eb2243/xsd/vo-dml-binding.xsd). A visual representation of the main part of the schema is shown below
+The mechanism for specifying the binding is via an XML file that conforms to the [binding schema](https://github.com/ivoa/vo-dml/blob/master/xsd/vo-dml-binding.xsd). A visual representation of the main part of the schema is shown below
 ![binding schama](./images/binding.jpg)
 
 The binding file can contain bindings for multiple VODML models, so the overall structure is
@@ -90,6 +90,11 @@ In general if a model is expected to be used as a "base model" then this should 
 
 ## RDB mapping for TAP schema
 There are various stylistic choices that can be made about how to map a VO-DML model to a relational database. The binding makes these choices concreate for a particular model.
+
+### Schema
+
+If present then the generated tables will be put in the given schema - otherwise the default is to put the tables in a schema with the same name as the model.
+
 ### Inheritance Strategy
 
 This can either be 
@@ -101,8 +106,11 @@ If joined then each sub-type creates a separate table to store its unique attrib
 If true then primary keys will have a name that includes the table name so that natural joins might be made -
 otherwise the default is that surrogate primary keys as just called ID. 
 ### uesRefInColumnName
-if true the column name for a reference will use the referred name in some way (depenedent on naturalJoin)
+if true the column name for a reference will use the referred name in some way (dependent on naturalJoin)
 rather than simply using the member name as the column name
+
+### listConcatenationDelimiter
+When an attribute has a multiplicity > 1,which is not a favoured model design, but can be supported in the case where the attribute has a simple string representation, then the RDB serialization can be a single column of a delimited string - this attribute allows that delimiter character to be specified for the whole model.
 
 ### Mapping individual types
 It is possible to alter the mapping of individualTypes

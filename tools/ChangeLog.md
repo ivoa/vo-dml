@@ -109,5 +109,18 @@
   * make sure that Object/DataType members do appear in VO-DML declaration order
   * for list concatenation, add ability to specify delimiting character in binding.
   * remove the element level persistRefs - must be done at the top level - model.management().persistRefs(em)
+* 0.5.23
+  * fixed some TAPSchema generation errors
+  * added the ability to run tests without persistence.xml - switch off generation of persistence.xml
+  * move the TAPSchema to DDL XSLT into the TAPSchemaDM project
+* 0.5.24
+  * make the tap table name not include the schema in tapschema generation
+    * supports composite natural keys from the composition hierarchy 
+* 0.5.25
+  * bug fix with tap schema generation.
+* 0.5.26
+  * Fix the key type in tap schema for sub-types
+  * Add composedBy and referredTo links in the site diagrams
+* 0.6.0
+  * support hibernate 6.6 embeddable inheritance hierarchies https://docs.jboss.org/hibernate/orm/6.6/userguide/html_single/Hibernate_User_Guide.html#embeddable-inheritance - this is the first time that true dataType polymorphism is supported in RDB serialization.
 
-N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass in same hierarchy - still waiting for a solution

@@ -48,6 +48,8 @@ public class LifeCycleDetailedTest extends AbstractTest {
         Arrays.asList(new ReferredLifeCycle("rc1"), new ReferredLifeCycle("rc2"));
     List<Contained> contained =
         Arrays.asList(new Contained("firstcontained"), new Contained("secondContained"));
+    List<Contained> contained2 =
+        Arrays.asList(new Contained("firstcontained-2"), new Contained("secondContained-2"));
     
     atest =
         ATest.createATest(
@@ -59,7 +61,7 @@ public class LifeCycleDetailedTest extends AbstractTest {
     atest2 = new ATest2(Arrays.asList(referredTo), atest, refcont.get(0));
     atest3 =
         new ATest3(
-            contained, refcont.get(0)); // TODO this will create contradictions.... how best to test
+            contained2, refcont.get(0)); // TODO this will create contradictions.... how best to test
 
     model = new LifecycleTestModel();
 //    model.addContent(atest);
@@ -77,12 +79,12 @@ public class LifeCycleDetailedTest extends AbstractTest {
   @Test
   void MultiContainedJPATest() {
     jakarta.persistence.EntityManager em =
-        setupH2Db(LifecycleTestModel.pu_name()); // IMPL build means that everything is in one
+        setupH2Db(LifecycleTestModel.pu_name(), LifecycleTestModel.modelDescription.allClassNames()); // IMPL build means that everything is in one
     // persistence unit.
     em.getTransaction().begin();
     model.management().persistRefs(em);
-    em.persist(atest2);
     em.persist(atest);
+    em.persist(atest2);
     em.persist(atest3);
     em.getTransaction().commit();
     Long id = atest2.getId();
@@ -136,7 +138,7 @@ public class LifeCycleDetailedTest extends AbstractTest {
   @Test
   void deleteTest() {
        jakarta.persistence.EntityManager em =
-        setupH2Db(LifecycleTestModel.pu_name()); // IMPL build means that everything is in one
+        setupH2Db(LifecycleTestModel.pu_name(),LifecycleTestModel.modelDescription.allClassNames()); // IMPL build means that everything is in one
     // persistence unit.
     em.getTransaction().begin();
     model.management().persistRefs(em);

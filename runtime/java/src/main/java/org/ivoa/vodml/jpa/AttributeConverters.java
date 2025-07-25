@@ -21,9 +21,6 @@ import java.util.stream.Stream;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.ParameterizedType;
 import org.hibernate.usertype.UserType;
-import org.hibernate.usertype.UserTypeSupport;
-
-import jakarta.persistence.AttributeConverter;
 
 /**
  * Hibernate converters to convert lists to delimited strings.
@@ -150,8 +147,7 @@ public class AttributeConverters {
          */
         @Override
         public Serializable disassemble(List<T> value) {
-            // not implemented on purpose
-            throw new  UnsupportedOperationException("UserType<List<String>>.disassemble() not implemented");
+            return null; // signal optional TODO find out a good thing to do so that this does get cached.
 
         }
 
@@ -161,8 +157,7 @@ public class AttributeConverters {
          */
         @Override
         public List<T> assemble(Serializable cached, Object owner) {
-            // not implemented on purpose
-            throw new  UnsupportedOperationException("UserType<List<String>>.assemble() not implemented");
+            return null; // signal optional TODO find out a good thing to do so that this does get cached.
 
         }
 

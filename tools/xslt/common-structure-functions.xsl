@@ -18,6 +18,7 @@ note - only define functions in here as it is included in the schematron rules
         <xsl:sequence select="count($models/key('ellookup',$vodml-ref)) =1 " />
     </xsl:function>
 
+
     <!-- return the base types for current type - note that this does not return the types in strict hierarchy order (not sure why!) -->
     <xsl:function name="vf:baseTypes" as="element()*">
         <xsl:param name="vodml-ref"/>
@@ -61,6 +62,10 @@ note - only define functions in here as it is included in the schematron rules
 
     </xsl:function>
 
+    <xsl:function name="vf:baseTypeId" as="xsd:string">
+        <xsl:param name="vodml-ref"/>
+        <xsl:sequence select="vf:baseTypeIds($vodml-ref)[last()]"/>
+    </xsl:function>
 
     <xsl:function name="vf:subTypes" as="element()*">
         <xsl:param name="vodml-ref"/>
@@ -621,6 +626,40 @@ note - only define functions in here as it is included in the schematron rules
             </xsl:for-each>
         </xsl:sequence>
     </xsl:function>
+    <xsl:function name="vf:dtypeUsedDirectly" as="xsd:boolean">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="name" select="$models/key('ellookup',$vodml-ref)/ancestor-or-self::vo-dml:model/name"/>
+        <xsl:variable name="modelsInScope" select="($name,vf:importedModelNames($name))"/>
+        <xsl:sequence select="count($models/vo-dml:model[name = $modelsInScope]//attribute/datatype[vodml-ref=$vodml-ref])>0" />
+    </xsl:function>
+
+    <xsl:function name="vf:dtypeHierarchyUsedPolymorphically" as="xsd:boolean">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <!-- the rules for whether a type is actually used polymophically are strict in hibernate
+
+        see https://docs.jboss.org/hibernate/orm/6.6/userguide/html_single/Hibernate_User_Guide.html#embeddable-inheritance
+
+        have requested easier way to specify this https://hibernate.atlassian.net/browse/HHH-19193
+        -->
+        <xsl:variable name="name" select="$models/key('ellookup',$vodml-ref)/ancestor-or-self::vo-dml:model/name"/>
+        <xsl:variable name="modelsInScope" select="($name,vf:importedModelNames($name))"/>
+        <xsl:variable name="typeTree" select="(reverse(vf:baseTypeIds($vodml-ref)),$vodml-ref,vf:subTypeIds($vodml-ref))"/>
+<!--        <xsl:message>dtype polymorphism=<xsl:value-of select="$vodml-ref"/>  tree=<xsl:value-of select="string-join($typeTree,',')"/></xsl:message>-->
+       <!-- TODO - need to actually work out the cases where polymorphism required
+        really need to establish whether only leaf types are used-->
+        <xsl:choose>
+            <xsl:when test="vf:typeRole($vodml-ref)='dataType' and count(vf:baseTypeIds($typeTree[last()]))> 1"> <!--FIXME this is a very crude heuristic - essentially going polymorphic if more than one level of inheritance on the last subtype
+             found, but even this might not resent the deepest subtype if a wide tree...-->
+                <xsl:sequence select="true()"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="false()"/>
+            </xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:function>
+
+
 
     <xsl:function name="vf:isOptional" as="xsd:boolean">
         <xsl:param name="el" as="element()"/>

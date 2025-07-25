@@ -617,6 +617,27 @@
         );
         }
 
+        <xsl:variable name="allclasses" as="xsd:string*">
+            <xsl:apply-templates select="current()/*" mode="jpaClasslist"/>
+            <xsl:for-each select="$modelsInScope">
+                <xsl:apply-templates select="$models/vo-dml:model[name=current()]/*" mode="jpaClasslist"/>
+            </xsl:for-each>
+        </xsl:variable>
+        /**
+        * Return a list of all classes for this model and included models.
+        * Generally useful for things like JPA.
+        * @return the list.
+        */
+        @Override
+        public  java.util.List&lt;String&gt; allClassNames()
+        {
+        return java.util.List.of(
+        <xsl:for-each select="$allclasses">
+            <xsl:if test="position() != 1">,</xsl:if><xsl:value-of select="concat($dq,current(),$dq)"/>
+        </xsl:for-each>
+        );
+        }
+
         };
         <!-- TODO add this to the model API -->
         /** the TAP schema for the model. The schema is represented via the <a href="https://github.com/ivoa/TAPSchemaDM">TAPSchemaDM</a> datamodel.
@@ -652,5 +673,16 @@
     <xsl:apply-templates select="package" mode="JAXBContext"/>
   </xsl:template>
 
+    <xsl:template match="package" mode="jpaClasslist" >
+        <xsl:apply-templates select="*" mode="jpaClasslist"/>
+    </xsl:template>
+
+    <xsl:template match="objectType|dataType|primitiveType" mode="jpaClasslist">
+        <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
+        <xsl:if test="not($mapping/key('maplookup',$vodml-ref)/java-type/@jpa-atomic)">
+            <xsl:sequence select="vf:QualifiedJavaType($vodml-ref)"/>
+        </xsl:if>
+    </xsl:template>
+    <xsl:template match="*" mode="jpaClasslist"><!-- do nothing --></xsl:template>
 
 </xsl:stylesheet>
