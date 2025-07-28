@@ -381,13 +381,23 @@ note the need to make the columnID unique over whole document (as it is an XML I
             <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
             <key_id>{vf:tapFkeyID($vodml-ref)}</key_id>
             <xsl:comment>reference to {datatype/vodml-ref} </xsl:comment>
-            <target_table>{vf:tapTableName(datatype/vodml-ref)}</target_table>
+            <xsl:variable name="target-vodml-id">
+            <xsl:choose>
+                <xsl:when test="vf:hasSuperTypes(current()/datatype/vodml-ref) and vf:isRdbSingleTable($modelname)">
+                    <xsl:value-of select="vf:baseTypeId(current()/datatype/vodml-ref)"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="current()/datatype/vodml-ref"/>
+                </xsl:otherwise>
+            </xsl:choose>
+            </xsl:variable>
+            <target_table>{vf:tapTableName($target-vodml-id)}</target_table>
             <description>{description}</description>
             <utype>{$vodml-ref}</utype>
             <columns>
                 <fKColumn>
                     <from_column>{vf:tapcolumnName($vodml-ref)}</from_column>
-                    <target_column>{vf:tapTargetColumnName(datatype/vodml-ref)}</target_column>
+                    <target_column>{vf:tapTargetColumnName($target-vodml-id)}</target_column>
                 </fKColumn>
             </columns>
 
@@ -426,7 +436,17 @@ note the need to make the columnID unique over whole document (as it is an XML I
         <foreignKey>
             <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
             <xsl:variable name="this" select="current()"/>
-            <xsl:variable name="target" select="vf:asvodmlref(current()/parent::*)"/>
+            <xsl:variable name="target" >
+                <xsl:variable name="initial" select="vf:asvodmlref(current()/parent::*)"/>
+                <xsl:choose>
+                    <xsl:when test="vf:hasSuperTypes($initial) and vf:isRdbSingleTable($modelname)">
+                        <xsl:value-of select="vf:baseTypeId($initial)"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$initial"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
             <key_id>{vf:tapFkeyID($vodml-ref)}</key_id>
             <xsl:comment>back reference to {datatype/vodml-ref} composition in {$target} </xsl:comment>
             <target_table>{vf:tapTableName($target)}</target_table>
