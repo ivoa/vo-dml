@@ -1073,7 +1073,8 @@ package <xsl:value-of select="$path"/>;
         <xsl:if test="name($subsetted)='attribute' and datatype/vodml-ref != $subsetted/datatype/vodml-ref"> <!-- only do this if types are different (subsetting can change just the semantic stuff)-->
 
         <xsl:if test="$do_jpa">
-        <xsl:call-template name="doEmbeddedJPA">
+            @jakarta.persistence.Embedded
+        <xsl:call-template name="doEmbeddedAssociationOverrides">
             <xsl:with-param name="nillable" >true</xsl:with-param><!--TODO think if it is possible to do better with nillable value-->
         </xsl:call-template>
 

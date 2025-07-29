@@ -222,12 +222,16 @@
                   <xsl:variable name="tableName">
                       <xsl:apply-templates select=".." mode="tableName"/><xsl:text>_</xsl:text><xsl:value-of select="$name"/>
                   </xsl:variable>
+                  <xsl:call-template name="doEmbeddedAssociationOverrides">
+                      <xsl:with-param name="nillable" select="true()"/>
+                  </xsl:call-template>
       @jakarta.persistence.ElementCollection
       @jakarta.persistence.CollectionTable(name = "<xsl:value-of select="$tableName"/>", joinColumns = @jakarta.persistence.JoinColumn(name="containerId") )
       @jakarta.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
               </xsl:when>
               <xsl:otherwise>
-                      <xsl:call-template name="doEmbeddedJPA">
+                  @jakarta.persistence.Embedded
+                      <xsl:call-template name="doEmbeddedAssociationOverrides">
                       <xsl:with-param name="nillable" >
                           <xsl:choose>
                               <xsl:when test="$isRdbSingleInheritance">true</xsl:when><!--IMPL perhaps this is too simplistic -->
@@ -247,9 +251,9 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template name="doEmbeddedJPA">
+    <xsl:template name="doEmbeddedAssociationOverrides">
         <xsl:param name="nillable"/>
-        @jakarta.persistence.Embedded
+
         <xsl:if test="current()/parent::objectType">
         <xsl:variable name="attovers" as="xsd:string*">
 

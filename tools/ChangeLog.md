@@ -123,4 +123,5 @@
   * Add composedBy and referredTo links in the site diagrams
 * 0.6.0
   * support hibernate 6.6 embeddable inheritance hierarchies https://docs.jboss.org/hibernate/orm/6.6/userguide/html_single/Hibernate_User_Guide.html#embeddable-inheritance - this is the first time that true dataType polymorphism is supported in RDB serialization.
+  * bug fix in TAPSchema generation of foreign keys in the single table inheritance case.
 
