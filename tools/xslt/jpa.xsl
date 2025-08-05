@@ -222,7 +222,7 @@
                       <xsl:with-param name="nillable" select="true()"/>
                   </xsl:call-template>
       @jakarta.persistence.ElementCollection
-      @jakarta.persistence.CollectionTable(name = "<xsl:value-of select="$tableName"/>", joinColumns = @jakarta.persistence.JoinColumn(name="containerId") )
+      @jakarta.persistence.CollectionTable(name = "<xsl:value-of select="$tableName"/>", schema = "<xsl:value-of select="$RdbSchemaName"/>", joinColumns = @jakarta.persistence.JoinColumn(name="containerId") )
       @jakarta.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
               </xsl:when>
               <xsl:otherwise>
