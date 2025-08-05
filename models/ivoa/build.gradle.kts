@@ -9,7 +9,7 @@ plugins {
 
 
 group = "org.javastro.ivoa.vo-dml"
-version = "1.0-SNAPSHOT"
+version = "1.0.5-SNAPSHOT" // make clear it is generated with 0.5 series plugin
 
 vodml {
     vodmlDir.set(file("vo-dml"))
