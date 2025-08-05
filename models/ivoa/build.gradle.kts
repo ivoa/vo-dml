@@ -1,5 +1,5 @@
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.6.0"
+    id("net.ivoa.vo-dml.vodmltools") version "0.5.27"
 //    id ("com.diffplug.spotless") version "5.17.1"
     `maven-publish`
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
@@ -9,7 +9,7 @@ plugins {
 
 
 group = "org.javastro.ivoa.vo-dml"
-version = "1.1.1-SNAPSHOT"
+version = "1.1.5-SNAPSHOT"
 
 vodml {
     vodmlDir.set(file("vo-dml"))
