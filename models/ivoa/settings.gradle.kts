@@ -5,7 +5,6 @@ pluginManagement {
         gradlePluginPortal()
         mavenCentral()
     }
-    includeBuild("../../tools/gradletooling/gradle-plugin") //get the gradle plugin
 }
 
 // == Define locations for components ==
@@ -17,5 +16,4 @@ dependencyResolutionManagement {
     }
 
 }
-includeBuild("../../runtime/java")
 rootProject.name="ivoa-base"
