@@ -264,7 +264,7 @@
             <xsl:variable name="atv">
                 <xsl:apply-templates select="current()" mode="attrovercols2"/>
             </xsl:variable>
-                <xsl:message>***D <xsl:value-of select="vf:asvodmlref(current())"/> --- <xsl:copy-of select="$atv" copy-namespaces="no"/></xsl:message>
+<!--                <xsl:message>***D <xsl:value-of select="vf:asvodmlref(current())"/> -&#45;&#45; <xsl:copy-of select="$atv" copy-namespaces="no"/></xsl:message>-->
                 <xsl:apply-templates select="$atv" mode="doAttributeOverride">
                     <xsl:with-param name="nillable" select="$nillable"/>
                 </xsl:apply-templates>

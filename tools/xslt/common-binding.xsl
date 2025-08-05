@@ -765,7 +765,7 @@
     <!-- IMPL this code is still template based rather than function based - it does return a new structure representing the datatypes subtrees though, so templates probably best -->
     <xsl:template match="dataType" mode="attrovercols2" >
         <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
-        <dt v="{$vodml-ref}" n="{name}">
+        <dt v="{$vodml-ref}" n="{name}" poly="{extends and vf:dtypeHierarchyUsedPolymorphically($vodml-ref)}">
 
 <!--            <xsl:apply-templates select="(attribute|reference, vf:baseTypes(vf:asvodmlref(current()))/(attribute|reference))" mode="attrovercols2"/> -->
 
