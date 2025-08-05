@@ -73,4 +73,5 @@ otype Parent "top level type" {
 
 otype Sub -> Parent "an otype subtype" {
 	subval: ivoa:string "";
+	slist : AEtype @+ "";
 }
