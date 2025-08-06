@@ -237,6 +237,10 @@ note the need to make the columnID unique over whole document (as it is an XML I
         </xsl:variable>
 <!--        <xsl:message>**** <xsl:copy-of select="$atv" copy-namespaces="no"/></xsl:message>-->
 
+        <xsl:apply-templates select="$atv/att" mode="dtypedescrim">
+            <xsl:with-param name="tableName" select="vf:rdbTableName(vf:asvodmlref(current()/parent::*))"/>
+        </xsl:apply-templates>
+
         <xsl:apply-templates select="$atv" mode="dtypeexpandcols">
             <xsl:with-param name="tableName" select="vf:rdbTableName(vf:asvodmlref(current()/parent::*))"/>
         </xsl:apply-templates>
@@ -267,7 +271,7 @@ note the need to make the columnID unique over whole document (as it is an XML I
         <xsl:variable name="top-el" select="$models/key('ellookup',$top-vodml-ref)"/>
         <column>
             <column_name><xsl:value-of select="concat($RdbSchemaName,'.',$tableName,'.',string-join(current()/ancestor-or-self::att/@c,'_'))"/></column_name>
-            <xsl:comment>attribute from dtype</xsl:comment>
+            <xsl:comment>attribute from dataType</xsl:comment>
             <datatype>{vf:rdbTapType(@type)}</datatype>
             <description>{$top-el/description}</description><!-- TODO would perhaps like to include datatype description too -->
             <utype>{$top-vodml-ref}</utype> <!--FIXME almost certainly not the "correct" UType - but UTypes are broken -->
@@ -315,7 +319,24 @@ note the need to make the columnID unique over whole document (as it is an XML I
         </foreignKey>
     </xsl:template>
 
-
+    <xsl:template match="att[dt[@poly='true']]" mode="dtypedescrim">
+        <xsl:param name="tableName"/>
+        <xsl:variable name="top-vodml-ref" select="dt[last()]/@v"/>
+        <xsl:variable name="top-el" select="$models/key('ellookup',$top-vodml-ref)"/>
+        <column>
+            <column_name><xsl:value-of select="concat($RdbSchemaName,'.',$tableName,'.',current()/@c,'_DTYPE')"/></column_name> <!-- TODO probably want to be able to specify this suffix in binding -->
+            <xsl:comment>discriminator for polymorphic dataType for original type {@type}</xsl:comment>
+            <datatype>VARCHAR</datatype>
+            <description>discriminator for {vf:baseTypeId(@type)} hierarchy</description><!-- TODO would perhaps like to include datatype description too -->
+            <utype/> <!--FIXME almost certainly not the "correct" UType - but UTypes are broken -->
+            <indexed>true</indexed><!-- IMPL probably should be -->
+            <principal>false</principal><!-- TODO need a way of actually specifying this -->
+            <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
+        </column>
+    </xsl:template>
+    <xsl:template match="att[dt[@poly='false']]" mode="dtypedescrim">
+        <!-- do nothing -->
+    </xsl:template>
 
 
     <xsl:template match="reference[not($models/key('ellookup',current()/datatype/vodml-ref)/attribute/constraint[ends-with(@xsi:type,':NaturalKey') and position='0'])]" mode="defn">

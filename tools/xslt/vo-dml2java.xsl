@@ -995,19 +995,8 @@ package <xsl:value-of select="$path"/>;
 
 
   <xsl:template match="attribute" mode="declare">
-      <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
-      <xsl:variable name="dpoly" as="xsd:boolean">
-          <xsl:choose>
-              <xsl:when test="not(vf:isSubSetted(current()/datatype/vodml-ref))
-            and vf:attributeIsDtype(current()) and vf:hasSuperTypes(current()/datatype/vodml-ref)
-            and vf:dtypeHierarchyUsedPolymorphically(current()/datatype/vodml-ref)">
-                  <xsl:value-of select="true()"/>
-              </xsl:when>
-              <xsl:otherwise>
-                  <xsl:value-of select="false()"/>
-              </xsl:otherwise>
-          </xsl:choose>
-      </xsl:variable>
+      <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
+      <xsl:variable name="dpoly" as="xsd:boolean" select="vf:treatAttrPolymorphically(current())"/>
     <xsl:variable name="type" >
         <xsl:choose>
             <xsl:when test="$dpoly">

@@ -8,7 +8,7 @@
       <uri/>
       <title></title>
       <version>1.0</version>
-      <lastModified>2025-07-22T10:38:22Z</lastModified>
+      <lastModified>2025-08-05T07:23:05Z</lastModified>
       <import>
         <name>ivoa</name>
         <version>1.0</version>
@@ -407,6 +407,18 @@
                  <multiplicity>
                    <minOccurs>1</minOccurs>
                    <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </attribute>
+               <attribute>
+                 <vodml-id>Sub.slist</vodml-id>
+                 <name>slist</name>
+                 <description></description>	    
+                 <datatype>
+                    <vodml-ref>jpatest:AEtype</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>-1</maxOccurs>
                  </multiplicity>
                </attribute>
             </objectType>
