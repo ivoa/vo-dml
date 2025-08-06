@@ -1,8 +1,7 @@
-Developing the Gradle Plugin
+Developing the VO-DML tools
 ============================
 
-The work of the plugin is mainly done in the [xslt 2.0 scripts](./xslt), and the plugin 
-[source](./gradletooling/gradle-plugin/src/main/kotlin/net/ivoa/vodml/gradle/plugin) is 
+The work of the tools is mainly done in the [xslt 3.0 scripts](./xslt), and the various tooling front ends are
 mainly concerned with running these.
 
 The XSLT reads all the models and mapping files in [binding_setup.xsl](./xslt/binding_setup.xsl) and there are a series 
@@ -10,17 +9,28 @@ of useful functions that can answer model questions such as "has subtypes" defin
 
 * [vo-dml2java.xsl](./xslt/vo-dml2java.xsl) generates Java code 
 * [vo-dml2python.xsl](./xslt/vo-dml2python.xsl) generates Python code
+* [vo-dml2tap.xsl](xslt/vo-dml2tap.xsl) generates TAP schema
 * [vo-dml2gml.xsl](./xslt/vo-dml2gml.xsl) generates the GML diagram description (part of the documentation task)
 * [vo-dml2gvd.xsl](./xslt/vo-dml2gvd.xsl) generates GraphViz diagram description (part of the documentation task)
 * [vo-dml2html.xsl](./xslt/vo-dml2html.xsl) generates HTML description of the model (part of the documentation task)
 * [vo-dml2Latex.xsl](./xslt/vo-dml2Latex.xsl) generates LaTeX description of the model (part of the documentation task)
 * [vo-dml2dsl.xsl](./xslt/vo-dml2dsl.xsl) converts VO-DML to VODSL
-* 
-There is a [sample](./gradletooling/sample) project that acts as a test bench for the plugin.
+
 
 http://dh.obdurodon.org/xslt3.xhtml is a good summary of the new features in XSLT 3.0.
 
-## Local testing
+
+The tooling front-ends that exist are
+
+* a gradle plugin - this is the most sophisticated of the front-ends and although written within the JVM ecosystem, it can be used to generate python code for instance.
+* a python front end command - this is much less complete and really only exists as a proof of concept, but in principle with work it could be made to have a completely equivalent functionality to the gradle plugin.
+
+## Gradle plugin development
+
+The plugin source is in the 
+[gradletooling/gradle-plugin directory](./gradletooling/gradle-plugin/src/main/kotlin/net/ivoa/vodml/gradle/plugin). 
+There is a [sample](./gradletooling/sample) project that acts as a test bench for the plugin.
+### Local testing
 
 Testing to the plugin against the sample models can be done in the [gradletooling](./gradletooling) directory where
 
@@ -36,7 +46,7 @@ installed locally using
 gradle :gradle-plugin:publishToMavenLocal
 ```
 
-## Publishing
+### Publishing
 
 [@pahjbo](https://github.com/pahjbo) has the credentials for publishing the products of this repository.
 
