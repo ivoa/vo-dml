@@ -495,7 +495,7 @@
             * @param superinstance The supertype.
             <xsl:for-each select="$localmembers">
                 <xsl:variable name="m" select="$models/key('ellookup',current())"/>
-            * @param <xsl:value-of select="concat($m/name,' ')"/> <xsl:apply-templates select="$m" mode="desc" />
+            * @param <xsl:value-of select="concat(vf:javaMemberName($m/name),' ')"/> <xsl:apply-templates select="$m" mode="desc" />
             </xsl:for-each>
             */
             public  <xsl:value-of select="vf:capitalize(name)"/> ( <xsl:value-of select="string-join($sparms,',')"/> )
