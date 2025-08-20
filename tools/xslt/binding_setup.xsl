@@ -27,6 +27,7 @@
                 <xsl:when test="file"> <!-- prefer local file for reading defn -->
                     <xsl:choose>
                         <xsl:when test="doc-available(file)">
+<!--                            <xsl:message>loading model file <xsl:value-of select="file"/></xsl:message>-->
                             <xsl:copy-of
                                     select="document(file)/vo-dml:model" />
                         </xsl:when>
