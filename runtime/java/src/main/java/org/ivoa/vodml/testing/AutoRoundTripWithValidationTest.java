@@ -15,6 +15,7 @@ import jakarta.xml.bind.JAXBException;
 
 import org.ivoa.vodml.VodmlModel;
 import org.ivoa.vodml.validation.XMLValidator.ValidationResult;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -23,7 +24,9 @@ import org.junit.jupiter.api.Test;
  * @since 4 May 2023
  */
 public abstract class AutoRoundTripWithValidationTest<M extends VodmlModel<M>> extends AutoRoundTripTest<M> {
- @Test
+
+   @Test
+   @Order(40)
     void validationTest() throws JAXBException {
         final M model = createModel(); 
         //model.management().writeXMLSchema();

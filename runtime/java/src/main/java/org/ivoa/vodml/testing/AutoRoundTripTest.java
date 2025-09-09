@@ -12,9 +12,10 @@ package org.ivoa.vodml.testing;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.ivoa.vodml.VodmlModel;
 import org.ivoa.vodml.validation.AbstractBaseValidation;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import jakarta.xml.bind.JAXBException;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Paul Harrison (paul.harrison@manchester.ac.uk) 
  * @since 3 May 2023
  */
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public abstract class AutoRoundTripTest <M extends VodmlModel<M>> extends AbstractBaseValidation {
     
     
@@ -49,6 +51,7 @@ public abstract class AutoRoundTripTest <M extends VodmlModel<M>> extends Abstra
   
     
     @Test
+    @Order(20)
     void testXmlRoundTrip() throws JAXBException, TransformerConfigurationException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException, IOException {
         
         M model = createModel();
@@ -59,6 +62,7 @@ public abstract class AutoRoundTripTest <M extends VodmlModel<M>> extends Abstra
     }
 
     @Test
+    @Order(30)
     void testJSONRoundTrip() throws JsonProcessingException  {
         
         M model = createModel();
