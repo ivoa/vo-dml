@@ -6,7 +6,7 @@ plugins {
     signing
 }
 group = "org.javastro.ivoa.vo-dml"
-version = "0.8.8"
+version = "0.8.9"
 
 
 dependencies {
@@ -25,7 +25,7 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
-    testRuntimeOnly("ch.qos.logback:logback-classic:1.4.12")
+    testRuntimeOnly("ch.qos.logback:logback-classic:1.5.13")
 }
 
 
