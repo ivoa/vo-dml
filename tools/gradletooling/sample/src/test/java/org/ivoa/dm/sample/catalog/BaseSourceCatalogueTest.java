@@ -22,8 +22,8 @@ import java.util.List;
 import org.ivoa.dm.filter.PhotometricSystem;
 import org.ivoa.dm.filter.PhotometryFilter;
 import org.ivoa.dm.ivoa.RealQuantity;
-import org.ivoa.dm.ivoa.Unit;
 import org.ivoa.dm.sample.catalog.inner.SourceCatalogue;
+import org.ivoa.vodml.stdtypes.Unit;
 import org.ivoa.vodml.testing.AbstractTest;
 
 /**

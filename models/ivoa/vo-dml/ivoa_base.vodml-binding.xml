@@ -74,6 +74,13 @@
   <xsd-type>xsd:float</xsd-type> <!--FIXME this is not ok for XML! -->
   <!-- FIXME - this really needs base JSON schema -->
 </type-mapping>
+
+  <type-mapping>
+    <vodml-id>Unit</vodml-id>
+    <java-type primitive-value-field="value" >org.ivoa.vodml.stdtypes.Unit</java-type>
+    <xsd-type>xsd:string</xsd-type>
+  </type-mapping>
+
 </model>
 
 </m:mappedModels>

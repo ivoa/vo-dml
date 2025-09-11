@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import org.ivoa.vodml.annotation.VoDml;
 import org.ivoa.vodml.annotation.VodmlRole;
+import org.ivoa.vodml.jpa.JPAManipulations;
 
 /**
  * UML DataType rational : A rational number from Q, represented by two
@@ -16,7 +17,7 @@ import org.ivoa.vodml.annotation.VodmlRole;
  */
 @VoDml(id = "ivoa:rational", role=VodmlRole.primitiveType, type="ivoa:rational")
 @Embeddable
-public class Rational {
+public class Rational  implements JPAManipulations {
 
     private int numerator;
     private int denominator;
@@ -73,4 +74,12 @@ public class Rational {
     public void setDenominator(int denominator) {
         this.denominator = denominator;
     }
+
+    @Override
+    public void forceLoad() {
+        // nothing to do
+    }
+
+   
+
 }
