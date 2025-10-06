@@ -1,4 +1,3 @@
-import net.ivoa.vodml.gradle.plugin.VodmlToVodslTask
 import ru.vyarus.gradle.plugin.python.PythonExtension
 import ru.vyarus.gradle.plugin.python.task.PythonTask
 
