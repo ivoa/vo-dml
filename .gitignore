@@ -20,3 +20,14 @@ tools/gradletooling/gradle-plugin/bin/
 /tools/gradletooling/gradle-plugin/gradle/
 /tools/pythontooling/.venv/
 /tools/pythontooling/src/vodmltools/schxslt/
+/doc/note/VodmlTools.aux
+/doc/note/VodmlTools.bbl
+/doc/note/VodmlTools.blg
+/doc/note/VodmlTools.fdb_latexmk
+/doc/note/VodmlTools.fls
+/doc/note/VodmlTools.log
+/doc/note/VodmlTools.out
+/doc/note/VodmlTools.toc
+/doc/note/gitmeta.tex
+/doc/note/ivoatexmeta.tex
+/doc/note/VodmlTools.pdf
