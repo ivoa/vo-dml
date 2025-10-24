@@ -37,8 +37,8 @@ defining models only by description in documentation, which allowed an unconstra
 it was common at least to use UML~\cite{std:uml}.
 There was a desire to continue to use UML tools to create data models which meant that there was a requirement for
 some tooling to convert the UML representation to VO-DML - this requirement was met by the development of the VO-DML tools.
-Although the VO-DML tools were not described in the VO-DML standard as it is possible to create VO-DML definitions `by hand` in a text editor,
-this is increasingly infeasible to do this as the models grow in complexity - at a minimum there needs to be a mechanism to
+Although the VO-DML tools were not described in the VO-DML standard as it is possible to create VO-DML definitions `by hand' in a text editor,
+this is increasingly infeasible to do as the models grow in complexity - at a minimum there needs to be a mechanism to
 ensure that any models created do not contain errors and are valid against the VO-DML design criteria.
 One of the earliest functionalities of the VO-DML tools was to produce standard documentation and diagrams of the data models,
 which again meant that, in practical terms, the use of the VO-DML tools was a requirement when developing a data model, as
@@ -47,7 +47,7 @@ the production of such documentation was a requirement of the VO-DML standard.
 In addition, one of the main purposes of creating a machine-readable definition of a data model is to be able to
 then generate products from this representation.
 However, it is at this point that the VO-DML standard does not make any normative requirements - there is some discussion of how this might be done in
-in Appendix B for various serialization formats, but not done in sufficient detail to produce interoperable formats.
+in Appendix B for various serialization formats, but not described in sufficient detail to produce interoperable formats.
 One of the main aims of this document is to propose that the implementation of these serializations that has been done in the VO-DML
 tools is the de-facto standard for how such concrete serializations are created from VO-DML models.
 
@@ -58,7 +58,7 @@ tools is the de-facto standard for how such concrete serializations are created 
 \section{Using the VO-DML tools}
 
 This document has been deliberately deficient in detail on exactly how to use the VO-DML tools.
-This has been done because the intention is that the detail of the use of the tools will be maintained
+This has been done because the intention is that this detail of the use of the tools will be maintained
 as on-line documentation at \url{https://ivoa.github.io/vo-dml/} rather than published via the usual IVOA document publishing route.
 
 \subsection{Features}
@@ -68,6 +68,12 @@ as on-line documentation at \url{https://ivoa.github.io/vo-dml/} rather than pub
 \section{Future Directions}
 
 It should be noted that the VO-DML tools are in a state of active development and have not reached what the author would consider a 1.0 status.
+The development is controlled by using the usual management mechanisms available in GitHub - in particular issues are created for suggested enhancements
+and bug fixes and code is controlled via pull requests.
+
+The development of the VO-DML Tools also is a test-bench for future enhancements to the VO-DML language and standard, as new developments will always
+be prototyped in the tools before being suggested for the the standardization track.
+
 
 
 
