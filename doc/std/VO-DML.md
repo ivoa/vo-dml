@@ -2816,6 +2816,12 @@ value must be an [ivoa:real.](#real)
 
 # Procedure for defining data models in the IVOA
 
+## VO-DML Tools
+
+In addition to this standard that defines VO-DML there is some tooling ("VO-DML tools")
+to assist with the definition and validation of models created in VO-DML. This tooling is maintained
+in the IVOA GitHub project and is described in detail in its [on-line documentation](https://ivoa.github.io/vo-dml/). It is recommended that the VO-DML tools are used to aid in creating new data models.
+
 ## IVOA-standardized data models
 
 A data model specified in VO-DML can be endorsed by the IVOA to become a
@@ -2834,7 +2840,7 @@ artifacts:
 
 -   The data model itself, written in VO-DML/XML, which MUST conform to
     the VO-DML schema[^39] and the rules in the VO-DML Schematron
-    file[^40].
+    file[^40]. 
 
 -   A detailed documentation in HTML format containing human-readable
     definitions for all elements of the data model, formatted in HTML
@@ -3358,7 +3364,11 @@ mappings aim to be as close to 1-1 as possible, providing so called
 *faithful* representations of the model. Developing standards for
 mappings to languages like these could greatly simplify a modeling
 process, as one need only define the conceptual model itself and use
-automated procedures to derive the serialization formats.
+automated procedures to derive the serialization formats. 
+The VO-DML tooling does define one such set of self-consistent 
+concrete mappings. These mappings could be adopted as the definitive 
+mappings in a separate IVOA standard.
+
 
 XSD
 
@@ -3683,6 +3693,7 @@ standard -->
 **Version 1.1 WD**
 
 * Made the format of the vodml-id normative -i.e. moved from an appendix to the main vodml-id section.
+* Added references to VO-DML Tools.
 
 **Version 20161222**
 
@@ -3851,7 +3862,8 @@ standard -->
 
 [^39]: http://www.ivoa.net/xml/VODML/vo-dml-v1.xsd
 
-[^40]: <http://www.ivoa.net/xml/VODML/vo-dml-v1.sch.xml>
+[^40]: The schematron validation rules are explained more fully in the
+[validation section of the VO-DML Tools guide](https://ivoa.github.io/vo-dml/modelling/Validation/)
 
 [^41]: E.g. see
     <http://en.wikibooks.org/wiki/Java_Persistence/Inheritance>
