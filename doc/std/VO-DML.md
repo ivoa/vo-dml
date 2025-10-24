@@ -2763,6 +2763,10 @@ Represents a point in time. Will generally need time frame and units in
 the serialization. Can also be used for **Attributes** just needing a
 time without a date part and vice versa.
 
+## duration
+
+Represents a period of time in UTC timescale in a topocentric coordinate frame. Any string serialization to conform to ISO 8601.
+
 ## string
 
 A standard string type, consisting of zero or more characters. We define
@@ -2773,6 +2777,14 @@ characters (as in VOTable for example).
 
 A special subtype of string representing uniform resource
 identifiers[^37]. Inspired by XML-Schema\'s anyURI[^38] type.
+
+## ivoid extends anyURI
+
+A special subtype of anyURI that represents an identifier that can be used as a key to look up in an IVOA registry - see https://www.ivoa.net/documents/IVOAIdentifiers/.
+
+## uuid 
+
+A Universally Unique Identifier (UUID) is a 128-bit label used to uniquely identify objects in computer systems. The string serialization follows RFC 9562.
 
 ## Unit extends string
 
