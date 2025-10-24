@@ -2164,6 +2164,8 @@ which the SemanticConcept has been assigned MUST take values from the
 vocabulary identified by the URI. It may be possible to define a subset
 of its values using the topConcept attribute.
 
+Use of the [IVOA vocabularies](https://www.ivoa.net/documents/Vocabularies/) encouraged.
+
 ### topConcept: anyURI \[0..1\]
 
 If this attribute is set, the specified URI identifies a semantic
