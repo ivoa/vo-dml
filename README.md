@@ -8,6 +8,7 @@ language.
 There is a [Guide to creating models with VO-DML tooling](https://ivoa.github.io/vo-dml/)
 
 [![PDF-Preview](https://img.shields.io/badge/VODML_WD_1.1-PDF-blue)](../../releases/download/WD-1.1-proposed/VO-DML.pdf)
+[![PDF-Preview of note](https://img.shields.io/badge/VODML_Tools_Note-PDF-blue)](../../releases/download/note-auto-pdf-preview/VodmlTools-draft.pdf)
 
 The various subdirectories
 
