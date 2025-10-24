@@ -2703,7 +2703,7 @@ Note, the vodml-id of all types exactly follow the generation rules in
 Appendix C. E.g. to refer to the \'string\' type one should always use
 the vodml-ref \'ivoa:string\'
 
-![C:\\Users\\Gerar\\AppData\\Local\\Microsoft\\Windows\\INetCache\\Content.Word\\IVOA_UML.PNG](media/image23.png){width="6.0in"
+![](media/image23.png){width="6.0in"
 height="3.0695647419072616in"}
 
 Figure VO-UML diagram with the types from the basic \'ivoa\' data model.
