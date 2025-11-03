@@ -7,7 +7,7 @@ DOCNAME = VO-DML
 DOCVERSION = 1.1
 
 # Publication date, ISO format; update manually for "releases"
-DOCDATE = 2018-09-05
+DOCDATE = 2025-12-31
 
 # What is it you're writing: NOTE, WD, PR, REC, PEN, or EN
 DOCTYPE = WD
