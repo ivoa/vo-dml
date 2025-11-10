@@ -2,7 +2,7 @@ plugins {
     id("net.ivoa.vo-dml.vodmltools") version "0.5.28"
 //    id ("com.diffplug.spotless") version "5.17.1"
     `maven-publish`
-    id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
+//    id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
     signing
 
 }
@@ -39,16 +39,16 @@ tasks.named<Jar>("jar") {
     exclude("**/persistence.xml")
 }
 //publishing - IMPL would be nice to factor this out in some way....
-nexusPublishing {
-    repositories {
-        //TODO this is a rather unsatisfactory kludge, but still seems better than the suggested JReleaser which is not really gradle friendly
-        // see https://central.sonatype.org/publish/publish-portal-ossrh-staging-api/#configuration
-        sonatype {
-            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
-        }
-    }
-}
+//nexusPublishing {
+//    repositories {
+//        //TODO this is a rather unsatisfactory kludge, but still seems better than the suggested JReleaser which is not really gradle friendly
+//        // see https://central.sonatype.org/publish/publish-portal-ossrh-staging-api/#configuration
+//        sonatype {
+//            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
+//            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
+//        }
+//    }
+//}
 
 publishing {
     publications {
@@ -87,6 +87,17 @@ publishing {
             }
         }
     }
+    repositories {
+        maven {
+            name = "uksrcrepo"
+            url = uri("https://repo.dev.uksrc.org/repository/maven-snapshots/")
+            credentials {
+                username = (findProperty("uksrcNexusUsername") ?: System.getenv("UKSRC_REPO_USERNAME")) as String?
+                password = (findProperty("uksrcNexusPassword") ?: System.getenv("UKSRC_REPO_PASSWORD")) as String?
+            }
+        }
+    }
+
 }
 
 println ("java property skipSigning= " + project.hasProperty("skipSigning"))
@@ -100,6 +111,6 @@ signing {
     }
 }
 //do not generate extra load on Nexus with new staging repository if signing fails
-tasks.withType<io.github.gradlenexus.publishplugin.InitializeNexusStagingRepository>().configureEach{
-    shouldRunAfter(tasks.withType<Sign>())
-}
+//tasks.withType<io.github.gradlenexus.publishplugin.InitializeNexusStagingRepository>().configureEach{
+//    shouldRunAfter(tasks.withType<Sign>())
+//}
