@@ -180,7 +180,7 @@ defined in this specification. Such strategies only need to be defined
 once and for all for each format, and apply to all Data Models, as long
 as they are formally described in a VODML/XML document.
 
-Appendix C discusses a possible set of rules for deriving the vodml-id
+[vodml-id syntax] discusses a possible set of rules for deriving the vodml-id
 of a model element from the actual model.
 
 Appendix D introduces the sample data model that is used in this
@@ -626,7 +626,7 @@ contains an identifier element named vodml-id that MUST be unique within
 the model.
 
 Note that for convenience vodml-id SHOULD be human-readable, following
-to the grammar defined in Appendix C. While this is not obligatory,
+to the grammar defined in [vodml-id syntax]. While this is not obligatory,
 since vodml-ids are only required to be unique in a model, it is
 convenient for a human confronted by such an identifier to intuitively
 infer its meaning. Following a standard grammar improves consistency
@@ -634,7 +634,7 @@ among data models.
 
 All referable elements also have a **name**, and a **description**. The
 name SHOULD be used to derive the vodml-id from the structure of the
-model, as described in Appendix C.
+model, as described in [vodml-id syntax].
 
 The name must often be unique within the direct context where a
 particular referable element is defined. For example all **Types**
@@ -722,6 +722,8 @@ so to intuitively provide information about the elements they identify.
 This specification states that vodml-id SHOULD be made human-readable
 according to specific rules that represent the location of the
 identified element in the model, encoded in the grammar presented below.
+
+#### vodml-id syntax 
 
 In the past[^42] rules have been defined for generating such unique
 identifiers for elements in a data model, and the following grammar is
@@ -2700,7 +2702,7 @@ formal VO-DML/XML representation can be found in
 <http://www.ivoa.net/xml/VODML/IVOA-v1.vo-dml.xml>.
 
 Note, the vodml-id of all types exactly follow the generation rules in
-Appendix C. E.g. to refer to the \'string\' type one should always use
+[vodml-id syntax] e.g. to refer to the \'string\' type one should always use
 the vodml-ref \'ivoa:string\'
 
 ![C:\\Users\\Gerar\\AppData\\Local\\Microsoft\\Windows\\INetCache\\Content.Word\\IVOA_UML.PNG](media/image23.png){width="6.0in"
