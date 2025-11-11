@@ -20,14 +20,17 @@
     The IVOA standard modelling language VO-DML~\cite{2018ivoa.spec.0910L} was developed
     with an associated set of tooling that could be used in the creation of data models
     expressed in VO-DML. The VO-DML standard does not go into any detail about the tooling
-    as it describes only the language.
+    as it describes only the language itself.
     This note attempts to fill that gap by describing the
-    development of the tooling, and its functionality.
+    development of the tooling, and give an outline of its functionality.
     In addition this document promotes the idea that the VO-DML tools are the de-facto standard way to create the
     schemas for serializations of model instances.
 \end{abstract}
 
-
+\section*{Acknowledgments}
+Although the author is the current lead maintainer of the VO-DML Tools, the tools are based on the original contributions
+principally of Gerard Lemson and Laurent Bourg\`es, and presumably associated contributions from others working
+on SIM-DM \citep{2012ivoa.spec.0503L} and the earlier VO-URP\footnote{\url{https://github.com/glemson/vo-urp}} project.
 
 \section{Introduction}
 
@@ -47,21 +50,39 @@ the production of such documentation was a requirement of the VO-DML standard.
 In addition, one of the main purposes of creating a machine-readable definition of a data model is to be able to
 then generate products from this representation.
 However, it is at this point that the VO-DML standard does not make any normative requirements - there is some discussion of how this might be done in
-in Appendix B for various serialization formats, but not described in sufficient detail to produce interoperable formats.
+in Appendix B of various serialization formats, but not described in sufficient detail to produce interoperable formats.
 One of the main aims of this document is to propose that the implementation of these serializations that has been done in the VO-DML
 tools is the de-facto standard for how such concrete serializations are created from VO-DML models.
 
+\section{A Brief History of VO-DML Tools}
+This section outlines the author's recollection of the timeline of the development of the VO-DML tools. It is
+possible, of course, to check the veracity of these recollections in the version control change logs for VO-URP\footnote{\url{https://github.com/glemson/vo-urp/commits/master/}}
+and the VO-DML Tools\footnote{\url{https://github.com/ivoa/vo-dml/commits/master/}}
+
+As mentioned in the acknowledgments, the VO-DML tools have their origins in the Simulation Data Model and VO-URP projects, which included
+Java code generation from a precursor meta-language that was similar to VO-DML.
+In the process of standardizing the VO-DML meta-language, some capabilities of the precursor language were dropped, as well the ability of the tools to create Java
+code that would serialize instances of the model described.
+The capabilities that the tools possessed at the time
+that VO-DML 1.0 was designated a recommendation included;
+
+\begin{itemize}
+    \item Being able to transform the output of several UML modelling tools.
+    \item Detailed validation of the VO-DML model against the standard.
+    \item Creating model documentation as a single HTML page.
+\end{itemize}
 
 
-\section{Technologies used to write the Tools}
+
+\subsection{Technologies used to write the Tools}
 
 \section{Using the VO-DML tools}
 
-This document has been deliberately deficient in detail on exactly how to use the VO-DML tools.
+This document is deliberately deficient in detail on exactly how to use the VO-DML tools.
 This has been done because the intention is that this detail of the use of the tools will be maintained
 as on-line documentation at \url{https://ivoa.github.io/vo-dml/} rather than published via the usual IVOA document publishing route.
 
-\subsection{Features}
+\section{Serialization}
 
 \section{Standardization}
 
@@ -76,9 +97,6 @@ be prototyped in the tools before being suggested for the the standardization tr
 
 
 
-
-
-
 \appendix
 \section{Changes from Previous Versions}
 
@@ -86,11 +104,6 @@ No previous versions yet.
 % these would be subsections "Changes from v. WD-..."
 % Use itemize environments.
 
-\section{Historial Descriptions of VO-DML tools}
-
-\begin{itemize}
-    \item
-\end{itemize}
 
 % NOTE: IVOA recommendations must be cited from docrepo rather than ivoabib
 % (REC entries there are for legacy documents only)
