@@ -72,9 +72,47 @@ that VO-DML 1.0 was designated a recommendation included;
     \item Creating model documentation as a single HTML page.
 \end{itemize}
 
+Starting in early 2021 the author had a requirement to design some new data models
+and create services against them.\footnote{This is the Polaris proposal tool \url{https://github.com/orppst} which uses ProposalDM \url{https://ivoa.github.io/ProposalDM/}}
+It seemed sensible to try to use VO-DML to define the data models and try to revive the
+code generation facilities of VO-URP. The way that the tooling was distributed was also changed
+see section \ref{sec:technologies}. The facilities that the current tooling provides are
+\begin{itemize}
+    \item Creating an XML schema that validates serialized instances of a particular data model
+    \item Creating a JSON schema that similarly can be used to validate serialized instances
+    \item Creating a TAPSchema representation (an XML serialization of the TAPSchemaDM also defined
+          in VO-DML\footnote{\url{https://ivoa.github.io/TAPSchemaDM/}})
+    \item Generation of Java code that can create instances of the data model and implements the serializations listed above
+    \item Generation of Python code that similarly does the same\footnote{the Python code generation is not as sophisticated as the Java code generation}
+    \item Generation of multi page documentation for the data model, which has several advantages over the single page HTML documentation;
+    \begin{itemize}
+        \item has better navigation.
+        \item resizes itself for modern mobile screen sizes.
+        \item has a localised diagram for each VO-DML element that shows its connection to the rest of the model.
+    \end{itemize}
+    \item Being able to author a VO-DML model in VODSL\footnote{\url{https://www.ivoa.net/documents/Notes/VODSL/}} as well as UML.
+\end{itemize}
 
-
+\label{sec:technologies}
 \subsection{Technologies used to write the Tools}
+As the VO-DML is expressed in XML the VO-DML tools made the early choice to implement all 
+of the business logic in XSLT. At the time of publishing VO-VML 1.0 the running of the various
+XSLT transformations was orchestrated using the Ant\footnote{\url{https://ant.apache.org}} build tool.
+The more recent versions of the VO-DML tools have been rewritten so that the Gradle\footnote{\url{https://gradle.org}} build tool, which
+has the following advantages of the previous Ant orchestration;
+\begin{itemize}
+    \item all of the associated XSLT and other files that are needed for the tools functionality can be packaged as a gradle plug-in
+     - this allows use of the tools by a simple textual reference to the plugin, rather than having to copy the required files from the VO-DML repository.
+    \item gradle makes it easy to include other dependencies via maven repositories
+\end{itemize}
+
+The choice of orchestration tools does look rather `Java-centric' and it reflects the fact that the
+initial target of the code generation target was Java. However, this does not mean that the tools are
+exclusively of utility to Java programmers - Indeed if only interested in the generated schema and
+documentation there is no particular language association (apart from a requirement of an installed
+Java Virtual Machine to run the tools). The tools can equally generate python code, and there is
+a prototype orchestration that is implemented in Python - however, this orchestration implementation
+is not as comprehensive in its functionality as the Gradle orchestration.
 
 \section{Using the VO-DML tools}
 
@@ -83,6 +121,45 @@ This has been done because the intention is that this detail of the use of the t
 as on-line documentation at \url{https://ivoa.github.io/vo-dml/} rather than published via the usual IVOA document publishing route.
 
 \section{Serialization}
+
+One of the principle advantages of having a machine readable version of a data model is that it is
+possible to further transform the model into other machine readable representations. One of the
+principle reasons to create a data model in the first place
+is to be able to exchange instances of that data model between
+different systems that might be interested in the content of those instances and be sure that
+the same interpretation will be made of the instance in each circumstance. Interchange is
+done by a process known as serialization where the model instances are transformed into
+a form that is easy to transport via some transport mechanism.
+This often means that the
+model instances are transformed into a textual form for transmission. In recent times
+two popular methods of doing this have been XML and JSON - these formats have their own
+meta-models that are typically generic enough to be able to express instances of complex
+data models.
+However, because they are generic they typically cannot express the same semanic
+information that is in a data model. In addition these formats, because they were often
+defined for interchange
+purposes will have their own schema systems to be able to validate instances against
+their meta-model.
+It is therefore useful to be able to generate schema from a VO-DML model
+so that the XML or JSON tools might be able to validate serialization instances of the
+data model, as they cannot directly understand the VO-DML.
+
+\subsection{References in serialization}
+\subsection{Schema representations}
+
+Depending to the complexity of a particular schema language and serializationformat, there might be several different
+styles that can be used to represent data model instance serializations - A possibility that
+occurs in XML is whether a particular VO-DML attribute should be represented by an
+XML element or an XML attribute - somtimes, for instance, if the VO-DML is a DataType then
+only an XML element would be the only formulation capable of being able to represent
+the structure in a DataType - therefore the choice between XML element and XML attribute
+cannot be a global choice, but can only be made on an attribute by attribute basis.
+A purely stylistic choice that can be made with XML for instance is where an XML element
+in a sequence that has a multiplicity of greater than one should be `wrapped' by another
+element, and although this does not alter any of the semantics of the data model being represented
+it often `reads better' to the human eye when looking at such an XML structure.
+
+
 
 \section{Standardization}
 
