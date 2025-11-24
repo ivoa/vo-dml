@@ -62,6 +62,10 @@ note - only define functions in here as it is included in the schematron rules
 
     </xsl:function>
 
+    <xsl:function name="vf:baseTypeId" as="xsd:string">
+        <xsl:param name="vodml-ref"/>
+        <xsl:sequence select="vf:baseTypeIds($vodml-ref)[last()]"/>
+    </xsl:function>
 
     <xsl:function name="vf:subTypes" as="element()*">
         <xsl:param name="vodml-ref"/>
