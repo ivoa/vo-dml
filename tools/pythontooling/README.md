@@ -38,7 +38,7 @@ note having to
 
 On Mac to get suitable dev env
 ```shell
-docker run -it --delete -v /Users/pharriso/Work/ivoa/vodml-clean/:/vodml:rw --platform linux/amd64 python.:3.12-bookworm bash
+docker run -it --rm -v `pwd`:/vodml:rw --platform linux/amd64 python:3.12-bookworm bash
 ```
 
 * https://click.palletsprojects.com/en/stable/
