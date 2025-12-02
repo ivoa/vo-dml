@@ -746,14 +746,17 @@
              <xsl:variable name="jtype" select="vf:JavaType($vodml-ref)"/>
              <!-- IMPL mapping from JavaType for convenience as that will include other primitives not thought of yet - would probably need another mapping in the binding otherwise-->
              <xsl:choose>
-                 <xsl:when test="$jtype='String'">VARCHAR</xsl:when>
+                 <xsl:when test="$jtype=('String','org.ivoa.vodml.stdtypes.Unit')">VARCHAR</xsl:when><!-- IMPL - should really have more general mechanism in place -->
                  <xsl:when test="$jtype=('Double', 'double')">DOUBLE</xsl:when>
                  <xsl:when test="$jtype=('Integer','int')">INTEGER</xsl:when>
                  <xsl:when test="$jtype=('Boolean','boolean')">INTEGER</xsl:when>
                  <xsl:when test="$jtype=('java.math.BigDecimal')">INTEGER</xsl:when>
                  <xsl:when test="$jtype=('java.util.Date')">TIMESTAMP</xsl:when>
                  <!--TODO this is incomplete -->
-                 <xsl:otherwise>UNKNOWN</xsl:otherwise>
+                 <xsl:otherwise>
+                     <xsl:message  select="concat('WARNING: cannot determine RDB type for ',$vodml-ref, ' jtype=',$jtype)"/>
+                     <xsl:text>UNKNOWN</xsl:text>
+                 </xsl:otherwise>
              </xsl:choose>
          </xsl:otherwise>
      </xsl:choose>
