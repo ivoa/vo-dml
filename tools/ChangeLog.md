@@ -124,5 +124,6 @@
 * 0.5.27 and 0.5.28 - bugfixes
 * 0.5.29
   * make tapschema generation include the imported models
+  * 
 
 N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass in same hierarchy - still waiting for a solution

@@ -76,11 +76,17 @@ open class VodmlSchemaTask  @Inject constructor(ao1: ArchiveOperations) : VodmlB
         vodmlFiles.forEach {
             val shortname = it.nameWithoutExtension
             val outfile = schemaDir.file("$shortname.tap.xml")
-            logger.debug("Generating JSON schema from  ${it.name} to ${outfile.get().asFile.absolutePath}")
+            logger.debug("Generating TAP schema from  ${it.name} to ${outfile.get().asFile.absolutePath}")
             Vodml2TAP.doTransform(it.absoluteFile, mapOf(
                 "binding" to allBinding.joinToString(separator = ",") { it.toURI().toURL().toString() }
             ),
                 actualCatalog, outfile.get().asFile)
+            val plantfile = schemaDir.file("$shortname.tap.plantuml")
+            logger.debug("Generating TAP schema ER Diagram from  ${it.name} to ${plantfile.get().asFile.absolutePath}")
+            TapSchema2PlantUML.doTransform(outfile.get().asFile, mapOf(
+                "binding" to allBinding.joinToString(separator = ",") { it.toURI().toURL().toString() }
+            ),
+                actualCatalog, plantfile.get().asFile)
         }
 
 
