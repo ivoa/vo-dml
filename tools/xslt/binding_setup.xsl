@@ -54,15 +54,7 @@
     <xsl:variable name="gt">&gt;</xsl:variable>
     <xsl:variable name="isRdbSingleInheritance" as="xsd:boolean" select="vf:isRdbSingleTable(/vo-dml:model/name)"/>
     <xsl:variable name="RdbSchemaName">
-        <xsl:choose>
-            <xsl:when test="$mapping/bnd:mappedModels/model[name=$themodelname]/rdb/@schema">
-                <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$themodelname]/rdb/@schema"/>
-<!--                <xsl:message>custom tap schema =<xsl:value-of select="$mapping/bnd:mappedModels/model[name=$themodelname]/rdb/@schema"/></xsl:message>-->
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:sequence select="$themodelname"/>
-            </xsl:otherwise>
-        </xsl:choose>
+       <xsl:value-of select="vf:schemaName($themodelname)"/>
     </xsl:variable>
 
     <xsl:variable name="isRDBUseColRef" as="xsd:boolean" select="vf:isRdbAddRef(/vo-dml:model/name)"/>

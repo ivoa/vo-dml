@@ -598,12 +598,22 @@
         <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelName]/rdb[@inheritance-strategy='single-table'] )= 1"/>
     </xsl:function>
 
-    <xsl:function name="vf:rdbSchemaName" as="xsd:string">
-        <xsl:param name="modelName" as="xsd:string"/>
-        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/rdb/@schema"/>
+
+    <xsl:function name="vf:schemaName" as="xsd:string" > <!-- get the schema name, given the model name-->
+        <xsl:param name="thismodelname" as="xsd:string" />
+        <xsl:choose>
+            <xsl:when test="$mapping/bnd:mappedModels/model[name=$thismodelname]/rdb/@schema">
+                <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$thismodelname]/rdb/@schema"/>
+                <!--                <xsl:message>custom tap schema =<xsl:value-of select="$mapping/bnd:mappedModels/model[name=$themodelname]/rdb/@schema"/></xsl:message>-->
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="$thismodelname"/>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:function>
 
-   <xsl:function name="vf:isRdbAddRef" as="xsd:boolean">
+
+    <xsl:function name="vf:isRdbAddRef" as="xsd:boolean">
         <xsl:param name="modelName" as="xsd:string"/>
         <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelName]/rdb[@useRefInColumnName=true()] )= 1"/>
     </xsl:function>
