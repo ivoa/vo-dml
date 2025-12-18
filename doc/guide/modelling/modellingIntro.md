@@ -19,7 +19,7 @@ It is possible to import existing data models by;
 1. Adding the published jar as a dependency in the `build.gradle.kts` file, e.g.
 ```kotlin
 dependencies {
-    implementation("org.javastro.ivoa.vo-dml:ivoa-base:1.0")
+    implementation("net.ivoa.vo-dml:ivoa-base:1.0")
 }
 ```
 the tooling then makes sure that the model files are available for local import.

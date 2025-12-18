@@ -88,7 +88,7 @@ tasks.test {
 }
 
 dependencies {
-    implementation("org.javastro.ivoa.vo-dml:ivoa-base")
+    implementation("net.ivoa.vo-dml:ivoa-base")
     testImplementation("org.junit.jupiter:junit-jupiter:5.12.2")
     testImplementation("com.networknt:json-schema-validator:1.5.6")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher") //Needed to override gradle built-in
