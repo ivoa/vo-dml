@@ -8,8 +8,8 @@ plugins {
 }
 
 
-group = "org.javastro.ivoa.vo-dml"
-version = "1.1.5-SNAPSHOT"
+group = "net.ivoa.vo-dml"
+version = "1.1-SNAPSHOT"
 
 vodml {
     vodmlDir.set(file("vo-dml"))
@@ -54,16 +54,16 @@ java {
 
 
 //publishing - IMPL would be nice to factor this out in some way....
-nexusPublishing {
-    repositories {
-        //TODO this is a rather unsatisfactory kludge, but still seems better than the suggested JReleaser which is not really gradle friendly
-        // see https://central.sonatype.org/publish/publish-portal-ossrh-staging-api/#configuration
-        sonatype {
-            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
-        }
-    }
-}
+//nexusPublishing {
+//    repositories {
+//        //TODO this is a rather unsatisfactory kludge, but still seems better than the suggested JReleaser which is not really gradle friendly
+//        // see https://central.sonatype.org/publish/publish-portal-ossrh-staging-api/#configuration
+//        sonatype {
+//            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
+//            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
+//        }
+//    }
+//}
 
 publishing {
     publications {
@@ -102,6 +102,28 @@ publishing {
             }
         }
     }
+    repositories {
+        // TODO really want to publish to a repo run by the IVOA
+        maven {
+            name = "uksrcrepo"
+            url = uri("https://repo.dev.uksrc.org/repository/maven-snapshots/")
+            credentials {
+                username = (findProperty("uksrcNexusUsername") ?: System.getenv("UKSRC_REPO_USERNAME")) as String?
+                password = (findProperty("uksrcNexusPassword") ?: System.getenv("UKSRC_REPO_PASSWORD")) as String?
+            }
+        }
+        // the github repo is really
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/ivoa/vo-dml/")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+
+    }
+
 }
 
 println ("java property skipSigning= " + project.hasProperty("skipSigning"))
@@ -115,6 +137,6 @@ signing {
     }
 }
 //do not generate extra load on Nexus with new staging repository if signing fails
-tasks.withType<io.github.gradlenexus.publishplugin.InitializeNexusStagingRepository>().configureEach{
-    shouldRunAfter(tasks.withType<Sign>())
-}
+//tasks.withType<io.github.gradlenexus.publishplugin.InitializeNexusStagingRepository>().configureEach{
+//    shouldRunAfter(tasks.withType<Sign>())
+//}
