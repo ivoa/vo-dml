@@ -3,7 +3,7 @@ name: Publish the IVOA base model
 
 on:
   # probably should only do on tag
-  create
+  [create, workflow_dispatch ]
 
 jobs:
   publish:
