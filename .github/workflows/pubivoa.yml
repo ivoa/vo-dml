@@ -1,9 +1,11 @@
-
+#doing this is nearly useless as the maven repo
+#can only be consumed by authenticated github users
+# so really only in other github actions practically
 name: Publish the IVOA base model
 
 on:
-  # probably should only do on tag
-  [create, workflow_dispatch ]
+  # only do on demand
+  [ workflow_dispatch ]
 
 jobs:
   publish:
