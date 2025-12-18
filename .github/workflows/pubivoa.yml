@@ -26,4 +26,5 @@ jobs:
       - name: Build ivoa model with Gradle
         run : |
           ./gradlew  :ivoa:publishMavenJavaPublicationToGitHubPackagesRepository  -PskipSigning=True
-
+        env:
+          GITHUB_TOKEN: ${{GITHUB_TOKEN}}
