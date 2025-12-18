@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+                     <catalog  xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+                        <group  prefer="system"  >
+                        
+                   <uri name="lifecycleTest.vo-dml.xml" uri="file:///vodml/models/sample/test/lifecycleTest.vo-dml.xml"/>
+   <uri name="IVOA-v1.0.vo-dml.xml" uri="file:///vodml/models/ivoa/vo-dml/IVOA-v1.0.vo-dml.xml"/>
+   <uri name="common-structure-functions.xsl" uri="file:///vodml/tools/pythontooling/src/vodmltools/xslt/common-structure-functions.xsl"/>
+
+                        </group>
+                     </catalog>
+                 

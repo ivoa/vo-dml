@@ -1,0 +1,11 @@
+create schema MyModel;
+create table MyModel.BaseC (ID bigint not null, SOMECONTENT_ID bigint, BaseC_SUBTYPE varchar(64) not null, bname varchar(255) not null, dval varchar(255), evalue varchar(255), primary key (ID));
+create table MyModel.Refa (ID bigint not null, val varchar(255) not null, primary key (ID));
+create table MyModel.Refb (name varchar(255) not null, val varchar(255) not null, primary key (name));
+create table MyModel.SomeContent (ID bigint not null, ref1 bigint not null, ref2 varchar(255) not null, zval varchar(255) not null, primary key (ID));
+create sequence BaseC_SEQ start with 1 increment by 50;
+create sequence Refa_SEQ start with 1 increment by 50;
+create sequence SomeContent_SEQ start with 1 increment by 50;
+alter table if exists MyModel.BaseC add constraint FKimvtfgqd2e8f8ts0qdo5od8he foreign key (SOMECONTENT_ID) references MyModel.SomeContent;
+alter table if exists MyModel.SomeContent add constraint FKmfk59tuspr1gb8uwyhtnqy3re foreign key (ref1) references MyModel.Refa;
+alter table if exists MyModel.SomeContent add constraint FKdcycmmpw2hwt6ooyu839tr522 foreign key (ref2) references MyModel.Refb;

@@ -1,0 +1,126 @@
+
+
+@startuml
+
+' hide the spot
+' hide circle
+
+' avoid problems with angled crows feet
+skinparam linetype ortho
+        
+entity "AstroObject" as AstroObject {
+
+    ID : BIGINT
+position_frame : VARCHAR
+
+---
+
+    AstroObject_SUBTYPE : VARCHAR
+label : VARCHAR
+name : VARCHAR
+description : VARCHAR
+position_longitude_value : DOUBLE
+position_longitude_unit : VARCHAR
+position_latitude_value : DOUBLE
+position_latitude_unit : VARCHAR
+classification : VARCHAR
+
+}
+
+entity "LuminosityMeasurement" as LuminosityMeasurement {
+
+    ID : BIGINT
+
+---
+
+    ABSTRACTSOURCE_ID : BIGINT
+value_value : DOUBLE
+value_unit : VARCHAR
+error_value : DOUBLE
+error_unit : VARCHAR
+description : VARCHAR
+type : VARCHAR
+filter : BIGINT
+
+---
+      filter : BIGINT<<FK>>
+ABSTRACTSOURCE_ID : BIGINT<<FK>>
+
+}
+
+entity "SkyCoordinateFrame" as SkyCoordinateFrame {
+
+    name : VARCHAR
+
+---
+
+    documentURI : VARCHAR
+equinox : VARCHAR
+system : VARCHAR
+
+}
+
+entity "Testing" as Testing {
+
+    ID : BIGINT
+
+---
+
+    plain : VARCHAR
+arrayIsh : VARCHAR
+unbounded : VARCHAR
+
+}
+
+entity "SourceCatalogue" as SourceCatalogue {
+
+    ID : BIGINT
+
+---
+
+    name : VARCHAR
+
+}
+
+entity "PhotometricSystem" as PhotometricSystem {
+
+    ID : BIGINT
+
+---
+
+    description : VARCHAR
+detectorType : INTEGER
+
+}
+
+entity "PhotometryFilter" as PhotometryFilter {
+
+    ID : BIGINT
+
+---
+
+    PHOTOMETRICSYSTEM_ID : BIGINT
+fpsIdentifier : VARCHAR
+name : VARCHAR
+description : VARCHAR
+bandName : VARCHAR
+dataValidityFrom : TIMESTAMP
+dataValidityTo : TIMESTAMP
+spectralLocation_value : DOUBLE
+spectralLocation_unit : VARCHAR
+
+---
+      PHOTOMETRICSYSTEM_ID : BIGINT<<FK>>
+
+}
+
+
+        LuminosityMeasurement }o--||PhotometryFilter
+LuminosityMeasurement }o--||AstroObject
+PhotometryFilter }o--||PhotometricSystem
+
+
+
+@enduml
+
+    

@@ -8,7 +8,7 @@ plugins {
 }
 
 
-group = "org.javastro.ivoa.vo-dml"
+group = "net.ivoa.vo-dml"
 version = "1.0-SNAPSHOT"
 
 vodml {
@@ -88,6 +88,7 @@ publishing {
         }
     }
     repositories {
+        // TODO really want to publish to a repo run by the IVOA
         maven {
             name = "uksrcrepo"
             url = uri("https://repo.dev.uksrc.org/repository/maven-snapshots/")
@@ -96,6 +97,7 @@ publishing {
                 password = (findProperty("uksrcNexusPassword") ?: System.getenv("UKSRC_REPO_PASSWORD")) as String?
             }
         }
+        // the github repo is really
         maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/ivoa/vo-dml/")
