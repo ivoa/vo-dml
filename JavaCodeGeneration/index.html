@@ -1,0 +1,1814 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../Documentation/">
+      
+      
+        <link rel="next" href="../PythonCodeGeneration/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Java Generation - VO-DML Tools Guide</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#java-code-generation" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="VO-DML Tools Guide" class="md-header__button md-logo" aria-label="VO-DML Tools Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            VO-DML Tools Guide
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Java Generation
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ivoa/vo-dml" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../Installation/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../Transformers/" class="md-tabs__link">
+          
+  
+  
+  Derived Products
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../modelling/modellingIntro/" class="md-tabs__link">
+          
+  
+  
+  Writing Models
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../modelling/designIntro/" class="md-tabs__link">
+          
+  
+  
+  Model Design
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="VO-DML Tools Guide" class="md-nav__button md-logo" aria-label="VO-DML Tools Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    VO-DML Tools Guide
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ivoa/vo-dml" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../QuickStart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Derived Products
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Derived Products
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Transformers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introduction
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Binding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Binding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Documentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Java Generation
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Java Generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#generating-the-java-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generating The Java code
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#characteristics-of-the-generated-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Characteristics of the Generated code
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Characteristics of the Generated code">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instance-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instance Creation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Instance Creation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#full-constructor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Full constructor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fluent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fluent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fluent-functional-builder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fluent functional builder
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#serializing-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Serializing Models
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Serializing Models">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#functions-for-adding-content" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Functions for adding content
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#xml-serialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        XML Serialization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#json-serialisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON Serialisation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reading-and-writing-from-rdbs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reading and Writing from RDBs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reading and Writing from RDBs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#composition-helpers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Composition Helpers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#embeddable-datatypes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Embeddable dataTypes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tap-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TAP schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing models
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#general-interfaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        General interfaces
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PythonCodeGeneration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Serialization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Serialization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Writing Models
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Writing Models
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../modelling/modellingIntro/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introduction
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../modelling/VODSL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VODSL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../modelling/EclipseVODSL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Eclipse Editor
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../modelling/UML/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../modelling/TransformingToVODML/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generation from other sources
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Model Design
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Model Design
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../modelling/designIntro/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introduction
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../modelling/ModelStructure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Tips
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../modelling/Validation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../modelling/Vocabularies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vocabularies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../modelling/CaseHandling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Case Handling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#generating-the-java-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generating The Java code
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#characteristics-of-the-generated-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Characteristics of the Generated code
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Characteristics of the Generated code">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instance-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instance Creation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Instance Creation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#full-constructor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Full constructor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fluent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fluent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fluent-functional-builder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fluent functional builder
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#serializing-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Serializing Models
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Serializing Models">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#functions-for-adding-content" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Functions for adding content
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#xml-serialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        XML Serialization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#json-serialisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON Serialisation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reading-and-writing-from-rdbs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reading and Writing from RDBs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reading and Writing from RDBs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#composition-helpers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Composition Helpers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#embeddable-datatypes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Embeddable dataTypes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tap-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TAP schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing models
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#general-interfaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        General interfaces
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/ivoa/vo-dml/edit/master/doc/guide/JavaCodeGeneration.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="java-code-generation">Java Code Generation</h1>
+<p>The tooling is capable of generating Java classes that can be used to store instances of the
+models. The code is annotated to allow JAXB and JPA to operate, which mean that it is easy to 
+read and write model instances to XML and standard relational databases. It should be noted that
+the generated code uses java 1.8 constructs.</p>
+<p>The generated Java code depends on the <a href="https://github.com/ivoa/vo-dml/tree/master/runtime/java">VO-DML java runtime library</a>, which the plugin will automatically add to the
+dependencies along with the necessary JAXB and JPA libraries.</p>
+<h2 id="generating-the-java-code">Generating The Java code</h2>
+<p>The command
+<div class="highlight"><pre><span></span><code>gradle<span class="w"> </span>vodmlJavaGenerate
+</code></pre></div>
+will generate java code in <code>./build/generated/sources/vodml/java</code> which is on the build classpath and so 
+<div class="highlight"><pre><span></span><code>gradle<span class="w"> </span>build
+</code></pre></div>
+will compile and run tests on the generated code. In fact <code>gradle build</code> will 
+automatically run <code>gradle vodmlJavaGenerate</code> if the code is out of date because the model has been updated.</p>
+<h2 id="characteristics-of-the-generated-code">Characteristics of the Generated code</h2>
+<p>In general the code creates POJOs or data classes - i.e. the classes have very little functionality
+apart from being stores of the data model. The functionality that they do have is described below.</p>
+<h3 id="instance-creation">Instance Creation</h3>
+<p>To be JPA and JAXB compliant, the classes are Java beans with a no argument constructor, so they can be 
+default constructed and then getX/setX can be used on the properties.</p>
+<div class="highlight"><pre><span></span><code><span class="n">A</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">A</span><span class="p">();</span>
+<span class="n">a</span><span class="p">.</span><span class="na">setX</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+<span class="n">a</span><span class="p">.</span><span class="na">setY</span><span class="p">(</span><span class="n">y</span><span class="p">);</span>
+</code></pre></div>
+<p>In addition, there are several other ways of creating objects</p>
+<h4 id="full-constructor">Full constructor</h4>
+<p>A constructor with all the possible properties included is</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">A</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">A</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">);</span>
+</code></pre></div>
+In addition there is a copy constructor, and for subclasses there is a constructor with arguments
+that consist of a superclass instance as well as the local members.</p>
+<h4 id="fluent">Fluent</h4>
+<p>Each property has a withX(X x) function</p>
+<div class="highlight"><pre><span></span><code><span class="n">A</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">A</span><span class="p">().</span><span class="na">withX</span><span class="p">(</span><span class="n">x</span><span class="p">).</span><span class="na">withY</span><span class="p">(</span><span class="n">y</span><span class="p">);</span>
+</code></pre></div>
+<h4 id="fluent-functional-builder">Fluent functional builder</h4>
+<p>A static builder that takes a functional argument.</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">A</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">A</span><span class="p">.</span><span class="na">createA</span><span class="p">(</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="n">b</span><span class="p">.</span><span class="na">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
+<span class="w">         </span><span class="n">b</span><span class="p">.</span><span class="na">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y</span><span class="p">;</span>
+<span class="w">         </span><span class="p">}</span>
+<span class="w">      </span><span class="p">);</span>
+</code></pre></div>
+It should be noted that this style becomes most desirable when there are attributes 
+which themselves are of a non-primitive type.</p>
+<h2 id="serializing-models">Serializing Models</h2>
+<p>As well as all the individual Enum, ObjectType, and DataType classes, there is
+an overall ${modelname}Model class generated, that is intended to act as 
+a 'container' for the individual elements. This is especially useful in the case
+where the model has references, as then there are some convenience methods for dealing with the
+automatic setting of reference IDs if necessary.</p>
+<h3 id="functions-for-adding-content">Functions for adding content</h3>
+<p>For each of the concrete objectTypes in the model there is
+an overloaded <code>addContent()</code> method, which will add the content to the
+overall instance and find any references.</p>
+<p>Once all the content has been added, then there is a <code>processReferences()</code> method
+which will go through the whole model and automatically assign IDs for any
+references that do not already have them.</p>
+<p>At this point the overall model object is suitable to be serialized.</p>
+<p>On reading in a model instance, it is possible to extract any top level ObjectTypes
+with the <code>public &lt;T&gt; List&lt;T&gt; getContent(Class&lt;T&gt; c)</code> method.</p>
+<div class="admonition note">
+<p class="admonition-title">contained references</p>
+<p>There is some provisional support for "contained references" when cloning an object - the API for this 
+is subject to change, but an example is used in <a href="https://github.com/ivoa/vo-dml/blob/53cf97613b4201d9bb72863fa8f132ff5650c17b/tools/gradletooling/sample/src/test/java/org/ivoa/dm/lifecycle/LifeCycleDetailedTest.java#L100">copyTest</a> using the <code>createContext()</code> and <code>updateClonedReferences()</code> methods either side of an object clone with a copy constructor.</p>
+</div>
+<p>Finally, there is a static <code>public static boolean hasReferences()</code> method which
+can be used to check if the model has any references - if it does not then much of the
+machinery above (apart from the JAXBContext) is necessary, and individual ObjectTypes may be
+written.</p>
+<p>The <a href="https://github.com/ivoa/vo-dml/tree/master/tools/gradletooling/sample/src/test/java/org/ivoa/dm/sample/catalog/SourceCatalogueTest.java">unit tests</a> for this project show most of the various code features being used</p>
+<h3 id="xml-serialization">XML Serialization</h3>
+<p>A static function to create a suitable JAXBContext is present
+<div class="highlight"><pre><span></span><code><span class="n">JAXBContext</span><span class="w"> </span><span class="n">jc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MyModel</span><span class="p">.</span><span class="na">contextFactory</span><span class="p">();</span>
+</code></pre></div></p>
+<h3 id="json-serialisation">JSON Serialisation</h3>
+<p>The JSON serialization is implemented with the <a href="https://github.com/FasterXML/jackson">Jackson</a> library</p>
+<p>A suitable ObjectMapper is obtained with
+<div class="highlight"><pre><span></span><code><span class="n">ObjectMapper</span><span class="w"> </span><span class="n">mapper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MyModel</span><span class="p">.</span><span class="na">jsonMapper</span><span class="p">();</span>
+</code></pre></div></p>
+<h2 id="reading-and-writing-from-rdbs">Reading and Writing from RDBs</h2>
+<p>The generated code has JPA annotations to allow storing in RDBs with compliant systems.</p>
+<p>Operations are not in general cascaded into references - so that the references need to be explicitly managed. In most cases this will be the "natural" way to do things 
+for the model - however at creation time it might be inconvenient to do this so that there is a method
+<code>persistRefs(jakarta.persistence.EntityManager _em)</code> on the model that will do a deep persist of any references in the child objects, which in turn then will allow an error free persist of the content. Note that in general it is only possible to run the persistRefs once all of the content has been added to the model, and only for the first time a reference is created - for subsequent updates of the model it will be necessary to manage the references manually. </p>
+<p>In general collections are marked for lazy loading, and as a convenience there is a <code>forceLoad()</code>
+method generated that will do a deep walk of all the collections in a particular type, which will force the loading of the whole instance tree if that is desired.</p>
+<p>This extra JPA functionality is described by the <a href="https://github.com/ivoa/vo-dml/tree/master/runtime/java/src/main/java/org/ivoa/vodml/jpa/JPAManipulations.java">JPAManipulations</a> interface.</p>
+<h3 id="composition-helpers">Composition Helpers</h3>
+<p>Some convenience methods are created on the object that is the parent of compositions to make dealing with JPA updates easier.</p>
+<p><div class="highlight"><pre><span></span><code><span class="kd">class</span> <span class="nc">X</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">replaceInY</span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">Y</span><span class="w"> </span><span class="n">_p</span><span class="p">)</span><span class="w"> </span><span class="p">{...}</span>
+<span class="p">}</span>
+</code></pre></div>
+Where Y is a composition type and the instance _p is not in the current JPA context (e.g has been deserialized from JSON), then
+the assuming that the deserialized object contains a valid database key, the member of the composition will be updated in a way that is suitable for a JPA merge.</p>
+<p>Internally this makes use of another convenience function </p>
+<p><div class="highlight"><pre><span></span><code><span class="kd">class</span> <span class="nc">Y</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">updateUsing</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Y</span><span class="w"> </span><span class="n">other</span><span class="p">){...}</span>
+<span class="p">}</span>
+</code></pre></div>
+that will update this with all the values from other.</p>
+<h3 id="embeddable-datatypes">Embeddable dataTypes</h3>
+<p>The most natural way to represent dataTypes in JPA is as embeddable, this means that they do
+not have a separate "identity" and are simply represented as columns within the parent entity table.
+The problem with this is that JPA does not specifically allow inheritance of embeddables (though nor does it disallow the use). 
+As a consequence the support for inherited embeddables is not uniform in JPA providers.</p>
+<p>Hibernate seems to support the concept of embeddable hierarchies reasonably well by
+naturally using the <code>@MappedSuperclass</code> annotation - although there is an irritation in that 
+the full flexibility of having optional attributes that are dataTypes is not supported as all columns are 
+made non-nullable - a bug has been submitted https://hibernate.atlassian.net/browse/HHH-14818</p>
+<h3 id="tap-schema">TAP schema</h3>
+<p>The TAP schema is available as an XML serialization according to the <a href="https://github.com/ivoa/TAPSchemaDM">TAPSchemaDM</a> using 
+<div class="highlight"><pre><span></span><code><span class="n">Model</span><span class="p">.</span><span class="na">TAPSchema</span><span class="p">();</span>
+</code></pre></div></p>
+<h2 id="testing-models">Testing models</h2>
+<p>The java runtime has a number of <a href="https://github.com/ivoa/vo-dml/tree/master/runtime/java/src/main/java/org/ivoa/vodml/testing">base classes</a> that aid the testing of model instances - there is an <a href="https://github.com/ivoa/vo-dml/tree/master/tools/gradletooling/sample/src/test/java/org/ivoa/dm/notstccoords/CoordsModelTest.java">example for the mock coords model</a>.
+Although it is not obvious from the source code presented because most of the behaviour is inherited
+from the base test class, this test will actually</p>
+<ul>
+<li>round trip the model instance to JSON</li>
+<li>round trip the model instance to XML</li>
+<li>validate the model instance</li>
+</ul>
+<p>simply by running</p>
+<div class="highlight"><pre><span></span><code>gradle<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
+<p>will generate the actual model code (if not already done) and run the tests as long as</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">tasks</span><span class="p">.</span><span class="na">test</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">useJUnitPlatform</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div>
+is set up in the <code>build.gradle.kts</code> file.</p>
+<h2 id="general-interfaces">General interfaces</h2>
+<p>Much of the functionality described above is defined in two interfaces
+<a href="https://github.com/ivoa/vo-dml/blob/master/runtime/java/src/main/java/org/ivoa/vodml/ModelManagement.java">ModelManagement</a> an 
+instance of which can be obtained with the <code>management()</code> method on the model class and
+<a href="https://github.com/ivoa/vo-dml/blob/master/runtime/java/src/main/java/org/ivoa/vodml/ModelDescription.java">ModelDescription</a> an
+instance of which can be obtained with the <code>description()</code> method on the model class.
+These interfaces allow generic model handling code to be written.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tabs", "content.action.edit"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

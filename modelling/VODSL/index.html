@@ -1,0 +1,2056 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../modellingIntro/">
+      
+      
+        <link rel="next" href="../EclipseVODSL/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>VODSL - VO-DML Tools Guide</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vodsl" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="VO-DML Tools Guide" class="md-header__button md-logo" aria-label="VO-DML Tools Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            VO-DML Tools Guide
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VODSL
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ivoa/vo-dml" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Installation/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Transformers/" class="md-tabs__link">
+          
+  
+  
+  Derived Products
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../modellingIntro/" class="md-tabs__link">
+          
+  
+  
+  Writing Models
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../designIntro/" class="md-tabs__link">
+          
+  
+  
+  Model Design
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="VO-DML Tools Guide" class="md-nav__button md-logo" aria-label="VO-DML Tools Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    VO-DML Tools Guide
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ivoa/vo-dml" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../QuickStart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Derived Products
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Derived Products
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Transformers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introduction
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Binding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Binding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Documentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JavaCodeGeneration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Java Generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PythonCodeGeneration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Serialization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Serialization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Writing Models
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Writing Models
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../modellingIntro/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introduction
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VODSL
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VODSL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#vodsl-support-in-the-gradle-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VODSL support in the gradle tools
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VODSL support in the gradle tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-vodsl-from-existing-vo-dml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating VODSL from existing VO-DML
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vodsl-language" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VODSL language
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VODSL language">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#model-declaration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model Declaration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Packages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Types
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#primitives" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Primitives
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enumerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enumerations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#datatypes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DataTypes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#objecttypes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ObjectTypes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiplicities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multiplicities
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#references-and-compositions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        References and Compositions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subsetting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Subsetting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scoping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scoping
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#full-example-of-vo-dsl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Full example of VO-DSL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rationale-for-vodsl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rationale for VODSL
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rationale for VODSL">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#relationship-to-vo-dml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relationship to VO-DML
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../EclipseVODSL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Eclipse Editor
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UML/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../TransformingToVODML/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generation from other sources
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Model Design
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Model Design
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../designIntro/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introduction
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ModelStructure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Tips
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Validation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Vocabularies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vocabularies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CaseHandling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Case Handling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#vodsl-support-in-the-gradle-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VODSL support in the gradle tools
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VODSL support in the gradle tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-vodsl-from-existing-vo-dml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating VODSL from existing VO-DML
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vodsl-language" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VODSL language
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VODSL language">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#model-declaration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model Declaration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Packages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Types
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#primitives" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Primitives
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enumerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enumerations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#datatypes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DataTypes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#objecttypes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ObjectTypes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiplicities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multiplicities
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#references-and-compositions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        References and Compositions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subsetting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Subsetting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scoping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scoping
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#full-example-of-vo-dsl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Full example of VO-DSL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rationale-for-vodsl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rationale for VODSL
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rationale for VODSL">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#relationship-to-vo-dml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relationship to VO-DML
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/ivoa/vo-dml/edit/master/doc/guide/modelling/VODSL.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="vodsl">VODSL</h1>
+<h2 id="vodsl-support-in-the-gradle-tools">VODSL support in the gradle tools</h2>
+<p>There is a <code>vodslToVodml</code> task that will convert models authored in <a href="https://www.ivoa.net/documents/Notes/VODSL/">vodsl</a> into standard VO-DML.</p>
+<p>the configurable properties within the vodml extension are;</p>
+<ul>
+<li>vodslDir - the default is <code>src/main/vodsl</code></li>
+<li>vodslFiles - this is set by default to be all the <code>*.vodsl</code> files in the vodslDir, but can be individually set.</li>
+</ul>
+<p>the task will write the VO-DML files into the <code>vodmlDir</code></p>
+<p>Any dependencies that have VO-DML models within them will have their VO-DML automatically converted to VODSL
+and placed in the <code>build/tmp</code> directory. Any target VODSL files will have to explicitly include the dependencies with a relative path into that directory.</p>
+<p>If you want to have the VO-DML generated automatically from the VODSL rather than running this task manually, then</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">tasks</span><span class="p">.</span><span class="na">named</span><span class="p">(</span><span class="s">&quot;vodmlJavaGenerate&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">dependsOn</span><span class="p">(</span><span class="s">&quot;vodslToVodml&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+in the <code>build.gradle.kts</code> file would run the task before the Java generation for instance.</p>
+<h3 id="creating-vodsl-from-existing-vo-dml">Creating VODSL from existing VO-DML</h3>
+<p>If it is desired to create VODSL from some existing VO-DML then there is a special task that can be run from the
+commandline with arguments (i.e. does not have to be configured in the <code>build.gradle</code> file as it would not be a repeated part of the workflow)
+The task has the <code>--dml</code> parameter to indicate the input VO-DML file and the <code>--dsl</code> parameter to indicate the output VODSL file.</p>
+<p><div class="highlight"><pre><span></span><code>gradle<span class="w"> </span>vodmlToVodsl<span class="w"> </span>--dml<span class="o">=</span>models/sample/sample/vo-dml/Sample.vo-dml.xml<span class="w"> </span>--dsl<span class="o">=</span>test.vodsl<span class="w"> </span>
+</code></pre></div>
+The transformation attempts to be faithful, but the generated VODSL is likely to need some manual editing to clean it up. As stated above, this transformation is expected to be a "one-time" operation as although the generation of VO-DML from VODSL is well defined, the reverse has some areas of possible ambiguity especially with VO-DML that has been created not using this toolkit.</p>
+<h2 id="vodsl-language">VODSL language</h2>
+<p>The VODSL language use the same underlying meta-model as VO-DML but uses a mapping to a syntax that
+makes it easier for humans to write by hand. It uses a general
+C/Java-like syntax with the following characteristics;</p>
+<ul>
+<li>
+<p>pairs of curly braces representing grouping</p>
+</li>
+<li>
+<p>attribute declarations ending with semi-colons <code>;</code></p>
+</li>
+<li>
+<p>line comments introduced by <code>// comment</code></p>
+</li>
+<li>
+<p>block comments <code>/* comment */</code></p>
+</li>
+<li>
+<p>keywords</p>
+<pre><code>model,author,include,package,abstract,primitive,dtype,
+otype,as,ordered,composition,enum,references,semantic,
+subset,title,iskey,ofRank
+</code></pre>
+</li>
+<li>
+<p>attibute names precede their types</p>
+</li>
+<li>
+<p><code>"documentation strings"</code> are enforced for all types</p>
+</li>
+<li>
+<p>multiplicities are introduced by <code>@</code></p>
+</li>
+</ul>
+<p>The syntax of various parts of the language are described in the
+following sections. For a fuller description of the semantics of the
+language, the VO-DML standard itself should be consulted.</p>
+<h3 id="model-declaration">Model Declaration</h3>
+<p>The model declaration includes the name of the model its version
+followed by a description and then a number of authors.</p>
+<div class="highlight"><pre><span></span><code>model example (0.1) &quot;description here&quot; 
+   author &quot;Paul Harrison&quot;
+   author &quot;An Other&quot;
+
+   include &quot;IVOA-v1.0.vodsl&quot;
+</code></pre></div>
+<p>It will almost always be the case that there should be an include
+statement that includes the standard IVOA VO-DML base model which
+defines a number of fundamental primitive types. There can be additonal
+includes to re-use parts of other models.</p>
+<h3 id="packages">Packages</h3>
+<p>Packages may be used to partition the namespace in a model. Is is not
+required that all definitions live in a package as there is an assumed
+“unnamed” which exists at the top-level of the model. Packages may be
+nested.</p>
+<div class="highlight"><pre><span></span><code>package p &quot;package&quot; {
+    package n &quot;nested package&quot; {
+
+    }
+}
+</code></pre></div>
+<p>Note that the above fragment is not actually legal without the inner
+package containing a type definition.</p>
+<h3 id="types">Types</h3>
+<p>Types are defined by starting with the particular type keyword. Where
+appropriate this might be preceded by <code>abstract</code> and if the type is a
+sub-type of another type then after the type name the supertype is
+indicated with <code>-&gt;</code>.</p>
+<pre><code>abstract otype ad1 -&gt; base "an abstract subtype "{  
+}
+</code></pre>
+<h4 id="primitives">Primitives</h4>
+<div class="highlight"><pre><span></span><code>primitive angle &quot;another primitive&quot;
+</code></pre></div>
+<p>note the lack of a semi-colon at the end of this declaration.</p>
+<h4 id="enumerations">Enumerations</h4>
+<div class="highlight"><pre><span></span><code>enum options &quot;an enum&quot; {
+    val1 &quot;first option&quot;,
+    val2 &quot;second option&quot;
+}   
+</code></pre></div>
+<h4 id="datatypes">DataTypes</h4>
+<p>DataTypes are defined with the “dtype” keyword. This definition also
+introduces the syntax for attribute definitions, which are defined
+between the curly braces of the main DataType definition.</p>
+<div class="highlight"><pre><span></span><code>dtype myQuant -&gt; ivoa:RealQuantity &quot;a flagged quantity&quot; {
+            flag : ivoa:boolean &quot;the flag&quot; ;
+}
+</code></pre></div>
+<h4 id="objecttypes">ObjectTypes</h4>
+<p>ObjectTypes are defined with the “otype” keyword.</p>
+<div class="highlight"><pre><span></span><code>otype o1 {
+         /* the following attribute is a &#39;natural key&#39; for the otype */
+           name : ivoa:string iskey &quot;the identifier&quot;;
+               bv : ivoa:anyURI  &quot;Description&quot;;
+            /* note use of ^ to be able to 
+                    re-use reserved word.*/ 
+            ^author: ivoa:string &quot;author&quot;; 
+}
+</code></pre></div>
+<p>This definition also introduces the <code>iskey</code> attribute modifier to hint
+to any code generation systems that this attribute should be regarded as
+a “natural key” for the ObjectType and used rather than generating a
+surrogate key.</p>
+<h3 id="multiplicities">Multiplicities</h3>
+<div class="highlight"><pre><span></span><code>otype multiplicities &quot;the @ sign introduces a multiplicity&quot;
+{
+    m1 : ivoa:integer @? &quot;0 or 1&quot;;
+    m2 : ivoa:integer @* &quot;0 or many&quot;;
+    m3 : ivoa:integer @+ &quot;1 or many&quot;;
+    m4 : ivoa:integer @[2] &quot;twice (as an array?)&quot;;
+}
+</code></pre></div>
+<h3 id="references-and-compositions">References and Compositions</h3>
+<p>This example shows the syntax for references and compositions and the
+difference in their semantics.</p>
+<div class="highlight"><pre><span></span><code> /*  this referred to otype is not affected by the lifecycle
+   of other instances in the model */
+ otype ReferedTo { 
+    test1: ivoa:integer &quot;&quot;;
+ }
+
+/* instances of this contained class will only live
+   as long as the containing instance.  */
+otype Contained  {
+    test2: ivoa:string &quot;&quot;;
+ }
+
+otype RCTest { 
+    ref references ReferedTo &quot;&quot;;
+    contained : Contained @+ as composition &quot;&quot;;
+}
+</code></pre></div>
+<h3 id="subsetting">Subsetting</h3>
+<p>Subsetting is an advanced VO-DML feature, where an attribute of a
+subtype can be declared to be a particular sub-type of the supertype’s
+attribute type.</p>
+<div class="highlight"><pre><span></span><code>otype subs -&gt; base {
+    /* note that the requirement to refer to the q attribute of base */
+   subset base.q as myQuant; //the type of base.q is a supertype of myQuant
+}
+</code></pre></div>
+<h3 id="scoping">Scoping</h3>
+<p>Type names need to be brought into scope by including the model where
+they are defined, and thereafter they can be referred to by prefixing
+the type name with the model name followed by a colon. Types defined in
+the same model as where they are referred to do not need this model
+prefix.</p>
+<p>If the type is futher namepspaced by packages, then to refer to a type
+in a package the enclosing package names should be separated by periods.
+The use of a period to separate name parts is also necessary when
+referring to an attribute of a type - e.g. when subsetting.[^2]</p>
+<h2 id="full-example-of-vo-dsl">Full example of VO-DSL</h2>
+<p>The following is the full model from which the sections above took
+snippets.</p>
+<div class="highlight"><pre><span></span><code>/*
+ *  created on 25 Feb 2022 
+ */
+
+ model example (0.1) &quot;description here&quot; 
+   author &quot;Paul Harrison&quot;
+   author &quot;An Other&quot;
+
+   include &quot;IVOA-v1.0.vodsl&quot;
+
+package p &quot;top level package&quot; {
+    package n &quot;nested package&quot; {
+     primitive angle &quot;another primitive&quot;     
+    }
+}
+
+enum options &quot;an enum&quot; {
+    val1 &quot;first option&quot;,
+    val2 &quot;second option&quot;
+}   
+
+dtype aQuant -&gt; ivoa:Quantity &quot;an angle quantity&quot; {
+            value : p.n.angle  &quot;angle&quot;;
+}
+
+abstract otype base {
+            q : ivoa:Quantity &quot;a quantity&quot;;   
+}
+
+abstract otype ad1 -&gt; base &quot;an abstract subtype &quot;{  
+}
+
+otype o1 {
+         /* the following attribute is a &#39;natural key&#39; for the otype */
+           name : ivoa:string iskey &quot;the identifier&quot;;
+               bv : ivoa:anyURI  &quot;Description&quot;;
+            /* note use of ^ to be able to 
+                    re-use reserved word.*/ 
+            ^author: ivoa:string &quot;author&quot;; 
+}
+
+dtype myQuant -&gt; ivoa:RealQuantity &quot;a flagged quantity&quot; {
+            flag : ivoa:boolean &quot;the flag&quot; ;
+}
+
+/* it should be noted in this example that
+ * @* and @+ are not &quot;recommended&quot; for attributes - it 
+   might be better to use composition of otypes - but this is 
+   not always the case */
+otype multiplicities &quot;the @ sign introduces a multiplicity&quot;
+{
+    m1 : ivoa:integer @? &quot;0 or 1&quot;;
+    m2 : ivoa:integer @* &quot;0 or many&quot;;
+    m3 : ivoa:integer @+ &quot;1 or many&quot;;
+    m4 : ivoa:integer @[2] &quot;twice (as an array?)&quot;;
+}
+
+ /*  this referred to otype is not affected by the lifecycle
+   of other instances in the model */
+ otype ReferedTo { 
+    test1: ivoa:integer &quot;&quot;;
+ }
+
+/* instances of this contained class will only live
+   as long as the containing instance.  */
+otype Contained  {
+    test2: ivoa:string &quot;&quot;;
+ }
+
+/* this example references and contains the above types */
+otype RCTest { 
+    ref references ReferedTo &quot;&quot;;
+    contained : Contained @+ as composition &quot;&quot;;
+}
+
+/* an example of subsetting */
+otype subs -&gt; base {
+    /* note that the requirement to refer to the q attribute of base */
+   subset base.q as myQuant; //the type of base.q is a supertype of myQuant
+}
+
+/* an example of the syntax for a constraint */
+otype constrained {
+            val : ivoa:integer &quot;just using a natural language constraint&quot; 
+              &lt; &quot;greater than 5&quot; as Natural&gt; ;
+        }
+</code></pre></div>
+<h2 id="rationale-for-vodsl">Rationale for VODSL</h2>
+<p>VO-DML is the IVOA standard language for creating data models and the
+standard document details the reasons behind its creation and the
+advantages of using such a language over other more general languages
+such as UML. The standard representation of VO-DML is XML and as such it
+is difficult to edit model instances directly, especially as the XML is
+a direct representation of the VO-DML meta model. The most common
+practice envisaged by the standard is that data models are generally
+created by visual UML tools and then the UML converted to VO-DML via the
+XMI interchange format. This approach does work, but it has several
+disadvantages.</p>
+<ol>
+<li>
+<p>UML tools tend to have poor interoperability despite the standard
+    XMI interchange format</p>
+<ul>
+<li>
+<p>There needs to be a specialized XMI $\Rightarrow$ VO-DML
+  conversion written for each UML tool (and sometimes for each
+  version of a particular tool).</p>
+</li>
+<li>
+<p>It is difficult to “import” an existing VO-DML definition into a
+  particular UML tool.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Because of this poor interoperability between UML tools it is
+    difficult for authors to collaborate on the creation of a data model</p>
+<ul>
+<li>
+<p>even if they are using the same tool and use XMI in a version
+  control system, there is</p>
+</li>
+<li>
+<p>if they are using different UML tools, comprehending what might be
+  small incremental changes in the source becomes impossible.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Commercial UML tools tend to be expensive, and the free ones less
+    feature rich.</p>
+</li>
+</ol>
+<p>These difficulties were the inspiration for creating VODSL as a new
+route to producing VO-DML with the following characteristics;</p>
+<ul>
+<li>
+<p>Text based for easy management by version control systems.</p>
+</li>
+<li>
+<p>Concise, so that it is easy for direct comprehension by humans.</p>
+</li>
+</ul>
+<p>The VODSL language and its associated tools are version controlled in
+<a href="https://github.com/pahjbo/vodsl">GitHub</a> as well as some
+<a href="https://github.com/ivoa/vodsl-models">examples</a> of models expressed in
+VODSL.</p>
+<h3 id="relationship-to-vo-dml">Relationship to VO-DML</h3>
+<p>The <a href="../modellingIntro/">diagram in the introduction</a> shows the role that VODSL plays in
+the VO-DML creation ecosystem - The yellow arrows indicate
+transformations that can be made programmatically between the different
+formats, and the green arrows indicate ways in which the source can be
+edited and the tools that can be used to create or edit that particular
+representation. It shows that VODSL has a similar role to XMI/UML in the
+creation of VO-DML, although with one significant advantage in that
+there is an exact transformation VO-DML$\Rightarrow$VODSL.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">VODSL</th>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">UML</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Easier to perform global refactoring</td>
+<td style="text-align: left;">vs</td>
+<td style="text-align: left;">Easier to visualise the whole model</td>
+</tr>
+<tr>
+<td style="text-align: left;">Instant validation[^1]</td>
+<td style="text-align: left;">vs</td>
+<td style="text-align: left;">Full validation only after XSLT transformation of XMI</td>
+</tr>
+<tr>
+<td style="text-align: left;">Easier to merge contributions from two authors textually</td>
+<td style="text-align: left;">vs</td>
+<td style="text-align: left;">Rely on UML tool to have model merging facility</td>
+</tr>
+</tbody>
+</table>
+<p>[^1]: when using the Eclipse plug-in</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tabs", "content.action.edit"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
