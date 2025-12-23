@@ -5,12 +5,14 @@ this guide is intended to offer practical assistance to those who want to
 use VO-DML to create data models, and then create code that can serialize those 
 models to various formats. 
 
+!!! quote "[Linus Torvalds](https://lwn.net/Articles/193245/)"
+    Good programmers worry about data structures and their relationships.
+
 The purpose of writing data models is two-fold
 
 * It defines concepts for a particular domain in an abstract way that provides a common discourse about meanings within that domain.
 * It provides a machine-readable representation that can be transformed in various ways that allow 
   instances of the model to be transported, stored and queried.
-
 
 [Start Modelling](Installation.md) and learn about [model design](modelling/designIntro.md)
 
