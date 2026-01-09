@@ -119,7 +119,7 @@ that allow for successful JSON round tripping.
     </xsl:template>
 
   <xsl:template match="description">
-    "description" : "<xsl:value-of select="normalize-space(translate(description,$dq,$sq))"/>"
+    "description" : "<xsl:value-of select="normalize-space(translate(current(),$dq,$sq))"/>"
   </xsl:template>
   <xsl:template name="defnName">
     "<xsl:value-of select="substring-after(vf:asvodmlref(current()),':')"/>"
