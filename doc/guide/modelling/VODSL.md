@@ -393,3 +393,7 @@ there is an exact transformation VO-DML$\Rightarrow$VODSL.
 
 [^1]: when using the Eclipse plug-in
 
+### References
+
+* [Initial presentation at IVOA Interop (2014)](https://wiki.ivoa.net/internal/IVOA/InterOpMay2014DM/VODSL.pdf)
+* [IVOA note (2022)](https://www.ivoa.net/documents/Notes/VODSL/)
