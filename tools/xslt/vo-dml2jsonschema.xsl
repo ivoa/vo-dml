@@ -165,10 +165,8 @@ that allow for successful JSON round tripping.
     "type": "object"
     ,<xsl:apply-templates select="description"/>
     ,"properties" : {
-    "$comment" : "placeholder to make commas easier!"
-      <!--  as properties optional by default - just define this  <xsl:if test="not(extends)"> &lt;!&ndash; impl perhaps vf:hasSubTypes(vf:asvodmlref(current())) what we really want and then do special things for the "content" types &ndash;&gt;-->
+    "$comment" : "allow @type for circumstances where necessary because context does determine the object type."
     ,"@type" : { "type": "string"}
-<!--    </xsl:if>-->
     <xsl:apply-templates select="attribute"/>
     <xsl:apply-templates select="composition"/>
     <xsl:apply-templates select="reference"/>
@@ -197,7 +195,9 @@ that allow for successful JSON round tripping.
         ,<xsl:apply-templates select="description"/>
         ,"properties" : {
         "$comment" : "placeholder to make commas easier!"
+        <xsl:if test="not(extends) and vf:hasSubTypes(vf:asvodmlref(current()))">
         ,"@type" : { "type": "string"}
+        </xsl:if>
         <xsl:apply-templates select="attribute|reference"/>
         }
         <xsl:call-template name="required"/>
@@ -212,8 +212,12 @@ that allow for successful JSON round tripping.
 
 
     <xsl:template name="required">
-      ,"required": [
+        ,"required": [
       <xsl:variable name="req" as="xsd:string*">
+          <!-- require @type when a base type is being emitted -->
+          <xsl:if test="not(current()/extends) and vf:hasSubTypes(vf:asvodmlref(current()))">
+              <xsl:sequence select="concat($dq,'@type',$dq)"/>
+          </xsl:if>
           <xsl:for-each select="(attribute|reference|composition)">
               <xsl:if test="number(multiplicity/minOccurs) = 1"> <!-- TODO need to think about array -->
                   <xsl:sequence select="concat($dq,name,$dq)"/>
