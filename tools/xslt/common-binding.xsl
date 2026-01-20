@@ -388,14 +388,16 @@
 
     </xsl:function>
 
-    <xsl:function name="vf:jsonType" as="xsd:string">
+    <!-- create a fully nested JSON type -->
+    <xsl:function name="vf:jsonType" as="xsd:string*">
         <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable  name="el" select="$models/key('ellookup',$vodml-ref)"/>
         <xsl:choose>
             <xsl:when test="vf:hasMapping($vodml-ref,'json')">
                 <xsl:variable name="mappedtype" select="vf:findmapping($vodml-ref,'json')"/>
                 <xsl:choose>
                     <xsl:when test="$mappedtype/@format">
-                        <xsl:value-of select="concat($dq,'format',$dq,': ',$dq,$mappedtype/@format,$dq)"/>
+                        <xsl:value-of select="concat($dq,'type',$dq,': ',$dq,'string',$dq,$nl,',',$dq,'format',$dq,': ',$dq,$mappedtype/@format,$dq)"/>
                     </xsl:when>
                     <xsl:when test="$mappedtype/@built-in">
                         <xsl:value-of select="concat($dq,'type',$dq,': ',$dq,$mappedtype/text(),$dq)"/>
@@ -404,6 +406,20 @@
                         <xsl:value-of select="concat($dq,'$ref',$dq,': ',$dq,$mappedtype/text(),$dq)"/>
                     </xsl:otherwise>
                 </xsl:choose>
+            </xsl:when>
+            <xsl:when test="$el/extends and vf:typeRole($vodml-ref) = 'primitiveType'">
+                <xsl:choose>
+                    <xsl:when test="vf:findTypeDetail($vodml-ref)/isJSONProperty = 'true'">
+                        <xsl:value-of select="vf:jsonType($el/extends/vodml-ref)"/>
+                    </xsl:when>
+                    <xsl:otherwise><xsl:text>
+                        "type": "object"
+                        ,"properties" : {
+                        "value" : {</xsl:text><xsl:value-of select="vf:jsonType($el/extends/vodml-ref)"/>}
+                        }
+                    </xsl:otherwise>
+                </xsl:choose>
+
             </xsl:when>
             <xsl:otherwise>
                 <xsl:variable name="modelname" select="substring-before($vodml-ref,':')"/>

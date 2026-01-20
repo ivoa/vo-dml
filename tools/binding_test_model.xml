@@ -37,6 +37,9 @@
         <rdb inheritance-strategy="single-table"
              discriminatorColumnLength="64"
              listConcatenationDelimiter="|"/>
+        <type-detail vodml-id="ivoid">
+            <isJSONProperty>false</isJSONProperty>
+        </type-detail>
 
     </model>
     <model>

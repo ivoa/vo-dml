@@ -242,14 +242,11 @@ that allow for successful JSON round tripping.
 
 
   <xsl:template match="primitiveType">
-      <xsl:if test="not(vf:hasMapping(vf:asvodmlref(current()),'json'))">
+      <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
       ,<xsl:call-template name="defnName"/> : {
-        "type": "object"
-        ,"properties" : {
-            "value" : "string"
-         }
+          <xsl:value-of select="vf:jsonType($vodml-ref)"/>
+
       }
-      </xsl:if>
   </xsl:template>
 
 

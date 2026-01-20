@@ -903,11 +903,12 @@ package <xsl:value-of select="$path"/>;
 
   <xsl:template match="primitiveType" mode="class">
     <xsl:param name="path"/>
+    <xsl:variable name="vodml-ref"  select="vf:asvodmlref(current())"/>
 
     <xsl:variable name="valuetype">
       <xsl:choose>
         <xsl:when test="extends">
-          <xsl:value-of select="vf:JavaType(vf:baseTypeIds(vf:asvodmlref(current()))[last()])"/>
+          <xsl:value-of select="vf:JavaType(vf:baseTypeIds($vodml-ref)[last()])"/>
         </xsl:when>
         <xsl:otherwise>
             <xsl:message>Primitive type <xsl:value-of select="name"/> is being represented as a String - in general it is probably best to specialize primitive types with the binding mechanism to get desired representation/behavious</xsl:message>
@@ -966,6 +967,9 @@ package <xsl:value-of select="$path"/>;
          * Return the representation of this primitive (value)
          * @return string representation of this primitive( value)
          */
+        <xsl:if test="vf:findTypeDetail($vodml-ref)/isJSONProperty = 'true'">
+            @com.fasterxml.jackson.annotation.JsonValue
+        </xsl:if>
         public final <xsl:value-of select="$valuetype"/> value() {
             return this.value;
         }

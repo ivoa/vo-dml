@@ -16,7 +16,7 @@ otype Refa  ""
 otype Refb  ""
 {
 	name: ivoa:string iskey "";
-	val : ivoa:string "";
+	val : MyModel:ivoid "";
 	
 }
 

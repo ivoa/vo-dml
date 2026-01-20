@@ -323,14 +323,21 @@ In general it must be used to map primitive types to various languages, but it c
      </xsd:annotation>
      
         <xsd:all>
-           <xsd:element name="isAttribute" maxOccurs="1" minOccurs="0">
+           <xsd:element name="isAttribute" type="xsd:boolean" maxOccurs="1" minOccurs="0" default="false">
               <xsd:annotation>
                  <xsd:documentation>
                     is an attribute in the XML serialization - the default is for it to be represented as an element if this emply type is not present.
                  </xsd:documentation>
               </xsd:annotation>
-              <xsd:complexType></xsd:complexType>
+             
            </xsd:element>
+           <xsd:element name="isJSONProperty" type="xsd:boolean"  maxOccurs="1" minOccurs="0" default="false">
+           <xsd:annotation>
+               <xsd:documentation>if the type is a primitive, then represent as a property directly, rather than the default which is to 
+               represent it as an object with a "value"" property</xsd:documentation>
+           </xsd:annotation>
+           </xsd:element>   
+           
            <xsd:element name="length" type="xsd:string" maxOccurs="1" minOccurs="0">
               <xsd:annotation>
                  <xsd:documentation>
@@ -353,7 +360,7 @@ In general it must be used to map primitive types to various languages, but it c
 
 IMPL - this could be put into the code - especially as the number of JSON built-in types is small</xsd:documentation>
               </xsd:annotation></xsd:attribute>
-        </xsd:extension>
+         </xsd:extension>
      </xsd:simpleContent>
   </xsd:complexType>
 

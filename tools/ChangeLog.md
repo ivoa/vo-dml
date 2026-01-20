@@ -124,6 +124,7 @@
 * 0.5.27 and 0.5.28 - bugfixes
 * 0.5.29
   * make tapschema generation include the imported models
-  * 
+  * add an initial entity relationship diagram for the tapschema
+  * better handling of primitive types in JSON schema - added possibility of the value being direct property rather than an object with a "value" property.
 
 N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass in same hierarchy - still waiting for a solution
