@@ -1,6 +1,6 @@
 # Introduction
 
-VO-DML is defined formally in an [IVOA Standard](https://www.ivoa.net/documents/VODML/index.html), but that standard concentrates on 
+VO-DML is defined in an [IVOA Standard](https://www.ivoa.net/documents/VODML/index.html), but that standard concentrates on 
 the formal definition of the metamodel, whereas
 this guide is intended to offer practical assistance to those who want to 
 use VO-DML to create their own data models, and then create code that can serialize those 
@@ -19,7 +19,7 @@ The purpose of writing data models is two-fold
 
 ## Features of the VO-DML tools
 
-The this project defined the VO-DML tools for working with VO-DML data models - the features of these tools include
+This project defines the VO-DML tools for working with VO-DML data models - the features of these tools include
 
 * easy to install - create a dependency on this project rather than checking it out [see template](https://github.com/ivoa/DataModelTemplate)
 * [model validation](modelling/Validation.md)
