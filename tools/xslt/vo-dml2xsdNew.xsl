@@ -120,10 +120,10 @@ note that this schema is substantially different from the era when this code was
             </xsd:sequence>
           </xsd:complexType>
         </xsd:element>
-        <xsl:apply-templates select="objectType" mode="test"/>
-        <xsl:apply-templates select="dataType" mode="test"/>
-        <xsl:apply-templates select="primitiveType" mode="test"/>
-        <xsl:apply-templates select="enumeration" mode="test"/>
+        <xsl:apply-templates select="objectType" mode="declare"/>
+        <xsl:apply-templates select="dataType" mode="declare"/>
+        <xsl:apply-templates select="primitiveType" mode="declare"/>
+        <xsl:apply-templates select="enumeration" mode="declare"/>
 
         <xsl:apply-templates select="package"/>
 
@@ -154,21 +154,14 @@ note that this schema is substantially different from the era when this code was
 
 
   <xsl:template match="package">
-    <xsl:apply-templates select="objectType" mode="test"/>
-    <xsl:apply-templates select="dataType" mode="test"/>
-    <xsl:apply-templates select="primitiveType" mode="test"/>
-    <xsl:apply-templates select="enumeration" mode="test"/>
+    <xsl:apply-templates select="objectType" mode="declare"/>
+    <xsl:apply-templates select="dataType" mode="declare"/>
+    <xsl:apply-templates select="primitiveType" mode="declare"/>
+    <xsl:apply-templates select="enumeration" mode="declare"/>
     <xsl:apply-templates select="package"/>
   </xsl:template>
 
-  <xsl:template match="objectType|dataType|enumeration|primitiveType" mode="test">
-    <xsl:variable name="mappedtype" select="vf:findmapping(vf:asvodmlref(current()),'xsd')"/>
-
-    <xsl:if test="not($mappedtype) or $mappedtype = ''" >
-      <xsl:apply-templates select="." mode="declare"/>
-    </xsl:if>
-  </xsl:template>
-
+ 
   <xsl:template match="objectType" mode="declare">
 
     <xsl:variable name="typename">
@@ -297,13 +290,28 @@ note that this schema is substantially different from the era when this code was
 
 
   <xsl:template match="primitiveType" mode="declare">
+    <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
     <xsd:simpleType>
       <xsl:attribute name="name">
-        <xsl:call-template name="localTypeName"/>
+        <xsl:choose>
+          <xsl:when test="vf:XMLIgnorePackages($modelname)">
+            <xsl:value-of select="name"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="substring-after($vodml-ref,':')"/>
+          </xsl:otherwise>
+        </xsl:choose>
       </xsl:attribute>
       <xsl:call-template name="add_annotation"/>
-      <xsd:restriction base="xsd:string">
-      </xsd:restriction>
+      <xsl:variable name="mappedtype" select="vf:findmapping($vodml-ref,'xsd')"/>
+      <xsl:choose>
+        <xsl:when test="$mappedtype != ''">
+          <xsd:restriction base="{$mappedtype}"/>
+        </xsl:when><!-- FIXME what about when primitive extends other primitive -->
+        <xsl:otherwise>
+          <xsd:restriction base="xsd:string"/> <!-- assume some type of string -->
+        </xsl:otherwise>
+      </xsl:choose>
     </xsd:simpleType>&cr;&cr;
   </xsl:template>
 

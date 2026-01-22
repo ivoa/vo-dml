@@ -37,6 +37,10 @@
         <rdb inheritance-strategy="single-table"
              discriminatorColumnLength="64"
              listConcatenationDelimiter="|"/>
+        <type-mapping>
+            <vodml-id>ivoid</vodml-id>
+            <xsd-type>xsd:anyURI</xsd-type>
+        </type-mapping>
         <type-detail vodml-id="ivoid">
             <isJSONProperty>true</isJSONProperty>
         </type-detail>
