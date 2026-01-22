@@ -38,7 +38,7 @@
              discriminatorColumnLength="64"
              listConcatenationDelimiter="|"/>
         <type-detail vodml-id="ivoid">
-            <isJSONProperty>false</isJSONProperty>
+            <isJSONProperty>true</isJSONProperty>
         </type-detail>
 
     </model>
