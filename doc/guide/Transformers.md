@@ -10,34 +10,40 @@ The most basic form of transformation is to make [human-readable documentation](
 
 ## Code Generation
 
+The following diagram illustrates the various ways that the vo-dml tools transform the vo-dml model into other representations - The actual tool commands are shown in bold against the transformation.
+
 ```plantuml format="svg_inline"
-!include <archimate/Archimate>
-Technology_Artifact(vodsl, "VODSL Description")
-Technology_Artifact(vodml, "VO-DML Description")
-Rel_Flow(vodsl, vodml, "vodslToVodml")
-Technology_SystemSoftware(tools, "VM-DML tools")
-Technology_Artifact(xsd, "XML Schema")
-Technology_Artifact(jsons, "JSON Schema")
-Technology_Artifact(tap, "TAP Schema")
-Rel_Flow(vodml, xsd, "vodmlSchema")
-Rel_Flow(vodml, jsons, "vodmlSchema")
-Rel_Flow(vodml, tap, "vodmlSchema")
-Technology_Artifact(java, "Java Code")
-Technology_Artifact(python, "Python Code")
-Rel_Flow(vodml, java, "vodmlJava")
-Rel_Flow(vodml, python, "vodmlPython")
-Technology_Artifact(xml, "XML Model Instance")
-Technology_Artifact(json, "JSON Model Instance")
-Technology_Artifact(rdb, "RDB Model Instance")
-Rel_Flow(java, xml, "serializes")
-Rel_Flow(java, json, "serializes")
-Rel_Flow(java, rdb, "stores")
-Rel_Flow(python, xml, "serializes")
-Rel_Flow(python, json, "serializes")
-Rel_Flow(python, rdb, "stores")
-Rel_Association_dir(xml,xsd,"valid against")
-Rel_Association_dir(json,jsons,"valid against")
-Rel_Association_dir(rdb,tap,"valid against")
+skinparam componentStyle rectangle
+
+artifact "VODSL Model Description" as vodsl
+artifact "**VO-DML Model Description**" as vodml #lightgreen
+artifact "XML Schema" as xsd
+artifact "JSON Schema" as jsons
+artifact "TAP Schema" as tap
+artifact "Java Code" as java #Salmon
+artifact "Python Code" as python #Salmon
+artifact "XML Model Instance" as xml #YellowGreen
+artifact "JSON Model Instance" as json #YellowGreen
+artifact "RDB Model Instance" as rdb #YellowGreen
+
+
+vodsl --> vodml : **vodslToVodml**
+vodml --> xsd : **vodmlSchema**
+vodml --> jsons : **vodmlSchema**
+vodml --> tap : **vodmlSchema**
+vodml --> java : **vodmlJava**
+vodml --> python : **vodmlPython**
+
+java --> xml : //serializes//
+java --> json : //serializes//
+java --> rdb : //stores//
+python --> xml : //serializes//
+python --> json : //serializes//
+python --> rdb : //stores//
+
+xml ..> xsd : valid against
+json ..> jsons : valid against
+rdb ..> tap : valid against
 ```
 
 
