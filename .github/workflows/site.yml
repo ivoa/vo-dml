@@ -24,7 +24,7 @@ jobs:
           path: .cache
           restore-keys: |
             mkdocs-material-
-      - run: pip install mkdocs-material
+      - run: pip install mkdocs-material plantuml-markdown
       - name: Deploy site
         working-directory: ./doc
         run: mkdocs gh-deploy --force
