@@ -27,7 +27,7 @@ The schema for the serializations can be created with the `gradle vodmlSchema` c
 
 ## XML
 
-For the [small example model](https://github.com/ivoa/vo-dml/tree/master/models/sample/test/serializationExample.vodsl), the overall model object will produce xml like
+For the [small example model](https://github.com/ivoa/vo-dml/tree/main/models/sample/test/serializationExample.vodsl), the overall model object will produce xml like
 
 ```xml
 <ser:myModelModel xmlns:ser="http://ivoa.net/vodml/sample/serialization" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >

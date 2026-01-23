@@ -43,13 +43,15 @@ To keep models manageable, VO-DML uses:
 
 * [Interop Nov 2021 - start of new tools packaging](https://wiki.ivoa.net/internal/IVOA/InterOpNov2021DM/VO-DML_TOOLS_PAH.pdf)
 * [Interop May 2022 - intro to new VO-DML 1.1 constructs](https://wiki.ivoa.net/internal/IVOA/InterOpApr2022DM/VO-DML_TOOLS_Update_PAH.pdf)
-* [Interop Oct 2022 - serialization and Python cocde generation](https://wiki.ivoa.net/internal/IVOA/InterOpOct2022DM/VO-DML_TOOLS_Update2_PAH.pdf)
+* [Interop Oct 2022 - serialization and Python code generation](https://wiki.ivoa.net/internal/IVOA/InterOpOct2022DM/VO-DML_TOOLS_Update2_PAH.pdf)
 * [Interop May 2023 - VO-DML Tools demo](https://wiki.ivoa.net/internal/IVOA/IntropMay3023DM/VO-DML_TOOLS_DEMO_PAH.pdf)
+
 
 
 ### VO-DML 1.1 presentations
 
 * [Interop Nov 2024](https://wiki.ivoa.net/internal/IVOA/InterOpNov2024DM/VO-DML_Extensions2_PAH.pdf)
+* * [Interop Nov 2025 - relation between VO-DML and vodml tools](https://wiki.ivoa.net/internal/IVOA/InterOpNov2025DM/VO-DML_1.1Update2025_PAH.pdf)
 
 
 

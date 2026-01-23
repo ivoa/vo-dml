@@ -123,7 +123,7 @@ VODML Tooling TODO
   * It might be best to generate schema even for imported models as it is difficult to decide what to do for `"additionalProperties": false` without context of how a particular type is being derived from.
 
 # Binding refactoring
-* jpa-atomic vs built-in
+* jpa-atomic vs built-in vs database type...
 * perhaps encapsulate the 
 * still keep the separation of mapping vs style?
 * UseRefInColumnName (is it just opposite of NaturalJoin)

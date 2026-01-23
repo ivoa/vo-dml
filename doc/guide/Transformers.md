@@ -3,11 +3,43 @@ Model Transformation
 
 A VO-DML transformation is something that takes the model and expresses it in another way. The parameters that can influence how a particular transformation can occur is specified in a [binding](Binding.md).
 
+
 ## Documentation
 
 The most basic form of transformation is to make [human-readable documentation](Documentation.md).
 
 ## Code Generation
+
+```plantuml format="svg_inline"
+!include <archimate/Archimate>
+Technology_Artifact(vodsl, "VODSL Description")
+Technology_Artifact(vodml, "VO-DML Description")
+Rel_Flow(vodsl, vodml, "vodslToVodml")
+Technology_SystemSoftware(tools, "VM-DML tools")
+Technology_Artifact(xsd, "XML Schema")
+Technology_Artifact(jsons, "JSON Schema")
+Technology_Artifact(tap, "TAP Schema")
+Rel_Flow(vodml, xsd, "vodmlSchema")
+Rel_Flow(vodml, jsons, "vodmlSchema")
+Rel_Flow(vodml, tap, "vodmlSchema")
+Technology_Artifact(java, "Java Code")
+Technology_Artifact(python, "Python Code")
+Rel_Flow(vodml, java, "vodmlJava")
+Rel_Flow(vodml, python, "vodmlPython")
+Technology_Artifact(xml, "XML Model Instance")
+Technology_Artifact(json, "JSON Model Instance")
+Technology_Artifact(rdb, "RDB Model Instance")
+Rel_Flow(java, xml, "serializes")
+Rel_Flow(java, json, "serializes")
+Rel_Flow(java, rdb, "stores")
+Rel_Flow(python, xml, "serializes")
+Rel_Flow(python, json, "serializes")
+Rel_Flow(python, rdb, "stores")
+Rel_Association_dir(xml,xsd,"valid against")
+Rel_Association_dir(json,jsons,"valid against")
+Rel_Association_dir(rdb,tap,"valid against")
+```
+
 
 Here the model is transformed into source code in various languages, which can then be used to hold instances
 of the data model and then [serialize](Serialization.md) in various formats - currently supported

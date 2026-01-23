@@ -14,14 +14,14 @@ that can be hand edited with [yEd](https://www.yworks.com/products/yed) for nice
 
 ![yed](images/yed.png)
 
-## Site
+## Static Site
 
 ```shell
 gradle vodmlSite
 ```
 
 Will generate a whole static site describing the model that is intended to be
-further processed with [mkdocs](https://www.mkdocs.org) tool that is configured with the [material theme](https://squidfunk.github.io/mkdocs-material/).
+further processed with the [mkdocs](https://www.mkdocs.org) tool that is configured with the [material theme](https://squidfunk.github.io/mkdocs-material/).
 
 The site is generated at in the `build/generated/docs/vodml-site/` directory (which can be 
 changed with the `outputSiteDir` setting). If you are creating full documentation site, 
@@ -49,6 +49,17 @@ nav:
       - Javadoc: generated/javadoc
 ```
 
+### ER Diagram
+
+In addition to the other diagrams the site documentation command will generate a plantuml definition of the entity relationship diagram for the TAP schema for the model. To include the diagram in the site documentation the following can be used on a 
+page.
+
+`````
+ ``` plantuml format="svg_inline" source="./generated/schema/TemplateDM-v1.vo-dml.tap.plantuml"
+ ```
+`````
+
+### Example Site
 
 The [DataModel Template](https://github.com/ivoa/DataModelTemplate/) has an example setup, and the [ProposalDM](https://ivoa.github.io/ProposalDM/) has a mature example with many objects.
 

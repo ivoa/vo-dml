@@ -44,3 +44,9 @@ markdown_extensions:
           format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.snippets:
       url_download: true
+  - plantuml_markdown:
+      #note that base_dir has to be specified for plantuml as it does not pick it up from mkdocs config
+      base_dir: guide
+      format: svg
+      remove_inline_svg_size: false
+      cachedir: build/generated/plantuml

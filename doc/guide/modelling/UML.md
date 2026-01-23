@@ -22,4 +22,4 @@ tasks.register("UmlToVodml", net.ivoa.vodml.gradle.plugin.XmiTask::class.java) {
     description = "convert UML to VO-DML"
 }
 ```
-The available conversion scripts are those in the [xslt](https://github.com/ivoa/vo-dml/tree/master/tools/xslt) directory with `xmi2vo-dml` as part of their name.
+The available conversion scripts are those in the [xslt](https://github.com/ivoa/vo-dml/tree/main/tools/xslt) directory with `xmi2vo-dml` as part of their name.
