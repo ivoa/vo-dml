@@ -300,7 +300,7 @@ In general it must be used to map primitive types to various languages, but it c
         </xsd:annotation>
         <xsd:simpleContent>
       <xsd:extension base="PythonName">
-        <xsd:attribute name="built-in" type="xsd:boolean" default="false">
+        <xsd:attribute name="built-in" type="xsd:boolean" default="false"><!--TODO this could be just implemented in the code from known python types rather than config-->
           <xsd:annotation>
              <xsd:documentation>if this is true the type is a python built-in type and so does not need a import</xsd:documentation>
           </xsd:annotation>
@@ -331,17 +331,18 @@ In general it must be used to map primitive types to various languages, but it c
               </xsd:annotation>
              
            </xsd:element>
-           <xsd:element name="isJSONProperty" type="xsd:boolean"  maxOccurs="1" minOccurs="0" default="false">
+           <xsd:element name="isJSONObject" type="xsd:boolean"  maxOccurs="1" minOccurs="0" default="false">
            <xsd:annotation>
-               <xsd:documentation>if the type is a primitive, then represent as a property directly, rather than the default which is to 
-               represent it as an object with a "value"" property</xsd:documentation>
+               <xsd:documentation>if the type is a primitive
+               represent it as an object with a "value"" property TODO think more about the difference between derived primitives and "pure" primitives
+               the default in derived primitives is to create an object wrapper.</xsd:documentation>
            </xsd:annotation>
            </xsd:element>   
            
            <xsd:element name="length" type="xsd:string" maxOccurs="1" minOccurs="0">
               <xsd:annotation>
                  <xsd:documentation>
-                    The length of the model element - arguably this really should be some sort of constraint in the model itsellf
+                    The length of the model element - arguably this really should be some sort of constraint in the model itself
                     - it has been included here as an intermediate measure whilst a constraint system is better specified.
                  </xsd:documentation>
               </xsd:annotation>
@@ -354,12 +355,7 @@ In general it must be used to map primitive types to various languages, but it c
      <xsd:simpleContent>
         <xsd:extension base="xsd:string">
            <xsd:attribute name="format" type="xsd:string" use="optional"/>
-           <xsd:attribute name="built-in" type="xsd:boolean" use="optional" default="false">
-              <xsd:annotation>
-                 <xsd:documentation>whether the type is a JSON built-in type
-
-IMPL - this could be put into the code - especially as the number of JSON built-in types is small</xsd:documentation>
-              </xsd:annotation></xsd:attribute>
+           <!-- TODO  add more possible json type attributes , e.g. pattern etc. -->
          </xsd:extension>
      </xsd:simpleContent>
   </xsd:complexType>

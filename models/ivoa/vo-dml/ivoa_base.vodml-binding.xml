@@ -13,35 +13,35 @@
   <java-type jpa-atomic="true">Double</java-type>
   <python-type built-in="true">float</python-type>
   <xsd-type>xsd:float</xsd-type>
-  <json-type built-in="true">number</json-type>
+  <json-type >number</json-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>string</vodml-id>
   <java-type jpa-atomic="true">String</java-type>
   <python-type built-in="true">str</python-type>
   <xsd-type>xsd:string</xsd-type>
-  <json-type built-in="true">string</json-type>
+  <json-type >string</json-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>boolean</vodml-id>
   <java-type jpa-atomic="true">Boolean</java-type>
   <python-type built-in="true">boolean</python-type>
   <xsd-type>xsd:boolean</xsd-type>
-  <json-type built-in="true">boolean</json-type>
+  <json-type >boolean</json-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>integer</vodml-id>
   <java-type jpa-atomic="true">Integer</java-type>
   <python-type built-in="true">int</python-type>
   <xsd-type>xsd:int</xsd-type>
-  <json-type built-in="true">number</json-type>
+  <json-type >number</json-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>nonnegativeInteger</vodml-id>
   <java-type jpa-atomic="true">Integer</java-type>
   <python-type built-in="true">int</python-type>
   <xsd-type>xsd:nonNegativeInteger</xsd-type>
-  <json-type built-in="true">number</json-type> <!-- TODO want to express non-negative -->
+  <json-type>number</json-type> <!-- TODO want to express non-negative -->
 </type-mapping>
 <type-mapping>
   <vodml-id>anyURI</vodml-id>
@@ -60,13 +60,13 @@
   <vodml-id>decimal</vodml-id>
   <java-type>java.math.BigDecimal</java-type>
   <xsd-type>xsd:decimal</xsd-type>
-  <json-type built-in="true">number</json-type>
+  <json-type>number</json-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>rational</vodml-id>
   <java-type>org.ivoa.vodml.stdtypes.Rational</java-type>
   <xsd-type>xsd:string</xsd-type>
-  <json-type built-in="true">number</json-type><!-- FIXME -->
+  <json-type >number</json-type><!-- FIXME -->
 </type-mapping>
 <type-mapping>
   <vodml-id>complex</vodml-id>
@@ -79,8 +79,12 @@
     <vodml-id>Unit</vodml-id>
     <java-type primitive-value-field="value" >org.ivoa.vodml.stdtypes.Unit</java-type>
     <xsd-type>xsd:string</xsd-type>
+    <json-type>string</json-type>
   </type-mapping>
 
+  <type-detail vodml-id="Unit">
+    <isJSONObject>true</isJSONObject>
+  </type-detail>
 </model>
 
 </m:mappedModels>
