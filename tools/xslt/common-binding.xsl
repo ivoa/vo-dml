@@ -388,37 +388,48 @@
 
     </xsl:function>
 
-    <!-- create a fully nested JSON type -->
+
+    <xsl:function name="vf:isJsonPrimitive" as="xsd:boolean">
+        <xsl:param name="type" as="xsd:string"/>
+        <xsl:sequence select="$type=('string','number','boolean')"/>
+    </xsl:function>
+    <!-- create a fully nested JSON decl -->
     <xsl:function name="vf:jsonType" as="xsd:string*">
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:variable  name="el" select="$models/key('ellookup',$vodml-ref)"/>
         <xsl:choose>
+
             <xsl:when test="vf:hasMapping($vodml-ref,'json')">
                 <xsl:variable name="mappedtype" select="vf:findmapping($vodml-ref,'json')"/>
+                <xsl:variable name="jtype">
                 <xsl:choose>
-                    <xsl:when test="$mappedtype/@format">
-                        <xsl:value-of select="concat($dq,'type',$dq,': ',$dq,'string',$dq,$nl,',',$dq,'format',$dq,': ',$dq,$mappedtype/@format,$dq)"/>
-                    </xsl:when>
-                    <xsl:when test="$mappedtype/@built-in">
+                    <xsl:when test="vf:isJsonPrimitive($mappedtype/text())">
                         <xsl:value-of select="concat($dq,'type',$dq,': ',$dq,$mappedtype/text(),$dq)"/>
+                        <xsl:for-each select="$mappedtype/@*">
+                            <xsl:value-of select="concat(',',$dq,current()/name(),$dq,': ',$dq,current(),$dq)"/>
+                        </xsl:for-each>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="concat($dq,'$ref',$dq,': ',$dq,$mappedtype/text(),$dq)"/>
+                        <xsl:value-of select="$mappedtype"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="vf:findTypeDetail($vodml-ref)/isJSONObject = 'true'">
+                        <xsl:text>
+                        "type": "object"
+                        ,"properties" : {
+                        "value" : {</xsl:text><xsl:value-of select="$jtype"/>}
+                        }
+
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$jtype"/>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
             <xsl:when test="$el/extends and vf:typeRole($vodml-ref) = 'primitiveType'">
-                <xsl:choose>
-                    <xsl:when test="vf:findTypeDetail($vodml-ref)/isJSONProperty = 'true'">
-                        <xsl:value-of select="vf:jsonType($el/extends/vodml-ref)"/>
-                    </xsl:when>
-                    <xsl:otherwise><xsl:text>
-                        "type": "object"
-                        ,"properties" : {
-                        "value" : {</xsl:text><xsl:value-of select="vf:jsonType($el/extends/vodml-ref)"/>}
-                        }
-                    </xsl:otherwise>
-                </xsl:choose>
+                <xsl:value-of select="vf:jsonType($el/extends/vodml-ref)"/>
 
             </xsl:when>
             <xsl:otherwise>
@@ -430,6 +441,7 @@
 
 
     </xsl:function>
+
 
     <xsl:function name="vf:jsonReferenceType" as="xsd:string">
     <xsl:param name="vodml-ref" as="xsd:string"/>

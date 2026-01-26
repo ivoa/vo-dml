@@ -967,7 +967,7 @@ package <xsl:value-of select="$path"/>;
          * Return the representation of this primitive (value)
          * @return string representation of this primitive( value)
          */
-        <xsl:if test="vf:findTypeDetail($vodml-ref)/isJSONProperty = 'true'">
+        <xsl:if test="not(vf:findTypeDetail($vodml-ref)/isJSONObject = 'true')">
             @com.fasterxml.jackson.annotation.JsonValue
         </xsl:if>
         public final <xsl:value-of select="$valuetype"/> value() {

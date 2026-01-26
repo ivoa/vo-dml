@@ -241,7 +241,7 @@ that allow for successful JSON round tripping.
   </xsl:template>
 
 
-  <xsl:template match="primitiveType">
+  <xsl:template match="primitiveType[not(vf:isJsonPrimitive(vf:asvodmlref(.)))]">
       <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
       ,<xsl:call-template name="defnName"/> : {
           <xsl:value-of select="vf:jsonType($vodml-ref)"/>
@@ -249,6 +249,9 @@ that allow for successful JSON round tripping.
       }
   </xsl:template>
 
+    <xsl:template match="primitiveType[vf:isJsonPrimitive(vf:asvodmlref(.))]">
+        <!-- do nothing - already mapped to primitive-->
+    </xsl:template>
 
 
   <xsl:template match="attribute[multiplicity/maxOccurs=1]" >

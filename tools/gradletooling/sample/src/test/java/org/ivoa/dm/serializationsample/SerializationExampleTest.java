@@ -27,7 +27,7 @@ private Refb refb;
 @Override
   public MyModelModel createModel() {
     themodel = new MyModelModel();
-    refa = new Refa("a value");
+    refa = new Refa(new AltURL("urn:value"));
     refb = new Refb("naturalkey", new Ivoid("ivo:val"));
 
     List<BaseC> clist = List.of(new Dcont("N1", "dval"), new Econt("cube", "eval"));

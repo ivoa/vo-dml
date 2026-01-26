@@ -72,7 +72,7 @@
   <vodml-id>complex</vodml-id>
   <java-type>org.ivoa.vodml.stdtypes.Complex</java-type>
   <xsd-type>xsd:float</xsd-type> <!--FIXME this is not ok for XML! -->
-  <!-- FIXME - this really needs base JSON schema -->
+  <json-type>"type": "object","properties" : {"re":"number","im":"number"}</json-type>
 </type-mapping>
 
   <type-mapping>

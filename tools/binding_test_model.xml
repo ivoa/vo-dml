@@ -40,9 +40,10 @@
         <type-mapping>
             <vodml-id>ivoid</vodml-id>
             <xsd-type>xsd:anyURI</xsd-type>
+            <json-type format="uri">string</json-type>
         </type-mapping>
         <type-detail vodml-id="ivoid">
-            <isJSONProperty>true</isJSONProperty>
+            <isJSONObject>false</isJSONObject>
         </type-detail>
 
     </model>
