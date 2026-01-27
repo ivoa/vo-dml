@@ -396,6 +396,7 @@
     <!-- create a fully nested JSON decl -->
     <xsl:function name="vf:jsonType" as="xsd:string*">
         <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:param name="jsonmode"/>
         <xsl:variable  name="el" select="$models/key('ellookup',$vodml-ref)"/>
         <xsl:choose>
 
@@ -429,13 +430,20 @@
                 </xsl:choose>
             </xsl:when>
             <xsl:when test="$el/extends and vf:typeRole($vodml-ref) = 'primitiveType'">
-                <xsl:value-of select="vf:jsonType($el/extends/vodml-ref)"/>
+                <xsl:value-of select="vf:jsonType($el/extends/vodml-ref,$jsonmode)"/>
 
             </xsl:when>
             <xsl:otherwise>
                 <xsl:variable name="modelname" select="substring-before($vodml-ref,':')"/>
                 <xsl:variable name="root" select="vf:jsonBaseURI($modelname)"/>
-                <xsl:value-of select="concat($dq,'$ref',$dq,': ',$dq,$root,'#/$defs/',substring-after($vodml-ref,':'),$dq)"/>
+                <xsl:choose>
+                    <xsl:when test="$jsonmode = 'openapi'">
+                        <xsl:value-of select="concat($dq,'$ref',$dq,': ',$dq,'#/components/schemas/',substring-after($vodml-ref,':'),$dq)"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="concat($dq,'$ref',$dq,': ',$dq,$root,'#/$defs/',substring-after($vodml-ref,':'),$dq)"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:otherwise>
         </xsl:choose>
 
@@ -444,11 +452,12 @@
 
 
     <xsl:function name="vf:jsonReferenceType" as="xsd:string">
-    <xsl:param name="vodml-ref" as="xsd:string"/>
-    <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:param name="jsonmode"/>
+        <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
         <xsl:choose>
             <xsl:when test="$el/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
-                <xsl:sequence select="vf:jsonType($el/attribute[constraint[ends-with(@xsi:type,':NaturalKey')]]/datatype/vodml-ref)"/>
+                <xsl:sequence select="vf:jsonType($el/attribute[constraint[ends-with(@xsi:type,':NaturalKey')]]/datatype/vodml-ref,$jsonmode)"/>
             </xsl:when>
                 <xsl:otherwise>
                     <xsl:sequence select="concat($dq,'type',$dq,':',$dq,'number',$dq)"/>
