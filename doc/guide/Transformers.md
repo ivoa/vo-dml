@@ -79,6 +79,7 @@ The schema files are named by adjusting the suffixes in the following fashion - 
 
 * ```model.vo-dml.xsd``` for the XML Schema
 * ```model.vo-dml.json``` for the JSON Schema
+* ```model.vo-dml.yaml``` for the OpenAPI Schema
 * ```model.vo-dml.tap.xml``` for the TAP Schema
 
 These schema files will automatically be included within the jar file for the model, so that instance validation can be automatically done without reference to external files.
