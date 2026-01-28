@@ -34,14 +34,14 @@
   <java-type jpa-atomic="true">Integer</java-type>
   <python-type built-in="true">int</python-type>
   <xsd-type>xsd:int</xsd-type>
-  <json-type >number</json-type>
+  <json-type >integer</json-type>
 </type-mapping>
 <type-mapping>
   <vodml-id>nonnegativeInteger</vodml-id>
   <java-type jpa-atomic="true">Integer</java-type>
   <python-type built-in="true">int</python-type>
   <xsd-type>xsd:nonNegativeInteger</xsd-type>
-  <json-type>number</json-type> <!-- TODO want to express non-negative -->
+  <json-type>integer</json-type> <!-- TODO want to express non-negative -->
 </type-mapping>
 <type-mapping>
   <vodml-id>anyURI</vodml-id>
@@ -66,7 +66,7 @@
   <vodml-id>rational</vodml-id>
   <java-type>org.ivoa.vodml.stdtypes.Rational</java-type>
   <xsd-type>xsd:string</xsd-type>
-  <json-type >number</json-type><!-- FIXME -->
+  <json-type>number</json-type><!-- FIXME -->
 </type-mapping>
 <type-mapping>
   <vodml-id>complex</vodml-id>
@@ -74,14 +74,12 @@
   <xsd-type>xsd:float</xsd-type> <!--FIXME this is not ok for XML! -->
   <json-type>"type": "object","properties" : {"re":"number","im":"number"}</json-type>
 </type-mapping>
-
   <type-mapping>
     <vodml-id>Unit</vodml-id>
     <java-type primitive-value-field="value" >org.ivoa.vodml.stdtypes.Unit</java-type>
     <xsd-type>xsd:string</xsd-type>
     <json-type>string</json-type>
   </type-mapping>
-
   <type-detail vodml-id="Unit">
     <isJSONObject>true</isJSONObject>
   </type-detail>
