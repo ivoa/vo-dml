@@ -129,5 +129,7 @@
     * in JSON schema - added possibility of the value being direct property rather than an object with a "value" property.
   * creation of OpenAPI schema
     * including preliminary discriminator support https://spec.openapis.org/oas/v3.1.2.html#discriminator-object
+* 0.5.30
+  * 
 
 N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass in same hierarchy - still waiting for a solution
