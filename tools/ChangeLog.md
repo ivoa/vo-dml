@@ -125,6 +125,9 @@
 * 0.5.29
   * make tapschema generation include the imported models
   * add an initial entity relationship diagram for the tapschema
-  * better handling of primitive types in JSON schema - added possibility of the value being direct property rather than an object with a "value" property.
+  * better handling of primitive types
+    * in JSON schema - added possibility of the value being direct property rather than an object with a "value" property.
+  * creation of OpenAPI schema
+    * including preliminary discriminator support https://spec.openapis.org/oas/v3.1.2.html#discriminator-object
 
 N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass in same hierarchy - still waiting for a solution

@@ -105,15 +105,7 @@ In general where the type of an object cannot be inferred unambiguously from the
 
 ### OpenAPI
 
-The JSON schema produced by the tooling can be converted into a YAML file suitable for the "schema" part of an OpenAPI definition with
-
-```shell
-jq '.["$defs"]|{components:{schemas:.}} |  walk(if type == "object" and has("$comment") then del(.["$comment"]) else . end)|(.. | objects| select(has("$ref")) ).["$ref"] |= sub("^[^#]+#/\\$defs";"#/components/schemas")'| yq -p json -o yaml
-```
-assuming that the standard input of the above is the JSON schema and the standard output is saved to a yaml file.[^1]
-
-
-[^1]: download the transformation as [jq script file](./jsonToOpenAPI.jq)
+The `vodmlSchema` command will also produce a yaml file which is suitable for inclusion as the [Schema object](https://spec.openapis.org/oas/v3.1.2.html#schema-object) in an [OpenAPI](https://spec.openapis.org/oas/) interface definition. There is support for polymorphism via [discriminators](https://spec.openapis.org/oas/v3.1.2.html#discriminator-object) that is not available to JSON schema.
 
 ## Relational Databases
 The object relational mapping has been done with the capabilities offered by JPA. The general design 

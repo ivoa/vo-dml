@@ -24,5 +24,5 @@ This project defines the VO-DML tools for working with VO-DML data models - the 
 * easy to install - create a dependency on this project rather than checking it out [see template](https://github.com/ivoa/DataModelTemplate)
 * [model validation](modelling/Validation.md)
 * [model documentation](Documentation.md)
-* auto-generation of XML, JSON and TAP Schema
+* auto-generation of XML, JSON, OpenAPI and TAP Schema
 * auto-generation of [Java](JavaCodeGeneration.md) and [Python](PythonCodeGeneration.md) code that [serializes](Serialization.md) according to these schema.
