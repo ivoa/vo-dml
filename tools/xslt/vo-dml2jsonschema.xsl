@@ -80,11 +80,7 @@ that allow for successful JSON round tripping.
         ,"$defs" : {
         "$comment" : "placeholder to make commas easier!"
 
-        <xsl:apply-templates select="objectType" />
-        <xsl:apply-templates select="dataType" />
-        <xsl:apply-templates select="primitiveType"/>
-        <xsl:apply-templates select="enumeration"/>
-        <xsl:apply-templates select="package"/>
+        <xsl:apply-templates select="(primitiveType|objectType|dataType|enumeration|package)" />
         }
 
       }
@@ -97,16 +93,12 @@ that allow for successful JSON round tripping.
         "schemas" : {
         "$comment" : "placeholder to make commas easier!"
 
-        <xsl:apply-templates select="objectType" />
-        <xsl:apply-templates select="dataType" />
-        <xsl:apply-templates select="primitiveType"/>
-        <xsl:apply-templates select="enumeration"/>
-        <xsl:apply-templates select="package"/>
-        }
+        <xsl:for-each select="vo-dml:model/import/name">
+            <xsl:apply-templates select="$models/vo-dml:model[name=current()]/(primitiveType|objectType|dataType|enumeration|package)"/>
+        </xsl:for-each>
+        <xsl:apply-templates select="(primitiveType|objectType|dataType|enumeration|package)"/>
 
-        }
-
-        }
+        }}}
     </xsl:template>
 
     <xsl:template match="vo-dml:model" mode="refs">
@@ -160,11 +152,7 @@ that allow for successful JSON round tripping.
 
 
   <xsl:template match="package">
-    <xsl:apply-templates select="objectType"/>
-    <xsl:apply-templates select="dataType" />
-    <xsl:apply-templates select="primitiveType"/>
-    <xsl:apply-templates select="enumeration"/>
-    <xsl:apply-templates select="package"/>
+    <xsl:apply-templates select="(primitiveType|objectType|dataType|enumeration|package)"/>
   </xsl:template>
 
 
@@ -192,14 +180,27 @@ that allow for successful JSON round tripping.
     </xsl:if>
     "type": "object"
     ,<xsl:apply-templates select="description"/>
+    <xsl:if test="$jsonmode = 'openapi' and (not(current()/extends) and vf:hasSubTypes(vf:asvodmlref(current())))">
+        <!-- IMPL this is using the https://redocly.com/learn/openapi/discriminator#allof-for-inheritance pattern -->
+      ,"discriminator": {"propertyName": "@type","mapping": {
+        <xsl:for-each select="vf:subTypes(vf:asvodmlref(current()))">
+            <xsl:variable name="thisvodml-ref" select="vf:asvodmlref(current())"/>
+            <xsl:if test="position() != 1">
+                <xsl:value-of select="concat(',',$nl)"/>
+            </xsl:if>
+            <xsl:value-of select="concat($dq,$thisvodml-ref,$dq,':',substring-after(vf:jsonType($thisvodml-ref,$jsonmode),':'))"/>
+
+        </xsl:for-each>
+        }}
+    </xsl:if>
     ,"properties" : {
-    "$comment" : "allow @type for circumstances where necessary because context does determine the object type."
-    ,"@type" : { "type": "string"}
-    <xsl:apply-templates select="attribute"/>
-    <xsl:apply-templates select="composition"/>
-    <xsl:apply-templates select="reference"/>
-    <xsl:if test="not(attribute/constraint[ends-with(@xsi:type,':NaturalKey')])">
-    ,"_id" : { "type": "number"}
+    "$comment" : "placeholder to make commas easier"
+     <xsl:if test="not(extends)">
+      ,"@type" : { "type": "string", "description":"UType as type discriminator"}
+     </xsl:if>
+      <xsl:apply-templates select="(attribute|composition|reference)"/>
+    <xsl:if test="not(attribute/constraint[ends-with(@xsi:type,':NaturalKey')]) and not(extends)">
+    ,"_id" : { "type": "integer", "description":"surrogate key"}
     </xsl:if>
       }
     <xsl:call-template name="required"/>

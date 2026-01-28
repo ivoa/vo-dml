@@ -391,7 +391,7 @@
 
     <xsl:function name="vf:isJsonPrimitive" as="xsd:boolean">
         <xsl:param name="type" as="xsd:string"/>
-        <xsl:sequence select="$type=('string','number','boolean')"/>
+        <xsl:sequence select="$type=('string','number','boolean','integer')"/>
     </xsl:function>
     <!-- create a fully nested JSON decl -->
     <xsl:function name="vf:jsonType" as="xsd:string*">
@@ -407,6 +407,7 @@
                     <xsl:when test="vf:isJsonPrimitive($mappedtype/text())">
                         <xsl:value-of select="concat($dq,'type',$dq,': ',$dq,$mappedtype/text(),$dq)"/>
                         <xsl:for-each select="$mappedtype/@*">
+                            <!-- TODO need to check if the escaping of backslashes is happening properly in pattern -->
                             <xsl:value-of select="concat(',',$dq,current()/name(),$dq,': ',$dq,current(),$dq)"/>
                         </xsl:for-each>
                     </xsl:when>
