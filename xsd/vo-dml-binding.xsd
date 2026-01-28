@@ -352,10 +352,26 @@ In general it must be used to map primitive types to various languages, but it c
   </xsd:complexType>
 
   <xsd:complexType name="JsonMapping">
+      <xsd:annotation>
+          <xsd:documentation>the json mapping for a type </xsd:documentation>
+      </xsd:annotation>
      <xsd:simpleContent>
         <xsd:extension base="xsd:string">
-           <xsd:attribute name="format" type="xsd:string" use="optional"/>
-           <!-- TODO  add more possible json type attributes , e.g. pattern etc. -->
+            <xsd:attribute name="format" type="xsd:string" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        same as the format property in JSON schema
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="pattern" type="xsd:string" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        same as the pattern property in JSON schema
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <!-- TODO  add more possible json type attributes -->
          </xsd:extension>
      </xsd:simpleContent>
   </xsd:complexType>
