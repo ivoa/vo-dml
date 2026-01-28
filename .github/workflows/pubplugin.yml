@@ -3,7 +3,7 @@ name: Publish Gradle Plugin
 on:
   push:
     tags:
-      - 'v*' # Triggers on tags like v1.0.0, v0.1.0-alpha, etc.
+      - 'plugin*' # Triggers on tags like v1.0.0, v0.1.0-alpha, etc.
 
 jobs:
   publish:
