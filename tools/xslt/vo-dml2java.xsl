@@ -822,9 +822,21 @@
       <xsl:apply-templates select="." mode="jpawalker"/>
       <xsl:apply-templates select="./self::objectType" mode="jpadeleter"/>
 
-<!--      <xsl:if test="local-name() eq 'dataType'">-->
-<!--          <xsl:apply-templates select="." mode="JPAConverter"/>-->
-<!--      </xsl:if>-->
+      <xsl:if test="local-name() eq 'dataType' and count(attribute|reference) != 0"> <!-- do equals and hash for dataTypes-->
+          @Override
+          public boolean equals(Object o_) {
+          if (!(o_ instanceof <xsl:value-of select="vf:capitalize(name)"/> oc_)) return false;
+          boolean retval = <xsl:if test="extends">super.equals(o_) &amp;&amp; </xsl:if>
+          <xsl:value-of select="string-join(for $w in (attribute/name|reference/name) return concat('java.util.Objects.equals(',vf:javaMemberName($w),',oc_.',vf:javaMemberName($w),')'),'  &amp;&amp; ')"/>
+           ;
+          return retval;
+          }
+
+          @Override
+          public int hashCode() {
+          return java.util.Objects.hash(<xsl:value-of select="string-join(for $w in (attribute/name|reference/name) return vf:javaMemberName($w),',')"/>);
+          }
+      </xsl:if>
 }
   </xsl:template>
 
