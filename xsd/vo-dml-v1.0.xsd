@@ -678,7 +678,6 @@ TBD continue based on VO-DML specification document.
                  </xsd:documentation>
               </xsd:annotation>
            </xsd:element>
-           <xsd:element name="UCD" type="xsd:string" minOccurs="0" maxOccurs="1"></xsd:element>
            <xsd:element name="constraint" type="Constraint" minOccurs="0" maxOccurs="1"></xsd:element><!-- TODO - allow more than one constraint? -->
         </xsd:sequence>
       </xsd:extension>
