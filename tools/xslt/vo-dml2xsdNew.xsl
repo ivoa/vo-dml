@@ -365,9 +365,6 @@ note that this schema is substantially different from the era when this code was
 
 <xsl:template match="attribute[multiplicity/maxOccurs != 1 and not(vf:XMLunwrapped(ancestor::vo-dml:model/name))]" >
     <xsd:element>
-      <xsl:attribute name="minOccurs">
-        <xsl:value-of select="multiplicity/minOccurs"/>
-      </xsl:attribute>
       <xsl:attribute name="name" >
         <xsl:choose>
           <xsl:when test="not(ends-with(name,'s'))">
