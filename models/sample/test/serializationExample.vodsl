@@ -22,7 +22,7 @@ otype Refb  ""
 
 package types "" {
 abstract otype BaseC {
-	bname: ivoa:string "" UCD "instr.calib";
+	bname: ivoa:string "";
 }
 
 otype Dcont -> BaseC {
