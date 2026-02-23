@@ -842,7 +842,14 @@
 
           @Override
           public int hashCode() {
-          return java.util.Objects.hash(<xsl:value-of select="string-join(for $w in (attribute/name|reference/name) return vf:javaMemberName($w),',')"/>);
+          <xsl:choose>
+          <xsl:when test="count(attribute|reference) != 0">
+              return <xsl:if test="extends">super.hashCode() * </xsl:if> java.util.Objects.hash(<xsl:value-of select="string-join(for $w in (attribute/name|reference/name) return vf:javaMemberName($w),',')"/>);
+          </xsl:when>
+          <xsl:otherwise>
+              return <xsl:if test="extends">super.hashCode() * </xsl:if> 17;
+          </xsl:otherwise>
+          </xsl:choose>
           }
       </xsl:if>
 }
