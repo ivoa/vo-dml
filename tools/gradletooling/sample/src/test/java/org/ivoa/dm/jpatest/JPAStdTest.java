@@ -6,6 +6,7 @@ package org.ivoa.dm.jpatest;
  */
 
 import org.ivoa.vodml.testing.AutoDBRoundTripTest;
+import org.ivoa.dm.jpatest.entity.Point;
 
 import java.util.ArrayList;
 import java.util.List;

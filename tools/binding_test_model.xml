@@ -15,6 +15,11 @@
         discriminatorColumnLength="64">
             <rdbmap vodml-id="LChild" joinColumnName="altered_join"/>
         </rdb>
+        <type-mapping>
+            <vodml-id>Point</vodml-id>
+            <java-type jpa-atomic="true" jpa-converter="org.ivoa.dm.jpatest.entity.PointConverter">org.ivoa.dm.jpatest.entity.Point</java-type>
+            <tap-type>Point</tap-type>
+        </type-mapping>
     </model>
     <model>
         <name>lifecycleTest</name>
