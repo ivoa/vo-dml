@@ -269,11 +269,27 @@ TODO similarly the scheme should be appended for table names - however this has 
         <xsl:variable name="top-el" select="$models/key('ellookup',$top-vodml-ref)"/>
         <xsl:variable name="thisModelName" select="$top-el/ancestor-or-self::vo-dml:model/name"/>
         <column>
-            <column_name><xsl:value-of select="concat(vf:schemaName($thisModelName),'.',$tableName,'.',string-join(current()/ancestor-or-self::att/@c,'_'))"/></column_name>
+            <column_name><xsl:value-of select="concat(vf:schemaName($thisModelName),'.',$tableName,'.',string-join(current()/ancestor-or-self::*/@c,'_'))"/></column_name>
             <xsl:comment>attribute from dtype</xsl:comment>
             <datatype>{vf:rdbTapType(@type)}</datatype>
             <description>{$top-el/description}</description><!-- TODO would perhaps like to include datatype description too -->
             <utype>{$top-vodml-ref}</utype> <!--FIXME almost certainly not the "correct" UType - but UTypes are broken -->
+            <indexed>{count($top-el/constraint[ends-with(@xsi:type,':NaturalKey')])> 0}</indexed>
+            <principal>false</principal><!-- TODO need a way of actually specifying this -->
+            <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
+        </column>
+    </xsl:template>
+    <xsl:template match="dt[not(*)]" mode="dtypeexpandcols">
+        <xsl:param name="tableName"/>
+        <xsl:variable name="top-vodml-ref" select="ancestor-or-self::dt[last()]/@v"/>
+        <xsl:variable name="top-el" select="$models/key('ellookup',$top-vodml-ref)"/>
+        <xsl:variable name="thisModelName" select="$top-el/ancestor-or-self::vo-dml:model/name"/>
+        <column>
+            <column_name><xsl:value-of select="concat(vf:schemaName($thisModelName),'.',$tableName,'.',string-join(current()/ancestor-or-self::att/@c,'_'))"/></column_name>
+            <xsl:comment>atomic dtype</xsl:comment>
+            <datatype>{vf:rdbTapType(@v)}</datatype>
+            <description>{$top-el/description}</description><!-- TODO would perhaps like to include datatype description too -->
+            <utype>{@v}</utype> <!--FIXME almost certainly not the "correct" UType - but UTypes are broken -->
             <indexed>{count($top-el/constraint[ends-with(@xsi:type,':NaturalKey')])> 0}</indexed>
             <principal>false</principal><!-- TODO need a way of actually specifying this -->
             <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->

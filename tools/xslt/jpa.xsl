@@ -230,6 +230,9 @@
       @jakarta.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
               </xsl:when>
               <xsl:when test="vf:findmapping(datatype/vodml-ref,'java')/@jpa-atomic">
+                  <xsl:call-template name="doEmbeddedJPA">
+                      <xsl:with-param name="nillable" select="true()"/>
+                  </xsl:call-template>
       @jakarta.persistence.Basic( optional = <xsl:apply-templates select="." mode="nullable"/> )
       @jakarta.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/>
                   <xsl:if test="vf:findTypeDetail($vodml-ref)/length">
@@ -281,7 +284,7 @@
         })
         </xsl:if>
     </xsl:template>
-    <xsl:template match="att[not(*)]" mode="doAttributeOverride">
+    <xsl:template match="att[not(*)]|att[count(descendant::*)=1 and dt]" mode="doAttributeOverride">
         <xsl:param name="nillable"/>
 
   <xsl:sequence select="concat('@jakarta.persistence.AttributeOverride(name=',$dq, string-join(current()/ancestor-or-self::att/@f,'.'),$dq,

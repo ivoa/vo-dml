@@ -777,13 +777,17 @@
 
     <xsl:function name="vf:rdbTapType" as="xsd:string">
     <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="modelName" select="substring-before($vodml-ref,':')"/>
 
      <xsl:choose>
          <xsl:when test="vf:typeRole($vodml-ref) = 'enumeration'">VARCHAR</xsl:when>
          <xsl:otherwise>
              <xsl:variable name="jtype" select="vf:JavaType($vodml-ref)"/>
-             <!-- IMPL mapping from JavaType for convenience as that will include other primitives not thought of yet - would probably need another mapping in the binding otherwise-->
+             <!-- IMPL mapping from JavaType for convenience as that will include other primitives not thought of yet - if there is explicit tap type in the binding - use that-->
              <xsl:choose>
+                 <xsl:when test="$mapping/bnd:mappedModels/model[name=$modelName]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/tap-type">
+                     <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/tap-type"/>
+                 </xsl:when>
                  <xsl:when test="$jtype=('String','org.ivoa.vodml.stdtypes.Unit')">VARCHAR</xsl:when><!-- IMPL - should really have more general mechanism in place -->
                  <xsl:when test="$jtype=('Double', 'double')">DOUBLE</xsl:when>
                  <xsl:when test="$jtype=('Integer','int')">INTEGER</xsl:when>
@@ -816,8 +820,19 @@
     <!-- IMPL this code is still template based rather than function based - it does return a new structure representing the datatypes subtrees though, so templates probably best -->
     <xsl:template match="dataType" mode="attrovercols2" >
         <dt v="{vf:asvodmlref(current())}" n="{name}">
-            <xsl:apply-templates select="(attribute|reference, vf:baseTypes(vf:asvodmlref(current()))/(attribute|reference))" mode="attrovercols2"/> <!-- this takes care of dataType inheritance should work https://hibernate.atlassian.net/browse/HHH-12790 -->
-        <!-- FIXME what about subtypes? -->
+            <xsl:choose>
+                <xsl:when test="vf:hasMapping(vf:asvodmlref(current()),'java')">
+                <xsl:variable name="pmap" select="vf:findmapping(vf:asvodmlref(current()),'java')"/>
+                    <xsl:if test="$pmap/@jpa-atomic">
+                        <xsl:attribute name="atomic" select="true()"/>
+                    </xsl:if>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:apply-templates select="(attribute|reference, vf:baseTypes(vf:asvodmlref(current()))/(attribute|reference))" mode="attrovercols2"/> <!-- this takes care of dataType inheritance should work https://hibernate.atlassian.net/browse/HHH-12790 -->
+                    <!-- FIXME what about subtypes? -->
+                </xsl:otherwise>
+            </xsl:choose>
+
         </dt>
     </xsl:template>
     <xsl:template match="objectType[vf:noTableInComposition(vf:asvodmlref(.))]" mode="attrovercols2" >
@@ -853,7 +868,7 @@
                 <xsl:choose>
                     <xsl:when test="vf:hasMapping(vf:asvodmlref(current()),'java')">
                         <xsl:variable name="pmap" select="vf:findmapping(vf:asvodmlref(current()),'java')"/>
-                        <xsl:choose>
+                        <xsl:choose><!--TODO - the idea that a type is "atomic" needs to be set higher in the mapping - generally unified -->
                             <xsl:when test="$pmap/@jpa-atomic">
                                 <xsl:attribute name="atomic" select="true()"/>
                             </xsl:when>
