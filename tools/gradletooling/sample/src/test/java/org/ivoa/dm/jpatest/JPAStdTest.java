@@ -7,6 +7,7 @@ package org.ivoa.dm.jpatest;
 
 import org.ivoa.vodml.testing.AutoDBRoundTripTest;
 import org.ivoa.dm.jpatest.entity.Point;
+import org.junit.jupiter.api.Assertions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,7 @@ public class JPAStdTest extends AutoDBRoundTripTest<JpatestModel,Long,Parent> {
 
    @Override
    public void testModel(JpatestModel jpatestModelTest) {
-
+      Parent aout = jpatestModelTest.getContent(Parent.class).get(0);
+      Assertions.assertEquals(new Point(1.5,3.0), aout.getTval().p);
    }
 }

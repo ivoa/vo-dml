@@ -98,7 +98,6 @@ dependencies {
 //    testImplementation("org.apache.derby:derby:10.14.2.0")
     compileOnly("com.google.googlejavaformat:google-java-format:1.22.0")
     //  testing with hibernate spatial
-    // Source: https://mvnrepository.com/artifact/org.locationtech.jts/jts-core
     implementation("org.locationtech.jts:jts-core:1.20.0")
     implementation("org.geolatte:geolatte-geom:1.9.0")
     implementation("org.hibernate.orm:hibernate-spatial:6.5.3.Final")

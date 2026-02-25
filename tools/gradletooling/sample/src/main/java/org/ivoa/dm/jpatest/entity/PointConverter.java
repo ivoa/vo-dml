@@ -20,6 +20,6 @@ public class PointConverter implements AttributeConverter<Point, org.geolatte.ge
 
    @Override
    public Point convertToEntityAttribute(org.geolatte.geom.Point<G2D> g2DPoint) {
-      return new Point(g2DPoint.getPosition().getCoordinate(0), g2DPoint.getPosition().getCoordinate(0));
+      return new Point(g2DPoint.getPosition().getCoordinate(0), g2DPoint.getPosition().getCoordinate(1));
    }
 }
