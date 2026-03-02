@@ -10,13 +10,20 @@
     mechanism. It should be included after the $binding variable containing the list of binding files has been set -->
     <xsl:import href="common-binding.xsl"/>
 
-    <!--read the mapping from the bindings -->
-    <xsl:variable name="mapping">
+    <!--read the mapping from the bindings - might include duplicates -->
+    <xsl:variable name="rawmapping">
         <bnd:mappedModels>
             <xsl:for-each select="tokenize($binding,',')">
                 <xsl:copy-of
                         select="document(normalize-space(.))/bnd:mappedModels/model" />
             </xsl:for-each>
+        </bnd:mappedModels>
+    </xsl:variable>
+
+    <!-- make the mappings unique -->
+    <xsl:variable name="mapping">
+        <bnd:mappedModels>
+            <xsl:sequence select="$rawmapping/bnd:mappedModels/model[not(name = following-sibling::model/name)]"/>
         </bnd:mappedModels>
     </xsl:variable>
 
