@@ -73,7 +73,7 @@ import javax.inject.Inject
 
              // Check if the response is OK (status code 200)
              if (response.statusCode() != 200) {
-                 throw  RuntimeException("cannot load vocabulary : " + response.statusCode());
+                 throw  RuntimeException("cannot load vocabulary $url : " + response.statusCode());
              }
              val out = javaGenDir.file(URLEncoder.encode(uri.toString(), StandardCharsets.UTF_8)).get().asFile
              out.bufferedWriter().use { wout ->
