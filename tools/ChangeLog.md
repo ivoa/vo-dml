@@ -134,5 +134,7 @@
   * support for custom tap type.
     * basically to support geometries - see https://github.com/ivoa/ADQLGeomDM
     * added the ability to specify JPA Converter in binding
+* 0.5.31
+  * small bugfixes
 
 N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass in same hierarchy - still waiting for a solution
