@@ -100,9 +100,9 @@ dependencies {
     //  testing with hibernate spatial
     implementation("org.locationtech.jts:jts-core:1.20.0")
     implementation("org.geolatte:geolatte-geom:1.9.0")
-    implementation("org.hibernate.orm:hibernate-spatial:6.5.3.Final")
+    implementation("org.hibernate.orm:hibernate-spatial:7.2.6.Final")
     testImplementation("org.orbisgis:h2gis:2.2.3")
-    testRuntimeOnly("org.hibernate.orm:hibernate-testing:6.5.3.Final")
+    testRuntimeOnly("org.hibernate.orm:hibernate-testing:7.2.6.Final")
 }
 
 python {
