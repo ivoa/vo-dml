@@ -37,6 +37,10 @@ internal class XSLTTransformerTest {
     fun doVodsl() {
         Vodml2Vodsl.doTransform(model, File(tmpDir,"testvodsl.vodsl"))
     }
+    @org.junit.jupiter.api.Test
+    fun doTAP() {
+        Vodml2TAP.doTransform(model, File(tmpDir,"testvodsl.tap"))
+    }
 //    @org.junit.jupiter.api.Test
 //    fun doXsd() { //the xsd generation is not a straight model transform TODO would need a catalogue
 //        Vodml2xsd.doTransform(model, mapOf(
