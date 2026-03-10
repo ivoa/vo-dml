@@ -1,0 +1,52 @@
+This is BibTeX, Version 0.99d (TeX Live 2025)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: VodmlTools.aux
+The style file: ivoatex/ivoa.bst
+Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
+Reallocated global_strs (elt_size=200001) to 20 items from 10.
+Reallocated glb_str_end (elt_size=4) to 20 items from 10.
+Database file #1: refs.bib
+Database file #2: ivoatex/ivoabib.bib
+Database file #3: ivoatex/docrepo.bib
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+You've used 3 entries,
+            3055 wiz_defined-function locations,
+            695 strings with 5975 characters,
+and the built_in function-call counts, 37489 in all, are:
+= -- 6379
+> -- 455
+< -- 0
++ -- 3233
+- -- 147
+* -- 3464
+:= -- 7056
+add.period$ -- 6
+call.type$ -- 3
+change.case$ -- 36
+chr.to.int$ -- 3
+cite$ -- 3
+duplicate$ -- 45
+empty$ -- 83
+format.name$ -- 159
+if$ -- 6773
+int.to.chr$ -- 5
+int.to.str$ -- 0
+missing$ -- 0
+newline$ -- 15
+num.names$ -- 22
+pop$ -- 19
+preamble$ -- 1
+purify$ -- 40
+quote$ -- 0
+skip$ -- 42
+stack$ -- 0
+substring$ -- 9331
+swap$ -- 30
+text.length$ -- 32
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 12
+warning$ -- 0
+while$ -- 46
+width$ -- 0
+write$ -- 49

@@ -6,6 +6,8 @@ package org.ivoa.dm.jpatest;
  */
 
 import org.ivoa.vodml.testing.AutoDBRoundTripTest;
+import org.ivoa.dm.jpatest.entity.Point;
+import org.junit.jupiter.api.Assertions;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -57,7 +59,7 @@ public class JPAStdTest extends AutoDBRoundTripTest<JpatestModel,Long,Parent> {
 @Override
 protected String setDbDumpFile() {
    return "jpa_test.sql";
-    
+
 }
 
    @Override
@@ -66,5 +68,6 @@ protected String setDbDumpFile() {
       assertNotNull(pl);
       assertEquals("intatt", pl.getDval().getIntatt());
       assertEquals("intatt_e", pl.getEval().getIntatt());
+      assertEquals(new Point(1.5,3.0), pl.getTval().p);
    }
 }

@@ -12,7 +12,7 @@ The links in the list below will take you to a more detailed discussion of the t
 * [vodmlDoc](Documentation.md) - create documentation for VO-DML models
 * [vodmlJavaGenerate](JavaCodeGeneration.md) - Generate Java classes from VO-DML models
 * [vodmlPythonGenerate](PythonCodeGeneration.md) - generate python classes from VO-DML models
-* [vodmlSchema](Transformers.md#schema) - create schema for VO-DML models
+* [vodmlSchema](Transformers.md#schema) - create XML, JSON, OpenAPI and TAP schema for VO-DML models
 * [vodmlSite](Documentation.md#site) - create mkdocs site for VO-DML models
 * [vodmlToVodsl](modelling/VODSL.md#creating-vodsl-from-existing-vo-dml) - convert VO-DML to VODSL on the commandline
 * [vodmlValidate](modelling/Validation.md) - validate VO-DML models

@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.ivoa.vodml.ModelManagement;
 import org.ivoa.vodml.VodmlModel;
 import org.ivoa.vodml.jpa.JPAManipulationsForObjectType;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -35,6 +36,7 @@ public abstract class AutoDBRoundTripTest <M extends VodmlModel<M>, I, T extends
     public abstract void testEntity(T e);
     
     @Test
+    @Order(10)
     void testRDBRoundTrip()
     {
        final M model = createModel();

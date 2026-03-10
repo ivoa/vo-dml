@@ -121,7 +121,20 @@
 * 0.5.26
   * Fix the key type in tap schema for sub-types
   * Add composedBy and referredTo links in the site diagrams
-* 0.6.0
-  * support hibernate 6.6 embeddable inheritance hierarchies https://docs.jboss.org/hibernate/orm/6.6/userguide/html_single/Hibernate_User_Guide.html#embeddable-inheritance - this is the first time that true dataType polymorphism is supported in RDB serialization.
-  * bug fix in TAPSchema generation of foreign keys in the single table inheritance case.
+* 0.5.27 and 0.5.28 - bugfixes
+* 0.5.29
+  * make tapschema generation include the imported models
+  * add an initial entity relationship diagram for the tapschema
+  * better handling of primitive types
+    * in JSON schema - added possibility of the value being direct property rather than an object with a "value" property.
+  * creation of OpenAPI schema
+    * including preliminary discriminator support https://spec.openapis.org/oas/v3.1.2.html#discriminator-object
+* 0.5.30
+  * small bugfixes
+  * support for custom tap type.
+    * basically to support geometries - see https://github.com/ivoa/ADQLGeomDM
+    * added the ability to specify JPA Converter in binding
+* 0.5.31
+  * small bugfixes
 
+N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass in same hierarchy - still waiting for a solution

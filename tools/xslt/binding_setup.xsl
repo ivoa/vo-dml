@@ -10,13 +10,20 @@
     mechanism. It should be included after the $binding variable containing the list of binding files has been set -->
     <xsl:import href="common-binding.xsl"/>
 
-    <!--read the mapping from the bindings -->
-    <xsl:variable name="mapping">
+    <!--read the mapping from the bindings - might include duplicates -->
+    <xsl:variable name="rawmapping">
         <bnd:mappedModels>
             <xsl:for-each select="tokenize($binding,',')">
                 <xsl:copy-of
                         select="document(normalize-space(.))/bnd:mappedModels/model" />
             </xsl:for-each>
+        </bnd:mappedModels>
+    </xsl:variable>
+
+    <!-- make the mappings unique -->
+    <xsl:variable name="mapping">
+        <bnd:mappedModels>
+            <xsl:sequence select="$rawmapping/bnd:mappedModels/model[not(name = following-sibling::model/name)]"/>
         </bnd:mappedModels>
     </xsl:variable>
 
@@ -27,6 +34,7 @@
                 <xsl:when test="file"> <!-- prefer local file for reading defn -->
                     <xsl:choose>
                         <xsl:when test="doc-available(file)">
+<!--                            <xsl:message>loading model file <xsl:value-of select="file"/></xsl:message>-->
                             <xsl:copy-of
                                     select="document(file)/vo-dml:model" />
                         </xsl:when>
@@ -53,15 +61,7 @@
     <xsl:variable name="gt">&gt;</xsl:variable>
     <xsl:variable name="isRdbSingleInheritance" as="xsd:boolean" select="vf:isRdbSingleTable(/vo-dml:model/name)"/>
     <xsl:variable name="RdbSchemaName">
-        <xsl:choose>
-            <xsl:when test="$mapping/bnd:mappedModels/model[name=$themodelname]/rdb/@schema">
-                <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$themodelname]/rdb/@schema"/>
-<!--                <xsl:message>custom tap schema =<xsl:value-of select="$mapping/bnd:mappedModels/model[name=$themodelname]/rdb/@schema"/></xsl:message>-->
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:sequence select="$themodelname"/>
-            </xsl:otherwise>
-        </xsl:choose>
+       <xsl:value-of select="vf:schemaName($themodelname)"/>
     </xsl:variable>
 
     <xsl:variable name="isRDBUseColRef" as="xsd:boolean" select="vf:isRdbAddRef(/vo-dml:model/name)"/>

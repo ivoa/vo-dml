@@ -55,6 +55,7 @@ gradle :gradle-plugin:publishToMavenLocal
 ```shell
 gradle :gradle-plugin:publishplugins
 ```
+Github CI is set up to publish the plugin when there is a new "pluginv0.x.x" pushed.
 
 ### Publishing the Java runtime to Maven Central
 

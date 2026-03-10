@@ -499,7 +499,7 @@
             * @param superinstance The supertype.
             <xsl:for-each select="$localmembers">
                 <xsl:variable name="m" select="$models/key('ellookup',current())"/>
-            * @param <xsl:value-of select="concat($m/name,' ')"/> <xsl:apply-templates select="$m" mode="desc" />
+            * @param <xsl:value-of select="concat(vf:javaMemberName($m/name),' ')"/> <xsl:apply-templates select="$m" mode="desc" />
             </xsl:for-each>
             */
             public  <xsl:value-of select="vf:capitalize(name)"/> ( <xsl:value-of select="string-join($sparms,',')"/> )
@@ -830,9 +830,36 @@
       <xsl:apply-templates select="." mode="jpawalker"/>
       <xsl:apply-templates select="./self::objectType" mode="jpadeleter"/>
 
-<!--      <xsl:if test="local-name() eq 'dataType'">-->
-<!--          <xsl:apply-templates select="." mode="JPAConverter"/>-->
-<!--      </xsl:if>-->
+      <xsl:if test="local-name() eq 'dataType'" > <!-- do equals and hash for dataTypes-->
+          @Override
+          public boolean equals(Object o_) {
+          if (!(o_ instanceof <xsl:value-of select="vf:capitalize(name)"/> oc_)) return false;
+          <xsl:choose>
+              <xsl:when test="count(attribute|reference) != 0">
+                  boolean retval = <xsl:if test="extends">super.equals(o_) &amp;&amp; </xsl:if>
+                  <xsl:value-of select="string-join(for $w in (attribute/name|reference/name) return concat('java.util.Objects.equals(',vf:javaMemberName($w),',oc_.',vf:javaMemberName($w),')'),'  &amp;&amp; ')"/>
+                  ;
+              </xsl:when>
+              <xsl:otherwise>
+                  boolean retval = <xsl:if test="extends">super.equals(o_) &amp;&amp; </xsl:if> true;
+              </xsl:otherwise>
+          </xsl:choose>
+
+          return retval;
+          }
+
+          @Override
+          public int hashCode() {
+          <xsl:choose>
+          <xsl:when test="count(attribute|reference) != 0">
+              return <xsl:if test="extends">super.hashCode() * </xsl:if> java.util.Objects.hash(<xsl:value-of select="string-join(for $w in (attribute/name|reference/name) return vf:javaMemberName($w),',')"/>);
+          </xsl:when>
+          <xsl:otherwise>
+              return <xsl:if test="extends">super.hashCode() * </xsl:if> 17;
+          </xsl:otherwise>
+          </xsl:choose>
+          }
+      </xsl:if>
 }
   </xsl:template>
 
@@ -911,11 +938,12 @@ package <xsl:value-of select="$path"/>;
 
   <xsl:template match="primitiveType" mode="class">
     <xsl:param name="path"/>
+    <xsl:variable name="vodml-ref"  select="vf:asvodmlref(current())"/>
 
     <xsl:variable name="valuetype">
       <xsl:choose>
         <xsl:when test="extends">
-          <xsl:value-of select="vf:JavaType(vf:baseTypeIds(vf:asvodmlref(current()))[last()])"/>
+          <xsl:value-of select="vf:JavaType(vf:baseTypeIds($vodml-ref)[last()])"/>
         </xsl:when>
         <xsl:otherwise>
             <xsl:message>Primitive type <xsl:value-of select="name"/> is being represented as a String - in general it is probably best to specialize primitive types with the binding mechanism to get desired representation/behavious</xsl:message>
@@ -974,6 +1002,9 @@ package <xsl:value-of select="$path"/>;
          * Return the representation of this primitive (value)
          * @return string representation of this primitive( value)
          */
+        <xsl:if test="not(vf:findTypeDetail($vodml-ref)/isJSONObject = 'true')">
+            @com.fasterxml.jackson.annotation.JsonValue
+        </xsl:if>
         public final <xsl:value-of select="$valuetype"/> value() {
             return this.value;
         }

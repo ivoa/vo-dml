@@ -15,6 +15,11 @@
         discriminatorColumnLength="64"> <!-- needs to be joined for complex embedded inheritance -->
             <rdbmap vodml-id="LChild" joinColumnName="altered_join"/>
         </rdb>
+        <type-mapping>
+            <vodml-id>Point</vodml-id>
+            <java-type jpa-atomic="true" jpa-converter="org.ivoa.dm.jpatest.entity.PointConverter">org.ivoa.dm.jpatest.entity.Point</java-type>
+            <tap-type>Point</tap-type>
+        </type-mapping>
     </model>
     <model>
         <name>lifecycleTest</name>
@@ -37,6 +42,14 @@
         <rdb inheritance-strategy="single-table"
              discriminatorColumnLength="64"
              listConcatenationDelimiter="|"/>
+        <type-mapping>
+            <vodml-id>ivoid</vodml-id>
+            <xsd-type>xsd:anyURI</xsd-type>
+            <json-type format="uri">string</json-type>
+        </type-mapping>
+        <type-detail vodml-id="ivoid">
+            <isJSONObject>false</isJSONObject>
+        </type-detail>
 
     </model>
     <model>

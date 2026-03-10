@@ -200,7 +200,7 @@ public abstract class AbstractBaseValidation {
      * @param classNames the list of classes managed by the persistence unit.
      * @return the EntityManager for the database.
      */
-    protected EntityManager setupH2Db(String puname, List<String> classNames) {
+    protected static EntityManager setupH2Db(String puname, List<String> classNames) {
 
 
         PersistenceUnitInfo persistenceUnitInfo = new HibernatePersistenceUnitInfo(puname, classNames);

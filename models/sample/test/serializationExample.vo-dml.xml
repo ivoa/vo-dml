@@ -8,7 +8,7 @@
       <uri/>
       <title></title>
       <version>1.0</version>
-      <lastModified>2025-07-04T13:25:55Z</lastModified>
+      <lastModified>2026-02-20T12:34:33Z</lastModified>
       <import>
         <name>ivoa</name>
         <version>1.0</version>
@@ -23,6 +23,14 @@
          <vodml-ref>ivoa:anyURI</vodml-ref>
       </extends>
       </primitiveType>
+      <primitiveType >
+      <vodml-id>altURL</vodml-id>
+      <name>altURL</name>
+      <description>different URI specialization</description>
+      <extends>
+         <vodml-ref>ivoa:anyURI</vodml-ref>
+      </extends>
+      </primitiveType>
             <objectType>
                <vodml-id>Refa</vodml-id>
                <name>Refa</name>
@@ -32,7 +40,7 @@
                  <name>val</name>
                  <description></description>	    
                  <datatype>
-                    <vodml-ref>ivoa:string</vodml-ref>
+                    <vodml-ref>MyModel:altURL</vodml-ref>
                  </datatype>
                  <multiplicity>
                    <minOccurs>1</minOccurs>
@@ -64,7 +72,7 @@
                  <name>val</name>
                  <description></description>	    
                  <datatype>
-                    <vodml-ref>ivoa:string</vodml-ref>
+                    <vodml-ref>MyModel:ivoid</vodml-ref>
                  </datatype>
                  <multiplicity>
                    <minOccurs>1</minOccurs>
@@ -144,7 +152,6 @@
                                 <minOccurs>1</minOccurs>
                                 <maxOccurs>1</maxOccurs>
                               </multiplicity>
-                                <UCD>instr.calib</UCD>
                             </attribute>
                          </objectType>
                          <objectType>

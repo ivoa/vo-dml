@@ -8,7 +8,7 @@ Authoring Ecosystem
 ![](../images/ecosystem.png)
 
 Although VO-DML/XML is the standard serialization of VO-DML models, and it is possible to create VO-DML directly
-by editing in a text editor (and the [model schema](https://github.com/ivoa/vo-dml/tree/master/xsd/vo-dml-v1.0.xsd) might be helpful in guiding this editing), it is generally easier to model using either
+by editing in a text editor (and the [model schema](https://github.com/ivoa/vo-dml/tree/main/xsd/vo-dml-v1.0.xsd) might be helpful in guiding this editing), it is generally easier to model using either
 
 * [VODSL](VODSL.md)
 * [UML](UML.md)
@@ -19,7 +19,7 @@ It is possible to import existing data models by;
 1. Adding the published jar as a dependency in the `build.gradle.kts` file, e.g.
 ```kotlin
 dependencies {
-    implementation("org.javastro.ivoa.vo-dml:ivoa-base:1.0")
+    implementation("net.ivoa.vo-dml:ivoa-base:1.0-SNAPSHOT")
 }
 ```
 the tooling then makes sure that the model files are available for local import.

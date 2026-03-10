@@ -27,8 +27,8 @@ private Refb refb;
 @Override
   public MyModelModel createModel() {
     themodel = new MyModelModel();
-    refa = new Refa("a value");
-    refb = new Refb("naturalkey", "another val");
+    refa = new Refa(new AltURL("urn:value"));
+    refb = new Refb("naturalkey", new Ivoid("ivo:val"));
 
     List<BaseC> clist = List.of(new Dcont("N1", "dval"), new Econt("cube", "eval"));
 
@@ -45,7 +45,10 @@ private Refb refb;
      List<String> z = cont.getZval();
      assertNotNull(z);
      assertEquals(3, z.size(),"z val should be array of size 3");
-  }
+     Refb rrb = cont.getRef2();
+     assertNotNull(rrb);
+     assertEquals("ivo:val", rrb.val.value());     
+             }
 
  
 

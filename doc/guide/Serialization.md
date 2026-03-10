@@ -27,7 +27,7 @@ The schema for the serializations can be created with the `gradle vodmlSchema` c
 
 ## XML
 
-For the [small example model](https://github.com/ivoa/vo-dml/tree/master/models/sample/test/serializationExample.vodsl), the overall model object will produce xml like
+For the [small example model](https://github.com/ivoa/vo-dml/tree/main/models/sample/test/serializationExample.vodsl), the overall model object will produce xml like
 
 ```xml
 <ser:myModelModel xmlns:ser="http://ivoa.net/vodml/sample/serialization" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
@@ -101,6 +101,11 @@ as a reference to the object if the data model is known. An `_id` property is ad
 }
 ```
 In general where the type of an object cannot be inferred unambiguously from the model,  a member called `@type` with the UType as value is added.
+
+
+### OpenAPI
+
+The `vodmlSchema` command will also produce a yaml file which is suitable for inclusion as the [Schema object](https://spec.openapis.org/oas/v3.1.2.html#schema-object) in an [OpenAPI](https://spec.openapis.org/oas/) interface definition. There is support for polymorphism via [discriminators](https://spec.openapis.org/oas/v3.1.2.html#discriminator-object) that is not available to JSON schema.
 
 ## Relational Databases
 The object relational mapping has been done with the capabilities offered by JPA. The general design 

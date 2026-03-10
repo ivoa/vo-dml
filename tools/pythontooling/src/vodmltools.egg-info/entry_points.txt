@@ -1,0 +1,2 @@
+[console_scripts]
+vodml = vodmltools.cli:app

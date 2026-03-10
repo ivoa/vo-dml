@@ -1,7 +1,7 @@
 model MyModel (1.0) "Small Model for serialization"
 include "https://raw.githubusercontent.com/ivoa/vodsl-models/master/IVOA-v1.0.vodsl"
 
-/* originally wanted to have this base class with refs with different types of keys - the generated
+/* TODO originally wanted to have this base class with refs with different types of keys - the generated
  * code always puts the ref in the base....
 abstract otype aref ""
 {
@@ -10,19 +10,19 @@ abstract otype aref ""
  */
 otype Refa  ""
 {
-		val : ivoa:string "";
+		val : MyModel:altURL "";
 	
 }
 otype Refb  ""
 {
 	name: ivoa:string iskey "";
-	val : ivoa:string "";
+	val : MyModel:ivoid "";
 	
 }
 
 package types "" {
 abstract otype BaseC {
-	bname: ivoa:string "" UCD "instr.calib";
+	bname: ivoa:string "";
 }
 
 otype Dcont -> BaseC {
@@ -41,3 +41,4 @@ otype SomeContent "" {
 }
 
 primitive ivoid -> ivoa:anyURI "a specialization for IVOIDs"
+primitive altURL -> ivoa:anyURI "different URI specialization" // the intention is it just inherits everything about base

@@ -248,7 +248,11 @@ In general it must be used to map primitive types to various languages, but it c
                  </xsd:documentation>
               </xsd:annotation>
            </xsd:element>
-           <xsd:element name="json-type" type="JsonMapping" maxOccurs="1" minOccurs="0"/>
+           <xsd:element name="json-type" type="JsonMapping" maxOccurs="1" minOccurs="0" />
+           <xsd:element name="tap-type" type="xsd:string" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                 <xsd:documentation>The TAP type for the model element. In general is is not necessary to specify if the type is one of the standard basic types defined in SQL - however geometry types it is necessary to specify.</xsd:documentation>
+              </xsd:annotation></xsd:element>
         </xsd:sequence>
 </xsd:complexType>
 
@@ -275,24 +279,33 @@ In general it must be used to map primitive types to various languages, but it c
     </xsd:restriction>
   </xsd:simpleType>
   <xsd:complexType name="JavaMapping">
-        <xsd:annotation>
-           <xsd:documentation>the java mapping for a type - the type should be resolveable without needing an import statement.</xsd:documentation>
-        </xsd:annotation>
-        <xsd:simpleContent>
-      <xsd:extension base="JavaName">
-        <xsd:attribute name="jpa-atomic" type="xsd:boolean" default="false">
-          <xsd:annotation>
-            <xsd:documentation>if this is true the type is atomic for JPA (does not appear in persistence.xml)</xsd:documentation>
-          </xsd:annotation>
-        </xsd:attribute>
-        <xsd:attribute name="primitive-value-field" type="xsd:string" >
-          <xsd:annotation>
-            <xsd:documentation>if a mapped primitive does not map to a java primitive, then this specifies what the value fieldname is</xsd:documentation>
-          </xsd:annotation>
-        </xsd:attribute>
-      </xsd:extension>
-    </xsd:simpleContent>
-
+     <xsd:annotation>
+        <xsd:documentation>
+           the java mapping for a type - the type should be resolveable without needing an import statement.
+        </xsd:documentation>
+     </xsd:annotation>
+     <xsd:simpleContent>
+        <xsd:extension base="JavaName">
+           <xsd:attribute name="jpa-atomic" type="xsd:boolean" default="false">
+              <xsd:annotation>
+                 <xsd:documentation>
+                    if this is true the type is atomic for JPA (does not appear in persistence.xml, and is a basic type)
+                 </xsd:documentation>
+              </xsd:annotation>
+           </xsd:attribute>
+           <xsd:attribute name="primitive-value-field" type="xsd:string">
+              <xsd:annotation>
+                 <xsd:documentation>
+                    if a mapped primitive does not map to a java primitive, then this specifies what the value fieldname is
+                 </xsd:documentation>
+              </xsd:annotation>
+           </xsd:attribute>
+           <xsd:attribute name="jpa-converter" type="xsd:string" use="optional">
+              <xsd:annotation>
+                 <xsd:documentation>if the type is atomic then there might need to be a converter to map from it to the detabase type.</xsd:documentation>
+              </xsd:annotation></xsd:attribute>
+        </xsd:extension>
+     </xsd:simpleContent>
   </xsd:complexType>
   <xsd:complexType name="PythonMapping">
         <xsd:annotation>
@@ -300,7 +313,7 @@ In general it must be used to map primitive types to various languages, but it c
         </xsd:annotation>
         <xsd:simpleContent>
       <xsd:extension base="PythonName">
-        <xsd:attribute name="built-in" type="xsd:boolean" default="false">
+        <xsd:attribute name="built-in" type="xsd:boolean" default="false"><!--TODO this could be just implemented in the code from known python types rather than config-->
           <xsd:annotation>
              <xsd:documentation>if this is true the type is a python built-in type and so does not need a import</xsd:documentation>
           </xsd:annotation>
@@ -323,18 +336,26 @@ In general it must be used to map primitive types to various languages, but it c
      </xsd:annotation>
      
         <xsd:all>
-           <xsd:element name="isAttribute" maxOccurs="1" minOccurs="0">
+           <xsd:element name="isAttribute" type="xsd:boolean" maxOccurs="1" minOccurs="0" default="false">
               <xsd:annotation>
                  <xsd:documentation>
                     is an attribute in the XML serialization - the default is for it to be represented as an element if this emply type is not present.
                  </xsd:documentation>
               </xsd:annotation>
-              <xsd:complexType></xsd:complexType>
+             
            </xsd:element>
+           <xsd:element name="isJSONObject" type="xsd:boolean"  maxOccurs="1" minOccurs="0" default="false">
+           <xsd:annotation>
+               <xsd:documentation>if the type is a primitive
+               represent it as an object with a "value"" property TODO think more about the difference between derived primitives and "pure" primitives
+               the default in derived primitives is to create an object wrapper.</xsd:documentation>
+           </xsd:annotation>
+           </xsd:element>   
+           
            <xsd:element name="length" type="xsd:string" maxOccurs="1" minOccurs="0">
               <xsd:annotation>
                  <xsd:documentation>
-                    The length of the model element - arguably this really should be some sort of constraint in the model itsellf
+                    The length of the model element - arguably this really should be some sort of constraint in the model itself
                     - it has been included here as an intermediate measure whilst a constraint system is better specified.
                  </xsd:documentation>
               </xsd:annotation>
@@ -344,16 +365,27 @@ In general it must be used to map primitive types to various languages, but it c
   </xsd:complexType>
 
   <xsd:complexType name="JsonMapping">
+      <xsd:annotation>
+          <xsd:documentation>the json mapping for a type </xsd:documentation>
+      </xsd:annotation>
      <xsd:simpleContent>
         <xsd:extension base="xsd:string">
-           <xsd:attribute name="format" type="xsd:string" use="optional"/>
-           <xsd:attribute name="built-in" type="xsd:boolean" use="optional" default="false">
-              <xsd:annotation>
-                 <xsd:documentation>whether the type is a JSON built-in type
-
-IMPL - this could be put into the code - especially as the number of JSON built-in types is small</xsd:documentation>
-              </xsd:annotation></xsd:attribute>
-        </xsd:extension>
+            <xsd:attribute name="format" type="xsd:string" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        same as the format property in JSON schema
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="pattern" type="xsd:string" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        same as the pattern property in JSON schema
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <!-- TODO  add more possible json type attributes -->
+         </xsd:extension>
      </xsd:simpleContent>
   </xsd:complexType>
 
@@ -376,7 +408,7 @@ IMPL - this could be put into the code - especially as the number of JSON built-
            </xsd:element>
            <xsd:element name="columnType" type="xsd:string" maxOccurs="1" minOccurs="0">
               <xsd:annotation>
-                 <xsd:documentation>The TAPSchema type for the column</xsd:documentation>
+                 <xsd:documentation>The TAPSchema type for the column - N.B</xsd:documentation>
               </xsd:annotation>
            </xsd:element>
         </xsd:sequence>

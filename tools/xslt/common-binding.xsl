@@ -388,39 +388,77 @@
 
     </xsl:function>
 
-    <xsl:function name="vf:jsonType" as="xsd:string">
+
+    <xsl:function name="vf:isJsonPrimitive" as="xsd:boolean">
+        <xsl:param name="type" as="xsd:string"/>
+        <xsl:sequence select="$type=('string','number','boolean','integer')"/>
+    </xsl:function>
+    <!-- create a fully nested JSON decl -->
+    <xsl:function name="vf:jsonType" as="xsd:string*">
         <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:param name="jsonmode"/>
+        <xsl:variable  name="el" select="$models/key('ellookup',$vodml-ref)"/>
         <xsl:choose>
+
             <xsl:when test="vf:hasMapping($vodml-ref,'json')">
                 <xsl:variable name="mappedtype" select="vf:findmapping($vodml-ref,'json')"/>
+                <xsl:variable name="jtype">
                 <xsl:choose>
-                    <xsl:when test="$mappedtype/@format">
-                        <xsl:value-of select="concat($dq,'format',$dq,': ',$dq,$mappedtype/@format,$dq)"/>
-                    </xsl:when>
-                    <xsl:when test="$mappedtype/@built-in">
+                    <xsl:when test="vf:isJsonPrimitive($mappedtype/text())">
                         <xsl:value-of select="concat($dq,'type',$dq,': ',$dq,$mappedtype/text(),$dq)"/>
+                        <xsl:for-each select="$mappedtype/@*">
+                            <!-- TODO need to check if the escaping of backslashes is happening properly in pattern -->
+                            <xsl:value-of select="concat(',',$dq,current()/name(),$dq,': ',$dq,current(),$dq)"/>
+                        </xsl:for-each>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="concat($dq,'$ref',$dq,': ',$dq,$mappedtype/text(),$dq)"/>
+                        <xsl:value-of select="$mappedtype"/>
                     </xsl:otherwise>
                 </xsl:choose>
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="vf:findTypeDetail($vodml-ref)/isJSONObject = 'true'">
+                        <xsl:text>
+                        "type": "object"
+                        ,"properties" : {
+                        "value" : {</xsl:text><xsl:value-of select="$jtype"/>}
+                        }
+
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$jtype"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:when test="$el/extends and vf:typeRole($vodml-ref) = 'primitiveType'">
+                <xsl:value-of select="vf:jsonType($el/extends/vodml-ref,$jsonmode)"/>
+
             </xsl:when>
             <xsl:otherwise>
                 <xsl:variable name="modelname" select="substring-before($vodml-ref,':')"/>
                 <xsl:variable name="root" select="vf:jsonBaseURI($modelname)"/>
-                <xsl:value-of select="concat($dq,'$ref',$dq,': ',$dq,$root,'#/$defs/',substring-after($vodml-ref,':'),$dq)"/>
+                <xsl:choose>
+                    <xsl:when test="$jsonmode = 'openapi'">
+                        <xsl:value-of select="concat($dq,'$ref',$dq,': ',$dq,'#/components/schemas/',substring-after($vodml-ref,':'),$dq)"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="concat($dq,'$ref',$dq,': ',$dq,$root,'#/$defs/',substring-after($vodml-ref,':'),$dq)"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:otherwise>
         </xsl:choose>
 
 
     </xsl:function>
 
+
     <xsl:function name="vf:jsonReferenceType" as="xsd:string">
-    <xsl:param name="vodml-ref" as="xsd:string"/>
-    <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:param name="jsonmode"/>
+        <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
         <xsl:choose>
             <xsl:when test="$el/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
-                <xsl:sequence select="vf:jsonType($el/attribute[constraint[ends-with(@xsi:type,':NaturalKey')]]/datatype/vodml-ref)"/>
+                <xsl:sequence select="vf:jsonType($el/attribute[constraint[ends-with(@xsi:type,':NaturalKey')]]/datatype/vodml-ref,$jsonmode)"/>
             </xsl:when>
                 <xsl:otherwise>
                     <xsl:sequence select="concat($dq,'type',$dq,':',$dq,'number',$dq)"/>
@@ -598,12 +636,22 @@
         <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelName]/rdb[@inheritance-strategy='single-table'] )= 1"/>
     </xsl:function>
 
-    <xsl:function name="vf:rdbSchemaName" as="xsd:string">
-        <xsl:param name="modelName" as="xsd:string"/>
-        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/rdb/@schema"/>
+
+    <xsl:function name="vf:schemaName" as="xsd:string" > <!-- get the schema name, given the model name-->
+        <xsl:param name="thismodelname" as="xsd:string" />
+        <xsl:choose>
+            <xsl:when test="$mapping/bnd:mappedModels/model[name=$thismodelname]/rdb/@schema">
+                <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$thismodelname]/rdb/@schema"/>
+                <!--                <xsl:message>custom tap schema =<xsl:value-of select="$mapping/bnd:mappedModels/model[name=$themodelname]/rdb/@schema"/></xsl:message>-->
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="$thismodelname"/>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:function>
 
-   <xsl:function name="vf:isRdbAddRef" as="xsd:boolean">
+
+    <xsl:function name="vf:isRdbAddRef" as="xsd:boolean">
         <xsl:param name="modelName" as="xsd:string"/>
         <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelName]/rdb[@useRefInColumnName=true()] )= 1"/>
     </xsl:function>
@@ -729,21 +777,28 @@
 
     <xsl:function name="vf:rdbTapType" as="xsd:string">
     <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:variable name="modelName" select="substring-before($vodml-ref,':')"/>
 
      <xsl:choose>
          <xsl:when test="vf:typeRole($vodml-ref) = 'enumeration'">VARCHAR</xsl:when>
          <xsl:otherwise>
              <xsl:variable name="jtype" select="vf:JavaType($vodml-ref)"/>
-             <!-- IMPL mapping from JavaType for convenience as that will include other primitives not thought of yet - would probably need another mapping in the binding otherwise-->
+             <!-- IMPL mapping from JavaType for convenience as that will include other primitives not thought of yet - if there is explicit tap type in the binding - use that-->
              <xsl:choose>
-                 <xsl:when test="$jtype='String'">VARCHAR</xsl:when>
+                 <xsl:when test="$mapping/bnd:mappedModels/model[name=$modelName]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/tap-type">
+                     <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelName]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/tap-type"/>
+                 </xsl:when>
+                 <xsl:when test="$jtype=('String','org.ivoa.vodml.stdtypes.Unit')">VARCHAR</xsl:when><!-- IMPL - should really have more general mechanism in place -->
                  <xsl:when test="$jtype=('Double', 'double')">DOUBLE</xsl:when>
                  <xsl:when test="$jtype=('Integer','int')">INTEGER</xsl:when>
                  <xsl:when test="$jtype=('Boolean','boolean')">INTEGER</xsl:when>
                  <xsl:when test="$jtype=('java.math.BigDecimal')">INTEGER</xsl:when>
                  <xsl:when test="$jtype=('java.util.Date')">TIMESTAMP</xsl:when>
                  <!--TODO this is incomplete -->
-                 <xsl:otherwise>UNKNOWN</xsl:otherwise>
+                 <xsl:otherwise>
+                     <xsl:message  select="concat('WARNING: cannot determine RDB type for ',$vodml-ref, ' jtype=',$jtype)"/>
+                     <xsl:text>UNKNOWN</xsl:text>
+                 </xsl:otherwise>
              </xsl:choose>
          </xsl:otherwise>
      </xsl:choose>
@@ -816,7 +871,7 @@
                 <xsl:choose>
                     <xsl:when test="vf:hasMapping(vf:asvodmlref(current()),'java')">
                         <xsl:variable name="pmap" select="vf:findmapping(vf:asvodmlref(current()),'java')"/>
-                        <xsl:choose>
+                        <xsl:choose><!--TODO - the idea that a type is "atomic" needs to be set higher in the mapping - generally unified -->
                             <xsl:when test="$pmap/@jpa-atomic">
                                 <xsl:attribute name="atomic" select="true()"/>
                             </xsl:when>

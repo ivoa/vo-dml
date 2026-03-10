@@ -1,13 +1,19 @@
 package net.ivoa.vodml.gradle.plugin
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.*
-import java.io.File
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.TaskAction
 import javax.inject.Inject
-import com.fasterxml.jackson.databind.ObjectMapper
-import java.nio.file.Paths
 
 
 /*
@@ -57,6 +63,22 @@ open class VodmlSchemaTask  @Inject constructor(ao1: ArchiveOperations) : VodmlB
             val mapper = ObjectMapper()
             val pretty = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapper.readTree(s));
             outfile.get().asFile.writeText(pretty)
+            // now the openapi version
+            val outapi = schemaDir.file("$shortname.yaml")
+            logger.debug("Generating OpenAPI schema to ${outapi.get().asFile.absolutePath}")
+            val json = Vodml2json.doTransformToString(it.absoluteFile, mapOf(
+                "binding" to allBinding.joinToString(separator = ",") { it.toURI().toURL().toString() }
+                ,"jsonmode" to "openapi"
+            ),
+                actualCatalog)
+            val jsonNode = mapper.readTree(json)
+            removeKeyRecursively(jsonNode, "\$comment")
+            val yamlMapper = YAMLMapper()
+            yamlMapper.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+            val openapiSchema = yamlMapper.writeValueAsString(jsonNode)
+            outapi.get().asFile.writeText(openapiSchema)
+
+
         }
 
         val xmlcat = java.nio.file.Paths.get(schemaDir.file("xmlcat.xml").get().asFile.toURI()).toUri().toString()
@@ -76,13 +98,43 @@ open class VodmlSchemaTask  @Inject constructor(ao1: ArchiveOperations) : VodmlB
         vodmlFiles.forEach {
             val shortname = it.nameWithoutExtension
             val outfile = schemaDir.file("$shortname.tap.xml")
-            logger.debug("Generating JSON schema from  ${it.name} to ${outfile.get().asFile.absolutePath}")
+            logger.debug("Generating TAP schema from  ${it.name} to ${outfile.get().asFile.absolutePath}")
             Vodml2TAP.doTransform(it.absoluteFile, mapOf(
                 "binding" to allBinding.joinToString(separator = ",") { it.toURI().toURL().toString() }
             ),
                 actualCatalog, outfile.get().asFile)
+            val plantfile = schemaDir.file("$shortname.tap.plantuml")
+            logger.debug("Generating TAP schema ER Diagram from  ${it.name} to ${plantfile.get().asFile.absolutePath}")
+            TapSchema2PlantUML.doTransform(outfile.get().asFile, mapOf(
+                "binding" to allBinding.joinToString(separator = ",") { it.toURI().toURL().toString() }
+            ),
+                actualCatalog, plantfile.get().asFile)
         }
 
+
+    }
+    fun removeKeyRecursively(node: JsonNode, keyToRemove: String?) {
+        if (node.isObject()) {
+            val objectNode: ObjectNode = node as ObjectNode
+            val fields: MutableIterator<MutableMap.MutableEntry<String?, JsonNode?>> = objectNode.fields()
+
+            while (fields.hasNext()) {
+                val field = fields.next()
+
+                // If the key matches, remove it using the iterator
+                if (field.key == keyToRemove) {
+                    fields.remove()
+                } else {
+                    // Otherwise, recurse into the value (in case it is nested)
+                    removeKeyRecursively(field.value!!, keyToRemove)
+                }
+            }
+        } else if (node.isArray()) {
+            val arrayNode: ArrayNode = node as ArrayNode
+            for (item in arrayNode) {
+                removeKeyRecursively(item, keyToRemove)
+            }
+        }
 
     }
 }

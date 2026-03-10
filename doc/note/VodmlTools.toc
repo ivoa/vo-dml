@@ -1,0 +1,11 @@
+\contentsline {section}{\numberline {1}Introduction}{3}{section.1}%
+\contentsline {section}{\numberline {2}A Brief History of VO-DML Tools}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Technologies used to write the Tools}{5}{subsection.2.1}%
+\contentsline {section}{\numberline {3}Using the VO-DML tools}{5}{section.3}%
+\contentsline {section}{\numberline {4}Serialization}{5}{section.4}%
+\contentsline {subsection}{\numberline {4.1}References in serialization}{6}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Schema representations}{6}{subsection.4.2}%
+\contentsline {section}{\numberline {5}Standardization}{6}{section.5}%
+\contentsline {section}{\numberline {6}Future Directions}{6}{section.6}%
+\contentsline {section}{\numberline {A}Changes from Previous Versions}{7}{appendix.A}%
+\contentsline {section}{References}{7}{section*.3}%

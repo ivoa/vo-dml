@@ -3,7 +3,7 @@ Binding
 
 When generating various products from the VO-DML there is often a choice to be made in translating the VO-DML into a concrete representation - the definition of these choices is called binding.
 
-The mechanism for specifying the binding is via an XML file that conforms to the [binding schema](https://github.com/ivoa/vo-dml/blob/master/xsd/vo-dml-binding.xsd). A visual representation of the main part of the schema is shown below
+The mechanism for specifying the binding is via an XML file that conforms to the [binding schema](https://github.com/ivoa/vo-dml/blob/main/xsd/vo-dml-binding.xsd). A visual representation of the main part of the schema is shown below
 ![binding schama](./images/binding.jpg)
 
 The binding file can contain bindings for multiple VODML models, so the overall structure is
@@ -51,7 +51,7 @@ An example of the binding is given below for the primitiveType ```ivoa:real```
 
 It is possible to map DataTypes too, although they will most likely need to be mapped to a hand written type in the target language.
 
-The [binding file for the base IVOA model](https://github.com/ivoa/vo-dml/tree/master/models/ivoa/vo-dml/ivoa_base.vodml-binding.xml)
+The [binding file for the base IVOA model](https://github.com/ivoa/vo-dml/tree/main/models/ivoa/vo-dml/ivoa_base.vodml-binding.xml)
 shows extensive use of the type mapping features, where it is possible to ignore the automated code generation entirely and substitute
 hand-written code.
 
