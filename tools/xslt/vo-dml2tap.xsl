@@ -428,7 +428,7 @@ TODO similarly the scheme should be appended for table names - however this has 
             <xsl:comment>reference to {datatype/vodml-ref} </xsl:comment>
             <xsl:variable name="target-vodml-id">
             <xsl:choose>
-                <xsl:when test="vf:hasSuperTypes(current()/datatype/vodml-ref) and vf:isRdbSingleTable($modelname)">
+                <xsl:when test="vf:hasSuperTypes(current()/datatype/vodml-ref) and vf:isRdbSingleTable($thisModelName)">
                     <xsl:value-of select="vf:baseTypeId(current()/datatype/vodml-ref)"/>
                 </xsl:when>
                 <xsl:otherwise>
@@ -486,7 +486,7 @@ TODO similarly the scheme should be appended for table names - however this has 
             <xsl:variable name="target" >
                 <xsl:variable name="initial" select="vf:asvodmlref(current()/parent::*)"/>
                 <xsl:choose>
-                    <xsl:when test="vf:hasSuperTypes($initial) and vf:isRdbSingleTable($modelname)">
+                    <xsl:when test="vf:hasSuperTypes($initial) and vf:isRdbSingleTable($thisModelName)">
                         <xsl:value-of select="vf:baseTypeId($initial)"/>
                     </xsl:when>
                     <xsl:otherwise>

@@ -238,7 +238,7 @@
       @jakarta.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
               </xsl:when>
               <xsl:when test="vf:findmapping(datatype/vodml-ref,'java')/@jpa-atomic">
-                  <xsl:call-template name="doEmbeddedJPA">
+                  <xsl:call-template name="doEmbeddedAssociationOverrides">
                       <xsl:with-param name="nillable" select="true()"/>
                   </xsl:call-template>
       @jakarta.persistence.Basic( optional = <xsl:apply-templates select="." mode="nullable"/> )
