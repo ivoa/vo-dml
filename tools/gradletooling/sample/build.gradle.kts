@@ -102,6 +102,7 @@ dependencies {
     implementation("org.geolatte:geolatte-geom:1.9.0")
     implementation("org.hibernate.orm:hibernate-spatial:6.5.3.Final")
     testImplementation("org.orbisgis:h2gis:2.2.3")
+    testRuntimeOnly("org.hibernate.orm:hibernate-testing:6.5.3.Final")
 }
 
 python {
