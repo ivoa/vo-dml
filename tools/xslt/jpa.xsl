@@ -298,7 +298,7 @@
 
   <xsl:sequence select="concat('@jakarta.persistence.AttributeOverride(name=',$dq, string-join(current()/ancestor-or-self::att/@f,'.'),$dq,
         ', column = @jakarta.persistence.Column(name=',$dq,string-join(current()/ancestor-or-self::att/@c,'_'),$dq,
-        ',nullable = ',$nillable,' ))')"/>
+        ',nullable = ',boolean(current()/ancestor-or-self::*[@nullable][position() = 1]/@nullable) or boolean(current()/ancestor-or-self::*[last()]/@nullable),' ))')"/>
     </xsl:template>
 
     <xsl:template match="ref" mode="doAssocOverride">
@@ -330,7 +330,7 @@
 
     <xsl:template match="attribute|reference|composition" mode="nullable">
 <!--      <xsl:message>nullability - <xsl:value-of select="concat(name,' parent=',./parent::*/name, ' type=',./parent::*/name())"/> </xsl:message>-->
-         <xsl:value-of select="vf:nullable(current())"/>
+         <xsl:value-of select="vf:nullable(vf:asvodmlref(current()))"/>
     </xsl:template>
 
 

@@ -136,5 +136,6 @@
     * added the ability to specify JPA Converter in binding
 * 0.5.31
   * small bugfixes
+  * improved the handling of nullable in DataType columns
 
 N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass in same hierarchy - still waiting for a solution
