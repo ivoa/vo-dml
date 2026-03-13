@@ -100,11 +100,20 @@
 
 
   <xsl:template match="dataType" mode="JPAAnnotation">
-       <xsl:text>@jakarta.persistence.Embeddable</xsl:text>&cr;
       <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
-    <xsl:if test="vf:hasSubTypes($vodml-ref)"  >
-        <xsl:text>@jakarta.persistence.MappedSuperclass</xsl:text>&cr;<!-- this works for hibernate but seem to need at every level not just top in multi-level hierarchy-->
-    </xsl:if>
+      <xsl:choose>
+          <xsl:when test="@abstract and not(extends) and vf:hasSubTypes($vodml-ref)">
+              <xsl:text>@jakarta.persistence.MappedSuperclass</xsl:text>&cr;
+          </xsl:when>
+          <xsl:when test="extends and vf:hasSubTypes($vodml-ref)">
+              <xsl:text>@jakarta.persistence.MappedSuperclass</xsl:text>&cr;
+              <xsl:text>@jakarta.persistence.Embeddable</xsl:text>&cr;
+          </xsl:when>
+          <xsl:otherwise>
+              <xsl:text>@jakarta.persistence.Embeddable</xsl:text>&cr;
+          </xsl:otherwise>
+      </xsl:choose>
+
 <!--    <xsl:if test="vf:hasSubTypes($vodml-ref) or count(vf:baseTypes($vodml-ref))>0">-->
 <!--      @org.eclipse.persistence.annotations.Customizer(<xsl:value-of select="vf:upperFirst(name)"/>.DescConv.class)-->
 <!--    </xsl:if>-->
