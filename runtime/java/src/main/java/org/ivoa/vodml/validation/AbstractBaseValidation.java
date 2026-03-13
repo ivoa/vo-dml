@@ -459,5 +459,16 @@ public abstract class AbstractBaseValidation {
             return null;// return Thread.currentThread().getContextClassLoader(); //IMPL or null
 
         }
+
+        @Override
+        public List<String> getQualifierAnnotationNames(){
+            throw new  UnsupportedOperationException("PersistenceUnitInfo.addTransformer() not implemented");
+
+        }
+        @Override
+        public String getScopeAnnotationName(){
+            throw new  UnsupportedOperationException("PersistenceUnitInfo.addTransformer() not implemented");
+        }
+
    }
 }

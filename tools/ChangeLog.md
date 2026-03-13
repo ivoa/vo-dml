@@ -1,4 +1,4 @@
-# Version history
+# Version history for the gradle plugim
 
 * 0.2 java generation changed to cope with STC coords.
 * 0.2.1 minor updates so that proposalDM generation works
@@ -134,7 +134,7 @@
   * support for custom tap type.
     * basically to support geometries - see https://github.com/ivoa/ADQLGeomDM
     * added the ability to specify JPA Converter in binding
-* 0.5.31
-  * small bugfixes
+* 0.6.0
+  * First version hibernate 6.6+ (actually set at 7.2.6.Final ) with polymorphism for @Embeddables (i.e DataTypes in VO-DML) 
+    * It should be noted that there is a hibernate bug (https://hibernate.atlassian.net/browse/HHH-19680) that limits the complexity of such hierarchies
 
-N.B hibernate 6.6 does not like @embeddable amd @mapped-superclass in same hierarchy - still waiting for a solution
