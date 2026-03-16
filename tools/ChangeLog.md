@@ -134,6 +134,9 @@
   * support for custom tap type.
     * basically to support geometries - see https://github.com/ivoa/ADQLGeomDM
     * added the ability to specify JPA Converter in binding
+* 0.5.31
+  * small bugfixes
+  * improved the handling of nullable in DataType columns
 * 0.6.0
   * First version hibernate 6.6+ (actually set at 7.2.6.Final ) with polymorphism for @Embeddables (i.e DataTypes in VO-DML) 
     * It should be noted that there is a hibernate bug (https://hibernate.atlassian.net/browse/HHH-19680) that limits the complexity of such hierarchies

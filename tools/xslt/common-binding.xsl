@@ -20,8 +20,9 @@
   <xsl:param name="targetnamespace_root"/>
 
     <xsl:function name="vf:nullable" as="xsd:string">
-        <xsl:param name="el" as="element()"/> <!--should be attribute|reference|composition-->
-        <xsl:variable name="vodml-ref" select="vf:asvodmlref($el/parent::*)"/>
+        <xsl:param name="vodml-ref" as="xsd:string"/> <!--should be attribute|reference|composition-->
+
+        <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/> <!--should be attribute|reference|composition-->
         <xsl:choose>
             <xsl:when test="$el/parent::*/name()='dataType'">
                 <xsl:text>true</xsl:text> <!-- TODO could be less restrictive - non-inherited datatypes not in type hierarchies could still have restrictions-->
@@ -854,15 +855,18 @@
         <att v="{vf:asvodmlref(current())}" c="{name}">
             <xsl:if test="not(current()/parent::objectType[not(vf:noTableInComposition(vf:asvodmlref(.)))])">
                 <xsl:attribute name="f" select="name"/>
+
             </xsl:if>
             <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
             <xsl:attribute name="type" select="datatype/vodml-ref"/>
+            <xsl:attribute name="nullable" select="number(multiplicity/minOccurs) = 0"/>
             <xsl:apply-templates select="$type" mode="attrovercols2"/>
         </att>
     </xsl:template>
     <xsl:template match="reference" mode="attrovercols2" >
         <ref v="{vf:asvodmlref(current())}" f="{name}" c="{name}">
             <xsl:attribute name="type" select="datatype/vodml-ref"/>
+            <xsl:attribute name="nullable" select="number(multiplicity/minOccurs) = 0"/>
         </ref>
     </xsl:template>
 
@@ -878,10 +882,13 @@
                             <xsl:when test="$pmap/@primitive-value-field">
                                 <att type="{$type}">
                                 <xsl:attribute name="f" select="$pmap/@primitive-value-field"/>
+                                <xsl:attribute name="nullable" select="number(multiplicity/minOccurs) = 0"/>
                                 </att>
                             </xsl:when>
                             <xsl:otherwise>
-                                <att f="value" type="{$type}"/>
+                                <att f="value" type="{$type}">
+                                    <xsl:attribute name="nullable" select="number(multiplicity/minOccurs) = 0"/>
+                                </att>
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:when>
@@ -894,7 +901,9 @@
                                 </att>
                             </xsl:when>
                             <xsl:otherwise>
-                                <att f="value" type="{$type}"/>
+                                <att f="value" type="{$type}">
+                                    <xsl:attribute name="nullable" select="number(multiplicity/minOccurs) = 0"/>
+                                </att>
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:otherwise>
@@ -904,6 +913,7 @@
         <xsl:attribute name="enumeration" select="true()"/>
         <xsl:attribute name="atomic" select="true()"/>
         <xsl:attribute name="f" select="'value'"/>
+        <xsl:attribute name="nullable" select="number(multiplicity/minOccurs) = 0"/>
     </xsl:template>
 
 
