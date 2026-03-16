@@ -7,6 +7,7 @@ import org.xmlunit.builder.Input;
  */
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 import org.xmlunit.xpath.JAXPXPathEngine;
 import org.xmlunit.xpath.XPathEngine;
 
@@ -19,7 +20,7 @@ public class TapSchemaTest {
       Source source = Input.fromStream(JpatestModel.TAPSchema()).build();
       XPathEngine xpath = new JAXPXPathEngine();
       Iterable<Node> allMatches = xpath.selectNodes("/*/schema", source);
-      assert allMatches.iterator().hasNext();
+      Assertions.assertTrue(allMatches.iterator().hasNext());
       //TODO add more tap schema tests
    }
 }
