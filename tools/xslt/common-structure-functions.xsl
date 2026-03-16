@@ -659,16 +659,16 @@ note - only define functions in here as it is included in the schematron rules
 
     </xsl:function>
 
-    <xsl:function name="vf:treatAttrPolymorphically">
+    <xsl:function name="vf:treatAttrPolymorphically" as="xsd:boolean">
         <xsl:param name="attr"/>
         <xsl:choose>
             <xsl:when test="not(vf:isSubSetted($attr/datatype/vodml-ref))
             and vf:attributeIsDtype($attr) and vf:hasSuperTypes($attr/datatype/vodml-ref)
             and vf:dtypeHierarchyUsedPolymorphically($attr/datatype/vodml-ref)">
-                <xsl:value-of select="true()"/>
+                <xsl:sequence select="true()"/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="false()"/>
+                <xsl:sequence select="false()"/>
             </xsl:otherwise>
         </xsl:choose>
 
