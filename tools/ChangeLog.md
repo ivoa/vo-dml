@@ -1,4 +1,4 @@
-# Version history for the gradle plugim
+# Version history for the gradle plugin
 
 * 0.2 java generation changed to cope with STC coords.
 * 0.2.1 minor updates so that proposalDM generation works
