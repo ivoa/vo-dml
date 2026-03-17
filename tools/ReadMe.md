@@ -8,7 +8,7 @@ There are two alternative ways to run the VO-DML tools
 
 In both cases it is expected that the use will be via setting up a separate project that imports the necessary plugin/package.
 
-The gradle tooling is far more mature than the python tooling at the moment.
+The gradle tooling is far more mature than the python tooling at the moment, and therefore should be used in preference when building models.
 
 In both cases the tooling sets up an appropriate environment to run the tooling business logic which is expressed in [XSLT 2](./xslt)
 
@@ -23,7 +23,7 @@ plugins {
 }
 ```
 
-See [detailed instructions for usege](https://ivoa.github.io/vo-dml/QuickStart/)
+See [detailed instructions for usage](https://ivoa.github.io/vo-dml/QuickStart/)
 
 Information for [developers of the plugin itself](./Developing.md)
 

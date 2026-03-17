@@ -9,6 +9,9 @@ import org.ivoa.vodml.testing.AutoDBRoundTripTest;
 import org.ivoa.dm.jpatest.entity.Point;
 import org.junit.jupiter.api.Assertions;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,8 +39,9 @@ public class JPAStdTest extends AutoDBRoundTripTest<JpatestModel,Long,Parent> {
       atest =
             Parent.createParent(
                   a -> {
-                     ReferredTo3 ref3 = new ReferredTo3("ref in dtype");
+                     ReferredTo3 ref3 = new ReferredTo3(3,"ref in dtype");
                      a.dval = new ADtype(1.1, "astring","intatt", "base", ref3);
+                     a.eval = new AEtype(1.2, "evals", "intatt_e", "basestre_e", ref3);
                      a.rval = referredTo;
                      a.cval = refcont;
                      a.lval = ll;
@@ -48,9 +52,22 @@ public class JPAStdTest extends AutoDBRoundTripTest<JpatestModel,Long,Parent> {
       return retval;
    }
 
+   /**
+ * {@inheritDoc}
+ * overrides @see org.ivoa.vodml.validation.AbstractBaseValidation#setDbDumpFile()
+ */
+@Override
+protected String setDbDumpFile() {
+   return "jpa_test.sql";
+
+}
+
    @Override
    public void testModel(JpatestModel jpatestModelTest) {
-      Parent aout = jpatestModelTest.getContent(Parent.class).get(0);
-      Assertions.assertEquals(new Point(1.5,3.0), aout.getTval().p);
+      Parent pl = jpatestModelTest.getContent(Parent.class).get(0);
+      assertNotNull(pl);
+      assertEquals("intatt", pl.getDval().getIntatt());
+      assertEquals("intatt_e", pl.getEval().getIntatt());
+      assertEquals(new Point(1.5,3.0), pl.getTval().p);
    }
 }

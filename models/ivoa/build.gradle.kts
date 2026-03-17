@@ -1,5 +1,5 @@
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.5.31"
+    id("net.ivoa.vo-dml.vodmltools") version "0.6.0"
 //    id ("com.diffplug.spotless") version "5.17.1"
     `maven-publish`
 //    id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
@@ -23,8 +23,8 @@ tasks.test {
 }
 
 dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     implementation("org.slf4j:slf4j-api:1.7.36")
     testRuntimeOnly("ch.qos.logback:logback-classic:1.4.7")

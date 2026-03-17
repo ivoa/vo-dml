@@ -376,6 +376,10 @@
                    <xsl:when test="$m/semanticconcept/vocabularyURI">
                        set<xsl:value-of select="concat(vf:upperFirst($m/name),'(',vf:javaMemberName($m/name),')')"/>;
                    </xsl:when>
+                   <xsl:when test="vf:isCollection($m) and vf:dtypeHierarchyUsedPolymorphically($m/datatype/vodml-ref)"><!-- TODO this changes semantics os the set a little -->
+                       this.<xsl:value-of select="vf:javaMemberName($m/name)"/> = <xsl:value-of select="vf:javaMemberName($m/name)"/> == null? null: new java.util.ArrayList&lt;&gt;(<xsl:value-of select="vf:javaMemberName($m/name)"/>); //only doing new array because of DataType polymorphism
+                   </xsl:when>
+
                    <xsl:otherwise>
                        this.<xsl:value-of select="vf:javaMemberName($m/name)"/> = <xsl:value-of select="vf:javaMemberName($m/name)"/>;
                    </xsl:otherwise>
@@ -501,12 +505,15 @@
             public  <xsl:value-of select="vf:capitalize(name)"/> ( <xsl:value-of select="string-join($sparms,',')"/> )
             {
             super (superinstance);
-            <xsl:for-each select="$localmembers">
+            <xsl:for-each select="$localmembers"> <!--TODO this is not really doing proper copy semantics -->
                 <xsl:variable name="m" select="$models/key('ellookup',current())"/>
                 <xsl:choose>
                     <xsl:when test="$m/semanticconcept/vocabularyURI">
                         set<xsl:value-of select="concat(vf:upperFirst($m/name),'(',vf:javaMemberName($m/name),')')"/>;
                     </xsl:when>
+                   <xsl:when test="vf:isCollection($m)">
+                       this.<xsl:value-of select="vf:javaMemberName($m/name)"/> = <xsl:value-of select="vf:javaMemberName($m/name)"/> == null? null: new java.util.ArrayList&lt;&gt;(<xsl:value-of select="vf:javaMemberName($m/name)"/>);
+                   </xsl:when>
                     <xsl:otherwise>
                         this.<xsl:value-of select="vf:javaMemberName($m/name)"/> = <xsl:value-of select="vf:javaMemberName($m/name)"/>;
                     </xsl:otherwise>
@@ -589,7 +596,8 @@
             </xsl:when>
             <xsl:otherwise>
                 <xsl:if test="not($t/@abstract)">
-                    if<xsl:value-of select="concat(' (other.',vf:javaMemberName($m/name),' != null )this.',vf:javaMemberName($m/name),'= new ',$jt,'(other.',vf:javaMemberName($m/name),')')"/>;
+                    <!-- IMPL the cast has been added to cope with the polymorphic DataType where the declaration is forced to be the base class-->
+                    if<xsl:value-of select="concat(' (other.',vf:javaMemberName($m/name),' != null )this.',vf:javaMemberName($m/name),'= new ',$jt,'((',$jt,')other.',vf:javaMemberName($m/name),')')"/>;
                 </xsl:if>
             </xsl:otherwise>
         </xsl:choose>
@@ -1018,11 +1026,22 @@ package <xsl:value-of select="$path"/>;
 
 
   <xsl:template match="attribute" mode="declare">
-    <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
-      <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
+      <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
+      <xsl:variable name="dpoly" as="xsd:boolean" select="vf:treatAttrPolymorphically(current())"/>
+    <xsl:variable name="type" >
+        <xsl:choose>
+            <xsl:when test="$dpoly">
+               <xsl:value-of select="vf:JavaType(vf:baseTypeId(datatype/vodml-ref))"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="vf:JavaType(datatype/vodml-ref)"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+
 
     /**
-    * <xsl:apply-templates select="." mode="desc" /> : Attribute <xsl:value-of select="vf:javaMemberName(name)"/> : multiplicity <xsl:apply-templates select="multiplicity" mode="tostring"/>
+    * <xsl:apply-templates select="." mode="desc" /> : Attribute <xsl:value-of select="concat(vf:javaMemberName(name),' type ',datatype/vodml-ref)"/> : multiplicity <xsl:apply-templates select="multiplicity" mode="tostring"/>
     *
     */
     <xsl:call-template name="vodmlAnnotation"/>
@@ -1045,7 +1064,7 @@ package <xsl:value-of select="$path"/>;
     protected <xsl:value-of select="concat('java.util.List',$lt,$type,$gt,' ',vf:javaMemberName(name))"/> = new java.util.ArrayList&lt;&gt;();
         </xsl:when>
         <xsl:otherwise>
-    protected <xsl:value-of select="concat($type,' ',vf:javaMemberName(name))"/>;
+    protected <xsl:value-of select="concat($type,' ',vf:javaMemberName(name))"/>;<xsl:if test="$dpoly">// IMPL  base type used due to Datatype polymorphism</xsl:if>
         </xsl:otherwise>
     </xsl:choose>
 
@@ -1075,7 +1094,7 @@ package <xsl:value-of select="$path"/>;
 
         <xsl:if test="$do_jpa">
             @jakarta.persistence.Embedded
-        <xsl:call-template name="doEmbeddedJPA">
+        <xsl:call-template name="doEmbeddedAssociationOverrides">
             <xsl:with-param name="nillable" >true</xsl:with-param><!--TODO think if it is possible to do better with nillable value-->
         </xsl:call-template>
 
@@ -1122,7 +1141,15 @@ package <xsl:value-of select="$path"/>;
         */
         <xsl:if test="$mult/maxOccurs != 1">@SuppressWarnings("unchecked")</xsl:if><!--the cast should be ok even for the list-->
         public <xsl:value-of select="$fulltype"/>&bl;get<xsl:value-of select="$upName"/>() {
+        <xsl:choose>
+            <xsl:when test="vf:isCollection(current()) and vf:dtypeHierarchyUsedPolymorphically(current()/datatype/vodml-ref)"><!-- TODO this changes semantics of the set a little -->
+        return (<xsl:value-of select="$fulltype"/>)this.<xsl:value-of select="vf:javaMemberName($name)"/>.stream().map(t->(<xsl:value-of select="$type"/>)t).collect(java.util.stream.Collectors.toList());     // only having to return a copy of list because of polymorphic DataType
+            </xsl:when>
+            <xsl:otherwise>
         return (<xsl:value-of select="$fulltype"/>)this.<xsl:value-of select="vf:javaMemberName($name)"/>;
+            </xsl:otherwise>
+        </xsl:choose>
+
         }
         <!-- cannot need to rely on most generic set if list of subsetted type, because of type erasure - IMPL might be able to do something clever with type argument on the base class, but gets tricky if there is more than one level of subclassing -->
         <xsl:if test="not(parent::*/extends and current()[ends-with(@xsi:type,':SubsettedRole')] and $mult/maxOccurs != 1)">
@@ -1148,7 +1175,15 @@ package <xsl:value-of select="$path"/>;
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:if>
+            <xsl:choose>
+                <xsl:when test="vf:isCollection(current()) and vf:dtypeHierarchyUsedPolymorphically(current()/datatype/vodml-ref)"><!-- TODO this changes semantics os the set a little -->
+        this.<xsl:value-of select="vf:javaMemberName($name)"/> = p<xsl:value-of select="$upName"/> == null? null: new java.util.ArrayList&lt;&gt;(p<xsl:value-of select="$upName"/>); //only doing new array because of DataType polymorphism
+                </xsl:when>
+                <xsl:otherwise>
         this.<xsl:value-of select="vf:javaMemberName($name)"/> = p<xsl:value-of select="$upName"/>;
+                </xsl:otherwise>
+            </xsl:choose>
+
         }
         </xsl:if>
         /**
@@ -1235,7 +1270,7 @@ package <xsl:value-of select="$path"/>;
       public List&lt;<xsl:value-of select="$type"/>&gt;&bl;get<xsl:value-of select="$name"/>() {
       </xsl:otherwise>
       </xsl:choose>
-    return java.util.Collections.unmodifiableList(this.<xsl:value-of select="vf:javaMemberName(name)"/> != null?this.<xsl:value-of select="vf:javaMemberName(name)"/>: new ArrayList&lt;&gt;());
+    return java.util.Collections.unmodifiableList(this.<xsl:value-of select="vf:javaMemberName(name)"/> != null?this.<xsl:value-of select="vf:javaMemberName(name)"/>: new java.util.ArrayList&lt;&gt;());
     }
     /**
     * Defines whole <xsl:value-of select="name"/> composition.
@@ -1258,7 +1293,7 @@ package <xsl:value-of select="$path"/>;
     */
     public void addTo<xsl:value-of select="$name"/>(final <xsl:value-of select="$type"/> p) {
       if(this.<xsl:value-of select="vf:javaMemberName(name)"/> == null) {
-        this.<xsl:value-of select="vf:javaMemberName(name)"/> = new ArrayList&lt;&gt;();
+        this.<xsl:value-of select="vf:javaMemberName(name)"/> = new java.util.ArrayList&lt;&gt;();
       }
       this.<xsl:value-of select="vf:javaMemberName(name)"/>.add(p);
     }

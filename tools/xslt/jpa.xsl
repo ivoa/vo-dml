@@ -100,23 +100,22 @@
 
 
   <xsl:template match="dataType" mode="JPAAnnotation">
+   <!-- the rules for how embeddables work is complex in hibernate -
+   cannot mark everything as embeddable (which would be easiest) as then only the base class may ever be used
+   and everything becomes polymorphic so it is necessary to impose some heuristics to try to work out when
+   the intention of a class hierarchy is only some convenience sharing - TODO need schematron rules to match...-->
       <xsl:variable name="vodml-ref" select="vf:asvodmlref(.)"/>
-      <xsl:choose>
-          <xsl:when test="@abstract and not(extends) and vf:hasSubTypes($vodml-ref)">
-              <xsl:text>@jakarta.persistence.MappedSuperclass</xsl:text>&cr;
-          </xsl:when>
-          <xsl:when test="extends and vf:hasSubTypes($vodml-ref)">
-              <xsl:text>@jakarta.persistence.MappedSuperclass</xsl:text>&cr;
-              <xsl:text>@jakarta.persistence.Embeddable</xsl:text>&cr;
-          </xsl:when>
-          <xsl:otherwise>
-              <xsl:text>@jakarta.persistence.Embeddable</xsl:text>&cr;
-          </xsl:otherwise>
-      </xsl:choose>
+//      @jakarta.persistence.Access(jakarta.persistence.AccessType.FIELD)
+    <xsl:choose>
+        <xsl:when test="vf:hasSubTypes($vodml-ref) and not(vf:dtypeHierarchyUsedPolymorphically($vodml-ref))">
+            <xsl:text>@jakarta.persistence.MappedSuperclass</xsl:text>&cr;
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:text>@jakarta.persistence.Embeddable</xsl:text>&cr;
+            <xsl:value-of select="concat('@jakarta.persistence.DiscriminatorValue(',$dq,$vodml-ref,$dq,' )')"/>&cr;
+        </xsl:otherwise>
+    </xsl:choose>
 
-<!--    <xsl:if test="vf:hasSubTypes($vodml-ref) or count(vf:baseTypes($vodml-ref))>0">-->
-<!--      @org.eclipse.persistence.annotations.Customizer(<xsl:value-of select="vf:upperFirst(name)"/>.DescConv.class)-->
-<!--    </xsl:if>-->
   </xsl:template>
 
 
@@ -231,7 +230,7 @@
                   <xsl:variable name="tableName">
                       <xsl:apply-templates select=".." mode="tableName"/><xsl:text>_</xsl:text><xsl:value-of select="$name"/>
                   </xsl:variable>
-                  <xsl:call-template name="doEmbeddedJPA">
+                  <xsl:call-template name="doEmbeddedAssociationOverrides">
                       <xsl:with-param name="nillable" select="true()"/>
                   </xsl:call-template>
       @jakarta.persistence.ElementCollection
@@ -239,7 +238,7 @@
       @jakarta.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
               </xsl:when>
               <xsl:when test="vf:findmapping(datatype/vodml-ref,'java')/@jpa-atomic">
-                  <xsl:call-template name="doEmbeddedJPA">
+                  <xsl:call-template name="doEmbeddedAssociationOverrides">
                       <xsl:with-param name="nillable" select="true()"/>
                   </xsl:call-template>
       @jakarta.persistence.Basic( optional = <xsl:apply-templates select="." mode="nullable"/> )
@@ -254,7 +253,7 @@
               </xsl:when>
               <xsl:otherwise>
                   @jakarta.persistence.Embedded
-                      <xsl:call-template name="doEmbeddedJPA">
+                      <xsl:call-template name="doEmbeddedAssociationOverrides">
                       <xsl:with-param name="nillable" >
                           <xsl:choose>
                               <xsl:when test="$isRdbSingleInheritance">true</xsl:when><!--IMPL perhaps this is too simplistic -->
@@ -274,7 +273,7 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template name="doEmbeddedJPA">
+    <xsl:template name="doEmbeddedAssociationOverrides">
         <xsl:param name="nillable"/>
 
         <xsl:if test="current()/parent::objectType">
@@ -288,12 +287,14 @@
                     <xsl:with-param name="nillable" select="$nillable"/>
                 </xsl:apply-templates>
         </xsl:variable>
+        //other
         @jakarta.persistence.AttributeOverrides( {
         <xsl:value-of select="string-join($attovers,concat(',',$cr))"/>
         })
         </xsl:if>
     </xsl:template>
-    <xsl:template match="att[not(*)]|att[count(descendant::*)=1 and dt]" mode="doAttributeOverride">
+<!--   this was main <xsl:template match="att[not(*)]|att[count(descendant::*)=1 and dt]" mode="doAttributeOverride">-->
+    <xsl:template match="att[not(*) and not(./@f = ./preceding-sibling::att/@f)]" mode="doAttributeOverride"><!-- IMPL avoid doing two attribute overrides for same property name at the same level - the model could legitimately have such naming, but @AttributeOverride cannot cope, so in reality the model would need changing -->
         <xsl:param name="nillable"/>
 
   <xsl:sequence select="concat('@jakarta.persistence.AttributeOverride(name=',$dq, string-join(current()/ancestor-or-self::att/@f,'.'),$dq,
@@ -479,7 +480,7 @@
             <xsl:otherwise>
                 @jakarta.persistence.OneToOne(cascade = jakarta.persistence.CascadeType.ALL)
             </xsl:otherwise>
-        </xsl:choose>   
+        </xsl:choose>
 
   </xsl:template>
     <xsl:template name="enumPattern">
@@ -499,18 +500,28 @@
     <!-- open file for jpa configuration -->
    <xsl:if test="$doit">
     <xsl:result-document href="{$file}" format="persistenceInfo">
-    <xsl:element name="persistence" namespace="http://java.sun.com/xml/ns/persistence">
-      <xsl:attribute name="version" select="'2.0'"/>
+    <xsl:element name="persistence" namespace="https://jakarta.ee/xml/ns/persistence">
+      <xsl:attribute name="version" select="'3.0'"/>
       <xsl:for-each select="$models/vo-dml:model">
-      <xsl:element name="persistence-unit" namespace="http://java.sun.com/xml/ns/persistence">
+      <xsl:element name="persistence-unit" namespace="https://jakarta.ee/xml/ns/persistence">
         <xsl:attribute name="name" select="name"/>
         <xsl:comment>we rely on hibernate extensions</xsl:comment>
-        <xsl:element name="provider" namespace="http://java.sun.com/xml/ns/persistence">org.hibernate.jpa.HibernatePersistenceProvider<!--org.eclipse.persistence.jpa.PersistenceProvider--></xsl:element>
-        <xsl:apply-templates select="*" mode="jpaConfig"/>
+        <xsl:element name="provider" namespace="https://jakarta.ee/xml/ns/persistence">org.hibernate.jpa.HibernatePersistenceProvider<!--org.eclipse.persistence.jpa.PersistenceProvider--></xsl:element>
+
         <xsl:for-each select="import/name">
-            <xsl:apply-templates select="$models/vo-dml:model[name=current()]/*" mode="jpaConfig"/>
+            <xsl:apply-templates select="$models/vo-dml:model[name=current()]/(dataType,objectType,enumeration,package)" mode="jpaConfig"/>
         </xsl:for-each>
-        <xsl:element name="exclude-unlisted-classes" namespace="http://java.sun.com/xml/ns/persistence">true</xsl:element>
+        <xsl:apply-templates select="dataType,objectType,enumeration,package" mode="jpaConfig">
+           <xsl:sort select="vf:persistOrder(current())" order="descending"/>
+        </xsl:apply-templates>
+        <xsl:element name="exclude-unlisted-classes" namespace="https://jakarta.ee/xml/ns/persistence">true</xsl:element>
+<!-- autodetection will not work?
+          <xsl:element name="properties" namespace="https://jakarta.ee/xml/ns/persistence">
+              <xsl:element name="property" namespace="https://jakarta.ee/xml/ns/persistence">
+                  <xsl:attribute name="name">hibernate.archive.autodetection</xsl:attribute>
+                  <xsl:attribute name="value">class, hbm</xsl:attribute>
+              </xsl:element>
+          </xsl:element> -->
       </xsl:element>
       </xsl:for-each>
     </xsl:element>
@@ -522,14 +533,27 @@
       </xsl:result-document>
 
   </xsl:template>
+  <!-- returns a larger value the more subtypes -->
+  <xsl:function name="vf:persistOrder" >
+      <xsl:param name="el" as="element()"/>
+      <xsl:choose>
+          <xsl:when test="$el/self::package">
+              <xsl:sequence select="number(0)"/>
+          </xsl:when>
+          <xsl:otherwise>
+              <xsl:sequence select="count(vf:subTypeIds(vf:asvodmlref($el)))"/>
+          </xsl:otherwise>
+      </xsl:choose>
+
+  </xsl:function>
 
   <xsl:template match="package" mode="jpaConfig" >
-    <xsl:apply-templates select="*" mode="jpaConfig"/>
+    <xsl:apply-templates select="* except (name,vodml-id)" mode="jpaConfig"/>
   </xsl:template>
 
   <xsl:template name="jpaclassdecl">
     <xsl:param name="vodml-ref"/>
-    <xsl:element name="class" namespace="http://java.sun.com/xml/ns/persistence">
+    <xsl:element name="class" namespace="https://jakarta.ee/xml/ns/persistence">
 
       <xsl:value-of select="vf:QualifiedJavaType($vodml-ref)"/>
     </xsl:element>

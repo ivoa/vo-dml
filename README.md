@@ -13,8 +13,8 @@ There is a [Guide to creating models with VO-DML tooling](https://ivoa.github.io
 The various subdirectories
 
 * [doc](./doc)      : The IVOA standard document source and the vodml tools guide.
-* [models](./models)   : The core IVOA data model along with a small example model.
-* [xsd](./xsd)      : XML schemas associated with VO-DML.
+* [models](./models)   : The core [IVOA base data model](./models/ivoa/vo-dml/IVOA-v1.0.vo-dml.xml) along with a small example model.
+* [xsd](./xsd)      : XML schemas associated with VO-DML - in particular VO-DML models must validate against [vo-dml-v1.0.xsd](./xsd/vo-dml-v1.0.xsd)
 * [templates](./templates): UML metamodel templates for various UML editors.
 * [tools](./tools)    : All resources required to process VO-DML files. 
 * [runtime](./runtime) : support code for using code generated from models in various languages

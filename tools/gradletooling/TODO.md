@@ -39,6 +39,7 @@ VODML Tooling TODO
   * OpenApi descriminators
 * THE <IDENTIFIER> element is supposed to register specify an identifier by which it is registered - any IVOA std should be 
   in the standard namespace anyway - only use might be for arbitrary names - however this might be better done with "namespacing" of the model names...
+* abstract Dtypes - any real meaning?...should be a warning...
  
 * STC
   * epoch - not really defined as something that is used properly
@@ -48,6 +49,7 @@ VODML Tooling TODO
   * polarization enum - not comprehensive - no L circular
   * AstroCoordSystem - is a CoordSys and has a CoordSys
   * no point on celestial sphere
+  * RefLocation should not be a DataType
 
 # gradle plugin
 
@@ -136,6 +138,10 @@ VODML Tooling TODO
 
 # Distribution
   * need better directory structure on IVOA site....
+
+
+cannot upgrade to hibernate 6.6
+https://hibernate.atlassian.net/browse/HHH-18899
 
 
 

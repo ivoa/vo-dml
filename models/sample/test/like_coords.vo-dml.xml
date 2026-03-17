@@ -10,7 +10,7 @@
       <title></title>
       <author>Arnold Rots, Mark Cresitello-Dittmar, Omar Laurino</author>
       <version>1.0</version>
-      <lastModified>2024-11-29T09:02:40Z</lastModified>
+      <lastModified>2025-07-24T15:32:49Z</lastModified>
       <import>
         <name>ivoa</name>
         <version>1.0</version>
@@ -355,38 +355,6 @@
                       </datatype>
                    </constraint>
             </dataType>
-            <dataType>
-              <vodml-id>TimeOffset</vodml-id>
-              <name>TimeOffset</name>
-              <description>Time is given as an offset from a specific point in time (time0).</description>	    
-               <extends>
-                  <vodml-ref>coords:TimeStamp</vodml-ref>
-               </extends>
-            <attribute>
-              <vodml-id>TimeOffset.time</vodml-id>
-              <name>time</name>
-              <description>The TimeOffset coordinate value.</description>	    
-              <datatype>
-                 <vodml-ref>ivoa:RealQuantity</vodml-ref>
-              </datatype>
-              <multiplicity>
-                <minOccurs>1</minOccurs>
-                <maxOccurs>1</maxOccurs>
-              </multiplicity>
-            </attribute>
-            <attribute>
-              <vodml-id>TimeOffset.time0</vodml-id>
-              <name>time0</name>
-              <description>The reference time from which the offset is calculated.  This MUST be given as a TimeInstant (e.g.: JD, MJD, ISOTime).</description>	    
-              <datatype>
-                 <vodml-ref>coords:TimeInstant</vodml-ref>
-              </datatype>
-              <multiplicity>
-                <minOccurs>1</minOccurs>
-                <maxOccurs>1</maxOccurs>
-              </multiplicity>
-            </attribute>
-            </dataType>
             <dataType abstract="true">
               <vodml-id>TimeInstant</vodml-id>
               <name>TimeInstant</name>
@@ -486,80 +454,80 @@
               </multiplicity>
             </attribute>
             </dataType>
-            <dataType abstract="true">
-              <vodml-id>RefLocation</vodml-id>
-              <name>RefLocation</name>
-              <description>RefLocation defines the origin of the spatial coordinate space.  This location is represented either by a standard reference position (for which the absolute location in phase space is known by definition), or a specified point in another Spatial frame.  This object is used as the origin of the SpaceFrame here, but also to specify the Spatial Reference Position (refPosition) associated with other domain Frames.  For example, in the Time domain, the Spatial Reference Position indicates that the 'time' values are the time that the 'event' occured at that location, which might be different from the detector location.  
-               </description>	    
-            </dataType>
-            <dataType>
-              <vodml-id>StdRefLocation</vodml-id>
-              <name>StdRefLocation</name>
-              <description>An absolute a-priori known location in phase space (position and velocity).  Values are selected from the StdRefPosition vocabulary.  Considering that the GEOCENTER is really the only place for which we know the absolute location at all times, all other locations require the specification of a planetary ephemeris.  LSR[KD] are reserved for spectral and reshift frames.  TOPOCENTER (location of the observer) is special in that it assumes that the observing location is available through other means (e.g. a geographic location or an orbit ephemeris).  RELOCATABLE is available for simulations.  UNKNOWN should only be used if absolutely necessary.</description>	    
+            <objectType abstract="true">
+               <vodml-id>RefLocation</vodml-id>
+               <name>RefLocation</name>
+               <description>RefLocation defines the origin of the spatial coordinate space.  This location is represented either by a standard reference position (for which the absolute location in phase space is known by definition), or a specified point in another Spatial frame.  This object is used as the origin of the SpaceFrame here, but also to specify the Spatial Reference Position (refPosition) associated with other domain Frames.  For example, in the Time domain, the Spatial Reference Position indicates that the 'time' values are the time that the 'event' occured at that location, which might be different from the detector location.  
+                </description>	    
+            </objectType>
+            <objectType>
+               <vodml-id>StdRefLocation</vodml-id>
+               <name>StdRefLocation</name>
+               <description>An absolute a-priori known location in phase space (position and velocity).  Values are selected from the StdRefPosition vocabulary.  Considering that the GEOCENTER is really the only place for which we know the absolute location at all times, all other locations require the specification of a planetary ephemeris.  LSR[KD] are reserved for spectral and reshift frames.  TOPOCENTER (location of the observer) is special in that it assumes that the observing location is available through other means (e.g. a geographic location or an orbit ephemeris).  RELOCATABLE is available for simulations.  UNKNOWN should only be used if absolutely necessary.</description>	    
                <extends>
                   <vodml-ref>coords:RefLocation</vodml-ref>
                </extends>
-            <attribute>
-              <vodml-id>StdRefLocation.position</vodml-id>
-              <name>position</name>
-              <description>Standard reference location.  Values MUST be selected from the controlled vocabulary at the given URL. </description>	    
-              <datatype>
-                 <vodml-ref>ivoa:string</vodml-ref>
-              </datatype>
-              <multiplicity>
-                <minOccurs>1</minOccurs>
-                <maxOccurs>1</maxOccurs>
-              </multiplicity>
-            <semanticconcept>
-              <topConcept>ReferencePosition</topConcept>
-              <vocabularyURI>http://www.ivoa.net/rdf/refposition</vocabularyURI>
-            </semanticconcept>
-            </attribute>
-            </dataType>
-            <dataType>
-              <vodml-id>CustomRefLocation</vodml-id>
-              <name>CustomRefLocation</name>
-              <description>A custom reference location in phase space (position and velocity).  Position and velocity are given as coordinates with an associated SpaceFrame.  An epoch MAY be provided to further refine the location.</description>	    
+               <attribute>
+                 <vodml-id>StdRefLocation.position</vodml-id>
+                 <name>position</name>
+                 <description>Standard reference location.  Values MUST be selected from the controlled vocabulary at the given URL. </description>	    
+                 <datatype>
+                    <vodml-ref>ivoa:string</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               <semanticconcept>
+                 <topConcept>ReferencePosition</topConcept>
+                 <vocabularyURI>http://www.ivoa.net/rdf/refposition</vocabularyURI>
+               </semanticconcept>
+               </attribute>
+            </objectType>
+            <objectType>
+               <vodml-id>CustomRefLocation</vodml-id>
+               <name>CustomRefLocation</name>
+               <description>A custom reference location in phase space (position and velocity).  Position and velocity are given as coordinates with an associated SpaceFrame.  An epoch MAY be provided to further refine the location.</description>	    
                <extends>
                   <vodml-ref>coords:RefLocation</vodml-ref>
                </extends>
-            <attribute>
-              <vodml-id>CustomRefLocation.epoch</vodml-id>
-              <name>epoch</name>
-              <description>Epoch for the reference location.</description>	    
-              <datatype>
-                 <vodml-ref>coords:Epoch</vodml-ref>
-              </datatype>
-              <multiplicity>
-                <minOccurs>0</minOccurs>
-                <maxOccurs>1</maxOccurs>
-              </multiplicity>
-            </attribute>
-            <attribute>
-              <vodml-id>CustomRefLocation.position</vodml-id>
-              <name>position</name>
-              <description>The spatial coordinates of the reference location.</description>	    
-              <datatype>
-                 <vodml-ref>coords:Point</vodml-ref>
-              </datatype>
-              <multiplicity>
-                <minOccurs>1</minOccurs>
-                <maxOccurs>1</maxOccurs>
-              </multiplicity>
-            </attribute>
-            <attribute>
-              <vodml-id>CustomRefLocation.velocity</vodml-id>
-              <name>velocity</name>
-              <description>The velocity of the reference location.</description>	    
-              <datatype>
-                 <vodml-ref>coords:Point</vodml-ref>
-              </datatype>
-              <multiplicity>
-                <minOccurs>0</minOccurs>
-                <maxOccurs>1</maxOccurs>
-              </multiplicity>
-            </attribute>
-            </dataType>
+               <attribute>
+                 <vodml-id>CustomRefLocation.epoch</vodml-id>
+                 <name>epoch</name>
+                 <description>Epoch for the reference location.</description>	    
+                 <datatype>
+                    <vodml-ref>coords:Epoch</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>0</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </attribute>
+               <attribute>
+                 <vodml-id>CustomRefLocation.position</vodml-id>
+                 <name>position</name>
+                 <description>The spatial coordinates of the reference location.</description>	    
+                 <datatype>
+                    <vodml-ref>coords:Point</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </attribute>
+               <attribute>
+                 <vodml-id>CustomRefLocation.velocity</vodml-id>
+                 <name>velocity</name>
+                 <description>The velocity of the reference location.</description>	    
+                 <datatype>
+                    <vodml-ref>coords:Point</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>0</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </attribute>
+            </objectType>
             <objectType abstract="true">
                <vodml-id>CoordSpace</vodml-id>
                <name>CoordSpace</name>
@@ -678,7 +646,7 @@
                <extends>
                   <vodml-ref>coords:CoordFrame</vodml-ref>
                </extends>
-               <attribute>
+               <composition>
                  <vodml-id>GenericFrame.refPosition</vodml-id>
                  <name>refPosition</name>
                  <description>Spatial location in phase space (position and velocity) at which the observed value is considered to have been taken. This will typically be given by a standard reference position, but we allow for custom locations as well.
@@ -690,7 +658,7 @@
                    <minOccurs>1</minOccurs>
                    <maxOccurs>1</maxOccurs>
                  </multiplicity>
-               </attribute>
+               </composition>
                <attribute>
                  <vodml-id>GenericFrame.planetaryEphem</vodml-id>
                  <name>planetaryEphem</name>
@@ -712,7 +680,7 @@
                <extends>
                   <vodml-ref>coords:CoordFrame</vodml-ref>
                </extends>
-               <attribute>
+               <composition>
                  <vodml-id>SpaceFrame.refPosition</vodml-id>
                  <name>refPosition</name>
                  <description>The spatial location at which the coordinates are considered to have been determined.  This model supports locations provided as either a standard reference position (e.g. GEOCENTER), or a coordinate specifying a custom location (e.g. long, lat, height ).</description>	    
@@ -723,7 +691,7 @@
                    <minOccurs>1</minOccurs>
                    <maxOccurs>1</maxOccurs>
                  </multiplicity>
-               </attribute>
+               </composition>
                <attribute>
                  <vodml-id>SpaceFrame.spaceRefFrame</vodml-id>
                  <name>spaceRefFrame</name>
@@ -773,7 +741,7 @@
                <extends>
                   <vodml-ref>coords:CoordFrame</vodml-ref>
                </extends>
-               <attribute>
+               <composition>
                  <vodml-id>TimeFrame.refPosition</vodml-id>
                  <name>refPosition</name>
                  <description>The spatial location at which the coordinate is considered to have been taken.  This model supports locations provided as either a standard reference position (e.g. GEOCENTER), or a coordinate specifying a custom location (e.g. long, lat, height).</description>	    
@@ -784,7 +752,7 @@
                    <minOccurs>1</minOccurs>
                    <maxOccurs>1</maxOccurs>
                  </multiplicity>
-               </attribute>
+               </composition>
                <attribute>
                  <vodml-id>TimeFrame.timescale</vodml-id>
                  <name>timescale</name>
@@ -801,7 +769,7 @@
                  <vocabularyURI>http://www.ivoa.net/rdf/timescale</vocabularyURI>
                </semanticconcept>
                </attribute>
-               <attribute>
+               <composition>
                  <vodml-id>TimeFrame.refDirection</vodml-id>
                  <name>refDirection</name>
                  <description>The reference direction is needed if the time stamps are transformed to a time frame with a different reference position.  In those situations, the solar system ephemeris also comes into play.  See: FITS WCS Paper IV for details, but in short:  The reference direction, presumably the direction to the thing being observed, is used in conjunction with the reference position and planetary ephemeris to determine the correction applied for the path length change.  To be fully useful, one also needs to know the location at which the observation was made ( i.e. the observatory location), which is not considered to be Frame metadata.</description>	    
@@ -812,7 +780,7 @@
                    <minOccurs>0</minOccurs>
                    <maxOccurs>1</maxOccurs>
                  </multiplicity>
-               </attribute>
+               </composition>
             </objectType>
             <objectType>
                <vodml-id>AstroCoordSystem</vodml-id>
