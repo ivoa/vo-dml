@@ -35,8 +35,9 @@ dependencies {
 }
 
 
-tasks.named<Jar>("jar") {
+tasks.withType<Jar> {
     exclude("**/persistence.xml")
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE  //IMPL bugfix - see https://stackoverflow.com/questions/67265308/gradle-entry-classpath-is-a-duplicate-but-no-duplicate-handling-strategy-has-b
 }
 //publishing - IMPL would be nice to factor this out in some way....
 //nexusPublishing {
@@ -109,6 +110,10 @@ publishing {
 
     }
 
+}
+
+java {
+    withSourcesJar()
 }
 
 println ("java property skipSigning= " + project.hasProperty("skipSigning"))
