@@ -1,0 +1,26 @@
+<SomeContent>
+  <ref1>
+    <val>
+      <value>
+        <value>urn:value</value>
+      </value>
+    </val>
+  </ref1>
+  <ref2>
+    <name>naturalkey</name>
+    <val>
+      <value>
+        <value>ivo:val</value>
+      </value>
+    </val>
+  </ref2>
+  <zval>some</zval>
+  <zval>z</zval>
+  <zval>values</zval>
+  <con>
+    <bname>dval</bname>
+  </con>
+  <con>
+    <bname>eval</bname>
+  </con>
+</SomeContent>

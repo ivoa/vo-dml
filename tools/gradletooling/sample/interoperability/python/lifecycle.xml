@@ -1,0 +1,30 @@
+<ATest2>
+  <atest>
+    <ref1>
+      <test1>3</test1>
+    </ref1>
+    <contained2>
+      <lowr>
+        <test3>rc1</test3>
+      </lowr>
+    </contained2>
+    <contained>
+      <test2>firstcontained</test2>
+    </contained>
+    <contained>
+      <test2>secondContained</test2>
+    </contained>
+    <refandcontained>
+      <test3>rc1</test3>
+    </refandcontained>
+    <refandcontained>
+      <test3>rc2</test3>
+    </refandcontained>
+  </atest>
+  <refcont>
+    <test3>rc1</test3>
+  </refcont>
+  <refagg>
+    <test1>3</test1>
+  </refagg>
+</ATest2>

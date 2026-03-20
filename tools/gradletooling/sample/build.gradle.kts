@@ -120,6 +120,7 @@ python {
     pip("pydantic:2.9.2")
     pip("sqlmodel:0.0.22")
     pip("xsdata-pydantic:24.5")
+    pip("pydantic-xml:2.13.1")
 }
 
 
@@ -150,6 +151,13 @@ tasks.register("pytest", PythonTask::class.java) {
     command = "pythontest/src/SourceCatalogueTest.py"
 //    command = "-c \"import sys; print(sys.path)\""
     dependsOn("vodmlPythonGenerate")
+}
+
+tasks.register("pytestPydantic", PythonTask::class.java) {
+    group = "verification"
+    description = "run pydantic interoperability tests against generated pydantic models"
+    command = "-m pytest pythontest/src/PydanticInteropTest.py -v --junit-xml=build/reports/pytestPydantic/results.xml"
+    dependsOn("vodmlPydanticGenerate", "vodmlSchema")
 }
 
 tasks.register<Exec>("siteNav")
