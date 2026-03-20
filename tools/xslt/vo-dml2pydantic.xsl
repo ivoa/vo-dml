@@ -93,10 +93,10 @@
 
 <xsl:text>
 from __future__ import annotations
-from typing import Optional, List, Any
+from typing import Optional, List, Any, Union
 from enum import Enum
 from pydantic_xml import BaseXmlModel, element, attr
-from pydantic import Field
+from pydantic import Field, field_serializer
 
 
 </xsl:text>
@@ -115,6 +115,9 @@ from <xsl:value-of select="vf:PythonModule(.)"/> import <xsl:value-of select="to
       <xsl:apply-templates select="objectType|dataType" mode="file">
         <xsl:sort select="vf:numberSupertypes(vf:asvodmlref(current()))" data-type="number"/>
       </xsl:apply-templates>
+      <xsl:if test="self::vo-dml:model">
+        <xsl:apply-templates select="." mode="model-wrapper"/>
+      </xsl:if>
     </xsl:result-document>
     <xsl:apply-templates select="package" mode="content"/>
 
@@ -139,6 +142,8 @@ from <xsl:value-of select="vf:PythonModule(.)"/> import <xsl:value-of select="to
   <!-- objectType → pydantic-xml BaseXmlModel class -->
   <xsl:template match="objectType" mode="content">
     <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
+    <xsl:variable name="modelName" select="ancestor-or-self::vo-dml:model/name"/>
+    <xsl:variable name="nsprefix" select="vf:xsdNsPrefix($modelName)"/>
     <xsl:text>
 
 </xsl:text>
@@ -146,7 +151,7 @@ from <xsl:value-of select="vf:PythonModule(.)"/> import <xsl:value-of select="to
 <xsl:text>class </xsl:text><xsl:value-of select="name"/><xsl:text>(</xsl:text><xsl:choose>
       <xsl:when test="extends"><xsl:value-of select="vf:PythonType(extends/vodml-ref)"/></xsl:when>
       <xsl:otherwise>BaseXmlModel</xsl:otherwise>
-    </xsl:choose><xsl:text>, tag="</xsl:text><xsl:value-of select="name"/><xsl:text>"):
+    </xsl:choose><xsl:text>, tag="</xsl:text><xsl:value-of select="name"/><xsl:text>", nsmap={"xsi": "http://www.w3.org/2001/XMLSchema-instance"}):
 </xsl:text>
     <xsl:text>    """
     * </xsl:text><xsl:apply-templates select="." mode="desc"/><xsl:text>
@@ -160,9 +165,19 @@ from <xsl:value-of select="vf:PythonModule(.)"/> import <xsl:value-of select="to
     <xsl:text>    model_config = {"arbitrary_types_allowed": True}
 </xsl:text>
     </xsl:if>
+    <xsl:if test="vf:referredTo($vodml-ref) and not(attribute/constraint[ends-with(@xsi:type,':NaturalKey')]) and not(extends)">
+    <xsl:text>    _id: Optional[str] = attr(name="_id", default=None)
+</xsl:text>
+    </xsl:if>
+    <xsl:if test="not(@abstract='true') and (extends or vf:hasSubTypes($vodml-ref))">
+    <xsl:value-of select="concat('    xsi_type: Optional[str] = attr(name=',$dq,'type',$dq,', ns=',$dq,'xsi',$dq,', default=',$dq,$nsprefix,':',name,$dq,')')"/>
+    <xsl:text>
+</xsl:text>
+    </xsl:if>
     <xsl:apply-templates select="(attribute|composition|reference)[multiplicity/minOccurs=1 and multiplicity/maxOccurs=1]" mode="declare"/>
     <xsl:apply-templates select="(attribute|composition|reference)[not(multiplicity/minOccurs=1 and multiplicity/maxOccurs=1)]" mode="declare"/>
     <xsl:apply-templates select="constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="declare"/>
+    <xsl:apply-templates select="reference" mode="serializer"/>
     <xsl:if test="not(attribute) and not(composition) and not(reference) and not(extends) and not(constraint[ends-with(@xsi:type,':SubsettedRole')])">
     <xsl:text>    pass
 </xsl:text>
@@ -173,6 +188,8 @@ from <xsl:value-of select="vf:PythonModule(.)"/> import <xsl:value-of select="to
   <!-- dataType → pydantic-xml BaseXmlModel class -->
   <xsl:template match="dataType" mode="content">
     <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
+    <xsl:variable name="modelName" select="ancestor-or-self::vo-dml:model/name"/>
+    <xsl:variable name="nsprefix" select="vf:xsdNsPrefix($modelName)"/>
     <xsl:text>
 
 </xsl:text>
@@ -180,7 +197,7 @@ from <xsl:value-of select="vf:PythonModule(.)"/> import <xsl:value-of select="to
 <xsl:text>class </xsl:text><xsl:value-of select="name"/><xsl:text>(</xsl:text><xsl:choose>
       <xsl:when test="extends"><xsl:value-of select="vf:PythonType(extends/vodml-ref)"/></xsl:when>
       <xsl:otherwise>BaseXmlModel</xsl:otherwise>
-    </xsl:choose><xsl:text>, tag="</xsl:text><xsl:value-of select="name"/><xsl:text>"):
+    </xsl:choose><xsl:text>, tag="</xsl:text><xsl:value-of select="name"/><xsl:text>", nsmap={"xsi": "http://www.w3.org/2001/XMLSchema-instance"}):
 </xsl:text>
     <xsl:text>    """
     * </xsl:text><xsl:apply-templates select="." mode="desc"/><xsl:text>
@@ -190,9 +207,15 @@ from <xsl:value-of select="vf:PythonModule(.)"/> import <xsl:value-of select="to
     * </xsl:text><xsl:value-of select="$vodmlauthor"/><xsl:text>
     """
 </xsl:text>
+    <xsl:if test="not(@abstract='true') and (extends or vf:hasSubTypes($vodml-ref))">
+    <xsl:value-of select="concat('    xsi_type: Optional[str] = attr(name=',$dq,'type',$dq,', ns=',$dq,'xsi',$dq,', default=',$dq,$nsprefix,':',name,$dq,')')"/>
+    <xsl:text>
+</xsl:text>
+    </xsl:if>
     <xsl:apply-templates select="(attribute|reference)[multiplicity/minOccurs=1 and multiplicity/maxOccurs=1]" mode="declare"/>
     <xsl:apply-templates select="(attribute|reference)[not(multiplicity/minOccurs=1 and multiplicity/maxOccurs=1)]" mode="declare"/>
     <xsl:apply-templates select="constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="declare"/>
+    <xsl:apply-templates select="reference" mode="serializer"/>
     <xsl:if test="not(attribute) and not(reference) and not(extends) and not(constraint[ends-with(@xsi:type,':SubsettedRole')])">
     <xsl:text>    pass
 </xsl:text>
@@ -236,7 +259,7 @@ class </xsl:text><xsl:value-of select="concat(name,'(str, Enum):')"/>
     <xsl:call-template name="vodmlAnnotation"/>
     <xsl:text>
 
-class </xsl:text><xsl:value-of select="name"/><xsl:text>(BaseXmlModel, tag="</xsl:text><xsl:value-of select="name"/><xsl:text>"):
+class </xsl:text><xsl:value-of select="name"/><xsl:text>(BaseXmlModel, tag="</xsl:text><xsl:value-of select="name"/><xsl:text>", nsmap={"xsi": "http://www.w3.org/2001/XMLSchema-instance"}):
     """
     *  </xsl:text><xsl:apply-templates select="." mode="desc"/><xsl:text>
     *  PrimitiveType </xsl:text><xsl:value-of select="name"/><xsl:text> :
@@ -356,13 +379,13 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(BaseXmlModel, tag="</xs
     </xsl:text>
     <xsl:choose>
       <xsl:when test="multiplicity/maxOccurs != 1">
-        <xsl:value-of select="concat(name, ': List[', $type, '] = element(tag=', $dq, name, $dq, ', default=[])')"/>
+        <xsl:value-of select="concat(name, ': List[Union[str, ', $type, ']] = element(tag=', $dq, name, $dq, ', default=[])')"/>
       </xsl:when>
       <xsl:when test="vf:isOptional(.)">
-        <xsl:value-of select="concat(name, ': Optional[', $type, '] = element(tag=', $dq, name, $dq, ', default=None)')"/>
+        <xsl:value-of select="concat(name, ': Optional[Union[str, ', $type, ']] = element(tag=', $dq, name, $dq, ', default=None)')"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:value-of select="concat(name, ': ', $type, ' = element(tag=', $dq, name, $dq, ')')"/>
+        <xsl:value-of select="concat(name, ': Union[str, ', $type, '] = element(tag=', $dq, name, $dq, ')')"/>
       </xsl:otherwise>
     </xsl:choose>
     <xsl:text>
@@ -371,6 +394,70 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(BaseXmlModel, tag="</xs
     * </xsl:text><xsl:apply-templates select="." mode="desc"/><xsl:text>
     * ( Multiplicity : </xsl:text><xsl:apply-templates select="multiplicity" mode="tostring"/><xsl:text>) """
 </xsl:text>
+  </xsl:template>
+
+  <xsl:template match="reference" mode="serializer">
+    <xsl:variable name="method-name" select="replace(name,'[^A-Za-z0-9_]','_')"/>
+    <xsl:text>
+    @field_serializer("</xsl:text><xsl:value-of select="name"/><xsl:text>")
+    def _serialize_ref_</xsl:text><xsl:value-of select="$method-name"/><xsl:text>(self, v: Any) -> Any:
+        def _as_id(value: Any) -> Any:
+            if value is None:
+                return None
+            if isinstance(value, (str, int, float)):
+                return value
+            if hasattr(value, "_id") and getattr(value, "_id") is not None:
+                return getattr(value, "_id")
+            if hasattr(value, "name") and getattr(value, "name") is not None:
+                return getattr(value, "name")
+            return str(value)
+
+        if isinstance(v, list):
+            return [_as_id(i) for i in v]
+        return _as_id(v)
+</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="vo-dml:model" mode="model-wrapper">
+    <xsl:variable name="modelName" select="name"/>
+    <xsl:variable name="modelClass" select="concat(vf:upperFirst(name),'Model')"/>
+    <xsl:variable name="refsClass" select="concat(vf:upperFirst(name),'Refs')"/>
+    <xsl:variable name="rootTag" select="concat(name,'Model')"/>
+    <xsl:variable name="rootPrefix" select="vf:xsdNsPrefix($modelName)"/>
+    <xsl:variable name="rootNs" select="vf:xsdNs($modelName)"/>
+    <xsl:variable name="references-vodmlref" select="vf:refsToSerialize($modelName)"/>
+    <xsl:variable name="contentTypes" as="element()*" select="vf:contentToSerialize($modelName)"/>
+    <xsl:text>
+
+class </xsl:text><xsl:value-of select="$refsClass"/><xsl:text>(BaseXmlModel, tag="refs"):
+</xsl:text>
+    <xsl:for-each select="$references-vodmlref">
+      <xsl:variable name="rtype" select="vf:PythonType(.)"/>
+      <xsl:variable name="rtag" select="vf:lowerFirst(substring-after(vf:xsdType(.),':'))"/>
+      <xsl:text>    </xsl:text><xsl:value-of select="$rtag"/><xsl:text>: List[</xsl:text><xsl:value-of select="$rtype"/><xsl:text>] = element(tag="</xsl:text><xsl:value-of select="$rtag"/><xsl:text>", default=[])
+</xsl:text>
+    </xsl:for-each>
+    <xsl:if test="empty($references-vodmlref)">
+      <xsl:text>    pass
+</xsl:text>
+    </xsl:if>
+    <xsl:text>
+class </xsl:text><xsl:value-of select="$modelClass"/><xsl:text>(BaseXmlModel, tag="</xsl:text><xsl:value-of select="$rootTag"/><xsl:text>", ns="</xsl:text><xsl:value-of select="$rootPrefix"/><xsl:text>", nsmap={</xsl:text><xsl:value-of select="concat($dq,$rootPrefix,$dq,': ',$dq,$rootNs,$dq)"/>
+    <xsl:for-each select="import/name">
+      <xsl:variable name="impName" select="."/>
+      <xsl:variable name="impPrefix" select="vf:xsdNsPrefix($impName)"/>
+      <xsl:variable name="impNs" select="vf:xsdNs($impName)"/>
+      <xsl:value-of select="concat(', ',$dq,$impPrefix,$dq,': ',$dq,$impNs,$dq)"/>
+    </xsl:for-each>
+    <xsl:text>, "xsi": "http://www.w3.org/2001/XMLSchema-instance"}):
+    refs: Optional[</xsl:text><xsl:value-of select="$refsClass"/><xsl:text>] = element(tag="refs", default=None)
+</xsl:text>
+    <xsl:for-each select="$contentTypes">
+      <xsl:variable name="ctype" select="vf:PythonType(vf:asvodmlref(.))"/>
+      <xsl:variable name="ctag" select="vf:lowerFirst(substring-after(vf:xsdType(vf:asvodmlref(.)),':'))"/>
+      <xsl:text>    </xsl:text><xsl:value-of select="$ctag"/><xsl:text>: List[</xsl:text><xsl:value-of select="$ctype"/><xsl:text>] = element(tag="</xsl:text><xsl:value-of select="$ctag"/><xsl:text>", default=[])
+</xsl:text>
+    </xsl:for-each>
   </xsl:template>
 
 
