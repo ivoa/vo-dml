@@ -23,6 +23,7 @@
 - Plugin tests: `./gradlew :gradle-plugin:test` (passes in this workspace).
 - Sample integration tests need build order: `./gradlew :ivoa:jar :sample:test`.
 - Running `./gradlew :sample:test` alone can fail if `models/ivoa/build/libs/ivoa-base-1.0-SNAPSHOT.jar` is missing.
+- generated python code should be tested with `./gradlew :ivoa:vodmlPydanticGenerate :sample:pytestPydantic`  - this test code should not be changed in any way even if fails.
 - Discover task surface quickly: `./gradlew :sample:tasks --all`.
 
 ## Project-specific conventions
@@ -35,6 +36,7 @@
 - XSLT code is written in XSLT 3.0; Saxon-HE is the processor, so avoid features that require Saxon-PE/EE.
 - Python code to use venv defined by the `ru.vyarus.use-python` plugin in the gradle configuration; generated Python code should be compatible with Python 3.10+. The actual venv location will be in the top level repository directory under `venv` (not checked in) and the plugin will ensure it is created and activated for the relevant tasks.
 - Python tests should be run with the via gradle tasks that activate the venv and set the PYTHONPATH to include the generated code; see `tools/gradletooling/sample/build.gradle.kts` for examples of how to do this. 
+
 
 
 ## Integration points and external dependencies
