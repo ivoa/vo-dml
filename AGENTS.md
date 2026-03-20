@@ -31,6 +31,11 @@
 - Generated Java and schema outputs are automatically wired into source/resources and JAR packaging by the plugin.
 - Task alias `vodmlGenerateJava` is kept as a deprecated compatibility alias; prefer `vodmlJavaGenerate`.
 - `tools/gradletooling/sample/build.gradle.kts` is the canonical example of non-default `vodml { ... }` configuration.
+- Java code can use Java 17 features; generated code also can use Java 17 features.
+- XSLT code is written in XSLT 3.0; Saxon-HE is the processor, so avoid features that require Saxon-PE/EE.
+- Python code to use venv defined by the `ru.vyarus.use-python` plugin in the gradle configuration; generated Python code should be compatible with Python 3.10+. The actual venv location will be in the top level repository directory under `venv` (not checked in) and the plugin will ensure it is created and activated for the relevant tasks.
+- Python tests should be run with the via gradle tasks that activate the venv and set the PYTHONPATH to include the generated code; see `tools/gradletooling/sample/build.gradle.kts` for examples of how to do this. 
+
 
 ## Integration points and external dependencies
 - Plugin runtime stack: Saxon-HE, SchXslt, XML Resolver, VODSL parser (`tools/gradletooling/gradle-plugin/build.gradle.kts`).
@@ -48,4 +53,5 @@
 - For transformation behavior changes, edit XSLT first; only adjust Kotlin task wiring when task orchestration/IO needs change.
 - If you change task names, default directories, or dependency injection, update both `doc/guide/*.md` and `tools/gradletooling/sample/build.gradle.kts` examples.
 - For new features (e.g., additional output formats), add new tasks in `VodmlGradlePlugin.kt` and corresponding XSLT templates, then update documentation and sample integration.
+
   
