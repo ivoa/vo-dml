@@ -14,6 +14,7 @@ import org.ivoa.vodml.stdtypes.Unit;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import static org.ivoa.dm.filter.PhotometryFilter.createPhotometryFilter;
@@ -57,8 +58,8 @@ public class CatalogExample {
                           fl -> {
                               fl.bandName = "C-Band";
                               fl.spectralLocation = new RealQuantity(5.0, GHz);
-                              fl.dataValidityFrom = new Date();
-                              fl.dataValidityTo = new Date();
+                              fl.dataValidityFrom = new GregorianCalendar(2020, 0, 1).getTime();
+                              fl.dataValidityTo = new GregorianCalendar(2025, 0, 1,20,12,16).getTime();
                               fl.description = "radio band";
                               fl.name = fl.bandName;
                           }),
@@ -66,8 +67,8 @@ public class CatalogExample {
                           fl -> {
                               fl.bandName = "L-Band";
                               fl.spectralLocation = new RealQuantity(1.5, GHz);
-                              fl.dataValidityFrom = new Date();
-                              fl.dataValidityTo = new Date();
+                              fl.dataValidityFrom = new GregorianCalendar(2020, 0, 1).getTime();
+                              fl.dataValidityTo = new GregorianCalendar(2025, 0, 1,13,12).getTime();
                               fl.description = "radio band";
                               fl.name = fl.bandName;
                           }));

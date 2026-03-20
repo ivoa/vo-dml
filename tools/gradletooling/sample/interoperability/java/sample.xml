@@ -28,9 +28,9 @@
                                 
                 <bandName>C-Band</bandName>
                                 
-                <dataValidityFrom>2026-03-20T11:38:48.014Z</dataValidityFrom>
+                <dataValidityFrom>2020-01-01T00:00:00Z</dataValidityFrom>
                                 
-                <dataValidityTo>2026-03-20T11:38:48.014Z</dataValidityTo>
+                <dataValidityTo>2025-01-01T20:12:16Z</dataValidityTo>
                                 
                 <spectralLocation>
                                         
@@ -50,9 +50,9 @@
                                 
                 <bandName>L-Band</bandName>
                                 
-                <dataValidityFrom>2026-03-20T11:38:48.014Z</dataValidityFrom>
+                <dataValidityFrom>2020-01-01T00:00:00Z</dataValidityFrom>
                                 
-                <dataValidityTo>2026-03-20T11:38:48.014Z</dataValidityTo>
+                <dataValidityTo>2025-01-01T13:12:00Z</dataValidityTo>
                                 
                 <spectralLocation>
                                         
