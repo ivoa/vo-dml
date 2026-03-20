@@ -197,6 +197,7 @@ class SampleModelInteropTest(unittest.TestCase):
         """Serialise the SourceCatalogue to XML and write to interoperability/python/."""
         xml_bytes = self.sc.to_xml(pretty_print=True)
         _write("sample.xml", xml_bytes)
+        _validate_xml(xml_bytes, "Sample.vo-dml.xsd", self)
         # Basic check: output is non-empty XML
         self.assertIn(b"<SourceCatalogue", xml_bytes)
         self.assertIn(b"testCat", xml_bytes)
@@ -260,6 +261,7 @@ class LifecycleModelInteropTest(unittest.TestCase):
     def test_xml_serialise(self):
         xml_bytes = self.top.to_xml(pretty_print=True)
         _write("lifecycle.xml", xml_bytes)
+        _validate_xml(xml_bytes, "lifecycleTest.vo-dml.xsd", self)
         self.assertIn(b"<ATest2", xml_bytes)
         self.assertIn(b"firstcontained", xml_bytes)
 
@@ -321,6 +323,7 @@ class SerializationExampleInteropTest(unittest.TestCase):
     def test_xml_serialise(self):
         xml_bytes = self.content.to_xml(pretty_print=True)
         _write("serializationsample.xml", xml_bytes)
+        _validate_xml(xml_bytes, "serializationExample.vo-dml.xsd", self)
         self.assertIn(b"<SomeContent", xml_bytes)
 
     def test_xml_round_trip(self):
@@ -330,10 +333,15 @@ class SerializationExampleInteropTest(unittest.TestCase):
         self.assertEqual(recovered.zval, self.content.zval)
 
 
-class JavaInteropReadTest(unittest.TestCase):
+
+
+class PythonNonModelReadTest(unittest.TestCase):
     """
-    Reads the Java-produced serialisation files from interoperability/java/ and
-    checks for parsing/validation errors.
+    Reads the Python-produced serialisation files from interoperability/python/ and
+    checks for parsing/validation errors. It does not use the model files for reading
+    but does it with direct JSON parsing and ElementTree for XML.
+
+    The tests were trained on the Java examples, so they expect the same structure and content as the Java files.
 
     The Java VODML serialisation wraps model objects in a container with a ``refs``
     section (objects referenced by ID or natural key) and a ``content`` list (typed
@@ -342,7 +350,7 @@ class JavaInteropReadTest(unittest.TestCase):
     a measure of Java ↔ Python interoperability.
     """
 
-    _JAVA_DIR = Path(__file__).parent.parent.parent / "interoperability" / "java"
+
 
     # ------------------------------------------------------------------ helpers
 
@@ -359,31 +367,18 @@ class JavaInteropReadTest(unittest.TestCase):
         """Return the root Element of the parsed XML file at *path*."""
         return ET.parse(str(path)).getroot()
 
+    #FIXME - really do *NOT* want to strip namespace!
     @staticmethod
     def _strip_ns(tag: str) -> str:
         """Strip ``{namespace}`` prefix from an ElementTree tag string."""
         return tag.split("}")[-1] if "}" in tag else tag
 
-    # ------------------------------------------------------------------ file existence
-
-    def test_java_interop_files_exist(self):
-        """All expected Java interoperability files must be present."""
-        expected = [
-            "sample.json", "sample.xml",
-            "lifecycle.json", "lifecycle.xml",
-            "serializationsample.json", "serializationsample.xml",
-        ]
-        missing = [f for f in expected if not (self._JAVA_DIR / f).exists()]
-        self.assertFalse(
-            missing,
-            f"Java interop files not found: {missing}  (run :sample:test first)",
-        )
 
     # ------------------------------------------------------------------ sample JSON
 
     def test_sample_json_source_catalogue(self):
-        """Parse Java sample.json and validate SourceCatalogue data."""
-        with open(self._JAVA_DIR / "sample.json") as fh:
+        """Parse Python sample.json and validate SourceCatalogue data."""
+        with open(_INTEROP_DIR / "sample.json") as fh:
             data = json.load(fh)
 
         root = data.get("SampleModel", {})
@@ -406,8 +401,8 @@ class JavaInteropReadTest(unittest.TestCase):
         self.assertAlmostEqual(position["latitude"]["value"], 52.5)
 
     def test_sample_json_photometric_system(self):
-        """Parse Java sample.json and validate PhotometricSystem data."""
-        with open(self._JAVA_DIR / "sample.json") as fh:
+        """Parse Python sample.json and validate PhotometricSystem data."""
+        with open(_INTEROP_DIR / "sample.json") as fh:
             data = json.load(fh)
 
         root = data.get("SampleModel", {})
@@ -424,8 +419,8 @@ class JavaInteropReadTest(unittest.TestCase):
     # ------------------------------------------------------------------ sample XML
 
     def test_sample_xml_source_catalogue(self):
-        """Parse Java sample.xml and validate SourceCatalogue data."""
-        root = self._parse_xml_root(self._JAVA_DIR / "sample.xml")
+        """Parse Python sample.xml and validate SourceCatalogue data."""
+        root = self._parse_xml_root(_INTEROP_DIR / "sample.xml")
 
         # The Java XML uses dotted element names like `catalog.inner.SourceCatalogue`
         sc_el = next(
@@ -454,8 +449,8 @@ class JavaInteropReadTest(unittest.TestCase):
     # ------------------------------------------------------------------ lifecycle JSON
 
     def test_lifecycle_json_atest2(self):
-        """Parse Java lifecycle.json and validate ATest2 data."""
-        with open(self._JAVA_DIR / "lifecycle.json") as fh:
+        """Parse Python lifecycle.json and validate ATest2 data."""
+        with open(_INTEROP_DIR / "lifecycle.json") as fh:
             data = json.load(fh)
 
         root = data.get("LifecycleTestModel", {})
@@ -479,8 +474,8 @@ class JavaInteropReadTest(unittest.TestCase):
     # ------------------------------------------------------------------ lifecycle XML
 
     def test_lifecycle_xml_atest2(self):
-        """Parse Java lifecycle.xml and validate ATest2 data."""
-        root = self._parse_xml_root(self._JAVA_DIR / "lifecycle.xml")
+        """Parse Python lifecycle.xml and validate ATest2 data."""
+        root = self._parse_xml_root(_INTEROP_DIR / "lifecycle.xml")
 
         atest2 = root.find(".//aTest2")
         self.assertIsNotNone(atest2, "<aTest2> not found in lifecycle.xml")
@@ -500,8 +495,8 @@ class JavaInteropReadTest(unittest.TestCase):
     # ------------------------------------------------------------------ serialisation example JSON
 
     def test_serializationsample_json_somecontent(self):
-        """Parse Java serializationsample.json and validate SomeContent data."""
-        with open(self._JAVA_DIR / "serializationsample.json") as fh:
+        """Parse Python serializationsample.json and validate SomeContent data."""
+        with open(_INTEROP_DIR / "serializationsample.json") as fh:
             data = json.load(fh)
 
         root = data.get("MyModelModel", {})
@@ -519,8 +514,8 @@ class JavaInteropReadTest(unittest.TestCase):
     # ------------------------------------------------------------------ serialisation example XML
 
     def test_serializationsample_xml_somecontent(self):
-        """Parse Java serializationsample.xml and validate SomeContent data."""
-        root = self._parse_xml_root(self._JAVA_DIR / "serializationsample.xml")
+        """Parse Python serializationsample.xml and validate SomeContent data."""
+        root = self._parse_xml_root(_INTEROP_DIR / "serializationsample.xml")
 
         sc_el = root.find(".//someContent")
         self.assertIsNotNone(sc_el, "<someContent> not found in serializationsample.xml")
@@ -544,20 +539,25 @@ class JavaInteropReadTest(unittest.TestCase):
 
     # ------------------------------------------------------------------ XML schema validation
 
-    def test_sample_xml_schema_valid(self):
-        """Validate the Java sample.xml against Sample.vo-dml.xsd."""
-        xml_bytes = (self._JAVA_DIR / "sample.xml").read_bytes()
-        _validate_xml(xml_bytes, "Sample.vo-dml.xsd", self)
+class PythonModelReadJavaTest(unittest.TestCase):
+    """ This is a placeholder for when it is remotely worth doing the reading of the java serialized instances with the python model
+    """
+    _JAVA_DIR = Path(__file__).parent.parent.parent / "interoperability" / "java"
 
-    def test_lifecycle_xml_schema_valid(self):
-        """Validate the Java lifecycle.xml against lifecycleTest.vo-dml.xsd."""
-        xml_bytes = (self._JAVA_DIR / "lifecycle.xml").read_bytes()
-        _validate_xml(xml_bytes, "lifecycleTest.vo-dml.xsd", self)
+        # ------------------------------------------------------------------ file existence
 
-    def test_serializationsample_xml_schema_valid(self):
-        """Validate the Java serializationsample.xml against serializationExample.vo-dml.xsd."""
-        xml_bytes = (self._JAVA_DIR / "serializationsample.xml").read_bytes()
-        _validate_xml(xml_bytes, "serializationExample.vo-dml.xsd", self)
+    def test_java_interop_files_exist(self):
+        """All expected Java interoperability files must be present."""
+        expected = [
+            "sample.json", "sample.xml",
+            "lifecycle.json", "lifecycle.xml",
+            "serializationsample.json", "serializationsample.xml",
+        ]
+        missing = [f for f in expected if not (self._JAVA_DIR / f).exists()]
+        self.assertFalse(
+            missing,
+            f"Java interop files not found: {missing}  (run :sample:test first)",
+        )
 
 
 if __name__ == "__main__":
