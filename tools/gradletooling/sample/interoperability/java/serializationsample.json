@@ -1,0 +1,32 @@
+{
+  "MyModelModel" : {
+    "refs" : {
+      "MyModel:Refa" : [ {
+        "_id" : 1045,
+        "val" : "urn:value"
+      } ],
+      "MyModel:Refb" : [ {
+        "name" : "naturalkey",
+        "val" : "ivo:val"
+      } ]
+    },
+    "content" : [ {
+      "@type" : "MyModel:SomeContent",
+      "_id" : 0,
+      "ref1" : 1045,
+      "ref2" : "naturalkey",
+      "zval" : [ "some", "z", "values" ],
+      "con" : [ {
+        "@type" : "MyModel:types.Dcont",
+        "_id" : 0,
+        "bname" : "dval",
+        "dval" : "N1"
+      }, {
+        "@type" : "MyModel:types.Econt",
+        "_id" : 0,
+        "bname" : "eval",
+        "evalue" : "cube"
+      } ]
+    } ]
+  }
+}

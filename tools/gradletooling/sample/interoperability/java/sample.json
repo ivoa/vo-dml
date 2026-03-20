@@ -1,0 +1,118 @@
+{
+  "SampleModel" : {
+    "refs" : {
+      "sample:catalog.SkyCoordinateFrame" : [ {
+        "name" : "J2000",
+        "documentURI" : "http://coord.net",
+        "equinox" : "J2000.0"
+      } ]
+    },
+    "content" : [ {
+      "@type" : "filter:PhotometricSystem",
+      "_id" : 0,
+      "description" : "test photometric system",
+      "detectorType" : 1,
+      "photometryFilter" : [ {
+        "_id" : 1034,
+        "name" : "C-Band",
+        "description" : "radio band",
+        "bandName" : "C-Band",
+        "dataValidityFrom" : "2026-03-20T11:38:48.403+00:00",
+        "dataValidityTo" : "2026-03-20T11:38:48.403+00:00",
+        "spectralLocation" : {
+          "@type" : "ivoa:RealQuantity",
+          "unit" : {
+            "value" : "GHz"
+          },
+          "value" : 5.0
+        }
+      }, {
+        "_id" : 1035,
+        "name" : "L-Band",
+        "description" : "radio band",
+        "bandName" : "L-Band",
+        "dataValidityFrom" : "2026-03-20T11:38:48.403+00:00",
+        "dataValidityTo" : "2026-03-20T11:38:48.403+00:00",
+        "spectralLocation" : {
+          "@type" : "ivoa:RealQuantity",
+          "unit" : {
+            "value" : "GHz"
+          },
+          "value" : 1.5
+        }
+      } ]
+    }, {
+      "@type" : "sample:catalog.inner.SourceCatalogue",
+      "_id" : 0,
+      "name" : "testCat",
+      "entry" : [ {
+        "@type" : "sample:catalog.SDSSSource",
+        "_id" : 0,
+        "label" : "cepheid",
+        "name" : "testSource",
+        "position" : {
+          "longitude" : {
+            "@type" : "ivoa:RealQuantity",
+            "unit" : {
+              "value" : "degree"
+            },
+            "value" : 2.5
+          },
+          "latitude" : {
+            "@type" : "ivoa:RealQuantity",
+            "unit" : {
+              "value" : "degree"
+            },
+            "value" : 52.5
+          },
+          "frame" : "J2000"
+        },
+        "positionError" : {
+          "@type" : "sample:catalog.AlignedEllipse",
+          "longError" : 0.2,
+          "latError" : 0.1
+        },
+        "classification" : "AGN",
+        "luminosity" : [ {
+          "_id" : 0,
+          "value" : {
+            "@type" : "ivoa:RealQuantity",
+            "unit" : {
+              "value" : "Jy"
+            },
+            "value" : 2.5
+          },
+          "error" : {
+            "@type" : "ivoa:RealQuantity",
+            "unit" : {
+              "value" : "Jy"
+            },
+            "value" : 0.25
+          },
+          "description" : "lummeas",
+          "type" : "flux",
+          "filter" : 1034
+        }, {
+          "_id" : 0,
+          "value" : {
+            "@type" : "ivoa:RealQuantity",
+            "unit" : {
+              "value" : "Jy"
+            },
+            "value" : 3.5
+          },
+          "error" : {
+            "@type" : "ivoa:RealQuantity",
+            "unit" : {
+              "value" : "Jy"
+            },
+            "value" : 0.25
+          },
+          "description" : "lummeas2",
+          "type" : "flux",
+          "filter" : 1035
+        } ]
+      } ]
+    } ]
+  }
+}

@@ -1,0 +1,109 @@
+<jpat:jpatestModel xmlns:jpat="http://ivoa.net/dm/sample/jpatest" xmlns:ser="http://ivoa.net/vodml/sample/serialization" xmlns:coord="http://notstc/coords/v1" xmlns:c1vdt="http://ivoa.net/dm/sample/c1vdt" xmlns:filt="http://ivoa.net/dm/sample/filter/v1" xmlns:simp="http://ivoa.net/dm/sample/sample/v1" xmlns:life="http://ivoa.net/vodml/sample/lifecycle" xmlns:ivoa="http://ivoa.net/vodml/ivoa">
+        
+    <refs>
+                
+        <referredTo3 _id="jpatest-ReferredTo3_1002">
+                        
+            <sval>ref in dtype</sval>
+                        
+            <ival>3</ival>
+                    
+        </referredTo3>
+                
+        <referredTo2 _id="jpatest-ReferredTo2_1004">
+                        
+            <sval>lower ref</sval>
+                    
+        </referredTo2>
+                
+        <referredTo1 _id="jpatest-ReferredTo1_1003">
+                        
+            <sval>top level ref</sval>
+                    
+        </referredTo1>
+            
+    </refs>
+        
+    <parent>
+                
+        <dval>
+                        
+            <basestr>base</basestr>
+                        
+            <dref>jpatest-ReferredTo3_1002</dref>
+                        
+            <intatt>intatt</intatt>
+                        
+            <dvalr>1.1</dvalr>
+                        
+            <dvals>astring</dvals>
+                    
+        </dval>
+                
+        <eval>
+                        
+            <basestr>basestre_e</basestr>
+                        
+            <dref>jpatest-ReferredTo3_1002</dref>
+                        
+            <intatt>intatt_e</intatt>
+                        
+            <evalr>1.2</evalr>
+                        
+            <evals>evals</evals>
+                    
+        </eval>
+                
+        <rval>jpatest-ReferredTo1_1003</rval>
+                
+        <cval>
+                        
+            <rval>jpatest-ReferredTo2_1004</rval>
+                    
+        </cval>
+                
+        <lval>
+                        
+            <lChild>
+                                
+                <sval>First</sval>
+                                
+                <ival>1</ival>
+                            
+            </lChild>
+                        
+            <lChild>
+                                
+                <sval>Second</sval>
+                                
+                <ival>2</ival>
+                            
+            </lChild>
+                        
+            <lChild>
+                                
+                <sval>Third</sval>
+                                
+                <ival>3</ival>
+                            
+            </lChild>
+                    
+        </lval>
+                
+        <tval>
+                        
+            <p>
+                                
+                <x>1.5</x>
+                                
+                <y>3.0</y>
+                            
+            </p>
+                        
+            <dt>thing</dt>
+                    
+        </tval>
+            
+    </parent>
+    
+</jpat:jpatestModel>

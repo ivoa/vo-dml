@@ -49,6 +49,11 @@ class LifecycleTestModelTest extends AutoRoundTripTest<LifecycleTestModel> {
   @AfterEach
   void tearDown() throws Exception {}
 
+  @Override
+  protected String setSerializationDumpPrefix() {
+    return "interoperability/java/lifecycle";
+  }
+
   /**
    * {@inheritDoc}
    * overrides @see org.ivoa.vodml.validation.AutoRoundTripTest#createModel()
@@ -93,4 +98,5 @@ class LifecycleTestModelTest extends AutoRoundTripTest<LifecycleTestModel> {
     m.processReferences();
     System.out.println("ref and contained val =" + ratest2.get(0).getRefcont().getTest3());
   }
+
 }

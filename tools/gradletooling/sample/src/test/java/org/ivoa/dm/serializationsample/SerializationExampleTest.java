@@ -24,7 +24,12 @@ private SomeContent someContent;
 private Refa refa;
 private Refb refb;
 
-@Override
+   @Override
+   protected String setSerializationDumpPrefix() {
+      return "interoperability/java/serializationsample";
+   }
+
+   @Override
   public MyModelModel createModel() {
     themodel = new MyModelModel();
     refa = new Refa(new AltURL("urn:value"));

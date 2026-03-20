@@ -1,0 +1,112 @@
+{
+  "CoordsModel" : {
+    "refs" : {
+      "coords:CoordSys" : [ {
+        "@type" : "coords:TimeSys",
+        "_id" : 1027,
+        "frame" : {
+          "@type" : "coords:TimeFrame",
+          "_id" : 0,
+          "refPosition" : {
+            "@type" : "coords:StdRefLocation",
+            "_id" : 0,
+            "position" : "TOPOCENTER"
+          },
+          "timescale" : "TT",
+          "refDirection" : {
+            "@type" : "coords:CustomRefLocation",
+            "_id" : 0,
+            "epoch" : "J2014.25",
+            "position" : {
+              "@type" : "coords:LonLatPoint",
+              "coordSys" : {
+                "@type" : "coords:SpaceSys",
+                "_id" : 1026,
+                "frame" : {
+                  "@type" : "coords:SpaceFrame",
+                  "_id" : 0,
+                  "refPosition" : {
+                    "@type" : "coords:StdRefLocation",
+                    "_id" : 0,
+                    "position" : "TOPOCENTER"
+                  },
+                  "spaceRefFrame" : "ICRS",
+                  "planetaryEphem" : "DE432"
+                }
+              },
+              "lon" : {
+                "@type" : "ivoa:RealQuantity",
+                "unit" : {
+                  "value" : "deg"
+                },
+                "value" : 6.752477
+              },
+              "lat" : {
+                "@type" : "ivoa:RealQuantity",
+                "unit" : {
+                  "value" : "deg"
+                },
+                "value" : -16.716116
+              },
+              "dist" : {
+                "@type" : "ivoa:RealQuantity",
+                "unit" : {
+                  "value" : "ly"
+                },
+                "value" : 8.6
+              }
+            }
+          }
+        }
+      }, 1026 ]
+    },
+    "content" : [ {
+      "@type" : "coords:AnObject",
+      "_id" : 0,
+      "position" : {
+        "@type" : "coords:LonLatPoint",
+        "coordSys" : 1026,
+        "lon" : {
+          "@type" : "ivoa:RealQuantity",
+          "unit" : {
+            "value" : "deg"
+          },
+          "value" : 45.0
+        },
+        "lat" : {
+          "@type" : "ivoa:RealQuantity",
+          "unit" : {
+            "value" : "deg"
+          },
+          "value" : 15.0
+        },
+        "dist" : {
+          "@type" : "ivoa:RealQuantity",
+          "unit" : {
+            "value" : "Mpc"
+          },
+          "value" : 1.5
+        }
+      },
+      "time" : {
+        "@type" : "coords:MJD",
+        "coordSys" : 1027,
+        "date" : 60000.0
+      },
+      "sys" : {
+        "@type" : "coords:GenericSys",
+        "_id" : 1028,
+        "frame" : {
+          "@type" : "coords:GenericFrame",
+          "_id" : 0,
+          "refPosition" : {
+            "@type" : "coords:StdRefLocation",
+            "_id" : 0,
+            "position" : "TOPOCENTER"
+          },
+          "planetaryEphem" : "DE432"
+        }
+      }
+    } ]
+  }
+}

@@ -29,6 +29,11 @@ public class JPAStdTest extends AutoDBRoundTripTest<JpatestModel,Long,Parent> {
    }
 
    @Override
+   protected String setSerializationDumpPrefix() {
+      return "interoperability/java/jpatest";
+   }
+
+   @Override
    public JpatestModel createModel() {
       final ReferredTo1 referredTo = new ReferredTo1("top level ref");
       final ReferredTo2 referredToin = new ReferredTo2("lower ref");

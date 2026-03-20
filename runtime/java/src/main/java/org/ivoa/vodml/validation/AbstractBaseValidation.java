@@ -6,12 +6,13 @@ package org.ivoa.vodml.validation;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.util.*;
 
 import com.networknt.schema.output.OutputUnit;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.SharedCacheMode;
 import jakarta.persistence.ValidationMode;
 import jakarta.persistence.spi.ClassTransformer;
@@ -43,14 +44,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Session;
 import org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl;
 import org.hibernate.jpa.boot.internal.PersistenceUnitInfoDescriptor;
-import org.ivoa.vodml.ModelDescription;
 import org.ivoa.vodml.ModelManagement;
 import org.ivoa.vodml.VodmlModel;
 import org.ivoa.vodml.jpa.JPAManipulationsForObjectType;
 import org.ivoa.vodml.validation.XMLValidator.ValidationResult;
 
 /**
- * Base Class for doing validating tests.
+ * Base Class for doing validating tests. There are two methods @link {@link #setSerializationDumpPrefix()} and
+ * {@link #setDbDumpFile()} that can be overridden to set up the
+ * writing of the serializations and the database dumps. The default is not to write these to files.
  */
 public abstract class AbstractBaseValidation {
     /**
@@ -72,6 +74,7 @@ public abstract class AbstractBaseValidation {
         String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(model);
         System.out.println("JSON output");
         System.out.println(json);
+        writeSerialization(json, "json");
         JSONValidator jsonValidator = new JSONValidator(m.management());
         OutputUnit vresult = jsonValidator.validate(json);
         if (!vresult.isValid()) {
@@ -139,6 +142,7 @@ public abstract class AbstractBaseValidation {
 
         trans.transform(new StreamSource(new StringReader(sw.toString())), result);
         final String xmlOutput = sw2.toString();
+        writeSerialization(xmlOutput, "xml");
         System.out.println(xmlOutput);
         XMLValidator xmlValidator = new XMLValidator(vodmlModel.management());
         ValidationResult validation = xmlValidator.validate(xmlOutput);
@@ -247,6 +251,33 @@ public abstract class AbstractBaseValidation {
      */
     protected String setDbDumpFile() {
         return  null;
+    }
+
+    /**
+     * set the prefix for the file to which the XML and JSON serializations are written.
+     * The default is null so that no file is written.
+     * @return
+     */
+    protected String setSerializationDumpPrefix() {
+        return null;
+    }
+
+    private void writeSerialization(String content, String suffix){
+         String prefix = setSerializationDumpPrefix();
+         if(prefix != null)
+         {
+               String filename = prefix+"."+suffix;
+               try {
+
+                   final Path path = Paths.get(filename);
+                   java.nio.file.Files.createDirectories(path.getParent());
+                   java.nio.file.Files.write(path, content.getBytes());
+
+               } catch (java.io.IOException e) {
+                  System.err.println("Error writing serialization to file "+filename);
+                  e.printStackTrace();
+               }
+         }
     }
 
 

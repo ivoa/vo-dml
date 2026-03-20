@@ -1,0 +1,135 @@
+<coord:coordsModel xmlns:coord="http://notstc/coords/v1" xmlns:ser="http://ivoa.net/vodml/sample/serialization" xmlns:c1vdt="http://ivoa.net/dm/sample/c1vdt" xmlns:filt="http://ivoa.net/dm/sample/filter/v1" xmlns:jpat="http://ivoa.net/dm/sample/jpatest" xmlns:simp="http://ivoa.net/dm/sample/sample/v1" xmlns:life="http://ivoa.net/vodml/sample/lifecycle" xmlns:ivoa="http://ivoa.net/vodml/ivoa">
+        
+    <refs>
+                
+        <coordSys xsi:type="coord:SpaceSys" _id="coords-SpaceSys_1023" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                        
+            <frame xsi:type="coord:SpaceFrame">
+                                
+                <refPosition xsi:type="coord:StdRefLocation">
+                                        
+                    <position>TOPOCENTER</position>
+                                    
+                </refPosition>
+                                
+                <spaceRefFrame>ICRS</spaceRefFrame>
+                                
+                <planetaryEphem>DE432</planetaryEphem>
+                            
+            </frame>
+                    
+        </coordSys>
+                
+        <coordSys xsi:type="coord:TimeSys" _id="coords-TimeSys_1024" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                        
+            <frame xsi:type="coord:TimeFrame">
+                                
+                <refPosition xsi:type="coord:StdRefLocation">
+                                        
+                    <position>TOPOCENTER</position>
+                                    
+                </refPosition>
+                                
+                <timescale>TT</timescale>
+                                
+                <refDirection xsi:type="coord:CustomRefLocation">
+                                        
+                    <epoch>J2014.25</epoch>
+                                        
+                    <position xsi:type="coord:LonLatPoint">
+                                                
+                        <coordSys>coords-SpaceSys_1023</coordSys>
+                                                
+                        <lon>
+                                                        
+                            <unit>deg</unit>
+                                                        
+                            <value>6.752477</value>
+                                                    
+                        </lon>
+                                                
+                        <lat>
+                                                        
+                            <unit>deg</unit>
+                                                        
+                            <value>-16.716116</value>
+                                                    
+                        </lat>
+                                                
+                        <dist>
+                                                        
+                            <unit>ly</unit>
+                                                        
+                            <value>8.6</value>
+                                                    
+                        </dist>
+                                            
+                    </position>
+                                    
+                </refDirection>
+                            
+            </frame>
+                    
+        </coordSys>
+            
+    </refs>
+        
+    <anObject>
+                
+        <position>
+                        
+            <coordSys>coords-SpaceSys_1023</coordSys>
+                        
+            <lon>
+                                
+                <unit>deg</unit>
+                                
+                <value>45.0</value>
+                            
+            </lon>
+                        
+            <lat>
+                                
+                <unit>deg</unit>
+                                
+                <value>15.0</value>
+                            
+            </lat>
+                        
+            <dist>
+                                
+                <unit>Mpc</unit>
+                                
+                <value>1.5</value>
+                            
+            </dist>
+                    
+        </position>
+                
+        <time>
+                        
+            <coordSys>coords-TimeSys_1024</coordSys>
+                        
+            <date>60000.0</date>
+                    
+        </time>
+                
+        <sys _id="coords-GenericSys_1025">
+                        
+            <frame xsi:type="coord:GenericFrame" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                                
+                <refPosition xsi:type="coord:StdRefLocation">
+                                        
+                    <position>TOPOCENTER</position>
+                                    
+                </refPosition>
+                                
+                <planetaryEphem>DE432</planetaryEphem>
+                            
+            </frame>
+                    
+        </sys>
+            
+    </anObject>
+    
+</coord:coordsModel>

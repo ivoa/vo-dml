@@ -29,7 +29,12 @@ class CoordsModelTest extends AutoRoundTripWithValidationTest<CoordsModel> {
   private static final org.slf4j.Logger logger =
       org.slf4j.LoggerFactory.getLogger(CoordsModelTest.class);
 
-  @Override
+   @Override
+   protected String setSerializationDumpPrefix() {
+      return "interoperability/java/notstccoords";
+   }
+
+   @Override
   public CoordsModel createModel() {
     // see
     // https://github.com/mcdittmar/ivoa-dm-examples/blob/master/assets/examples/coords/current/instances/astrocoordsys.jovial for jovial version of this test.

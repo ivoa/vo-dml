@@ -17,38 +17,34 @@ import java.io.StringWriter;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+
+import org.ivoa.dm.filter.PhotometricSystem;
 import org.ivoa.dm.sample.SampleModel;
 import org.ivoa.dm.sample.catalog.inner.SourceCatalogue;
+import org.ivoa.vodml.testing.AbstractTest;
 import org.ivoa.vodml.validation.XMLValidator;
 import org.ivoa.vodml.validation.XMLValidator.ValidationResult;
 
 /*
  * Created on 20/08/2021 by Paul Harrison (paul.harrison@manchester.ac.uk).
  */
-class SourceCatalogueTest extends BaseSourceCatalogueTest {
+class SourceCatalogueTest extends AbstractTest {
 
+
+  private static CatalogExample example;
+  protected SourceCatalogue sc;
+   protected PhotometricSystem ps;
   /** logger for this class */
   private static final org.slf4j.Logger logger =
       org.slf4j.LoggerFactory.getLogger(SourceCatalogueTest.class);
 
-  @org.junit.jupiter.api.Test
-  void sourceCatJaxBTest()
-      throws JAXBException, ParserConfigurationException, TransformerException, IOException {
-
-    logger.debug("starting JAXB test");
-
-    JAXBContext jc = SampleModel.contextFactory();
-
-    SampleModel model = new SampleModel();
-    model.addContent(ps);
-    model.addContent(sc);
-
-    model.processReferences();
-
-    SampleModel modelin = modelRoundTripXMLwithTest(model);
-    checkModel(modelin.getContent(SourceCatalogue.class));
-   
+  @org.junit.jupiter.api.BeforeEach
+   void setUp() {
+    example = new CatalogExample();
+    sc = example.sc;
+    ps = example.ps;
   }
+
 
   @org.junit.jupiter.api.Test
   void sourceCatJPATest() {
@@ -58,7 +54,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
     omodel.addContent(ps);
     em.getTransaction().begin();
     omodel.management().persistRefs(em);
-    em.persist(ps);
+    em.persist(ps); // IMPL need to save these in one because there is a contained reference to the filters
     em.persist(sc); // TODO need to test whether Photometric system is saved....
     em.getTransaction().commit();
     Long id = sc.getId();
@@ -73,7 +69,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
         em.createNamedQuery("SourceCatalogue.findById", SourceCatalogue.class)
             .setParameter("id", id)
             .getResultList();
-    checkModel(cats);
+    example.checkModel(cats);
 
     // now try to add into a new model
     SampleModel model = new SampleModel();
@@ -86,14 +82,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
     dumpDbData(em, "test_dump.sql");
   }
 
-  @org.junit.jupiter.api.Test
-  void sourceCatJSONTest() throws JsonProcessingException {
-    SampleModel model = new SampleModel();
-    model.addContent(sc);
-    model.processReferences();
-    SampleModel modelin = modelRoundTripJSONwithTest(model);
-    checkModel(modelin.getContent(SourceCatalogue.class));
-  }
+
 
   @org.junit.jupiter.api.Test
   void sourceCatDeleteTest() throws JsonProcessingException {
@@ -102,7 +91,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
     model.processReferences();
     model.deleteContent(sc); //
     SampleModel modelin =
-        modelRoundTripJSONwithTest(model); // FIXME need to test that the refenences are gone
+        roundTripJSON(model).retval; // FIXME need to test that the refenences are gone
   }
 
  
@@ -117,7 +106,7 @@ class SourceCatalogueTest extends BaseSourceCatalogueTest {
     model.addContent(sc);
     model.addContent(newsc);
     model.processReferences();
-    SampleModel modelin = modelRoundTripJSONwithTest(model);
+    SampleModel modelin = roundTripJSON(model).retval;
     assertNotNull(modelin);
   }
 

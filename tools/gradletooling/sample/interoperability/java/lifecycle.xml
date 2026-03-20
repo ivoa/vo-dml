@@ -1,0 +1,65 @@
+<life:lifecycleTestModel xmlns:life="http://ivoa.net/vodml/sample/lifecycle" xmlns:ser="http://ivoa.net/vodml/sample/serialization" xmlns:coord="http://notstc/coords/v1" xmlns:c1vdt="http://ivoa.net/dm/sample/c1vdt" xmlns:filt="http://ivoa.net/dm/sample/filter/v1" xmlns:jpat="http://ivoa.net/dm/sample/jpatest" xmlns:simp="http://ivoa.net/dm/sample/sample/v1" xmlns:ivoa="http://ivoa.net/vodml/ivoa">
+        
+    <refs>
+                
+        <referredTo _id="lifecycleTest-ReferredTo_1011">
+                        
+            <test1>3</test1>
+                    
+        </referredTo>
+            
+    </refs>
+        
+    <aTest2>
+                
+        <refagg>lifecycleTest-ReferredTo_1011</refagg>
+                
+        <atest>
+                        
+            <ref1>lifecycleTest-ReferredTo_1011</ref1>
+                        
+            <contained>
+                                
+                <contained>
+                                        
+                    <test2>firstcontained</test2>
+                                    
+                </contained>
+                                
+                <contained>
+                                        
+                    <test2>secondContained</test2>
+                                    
+                </contained>
+                            
+            </contained>
+                        
+            <refandcontained>
+                                
+                <referredLifeCycle _id="lifecycleTest-ReferredLifeCycle_1012">
+                                        
+                    <test3>rc1</test3>
+                                    
+                </referredLifeCycle>
+                                
+                <referredLifeCycle _id="lifecycleTest-ReferredLifeCycle_1013">
+                                        
+                    <test3>rc2</test3>
+                                    
+                </referredLifeCycle>
+                            
+            </refandcontained>
+                        
+            <contained2>
+                                
+                <lowr>lifecycleTest-ReferredLifeCycle_1012</lowr>
+                            
+            </contained2>
+                    
+        </atest>
+                
+        <refcont>lifecycleTest-ReferredLifeCycle_1012</refcont>
+            
+    </aTest2>
+    
+</life:lifecycleTestModel>
