@@ -14,6 +14,8 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
 
+from lxml import etree as _etree
+
 from org.ivoa.dm.filter.filter import PhotometricSystem, PhotometryFilter
 from org.ivoa.dm.ivoa import RealQuantity, Unit, anyURI
 from org.ivoa.dm.samplemodel.sample_catalog import (
@@ -28,7 +30,54 @@ from org.ivoa.dm.samplemodel.sample_catalog import (
 from org.ivoa.dm.samplemodel.sample_catalog_inner import SourceCatalogue
 
 # Output directory (relative to the sample project root).
-_INTEROP_DIR = Path(__file__).parent.parent.parent / "interoperability" / "python"
+_SAMPLE_DIR = Path(__file__).parent.parent.parent
+_INTEROP_DIR = _SAMPLE_DIR / "interoperability" / "python"
+
+# Directory containing the generated XSD schemas (populated by :sample:vodmlSchema).
+_SCHEMA_DIR = _SAMPLE_DIR / "docs" / "schema"
+
+# The IVOA base XSD lives in the ivoa model build resources (present after :ivoa:jar).
+_IVOA_XSD = _SAMPLE_DIR.parent.parent.parent / "models" / "ivoa" / "build" / "resources" / "main" / "IVOA-v1.0.vo-dml.xsd"
+
+
+class _LocalSchemaResolver(_etree.Resolver):
+    """Resolve relative schema imports from ``_SCHEMA_DIR`` or the ivoa build output."""
+
+    def resolve(self, url: str, id, context):
+        name = Path(url).name
+        local = _SCHEMA_DIR / name
+        if local.exists():
+            return self.resolve_filename(str(local), context)
+        if name == "IVOA-v1.0.vo-dml.xsd" and _IVOA_XSD.exists():
+            return self.resolve_filename(str(_IVOA_XSD), context)
+        return None
+
+
+def _load_schema(xsd_name: str) -> "_etree.XMLSchema | None":
+    """Load an XMLSchema from *_SCHEMA_DIR*, returning ``None`` when unavailable."""
+    xsd_path = _SCHEMA_DIR / xsd_name
+    if not xsd_path.exists():
+        return None
+    parser = _etree.XMLParser()
+    parser.resolvers.add(_LocalSchemaResolver())
+    return _etree.XMLSchema(_etree.parse(str(xsd_path), parser))
+
+
+def _validate_xml(xml_bytes: bytes, xsd_name: str, test_case: unittest.TestCase) -> None:
+    """Assert that *xml_bytes* validates against the named XSD schema.
+
+    If the schema file is not present (e.g. ``vodmlSchema`` was not run), the
+    check is silently skipped so the test does not fail in minimal build
+    environments.
+    """
+    schema = _load_schema(xsd_name)
+    if schema is None:
+        return
+    doc = _etree.fromstring(xml_bytes)
+    result = schema.validate(doc)
+    if not result:
+        errors = "\n".join(str(e) for e in schema.error_log)
+        test_case.fail(f"XML failed schema validation against {xsd_name}:\n{errors}")
 
 
 def _write(filename: str, content: str | bytes) -> None:
@@ -492,6 +541,23 @@ class JavaInteropReadTest(unittest.TestCase):
         xtypes = [el.get(xsi_type_attr, "") for el in base_c_items]
         self.assertTrue(any("Dcont" in xt for xt in xtypes), "Dcont xsi:type not found")
         self.assertTrue(any("Econt" in xt for xt in xtypes), "Econt xsi:type not found")
+
+    # ------------------------------------------------------------------ XML schema validation
+
+    def test_sample_xml_schema_valid(self):
+        """Validate the Java sample.xml against Sample.vo-dml.xsd."""
+        xml_bytes = (self._JAVA_DIR / "sample.xml").read_bytes()
+        _validate_xml(xml_bytes, "Sample.vo-dml.xsd", self)
+
+    def test_lifecycle_xml_schema_valid(self):
+        """Validate the Java lifecycle.xml against lifecycleTest.vo-dml.xsd."""
+        xml_bytes = (self._JAVA_DIR / "lifecycle.xml").read_bytes()
+        _validate_xml(xml_bytes, "lifecycleTest.vo-dml.xsd", self)
+
+    def test_serializationsample_xml_schema_valid(self):
+        """Validate the Java serializationsample.xml against serializationExample.vo-dml.xsd."""
+        xml_bytes = (self._JAVA_DIR / "serializationsample.xml").read_bytes()
+        _validate_xml(xml_bytes, "serializationExample.vo-dml.xsd", self)
 
 
 if __name__ == "__main__":

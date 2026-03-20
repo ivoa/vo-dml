@@ -156,8 +156,8 @@ tasks.register("pytest", PythonTask::class.java) {
 tasks.register("pytestPydantic", PythonTask::class.java) {
     group = "verification"
     description = "run pydantic interoperability tests against generated pydantic models"
-    command = "-m pytest pythontest/src/PydanticInteropTest.py -v"
-    dependsOn("vodmlPydanticGenerate")
+    command = "-m pytest pythontest/src/PydanticInteropTest.py -v --junit-xml=build/reports/pytestPydantic/results.xml"
+    dependsOn("vodmlPydanticGenerate", "vodmlSchema")
 }
 
 tasks.register<Exec>("siteNav")
