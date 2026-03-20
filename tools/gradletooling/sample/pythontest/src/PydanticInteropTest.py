@@ -10,6 +10,7 @@ files in interoperability/java/ to evaluate how close the two serialisations are
 import json
 import os
 import unittest
+import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -278,6 +279,219 @@ class SerializationExampleInteropTest(unittest.TestCase):
         xml_bytes = self.content.to_xml(pretty_print=True)
         recovered = SomeContent.from_xml(xml_bytes)
         self.assertEqual(recovered.zval, self.content.zval)
+
+
+class JavaInteropReadTest(unittest.TestCase):
+    """
+    Reads the Java-produced serialisation files from interoperability/java/ and
+    checks for parsing/validation errors.
+
+    The Java VODML serialisation wraps model objects in a container with a ``refs``
+    section (objects referenced by ID or natural key) and a ``content`` list (typed
+    with ``@type``).  These tests parse both the JSON and XML representations and
+    validate that the expected model data can be extracted without errors, providing
+    a measure of Java ↔ Python interoperability.
+    """
+
+    _JAVA_DIR = Path(__file__).parent.parent.parent / "interoperability" / "java"
+
+    # ------------------------------------------------------------------ helpers
+
+    @staticmethod
+    def _find_content(java_model_root: dict, type_fragment: str) -> dict | None:
+        """Return the first content entry whose ``@type`` contains *type_fragment*."""
+        for item in java_model_root.get("content", []):
+            if type_fragment in item.get("@type", ""):
+                return item
+        return None
+
+    @staticmethod
+    def _parse_xml_root(path: Path) -> ET.Element:
+        """Return the root Element of the parsed XML file at *path*."""
+        return ET.parse(str(path)).getroot()
+
+    @staticmethod
+    def _strip_ns(tag: str) -> str:
+        """Strip ``{namespace}`` prefix from an ElementTree tag string."""
+        return tag.split("}")[-1] if "}" in tag else tag
+
+    # ------------------------------------------------------------------ file existence
+
+    def test_java_interop_files_exist(self):
+        """All expected Java interoperability files must be present."""
+        expected = [
+            "sample.json", "sample.xml",
+            "lifecycle.json", "lifecycle.xml",
+            "serializationsample.json", "serializationsample.xml",
+        ]
+        missing = [f for f in expected if not (self._JAVA_DIR / f).exists()]
+        self.assertFalse(
+            missing,
+            f"Java interop files not found: {missing}  (run :sample:test first)",
+        )
+
+    # ------------------------------------------------------------------ sample JSON
+
+    def test_sample_json_source_catalogue(self):
+        """Parse Java sample.json and validate SourceCatalogue data."""
+        with open(self._JAVA_DIR / "sample.json") as fh:
+            data = json.load(fh)
+
+        root = data.get("SampleModel", {})
+        self.assertIn("refs", root, "Missing 'refs' section in Java sample.json")
+        self.assertIn("content", root, "Missing 'content' section in Java sample.json")
+
+        sc = self._find_content(root, "SourceCatalogue")
+        self.assertIsNotNone(sc, "SourceCatalogue not found in Java sample.json content")
+        self.assertEqual(sc["name"], "testCat")
+
+        entries = sc.get("entry", [])
+        self.assertEqual(len(entries), 1, "Expected exactly 1 entry in SourceCatalogue")
+        entry = entries[0]
+        self.assertEqual(entry["name"], "testSource")
+        self.assertEqual(entry["classification"], "AGN")
+        self.assertEqual(len(entry.get("luminosity", [])), 2)
+
+        position = entry["position"]
+        self.assertAlmostEqual(position["longitude"]["value"], 2.5)
+        self.assertAlmostEqual(position["latitude"]["value"], 52.5)
+
+    def test_sample_json_photometric_system(self):
+        """Parse Java sample.json and validate PhotometricSystem data."""
+        with open(self._JAVA_DIR / "sample.json") as fh:
+            data = json.load(fh)
+
+        root = data.get("SampleModel", {})
+        ps = self._find_content(root, "PhotometricSystem")
+        self.assertIsNotNone(ps, "PhotometricSystem not found in Java sample.json")
+        self.assertEqual(ps["detectorType"], 1)
+
+        filters = ps.get("photometryFilter", [])
+        self.assertEqual(len(filters), 2)
+        names = {f["name"] for f in filters}
+        self.assertIn("C-Band", names)
+        self.assertIn("L-Band", names)
+
+    # ------------------------------------------------------------------ sample XML
+
+    def test_sample_xml_source_catalogue(self):
+        """Parse Java sample.xml and validate SourceCatalogue data."""
+        root = self._parse_xml_root(self._JAVA_DIR / "sample.xml")
+
+        # The Java XML uses dotted element names like `catalog.inner.SourceCatalogue`
+        sc_el = next(
+            (el for el in root.iter() if "SourceCatalogue" in self._strip_ns(el.tag)),
+            None,
+        )
+        self.assertIsNotNone(sc_el, "SourceCatalogue element not found in Java sample.xml")
+
+        name_el = sc_el.find("name")
+        self.assertIsNotNone(name_el, "No <name> child under SourceCatalogue")
+        self.assertEqual(name_el.text, "testCat")
+
+        # Find entry elements (may be wrapped)
+        entries = list(sc_el.iter("entry"))
+        self.assertGreaterEqual(len(entries), 1, "No <entry> elements found")
+        entry = entries[0]
+
+        name_sub = entry.find("name")
+        self.assertIsNotNone(name_sub)
+        self.assertEqual(name_sub.text, "testSource")
+
+        classification = entry.find("classification")
+        self.assertIsNotNone(classification)
+        self.assertEqual(classification.text, "AGN")
+
+    # ------------------------------------------------------------------ lifecycle JSON
+
+    def test_lifecycle_json_atest2(self):
+        """Parse Java lifecycle.json and validate ATest2 data."""
+        with open(self._JAVA_DIR / "lifecycle.json") as fh:
+            data = json.load(fh)
+
+        root = data.get("LifecycleTestModel", {})
+        self.assertIn("content", root, "Missing 'content' in Java lifecycle.json")
+
+        atest2 = self._find_content(root, "ATest2")
+        self.assertIsNotNone(atest2, "ATest2 not found in Java lifecycle.json")
+
+        atest = atest2.get("atest", {})
+        self.assertIsNotNone(atest, "Missing 'atest' inside ATest2")
+
+        contained = atest.get("contained", [])
+        self.assertEqual(len(contained), 2, "Expected 2 contained items in ATest.contained")
+        test2_values = [c["test2"] for c in contained]
+        self.assertIn("firstcontained", test2_values)
+        self.assertIn("secondContained", test2_values)
+
+        refandcontained = atest.get("refandcontained", [])
+        self.assertEqual(len(refandcontained), 2, "Expected 2 items in refandcontained")
+
+    # ------------------------------------------------------------------ lifecycle XML
+
+    def test_lifecycle_xml_atest2(self):
+        """Parse Java lifecycle.xml and validate ATest2 data."""
+        root = self._parse_xml_root(self._JAVA_DIR / "lifecycle.xml")
+
+        atest2 = root.find(".//aTest2")
+        self.assertIsNotNone(atest2, "<aTest2> not found in lifecycle.xml")
+
+        atest_el = atest2.find("atest")
+        self.assertIsNotNone(atest_el, "No <atest> child inside <aTest2>")
+
+        # contained is a wrapper element that itself contains <contained> children
+        contained_wrapper = atest_el.find("contained")
+        self.assertIsNotNone(contained_wrapper, "No <contained> wrapper under <atest>")
+        contained_items = list(contained_wrapper.findall("contained"))
+        self.assertEqual(len(contained_items), 2, "Expected 2 <contained> items")
+        test2_texts = [c.findtext("test2") for c in contained_items]
+        self.assertIn("firstcontained", test2_texts)
+        self.assertIn("secondContained", test2_texts)
+
+    # ------------------------------------------------------------------ serialisation example JSON
+
+    def test_serializationsample_json_somecontent(self):
+        """Parse Java serializationsample.json and validate SomeContent data."""
+        with open(self._JAVA_DIR / "serializationsample.json") as fh:
+            data = json.load(fh)
+
+        root = data.get("MyModelModel", {})
+        sc = self._find_content(root, "SomeContent")
+        self.assertIsNotNone(sc, "SomeContent not found in Java serializationsample.json")
+
+        self.assertEqual(sc.get("zval", []), ["some", "z", "values"])
+
+        con = sc.get("con", [])
+        self.assertEqual(len(con), 2, "Expected 2 'con' items")
+        types = [c.get("@type", "") for c in con]
+        self.assertTrue(any("Dcont" in t for t in types), "Dcont not found in con types")
+        self.assertTrue(any("Econt" in t for t in types), "Econt not found in con types")
+
+    # ------------------------------------------------------------------ serialisation example XML
+
+    def test_serializationsample_xml_somecontent(self):
+        """Parse Java serializationsample.xml and validate SomeContent data."""
+        root = self._parse_xml_root(self._JAVA_DIR / "serializationsample.xml")
+
+        sc_el = root.find(".//someContent")
+        self.assertIsNotNone(sc_el, "<someContent> not found in serializationsample.xml")
+
+        # zval items are wrapped in <zvals><zval>...</zval></zvals>
+        zvals_el = sc_el.find("zvals")
+        self.assertIsNotNone(zvals_el, "No <zvals> element under <someContent>")
+        zvals = [el.text for el in zvals_el.findall("zval")]
+        self.assertEqual(zvals, ["some", "z", "values"])
+
+        con_el = sc_el.find("con")
+        self.assertIsNotNone(con_el, "No <con> element under <someContent>")
+        base_c_items = list(con_el.iter("baseC"))
+        self.assertEqual(len(base_c_items), 2, "Expected 2 <baseC> items")
+
+        # xsi:type should distinguish Dcont from Econt
+        xsi_type_attr = "{http://www.w3.org/2001/XMLSchema-instance}type"
+        xtypes = [el.get(xsi_type_attr, "") for el in base_c_items]
+        self.assertTrue(any("Dcont" in xt for xt in xtypes), "Dcont xsi:type not found")
+        self.assertTrue(any("Econt" in xt for xt in xtypes), "Econt xsi:type not found")
 
 
 if __name__ == "__main__":
