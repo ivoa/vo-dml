@@ -1,0 +1,30 @@
+{
+  "ref1": {
+    "val": {
+      "value": {
+        "value": "urn:value"
+      }
+    }
+  },
+  "ref2": {
+    "name": "naturalkey",
+    "val": {
+      "value": {
+        "value": "ivo:val"
+      }
+    }
+  },
+  "zval": [
+    "some",
+    "z",
+    "values"
+  ],
+  "con": [
+    {
+      "bname": "dval"
+    },
+    {
+      "bname": "eval"
+    }
+  ]
+}

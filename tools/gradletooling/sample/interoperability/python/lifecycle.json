@@ -1,0 +1,36 @@
+{
+  "atest": {
+    "ref1": {
+      "test1": 3
+    },
+    "contained2": {
+      "lowr": {
+        "test3": "rc1"
+      }
+    },
+    "contained": [
+      {
+        "test2": "firstcontained"
+      },
+      {
+        "test2": "secondContained"
+      }
+    ],
+    "refandcontained": [
+      {
+        "test3": "rc1"
+      },
+      {
+        "test3": "rc2"
+      }
+    ]
+  },
+  "refcont": {
+    "test3": "rc1"
+  },
+  "refagg": [
+    {
+      "test1": 3
+    }
+  ]
+}
