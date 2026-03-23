@@ -114,13 +114,13 @@ python {
 //                     +":"+layout.projectDirectory.dir("../../../models/ivoa/build/generated/sources/vodml/python").asFile.absolutePath
     )
 
-    pip("pytest:7.3.1")
-    pip("SQLAlchemy:2.0.30")
-    pip("xsdata[lxml,cli]:24.5")
-    pip("pydantic:2.9.2")
+    pip("pytest:9.0.2")
+    pip("SQLAlchemy:2.0.48")
+    pip("xsdata[lxml,cli]:26.2")
+    pip("pydantic:2.12.5")
     pip("sqlmodel:0.0.22")
     pip("xsdata-pydantic:24.5")
-    pip("pydantic-xml:2.13.1")
+    pip("pydantic-xml:2.19.0")
 }
 
 
