@@ -18,6 +18,8 @@ from lxml import etree as _etree
 
 from org.ivoa.dm.filter.filter import PhotometricSystem, PhotometryFilter
 from org.ivoa.dm.ivoa import RealQuantity, Unit, anyURI
+from org.ivoa.dm.lifecycle.lifecycleTest import LifecycleTestModel, LifecycleTestRefs
+from org.ivoa.dm.samplemodel.sample import SampleModel, SampleRefs
 from org.ivoa.dm.samplemodel.sample_catalog import (
     AlignedEllipse,
     LuminosityMeasurement,
@@ -28,6 +30,7 @@ from org.ivoa.dm.samplemodel.sample_catalog import (
     SourceClassification,
 )
 from org.ivoa.dm.samplemodel.sample_catalog_inner import SourceCatalogue
+from org.ivoa.dm.serializationsample.MyModel import MyModelRefs
 
 # Output directory (relative to the sample project root).
 _SAMPLE_DIR = Path(__file__).parent.parent.parent
@@ -160,7 +163,10 @@ class SampleModelInteropTest(unittest.TestCase):
                 ),
             ],
         )
+
         cls.sc = SourceCatalogue(name="testCat", entry=[source])
+
+        cls.model = SampleModel(photometricSystem=[cls.ps], sourceCatalogue=[cls.sc],refs=SampleRefs(skyCoordinateFrame=[frame]))
 
     # ------------------------------------------------------------------
     # JSON
@@ -168,11 +174,8 @@ class SampleModelInteropTest(unittest.TestCase):
 
     def test_json_serialise(self):
         """Serialise the SourceCatalogue to JSON and write to interoperability/python/."""
-        payload = {
-            "sourceCatalogue": json.loads(self.sc.model_dump_json()),
-            "photometricSystem": json.loads(self.ps.model_dump_json()),
-        }
-        content = json.dumps(payload, indent=2)
+
+        content = json.dumps(self.model, indent=2)
         _write("sample.json", content)
         # Basic structural checks
         data = json.loads(content)
@@ -184,7 +187,7 @@ class SampleModelInteropTest(unittest.TestCase):
 
     def test_json_round_trip(self):
         """Verify that the JSON output can be read back by pydantic."""
-        json_str = self.sc.model_dump_json()
+        json_str = self.model.model_dump_json()
         recovered = SourceCatalogue.model_validate_json(json_str)
         self.assertEqual(recovered.name, self.sc.name)
         self.assertEqual(len(recovered.entry), 1)
@@ -195,7 +198,7 @@ class SampleModelInteropTest(unittest.TestCase):
 
     def test_xml_serialise(self):
         """Serialise the SourceCatalogue to XML and write to interoperability/python/."""
-        xml_bytes = self.sc.to_xml(pretty_print=True)
+        xml_bytes = self.model.to_xml(pretty_print=True)
         _write("sample.xml", xml_bytes)
         _validate_xml(xml_bytes, "Sample.vo-dml.xsd", self)
         # Basic check: output is non-empty XML
@@ -205,7 +208,7 @@ class SampleModelInteropTest(unittest.TestCase):
 
     def test_xml_round_trip(self):
         """Verify that the XML output can be read back by pydantic-xml."""
-        xml_bytes = self.sc.to_xml(pretty_print=True)
+        xml_bytes = self.model.to_xml(pretty_print=True)
         recovered = SourceCatalogue.from_xml(xml_bytes)
         self.assertEqual(recovered.name, self.sc.name)
         self.assertEqual(len(recovered.entry), 1)
@@ -243,10 +246,11 @@ class LifecycleModelInteropTest(unittest.TestCase):
             refandcontained=[rc1, rc2],
             contained2=contained_obj,
         )
-        cls.top = ATest2(atest=atest, refcont=rc1, refagg=[ref1])
+        top = ATest2(atest=atest, refcont=rc1, refagg=[ref1])
+        cls.model=LifecycleTestModel(aTest2=[top],refs=LifecycleTestRefs(referredTo=[ref1,rc1, rc2]))
 
     def test_json_serialise(self):
-        json_str = self.top.model_dump_json(indent=2)
+        json_str = self.model.model_dump_json(indent=2)
         _write("lifecycle.json", json_str)
         data = json.loads(json_str)
         self.assertIn("atest", data)
@@ -254,12 +258,12 @@ class LifecycleModelInteropTest(unittest.TestCase):
 
     def test_json_round_trip(self):
         from org.ivoa.dm.lifecycle.lifecycleTest import ATest2
-        json_str = self.top.model_dump_json()
+        json_str = self.model.model_dump_json()
         recovered = ATest2.model_validate_json(json_str)
         self.assertEqual(len(recovered.atest.contained), 2)
 
     def test_xml_serialise(self):
-        xml_bytes = self.top.to_xml(pretty_print=True)
+        xml_bytes = self.model.to_xml(pretty_print=True)
         _write("lifecycle.xml", xml_bytes)
         _validate_xml(xml_bytes, "lifecycleTest.vo-dml.xsd", self)
         self.assertIn(b"<ATest2", xml_bytes)
@@ -267,7 +271,7 @@ class LifecycleModelInteropTest(unittest.TestCase):
 
     def test_xml_round_trip(self):
         from org.ivoa.dm.lifecycle.lifecycleTest import ATest2
-        xml_bytes = self.top.to_xml(pretty_print=True)
+        xml_bytes = self.model.to_xml(pretty_print=True)
         recovered = ATest2.from_xml(xml_bytes)
         self.assertEqual(len(recovered.atest.contained), 2)
 
@@ -289,6 +293,7 @@ class SerializationExampleInteropTest(unittest.TestCase):
             SomeContent,
             altURL,
             ivoid,
+            MyModelModel
         )
         from org.ivoa.dm.serializationsample.MyModel_types import BaseC, Dcont, Econt
 
@@ -297,7 +302,7 @@ class SerializationExampleInteropTest(unittest.TestCase):
             name="naturalkey",
             val=ivoid(value=anyURI(value="ivo:val")),
         )
-        cls.content = SomeContent(
+        content = SomeContent(
             ref1=refa,
             ref2=refb,
             zval=["some", "z", "values"],
@@ -306,9 +311,13 @@ class SerializationExampleInteropTest(unittest.TestCase):
                 Econt(bname="eval", evalue="cube"),
             ],
         )
+        # this now actually matches the java structure
+        model = MyModelModel(someContent=[content],refs=MyModelRefs(refa=[refa], refb=[refb]))
+
+        cls.model = model
 
     def test_json_serialise(self):
-        json_str = self.content.model_dump_json(indent=2)
+        json_str = self.model.model_dump_json(indent=2)
         _write("serializationsample.json", json_str)
         data = json.loads(json_str)
         self.assertEqual(data["zval"], ["some", "z", "values"])
@@ -316,21 +325,21 @@ class SerializationExampleInteropTest(unittest.TestCase):
 
     def test_json_round_trip(self):
         from org.ivoa.dm.serializationsample.MyModel import SomeContent
-        json_str = self.content.model_dump_json()
+        json_str = self.model.model_dump_json()
         recovered = SomeContent.model_validate_json(json_str)
         self.assertEqual(recovered.zval, ["some", "z", "values"])
 
     def test_xml_serialise(self):
-        xml_bytes = self.content.to_xml(pretty_print=True)
+        xml_bytes = self.model.to_xml(pretty_print=True)
         _write("serializationsample.xml", xml_bytes)
         _validate_xml(xml_bytes, "serializationExample.vo-dml.xsd", self)
         self.assertIn(b"<SomeContent", xml_bytes)
 
     def test_xml_round_trip(self):
         from org.ivoa.dm.serializationsample.MyModel import SomeContent
-        xml_bytes = self.content.to_xml(pretty_print=True)
+        xml_bytes = self.model.to_xml(pretty_print=True)
         recovered = SomeContent.from_xml(xml_bytes)
-        self.assertEqual(recovered.zval, self.content.zval)
+        self.assertEqual(recovered.zval, self.model.someContent[0].zval)
 
 
 
@@ -367,11 +376,6 @@ class PythonNonModelReadTest(unittest.TestCase):
         """Return the root Element of the parsed XML file at *path*."""
         return ET.parse(str(path)).getroot()
 
-    #FIXME - really do *NOT* want to strip namespace!
-    @staticmethod
-    def _strip_ns(tag: str) -> str:
-        """Strip ``{namespace}`` prefix from an ElementTree tag string."""
-        return tag.split("}")[-1] if "}" in tag else tag
 
 
     # ------------------------------------------------------------------ sample JSON
@@ -424,7 +428,7 @@ class PythonNonModelReadTest(unittest.TestCase):
 
         # The Java XML uses dotted element names like `catalog.inner.SourceCatalogue`
         sc_el = next(
-            (el for el in root.iter() if "SourceCatalogue" in self._strip_ns(el.tag)),
+            (el for el in root.iter() if "SourceCatalogue" in self),
             None,
         )
         self.assertIsNotNone(sc_el, "SourceCatalogue element not found in Java sample.xml")
@@ -540,7 +544,7 @@ class PythonNonModelReadTest(unittest.TestCase):
     # ------------------------------------------------------------------ XML schema validation
 
 class PythonModelReadJavaTest(unittest.TestCase):
-    """ This is a placeholder for when it is remotely worth doing the reading of the java serialized instances with the python model
+    """ This is a placeholder for when it is worth doing the reading of the java serialized instances with the python model - i.e. all the other test need to pass...
     """
     _JAVA_DIR = Path(__file__).parent.parent.parent / "interoperability" / "java"
 
