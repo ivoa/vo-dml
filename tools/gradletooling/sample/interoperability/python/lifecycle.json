@@ -1,12 +1,8 @@
 {
   "atest": {
-    "ref1": {
-      "test1": 3
-    },
+    "ref1": "id=None test1=3",
     "contained2": {
-      "lowr": {
-        "test3": "rc1"
-      }
+      "lowr": "id=None test3='rc1'"
     },
     "contained": [
       {
@@ -18,19 +14,17 @@
     ],
     "refandcontained": [
       {
+        "id": null,
         "test3": "rc1"
       },
       {
+        "id": null,
         "test3": "rc2"
       }
     ]
   },
-  "refcont": {
-    "test3": "rc1"
-  },
+  "refcont": "id=None test3='rc1'",
   "refagg": [
-    {
-      "test1": 3
-    }
+    "id=None test1=3"
   ]
 }

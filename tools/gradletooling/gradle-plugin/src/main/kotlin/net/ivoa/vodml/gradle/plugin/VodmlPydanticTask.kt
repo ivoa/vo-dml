@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 /**
  * Generates Pydantic model code from the VO-DML models.
- * Uses pydantic-xml for XML/JSON serialisation support.
+ * Uses xsdata-pydantic for XML/JSON serialisation support.
  */
 open class VodmlPydanticTask @Inject constructor(ao1: ArchiveOperations) : VodmlBaseTask(ao1) {
 
