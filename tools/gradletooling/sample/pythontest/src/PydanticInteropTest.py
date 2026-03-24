@@ -8,7 +8,6 @@ files in interoperability/java/ to evaluate how close the two serialisations are
 """
 
 import json
-import os
 import unittest
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
@@ -18,19 +17,13 @@ from lxml import etree as _etree
 
 from org.ivoa.dm.filter.filter import PhotometricSystem, PhotometryFilter
 from org.ivoa.dm.ivoa import RealQuantity, Unit, anyURI
+from org.ivoa.dm.jpatest.jpatest import JpatestModel
+
 from org.ivoa.dm.lifecycle.lifecycleTest import LifecycleTestModel, LifecycleTestRefs
 from org.ivoa.dm.samplemodel.sample import SampleModel, SampleRefs
-from org.ivoa.dm.samplemodel.sample_catalog import (
-    AlignedEllipse,
-    LuminosityMeasurement,
-    LuminosityType,
-    SDSSSource,
-    SkyCoordinate,
-    SkyCoordinateFrame,
-    SourceClassification,
-)
+
 from org.ivoa.dm.samplemodel.sample_catalog_inner import SourceCatalogue
-from org.ivoa.dm.serializationsample.MyModel import MyModelRefs
+from org.ivoa.dm.serializationsample.MyModel import MyModelModel, MyModelRefs
 
 # Output directory (relative to the sample project root).
 _SAMPLE_DIR = Path(__file__).parent.parent.parent
@@ -93,6 +86,36 @@ def _write(filename: str, content: str | bytes) -> None:
         dest.write_text(content, encoding="utf-8")
 
 
+def _local_name(tag: str) -> str:
+    """Return the local part of an XML tag name."""
+    return tag.split("}", 1)[-1]
+
+
+def _find_first(root: ET.Element, local_name: str) -> ET.Element | None:
+    """Return the first element in *root* whose local name matches *local_name*."""
+    return next((el for el in root.iter() if _local_name(el.tag) == local_name), None)
+
+
+def _children_named(element: ET.Element, local_name: str) -> list[ET.Element]:
+    """Return the direct children of *element* with the given local name."""
+    return [child for child in list(element) if _local_name(child.tag) == local_name]
+
+
+def _first_child_text(element: ET.Element, local_name: str) -> str | None:
+    """Return the text of the first direct child called *local_name*."""
+    child = next((c for c in list(element) if _local_name(c.tag) == local_name), None)
+    return child.text if child is not None else None
+
+
+def _read_json(filename: str) -> dict:
+    with open(_INTEROP_DIR / filename, encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def _read_xml_root(filename: str) -> ET.Element:
+    return ET.parse(str(_INTEROP_DIR / filename)).getroot()
+
+
 class SampleModelInteropTest(unittest.TestCase):
     """
     Tests for the Sample model (SourceCatalogue / SDSSSource).
@@ -103,6 +126,15 @@ class SampleModelInteropTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        from org.ivoa.dm.samplemodel.sample_catalog import (
+            AlignedEllipse,
+            LuminosityMeasurement,
+            LuminosityType,
+            SDSSSource,
+            SkyCoordinate,
+            SkyCoordinateFrame,
+            SourceClassification,
+        )
         jansky = Unit(value="Jy")
         degree = Unit(value="degree")
         ghz = Unit(value="GHz")
@@ -131,36 +163,36 @@ class SampleModelInteropTest(unittest.TestCase):
         )
 
         cls.ps = PhotometricSystem(
-            description="test photometric system",
-            detectorType=1,
-            photometryFilter=[c_band, l_band],
-        )
+                    description="test photometric system",
+                    detectorType=1,
+                    photometryFilter=[c_band, l_band],
+                )
 
         source = SDSSSource(
-            name="testSource",
-            label="cepheid",
-            classification=SourceClassification.AGN,
-            position=SkyCoordinate(
-                longitude=RealQuantity(value=2.5, unit=degree),
-                latitude=RealQuantity(value=52.5, unit=degree),
-                frame=frame,
-            ),
-            positionError=AlignedEllipse(longError=0.2, latError=0.1),
-            luminosity=[
-                LuminosityMeasurement(
-                    description="lummeas",
-                    type=LuminosityType.FLUX,
-                    value=RealQuantity(value=2.5, unit=jansky),
-                    error=RealQuantity(value=0.25, unit=jansky),
-                    filter=c_band,
-                ),
-                LuminosityMeasurement(
-                    description="lummeas2",
-                    type=LuminosityType.FLUX,
-                    value=RealQuantity(value=3.5, unit=jansky),
-                    error=RealQuantity(value=0.25, unit=jansky),
-                    filter=l_band,
-                ),
+                            name="testSource",
+                            label="cepheid",
+                            classification=SourceClassification.AGN,
+                            position=SkyCoordinate(
+                                longitude=RealQuantity(value=2.5, unit=degree),
+                                latitude=RealQuantity(value=52.5, unit=degree),
+                                frame=frame,
+                            ),
+                            positionError=AlignedEllipse(longError=0.2, latError=0.1),
+                            luminosity=[
+                                LuminosityMeasurement(
+                                    description="lummeas",
+                                    type=LuminosityType.FLUX,
+                                    value=RealQuantity(value=2.5, unit=jansky),
+                                    error=RealQuantity(value=0.25, unit=jansky),
+                                    filter=c_band,
+                                ),
+                                LuminosityMeasurement(
+                                    description="lummeas2",
+                                    type=LuminosityType.FLUX,
+                                    value=RealQuantity(value=3.5, unit=jansky),
+                                    error=RealQuantity(value=0.25, unit=jansky),
+                                    filter=l_band,
+                                ),
             ],
         )
 
@@ -173,45 +205,40 @@ class SampleModelInteropTest(unittest.TestCase):
     # ------------------------------------------------------------------
 
     def test_json_serialise(self):
-        """Serialise the SourceCatalogue to JSON and write to interoperability/python/."""
+        json_str = self.model.model_dump_json(indent=2)
+        _write("sample.json", json_str)
 
-        content = json.dumps(self.model, indent=2)
-        _write("sample.json", content)
-        # Basic structural checks
-        data = json.loads(content)
-        self.assertEqual(data["sourceCatalogue"]["name"], "testCat")
-        entry = data["sourceCatalogue"]["entry"][0]
+        data = json.loads(json_str)
+        self.assertEqual(data["sourceCatalogue"][0]["name"], "testCat")
+        entry = data["sourceCatalogue"][0]["entry"][0]
         self.assertEqual(entry["name"], "testSource")
+        self.assertEqual(entry["position"]["frame"], "J2000")
         self.assertEqual(len(entry["luminosity"]), 2)
         self.assertAlmostEqual(entry["position"]["longitude"]["value"], 2.5)
+        self.assertEqual(data["photometricSystem"][0]["photometryFilter"][1]["name"], "L-Band")
 
     def test_json_round_trip(self):
-        """Verify that the JSON output can be read back by pydantic."""
-        json_str = self.model.model_dump_json()
-        recovered = SourceCatalogue.model_validate_json(json_str)
-        self.assertEqual(recovered.name, self.sc.name)
-        self.assertEqual(len(recovered.entry), 1)
-
-    # ------------------------------------------------------------------
-    # XML
-    # ------------------------------------------------------------------
+        recovered = SampleModel.model_validate_json(self.model.model_dump_json())
+        self.assertEqual(recovered.sourceCatalogue[0].name, "testCat")
+        self.assertEqual(recovered.sourceCatalogue[0].entry[0].name, "testSource")
+        self.assertEqual(recovered.refs.skyCoordinateFrame[0].name, "J2000")
 
     def test_xml_serialise(self):
-        """Serialise the SourceCatalogue to XML and write to interoperability/python/."""
         xml_bytes = self.model.to_xml(pretty_print=True)
         _write("sample.xml", xml_bytes)
         _validate_xml(xml_bytes, "Sample.vo-dml.xsd", self)
-        # Basic check: output is non-empty XML
-        self.assertIn(b"<SourceCatalogue", xml_bytes)
-        self.assertIn(b"testCat", xml_bytes)
-        self.assertIn(b"testSource", xml_bytes)
+        root = ET.fromstring(xml_bytes)
+        self.assertEqual(_local_name(root.tag), "sampleModel")
+        source_catalogue = _find_first(root, "sourceCatalogue")
+        self.assertIsNotNone(source_catalogue)
+        self.assertEqual(_first_child_text(source_catalogue, "name"), "testCat")
+        self.assertEqual(_first_child_text(_find_first(source_catalogue, "entry"), "name"), "testSource")
 
     def test_xml_round_trip(self):
-        """Verify that the XML output can be read back by pydantic-xml."""
-        xml_bytes = self.model.to_xml(pretty_print=True)
-        recovered = SourceCatalogue.from_xml(xml_bytes)
-        self.assertEqual(recovered.name, self.sc.name)
-        self.assertEqual(len(recovered.entry), 1)
+        recovered = SampleModel.from_xml(self.model.to_xml(pretty_print=True))
+        self.assertEqual(recovered.sourceCatalogue[0].name, "testCat")
+        self.assertEqual(recovered.sourceCatalogue[0].entry[0].name, "testSource")
+        self.assertEqual(recovered.photometricSystem[0].photometryFilter[0].name, "C-Band")
 
 
 class LifecycleModelInteropTest(unittest.TestCase):
@@ -232,11 +259,10 @@ class LifecycleModelInteropTest(unittest.TestCase):
             ReferredLifeCycle,
             ReferredTo,
         )
-
-        ref1 = ReferredTo(test1=3)
-        rc1 = ReferredLifeCycle(test3="rc1")
-        rc2 = ReferredLifeCycle(test3="rc2")
-        contained_obj = ATest4(lowr=rc1)
+        #FIXME really need to add equivalent of the java processReferences() runtime functionality to set up the ids for references
+        ref1 = ReferredTo(id="lifecycleTest-ReferredTo_1011", test1=3)
+        rc1 = ReferredLifeCycle(id="lifecycleTest-ReferredLifeCycle_1012", test3="rc1")
+        rc2 = ReferredLifeCycle(id="lifecycleTest-ReferredLifeCycle_1013", test3="rc2")
         atest = ATest(
             ref1=ref1,
             contained=[
@@ -244,7 +270,7 @@ class LifecycleModelInteropTest(unittest.TestCase):
                 Contained(test2="secondContained"),
             ],
             refandcontained=[rc1, rc2],
-            contained2=contained_obj,
+            contained2=ATest4(lowr=rc1.id),
         )
         top = ATest2(atest=atest, refcont=rc1, refagg=[ref1])
         cls.model=LifecycleTestModel(aTest2=[top],refs=LifecycleTestRefs(referredTo=[ref1,rc1, rc2]))
@@ -252,28 +278,34 @@ class LifecycleModelInteropTest(unittest.TestCase):
     def test_json_serialise(self):
         json_str = self.model.model_dump_json(indent=2)
         _write("lifecycle.json", json_str)
+
         data = json.loads(json_str)
-        self.assertIn("atest", data)
-        self.assertEqual(len(data["atest"]["contained"]), 2)
+        self.assertEqual(data["refs"]["referredTo"][0]["test1"], 3)
+        atest2 = data["aTest2"][0]
+        self.assertEqual(atest2["refcont"], "lifecycleTest-ReferredLifeCycle_1012")
+        self.assertEqual(len(atest2["atest"]["contained"]), 2)
+        self.assertEqual(atest2["atest"]["refandcontained"][1]["test3"], "rc2")
 
     def test_json_round_trip(self):
-        from org.ivoa.dm.lifecycle.lifecycleTest import ATest2
-        json_str = self.model.model_dump_json()
-        recovered = ATest2.model_validate_json(json_str)
-        self.assertEqual(len(recovered.atest.contained), 2)
+        recovered = LifecycleTestModel.model_validate_json(self.model.model_dump_json())
+        self.assertEqual(recovered.aTest2[0].atest.contained[0].test2, "firstcontained")
+        self.assertEqual(recovered.aTest2[0].refcont, "lifecycleTest-ReferredLifeCycle_1012")
 
     def test_xml_serialise(self):
         xml_bytes = self.model.to_xml(pretty_print=True)
         _write("lifecycle.xml", xml_bytes)
         _validate_xml(xml_bytes, "lifecycleTest.vo-dml.xsd", self)
-        self.assertIn(b"<ATest2", xml_bytes)
-        self.assertIn(b"firstcontained", xml_bytes)
+        root = ET.fromstring(xml_bytes)
+        self.assertEqual(_local_name(root.tag), "lifecycleTestModel")
+        atest2 = _find_first(root, "aTest2")
+        self.assertIsNotNone(atest2)
+        self.assertEqual(_first_child_text(atest2, "refcont"), "lifecycleTest-ReferredLifeCycle_1012")
+        self.assertIn("firstcontained", "".join(el.text or "" for el in root.iter() if _local_name(el.tag) == "test2"))
 
     def test_xml_round_trip(self):
-        from org.ivoa.dm.lifecycle.lifecycleTest import ATest2
-        xml_bytes = self.model.to_xml(pretty_print=True)
-        recovered = ATest2.from_xml(xml_bytes)
-        self.assertEqual(len(recovered.atest.contained), 2)
+        recovered = LifecycleTestModel.from_xml(self.model.to_xml(pretty_print=True))
+        self.assertEqual(len(recovered.aTest2[0].atest.contained), 2)
+        self.assertEqual(recovered.aTest2[0].atest.contained2.lowr, "lifecycleTest-ReferredLifeCycle_1012")
 
 
 class SerializationExampleInteropTest(unittest.TestCase):
@@ -287,275 +319,254 @@ class SerializationExampleInteropTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        from org.ivoa.dm.serializationsample.MyModel import (
-            Refa,
-            Refb,
-            SomeContent,
-            altURL,
-            ivoid,
-            MyModelModel
-        )
-        from org.ivoa.dm.serializationsample.MyModel_types import BaseC, Dcont, Econt
+        from org.ivoa.dm.serializationsample.MyModel import Refa, Refb, SomeContent, altURL, ivoid
+        from org.ivoa.dm.serializationsample.MyModel_types import Dcont, Econt
 
-        refa = Refa(val=altURL(value=anyURI(value="urn:value")))
-        refb = Refb(
-            name="naturalkey",
-            val=ivoid(value=anyURI(value="ivo:val")),
-        )
-        content = SomeContent(
-            ref1=refa,
-            ref2=refb,
-            zval=["some", "z", "values"],
-            con=[
-                Dcont(bname="dval", dval="N1"),
-                Econt(bname="eval", evalue="cube"),
+        refa = Refa(id="refa-1", val=altURL(value=anyURI(value="urn:value")))
+        refb = Refb(name="naturalkey", val=ivoid(value=anyURI(value="ivo:val")))
+        cls.model = MyModelModel(
+            someContent=[
+                SomeContent(
+                    ref1=refa.id,
+                    ref2=refb.name,
+                    zval=["some", "z", "values"],
+                    con=[
+                        Dcont(bname="dval", dval="N1"),
+                        Econt(bname="eval", evalue="cube"),
+                    ],
+                )
             ],
+            refs=MyModelRefs(refa=[refa], refb=[refb]),
         )
-        # this now actually matches the java structure
-        model = MyModelModel(someContent=[content],refs=MyModelRefs(refa=[refa], refb=[refb]))
-
-        cls.model = model
 
     def test_json_serialise(self):
         json_str = self.model.model_dump_json(indent=2)
         _write("serializationsample.json", json_str)
+
         data = json.loads(json_str)
-        self.assertEqual(data["zval"], ["some", "z", "values"])
-        self.assertEqual(len(data["con"]), 2)
+        self.assertEqual(data["refs"]["refa"][0]["id"], "refa-1")
+        content = data["someContent"][0]
+        self.assertEqual(content["ref1"], "refa-1")
+        self.assertEqual(content["ref2"], "naturalkey")
+        self.assertEqual(content["zval"], ["some", "z", "values"])
+        self.assertEqual(len(content["con"]), 2)
 
     def test_json_round_trip(self):
-        from org.ivoa.dm.serializationsample.MyModel import SomeContent
-        json_str = self.model.model_dump_json()
-        recovered = SomeContent.model_validate_json(json_str)
-        self.assertEqual(recovered.zval, ["some", "z", "values"])
+        recovered = MyModelModel.model_validate_json(self.model.model_dump_json())
+        self.assertEqual(recovered.someContent[0].zval, ["some", "z", "values"])
+        self.assertEqual(recovered.refs.refb[0].name, "naturalkey")
 
     def test_xml_serialise(self):
         xml_bytes = self.model.to_xml(pretty_print=True)
         _write("serializationsample.xml", xml_bytes)
         _validate_xml(xml_bytes, "serializationExample.vo-dml.xsd", self)
-        self.assertIn(b"<SomeContent", xml_bytes)
+        root = ET.fromstring(xml_bytes)
+        self.assertEqual(_local_name(root.tag), "MyModelModel")
+        some_content = _find_first(root, "someContent")
+        self.assertIsNotNone(some_content)
+        self.assertEqual(_first_child_text(some_content, "ref1"), "refa-1")
+        zvals = [el.text for el in root.iter() if _local_name(el.tag) == "zval"]
+        self.assertEqual(zvals, ["some", "z", "values"])
 
     def test_xml_round_trip(self):
-        from org.ivoa.dm.serializationsample.MyModel import SomeContent
+        recovered = MyModelModel.from_xml(self.model.to_xml(pretty_print=True))
+        self.assertEqual(recovered.someContent[0].ref1, "refa-1")
+        self.assertEqual(recovered.someContent[0].zval, ["some", "z", "values"])
+
+
+class JpatestModelInteropTest(unittest.TestCase):
+    """Round-trip tests for the jpatest model wrapper."""
+
+    @classmethod
+    def setUpClass(cls):
+        from org.ivoa.dm.jpatest.jpatest import (
+            ADtype,
+            AEtype,
+            Child,
+            DThing,
+            JpatestModel,
+            JpatestRefs,
+            LChild,
+            Parent,
+            Point,
+            ReferredTo1,
+            ReferredTo2,
+            ReferredTo3,
+        )
+        ref3 = ReferredTo3(id="jpatest-ReferredTo3_1002", sval="ref in dtype", ival=3)
+        ref2 = ReferredTo2(id="jpatest-ReferredTo2_1004", sval="lower ref")
+        ref1 = ReferredTo1(id="jpatest-ReferredTo1_1003", sval="top level ref")
+
+        parent = Parent(
+            dval=ADtype(
+                basestr="base",
+                dref=ref3.id,
+                intatt="intatt",
+                dvalr=1.1,
+                dvals="astring",
+            ),
+            eval=AEtype(
+                basestr="basestre_e",
+                dref=ref3.id,
+                intatt="intatt_e",
+                evalr=1.2,
+                evals="evals",
+            ),
+            rval=ref1.id,
+            cval=Child(rval=ref2.id),
+            lval=[
+                LChild(sval="First", ival=1),
+                LChild(sval="Second", ival=2),
+                LChild(sval="Third", ival=3),
+            ],
+            tval=DThing(p=Point(x=1.5, y=3.0), dt="thing"),
+        )
+
+        cls.model = JpatestModel(
+            refs=JpatestRefs(referredTo3=[ref3], referredTo2=[ref2], referredTo1=[ref1]),
+            parent=[parent],
+        )
+
+    def test_json_serialise(self):
+        json_str = self.model.model_dump_json(indent=2)
+        _write("jpatest.json", json_str)
+
+        data = json.loads(json_str)
+        self.assertEqual(data["refs"]["referredTo3"][0]["ival"], 3)
+        parent = data["parent"][0]
+        self.assertEqual(parent["dval"]["dref"], "jpatest-ReferredTo3_1002")
+        self.assertEqual(parent["rval"], "jpatest-ReferredTo1_1003")
+        self.assertEqual(parent["cval"]["rval"], "jpatest-ReferredTo2_1004")
+        self.assertEqual([child["sval"] for child in parent["lval"]], ["First", "Second", "Third"])
+        self.assertAlmostEqual(parent["tval"]["p"]["x"], 1.5)
+
+    def test_json_round_trip(self):
+        recovered = JpatestModel.model_validate_json(self.model.model_dump_json())
+        parent = recovered.parent[0]
+        self.assertEqual(parent.dval.intatt, "intatt")
+        self.assertEqual(parent.eval.intatt, "intatt_e")
+        self.assertEqual(parent.tval.p.x, 1.5)
+        self.assertEqual(parent.cval.rval, "jpatest-ReferredTo2_1004")
+
+    def test_xml_serialise(self):
         xml_bytes = self.model.to_xml(pretty_print=True)
-        recovered = SomeContent.from_xml(xml_bytes)
-        self.assertEqual(recovered.zval, self.model.someContent[0].zval)
+        _write("jpatest.xml", xml_bytes)
+        _validate_xml(xml_bytes, "jpatest.vo-dml.xsd", self)
+        root = ET.fromstring(xml_bytes)
+        self.assertEqual(_local_name(root.tag), "jpatestModel")
+        parent = _find_first(root, "parent")
+        self.assertIsNotNone(parent)
+        self.assertEqual(_first_child_text(parent, "rval"), "jpatest-ReferredTo1_1003")
+        dval = _find_first(parent, "dval")
+        self.assertEqual(_first_child_text(dval, "dvals"), "astring")
+        lval = _children_named(parent, "lval")
+        self.assertEqual(len(lval), 3)
+        self.assertEqual([_first_child_text(child, "sval") for child in lval], ["First", "Second", "Third"])
 
-
+    def test_xml_round_trip(self):
+        recovered = JpatestModel.from_xml(self.model.to_xml(pretty_print=True))
+        parent = recovered.parent[0]
+        self.assertEqual(parent.dval.basestr, "base")
+        self.assertEqual(parent.eval.evals, "evals")
+        self.assertEqual(parent.lval[1].ival, 2)
+        self.assertEqual(parent.tval.dt, "thing")
 
 
 class PythonNonModelReadTest(unittest.TestCase):
-    """
-    Reads the Python-produced serialisation files from interoperability/python/ and
-    checks for parsing/validation errors. It does not use the model files for reading
-    but does it with direct JSON parsing and ElementTree for XML.
-
-    The tests were trained on the Java examples, so they expect the same structure and content as the Java files.
-
-    The Java VODML serialisation wraps model objects in a container with a ``refs``
-    section (objects referenced by ID or natural key) and a ``content`` list (typed
-    with ``@type``).  These tests parse both the JSON and XML representations and
-    validate that the expected model data can be extracted without errors, providing
-    a measure of Java ↔ Python interoperability.
-    """
-
-
-
-    # ------------------------------------------------------------------ helpers
-
-    @staticmethod
-    def _find_content(java_model_root: dict, type_fragment: str) -> dict | None:
-        """Return the first content entry whose ``@type`` contains *type_fragment*."""
-        for item in java_model_root.get("content", []):
-            if type_fragment in item.get("@type", ""):
-                return item
-        return None
-
-    @staticmethod
-    def _parse_xml_root(path: Path) -> ET.Element:
-        """Return the root Element of the parsed XML file at *path*."""
-        return ET.parse(str(path)).getroot()
-
-
-
-    # ------------------------------------------------------------------ sample JSON
+    """Validate the Python-written interoperability files without using the generated models."""
 
     def test_sample_json_source_catalogue(self):
-        """Parse Python sample.json and validate SourceCatalogue data."""
-        with open(_INTEROP_DIR / "sample.json") as fh:
-            data = json.load(fh)
+        data = _read_json("sample.json")
+        self.assertIn("sourceCatalogue", data)
+        self.assertIn("photometricSystem", data)
 
-        root = data.get("SampleModel", {})
-        self.assertIn("refs", root, "Missing 'refs' section in Java sample.json")
-        self.assertIn("content", root, "Missing 'content' section in Java sample.json")
-
-        sc = self._find_content(root, "SourceCatalogue")
-        self.assertIsNotNone(sc, "SourceCatalogue not found in Java sample.json content")
-        self.assertEqual(sc["name"], "testCat")
-
-        entries = sc.get("entry", [])
-        self.assertEqual(len(entries), 1, "Expected exactly 1 entry in SourceCatalogue")
-        entry = entries[0]
+        catalogue = data["sourceCatalogue"][0]
+        self.assertEqual(catalogue["name"], "testCat")
+        entry = catalogue["entry"][0]
         self.assertEqual(entry["name"], "testSource")
         self.assertEqual(entry["classification"], "AGN")
-        self.assertEqual(len(entry.get("luminosity", [])), 2)
-
-        position = entry["position"]
-        self.assertAlmostEqual(position["longitude"]["value"], 2.5)
-        self.assertAlmostEqual(position["latitude"]["value"], 52.5)
+        self.assertEqual(entry["position"]["frame"], "J2000")
 
     def test_sample_json_photometric_system(self):
-        """Parse Python sample.json and validate PhotometricSystem data."""
-        with open(_INTEROP_DIR / "sample.json") as fh:
-            data = json.load(fh)
-
-        root = data.get("SampleModel", {})
-        ps = self._find_content(root, "PhotometricSystem")
-        self.assertIsNotNone(ps, "PhotometricSystem not found in Java sample.json")
+        data = _read_json("sample.json")
+        ps = data["photometricSystem"][0]
         self.assertEqual(ps["detectorType"], 1)
-
-        filters = ps.get("photometryFilter", [])
-        self.assertEqual(len(filters), 2)
-        names = {f["name"] for f in filters}
-        self.assertIn("C-Band", names)
-        self.assertIn("L-Band", names)
-
-    # ------------------------------------------------------------------ sample XML
+        names = [item["name"] for item in ps["photometryFilter"]]
+        self.assertEqual(names, ["C-Band", "L-Band"])
 
     def test_sample_xml_source_catalogue(self):
-        """Parse Python sample.xml and validate SourceCatalogue data."""
-        root = self._parse_xml_root(_INTEROP_DIR / "sample.xml")
-
-        # The Java XML uses dotted element names like `catalog.inner.SourceCatalogue`
-        sc_el = next(
-            (el for el in root.iter() if "SourceCatalogue" in self),
-            None,
-        )
-        self.assertIsNotNone(sc_el, "SourceCatalogue element not found in Java sample.xml")
-
-        name_el = sc_el.find("name")
-        self.assertIsNotNone(name_el, "No <name> child under SourceCatalogue")
-        self.assertEqual(name_el.text, "testCat")
-
-        # Find entry elements (may be wrapped)
-        entries = list(sc_el.iter("entry"))
-        self.assertGreaterEqual(len(entries), 1, "No <entry> elements found")
-        entry = entries[0]
-
-        name_sub = entry.find("name")
-        self.assertIsNotNone(name_sub)
-        self.assertEqual(name_sub.text, "testSource")
-
-        classification = entry.find("classification")
-        self.assertIsNotNone(classification)
-        self.assertEqual(classification.text, "AGN")
-
-    # ------------------------------------------------------------------ lifecycle JSON
+        root = _read_xml_root("sample.xml")
+        catalogue = _find_first(root, "sourceCatalogue")
+        self.assertIsNotNone(catalogue)
+        self.assertEqual(_first_child_text(catalogue, "name"), "testCat")
+        entry = _find_first(catalogue, "entry")
+        self.assertEqual(_first_child_text(entry, "name"), "testSource")
+        self.assertEqual(_first_child_text(entry, "classification"), "AGN")
 
     def test_lifecycle_json_atest2(self):
-        """Parse Python lifecycle.json and validate ATest2 data."""
-        with open(_INTEROP_DIR / "lifecycle.json") as fh:
-            data = json.load(fh)
-
-        root = data.get("LifecycleTestModel", {})
-        self.assertIn("content", root, "Missing 'content' in Java lifecycle.json")
-
-        atest2 = self._find_content(root, "ATest2")
-        self.assertIsNotNone(atest2, "ATest2 not found in Java lifecycle.json")
-
-        atest = atest2.get("atest", {})
-        self.assertIsNotNone(atest, "Missing 'atest' inside ATest2")
-
-        contained = atest.get("contained", [])
-        self.assertEqual(len(contained), 2, "Expected 2 contained items in ATest.contained")
-        test2_values = [c["test2"] for c in contained]
-        self.assertIn("firstcontained", test2_values)
-        self.assertIn("secondContained", test2_values)
-
-        refandcontained = atest.get("refandcontained", [])
-        self.assertEqual(len(refandcontained), 2, "Expected 2 items in refandcontained")
-
-    # ------------------------------------------------------------------ lifecycle XML
+        data = _read_json("lifecycle.json")
+        atest2 = data["aTest2"][0]
+        self.assertEqual(atest2["refagg"], ["lifecycleTest-ReferredTo_1011"])
+        self.assertEqual(len(atest2["atest"]["contained"]), 2)
+        self.assertEqual(atest2["atest"]["contained2"]["lowr"], "lifecycleTest-ReferredLifeCycle_1012")
 
     def test_lifecycle_xml_atest2(self):
-        """Parse Python lifecycle.xml and validate ATest2 data."""
-        root = self._parse_xml_root(_INTEROP_DIR / "lifecycle.xml")
-
-        atest2 = root.find(".//aTest2")
-        self.assertIsNotNone(atest2, "<aTest2> not found in lifecycle.xml")
-
-        atest_el = atest2.find("atest")
-        self.assertIsNotNone(atest_el, "No <atest> child inside <aTest2>")
-
-        # contained is a wrapper element that itself contains <contained> children
-        contained_wrapper = atest_el.find("contained")
-        self.assertIsNotNone(contained_wrapper, "No <contained> wrapper under <atest>")
-        contained_items = list(contained_wrapper.findall("contained"))
-        self.assertEqual(len(contained_items), 2, "Expected 2 <contained> items")
-        test2_texts = [c.findtext("test2") for c in contained_items]
-        self.assertIn("firstcontained", test2_texts)
-        self.assertIn("secondContained", test2_texts)
-
-    # ------------------------------------------------------------------ serialisation example JSON
+        root = _read_xml_root("lifecycle.xml")
+        atest2 = _find_first(root, "aTest2")
+        self.assertIsNotNone(atest2)
+        self.assertEqual(_first_child_text(atest2, "refcont"), "lifecycleTest-ReferredLifeCycle_1012")
+        contained_values = [el.text for el in root.iter() if _local_name(el.tag) == "test2"]
+        self.assertEqual(contained_values, ["firstcontained", "secondContained"])
 
     def test_serializationsample_json_somecontent(self):
-        """Parse Python serializationsample.json and validate SomeContent data."""
-        with open(_INTEROP_DIR / "serializationsample.json") as fh:
-            data = json.load(fh)
-
-        root = data.get("MyModelModel", {})
-        sc = self._find_content(root, "SomeContent")
-        self.assertIsNotNone(sc, "SomeContent not found in Java serializationsample.json")
-
-        self.assertEqual(sc.get("zval", []), ["some", "z", "values"])
-
-        con = sc.get("con", [])
-        self.assertEqual(len(con), 2, "Expected 2 'con' items")
-        types = [c.get("@type", "") for c in con]
-        self.assertTrue(any("Dcont" in t for t in types), "Dcont not found in con types")
-        self.assertTrue(any("Econt" in t for t in types), "Econt not found in con types")
-
-    # ------------------------------------------------------------------ serialisation example XML
+        data = _read_json("serializationsample.json")
+        content = data["someContent"][0]
+        self.assertEqual(content["zval"], ["some", "z", "values"])
+        self.assertEqual(content["ref1"], "refa-1")
+        self.assertEqual(content["ref2"], "naturalkey")
+        self.assertEqual(len(content["con"]), 2)
 
     def test_serializationsample_xml_somecontent(self):
-        """Parse Python serializationsample.xml and validate SomeContent data."""
-        root = self._parse_xml_root(_INTEROP_DIR / "serializationsample.xml")
-
-        sc_el = root.find(".//someContent")
-        self.assertIsNotNone(sc_el, "<someContent> not found in serializationsample.xml")
-
-        # zval items are wrapped in <zvals><zval>...</zval></zvals>
-        zvals_el = sc_el.find("zvals")
-        self.assertIsNotNone(zvals_el, "No <zvals> element under <someContent>")
-        zvals = [el.text for el in zvals_el.findall("zval")]
+        root = _read_xml_root("serializationsample.xml")
+        some_content = _find_first(root, "someContent")
+        self.assertIsNotNone(some_content)
+        self.assertEqual(_first_child_text(some_content, "ref1"), "refa-1")
+        zvals = [el.text for el in root.iter() if _local_name(el.tag) == "zval"]
         self.assertEqual(zvals, ["some", "z", "values"])
 
-        con_el = sc_el.find("con")
-        self.assertIsNotNone(con_el, "No <con> element under <someContent>")
-        base_c_items = list(con_el.iter("baseC"))
-        self.assertEqual(len(base_c_items), 2, "Expected 2 <baseC> items")
+    def test_jpatest_json_parent(self):
+        data = _read_json("jpatest.json")
+        parent = data["parent"][0]
+        self.assertEqual(parent["dval"]["dvals"], "astring")
+        self.assertEqual(parent["eval"]["evals"], "evals")
+        self.assertEqual(parent["cval"]["rval"], "jpatest-ReferredTo2_1004")
+        self.assertEqual(parent["tval"]["dt"], "thing")
 
-        # xsi:type should distinguish Dcont from Econt
-        xsi_type_attr = "{http://www.w3.org/2001/XMLSchema-instance}type"
-        xtypes = [el.get(xsi_type_attr, "") for el in base_c_items]
-        self.assertTrue(any("Dcont" in xt for xt in xtypes), "Dcont xsi:type not found")
-        self.assertTrue(any("Econt" in xt for xt in xtypes), "Econt xsi:type not found")
+    def test_jpatest_xml_parent(self):
+        root = _read_xml_root("jpatest.xml")
+        parent = _find_first(root, "parent")
+        self.assertIsNotNone(parent)
+        self.assertEqual(_first_child_text(parent, "rval"), "jpatest-ReferredTo1_1003")
+        self.assertEqual(_first_child_text(_find_first(parent, "tval"), "dt"), "thing")
+        lvals = _children_named(parent, "lval")
+        self.assertEqual([_first_child_text(child, "sval") for child in lvals], ["First", "Second", "Third"])
 
-    # ------------------------------------------------------------------ XML schema validation
 
 class PythonModelReadJavaTest(unittest.TestCase):
-    """ This is a placeholder for when it is worth doing the reading of the java serialized instances with the python model - i.e. all the other test need to pass...
-    """
+    """Sanity-check that the Java interoperability fixtures exist."""
+
     _JAVA_DIR = Path(__file__).parent.parent.parent / "interoperability" / "java"
 
-        # ------------------------------------------------------------------ file existence
-
     def test_java_interop_files_exist(self):
-        """All expected Java interoperability files must be present."""
         expected = [
-            "sample.json", "sample.xml",
-            "lifecycle.json", "lifecycle.xml",
-            "serializationsample.json", "serializationsample.xml",
+            "sample.json",
+            "sample.xml",
+            "lifecycle.json",
+            "lifecycle.xml",
+            "serializationsample.json",
+            "serializationsample.xml",
+            "jpatest.json",
+            "jpatest.xml",
         ]
         missing = [f for f in expected if not (self._JAVA_DIR / f).exists()]
         self.assertFalse(
