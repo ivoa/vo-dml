@@ -174,7 +174,7 @@ class _VodmlXmlBase(BaseModel):
   <xsl:template match="objectType" mode="content">
     <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
     <xsl:variable name="modelName" select="ancestor-or-self::vo-dml:model/name"/>
-    <xsl:variable name="nsprefix" select="vf:xsdNsPrefix($modelName)"/>
+    <xsl:variable name="ns" select="vf:xsdNs($modelName)"/>
     <xsl:text>
 
 </xsl:text>
@@ -185,6 +185,7 @@ class _VodmlXmlBase(BaseModel):
     </xsl:choose><xsl:text>):
     class Meta:
         name = "</xsl:text><xsl:value-of select="name"/><xsl:text>"
+        namespace = "</xsl:text><xsl:value-of select="$ns"/><xsl:text>"
 </xsl:text>
     <xsl:text>    """
     * </xsl:text><xsl:apply-templates select="." mode="desc"/><xsl:text>
@@ -218,7 +219,7 @@ class _VodmlXmlBase(BaseModel):
   <xsl:template match="dataType" mode="content">
     <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
     <xsl:variable name="modelName" select="ancestor-or-self::vo-dml:model/name"/>
-    <xsl:variable name="nsprefix" select="vf:xsdNsPrefix($modelName)"/>
+    <xsl:variable name="ns" select="vf:xsdNs($modelName)"/>
     <xsl:text>
 
 </xsl:text>
@@ -229,6 +230,7 @@ class _VodmlXmlBase(BaseModel):
     </xsl:choose><xsl:text>):
     class Meta:
         name = "</xsl:text><xsl:value-of select="name"/><xsl:text>"
+        namespace = "</xsl:text><xsl:value-of select="$ns"/><xsl:text>"
 </xsl:text>
     <xsl:text>    """
     * </xsl:text><xsl:apply-templates select="." mode="desc"/><xsl:text>
@@ -316,7 +318,7 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
     <!-- include xsdata format string for special types (e.g. datetime) -->
     <xsl:variable name="fmt" select="vf:PythonFormat(datatype/vodml-ref)"/>
     <xsl:variable name="fmtpart" select="if (string-length($fmt) gt 0) then concat(', ',$sq,'format',$sq,': ',$sq,$fmt,$sq) else ''"/>
-    <xsl:variable name="wrapper" select="',',$sq,'wrapper',$sq,':',$sq,name,'s',$sq"/> <!--TODO should check in binding if wrapping really needed -->
+    <xsl:variable name="wrapper" select="concat(',',$sq,'wrapper',$sq,':',$sq,name,'s',$sq)"/> <!--TODO should check in binding if wrapping really needed -->
     <xsl:if test="not(vf:isSubSetted($vodml-ref))">
       <xsl:text>
     </xsl:text>
@@ -370,7 +372,7 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
     <xsl:call-template name="vodmlAnnotation"/>
     <xsl:text>
     </xsl:text>
-    <xsl:value-of select="concat(name, ': List[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,'}, default_factory=list)')"/>
+    <xsl:value-of select="concat(name, ': List[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,vf:lowerFirst($type),$sq,', ',$sq,'wrapper',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,'}, default_factory=list)')"/>
     <xsl:text>
     """
     *
