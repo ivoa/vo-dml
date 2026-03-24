@@ -87,7 +87,9 @@
 
   <xsl:template match="vo-dml:model|package" mode="content">
     <variable name="root_package_dir" select="$root_package_dir"/>
-    <xsl:variable name="file" select="concat($root_package_dir, '/',string-join(./ancestor-or-self::*/name,'_') , '.py')"/>
+      <xsl:variable name="ns" select="$mapping/bnd:mappedModels/model[name=current()/ancestor-or-self::vo-dml:model/name]/xml-targetnamespace"/>
+
+      <xsl:variable name="file" select="concat($root_package_dir, '/',string-join(./ancestor-or-self::*/name,'_') , '.py')"/>
     <xsl:variable name="package-vodml-ref" select="concat(./ancestor-or-self::vo-dml:model/name,':',string-join(./ancestor-or-self::package/name,'.'))"/>
     <xsl:message>package = <xsl:value-of select="concat(name,' ',$file,' ',$package-vodml-ref)"/></xsl:message>
     <xsl:result-document href="{$file}" format="python">
@@ -116,7 +118,10 @@ class _VodmlXmlBase(BaseModel):
     def to_xml(self, pretty_print: bool = False) -> bytes:
         config = SerializerConfig(indent="  " if pretty_print else None)
         ctx = XmlContext(class_type="pydantic")
-        return XmlSerializer(config=config, context=ctx).render(self).encode("utf-8")
+</xsl:text>
+        <xsl:value-of select="concat('        ns_map = {', $dq,$ns/@prefix, $dq, ': ', $dq, normalize-space($ns/text()), $dq, '}')"/>
+<xsl:text>
+        return XmlSerializer(config=config, context=ctx).render(self, ns_map=ns_map).encode("utf-8")
 
     @classmethod
     def from_xml(cls, xml_bytes: bytes):
