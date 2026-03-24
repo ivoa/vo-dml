@@ -199,7 +199,7 @@ class _VodmlXmlBase(BaseModel):
 </xsl:text>
     </xsl:if>
     <xsl:if test="not(@abstract='true') and (extends or vf:hasSubTypes($vodml-ref))">
-    <xsl:value-of select="concat('    xsi_type: Optional[str] = xsfield({',$sq,'type',$sq,': ',$sq,'Attribute',$sq,', ',$sq,'name',$sq,': ',$sq,'type',$sq,', ',$sq,'namespace',$sq,': ',$sq,'http://www.w3.org/2001/XMLSchema-instance',$sq,'}, default=',$dq,name,$dq,')')"/>
+        <!-- TODO perhaps need code to handle subtypes in serialisation - i.e. add a field to the base type to indicate the actual type of the instance (e.g. xsi:type) and then use this in serialisation to determine which type to serialise as -->
     <xsl:text>
 </xsl:text>
     </xsl:if>
@@ -239,7 +239,7 @@ class _VodmlXmlBase(BaseModel):
     """
 </xsl:text>
     <xsl:if test="not(@abstract='true') and (extends or vf:hasSubTypes($vodml-ref))">
-    <xsl:value-of select="concat('    xsi_type: Optional[str] = xsfield({',$sq,'type',$sq,': ',$sq,'Attribute',$sq,', ',$sq,'name',$sq,': ',$sq,'type',$sq,', ',$sq,'namespace',$sq,': ',$sq,'http://www.w3.org/2001/XMLSchema-instance',$sq,'}, default=',$dq,name,$dq,')')"/>
+        <!-- TODO perphas need code to handle subtypes in serialisation - i.e. add a field to the base type to indicate the actual type of the instance (e.g. xsi:type) and then use this in serialisation to determine which type to serialise as -->
     <xsl:text>
 </xsl:text>
     </xsl:if>
@@ -316,6 +316,7 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
     <!-- include xsdata format string for special types (e.g. datetime) -->
     <xsl:variable name="fmt" select="vf:PythonFormat(datatype/vodml-ref)"/>
     <xsl:variable name="fmtpart" select="if (string-length($fmt) gt 0) then concat(', ',$sq,'format',$sq,': ',$sq,$fmt,$sq) else ''"/>
+    <xsl:variable name="wrapper" select="',',$sq,'wrapper',$sq,':',$sq,name,'s',$sq"/> <!--TODO should check in binding if wrapping really needed -->
     <xsl:if test="not(vf:isSubSetted($vodml-ref))">
       <xsl:text>
     </xsl:text>
@@ -323,7 +324,7 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
       <xsl:choose>
         <xsl:when test="multiplicity/maxOccurs = -1 or number(multiplicity/maxOccurs) gt 1">
           <!-- list-valued attribute -->
-          <xsl:value-of select="concat(name, ': List[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,$fmtpart,'}, default_factory=list)')"/>
+          <xsl:value-of select="concat(name, ': List[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,$wrapper,$fmtpart,'}, default_factory=list)')"/>
         </xsl:when>
         <xsl:when test="vf:isOptional(.)">
           <xsl:value-of select="concat(name, ': Optional[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,$fmtpart,'}, default=None)')"/>
