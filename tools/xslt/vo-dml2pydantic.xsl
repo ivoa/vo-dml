@@ -114,7 +114,7 @@ class _VodmlXmlBase(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def to_xml(self, pretty_print: bool = False) -> bytes:
-        config = SerializerConfig(pretty_print=pretty_print)
+        config = SerializerConfig(indent="  " if pretty_print else None)
         ctx = XmlContext(class_type="pydantic")
         return XmlSerializer(config=config, context=ctx).render(self).encode("utf-8")
 
@@ -295,7 +295,7 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
     *  </xsl:text><xsl:value-of select="$vodmlauthor"/><xsl:text>
     """
 
-    value: </xsl:text><xsl:value-of select="$valuetype"/><xsl:text> = xsfield({'type': 'Element', 'name': 'value'})
+    value: </xsl:text><xsl:value-of select="$valuetype"/><xsl:text> = xsfield({'type': 'Element', 'name': 'value', 'namespace': ''})
 
 
 </xsl:text>
@@ -318,13 +318,13 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
       <xsl:choose>
         <xsl:when test="multiplicity/maxOccurs = -1 or number(multiplicity/maxOccurs) gt 1">
           <!-- list-valued attribute -->
-          <xsl:value-of select="concat(name, ': List[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,$fmtpart,'}, default_factory=list)')"/>
+          <xsl:value-of select="concat(name, ': List[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,$fmtpart,'}, default_factory=list)')"/>
         </xsl:when>
         <xsl:when test="vf:isOptional(.)">
-          <xsl:value-of select="concat(name, ': Optional[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,$fmtpart,'}, default=None)')"/>
+          <xsl:value-of select="concat(name, ': Optional[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,$fmtpart,'}, default=None)')"/>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:value-of select="concat(name, ': ', $type, ' = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,$fmtpart,'})')"/>
+          <xsl:value-of select="concat(name, ': ', $type, ' = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,$fmtpart,'})')"/>
         </xsl:otherwise>
       </xsl:choose>
       <xsl:text>
@@ -346,7 +346,7 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
       <xsl:variable name="sname" select="tokenize(role/vodml-ref/text(),'[.]')[last()]"/>
       <xsl:text>
     </xsl:text>
-      <xsl:value-of select="concat($sname, ': ', $stype, ' = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,$sname,$sq,'})')"/>
+      <xsl:value-of select="concat($sname, ': ', $stype, ' = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,$sname,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,'})')"/>
       <xsl:text>
     """
     * Attribute </xsl:text><xsl:value-of select="$sname"/><xsl:text> : subsetted
@@ -364,7 +364,7 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
     <xsl:call-template name="vodmlAnnotation"/>
     <xsl:text>
     </xsl:text>
-    <xsl:value-of select="concat(name, ': List[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,'}, default_factory=list)')"/>
+    <xsl:value-of select="concat(name, ': List[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,'}, default_factory=list)')"/>
     <xsl:text>
     """
     *
@@ -385,10 +385,10 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
     </xsl:text>
     <xsl:choose>
       <xsl:when test="multiplicity/minOccurs = 0">
-        <xsl:value-of select="concat(name, ': Optional[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,'}, default=None)')"/>
+        <xsl:value-of select="concat(name, ': Optional[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,'}, default=None)')"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:value-of select="concat(name, ': ', $type, ' = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,'})')"/>
+        <xsl:value-of select="concat(name, ': ', $type, ' = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,'})')"/>
       </xsl:otherwise>
     </xsl:choose>
     <xsl:text>
@@ -410,13 +410,13 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
     </xsl:text>
     <xsl:choose>
       <xsl:when test="multiplicity/maxOccurs != 1">
-        <xsl:value-of select="concat(name, ': List[Union[str, ', $type, ']] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,'}, default_factory=list)')"/>
+        <xsl:value-of select="concat(name, ': List[Union[str, ', $type, ']] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,'}, default_factory=list)')"/>
       </xsl:when>
       <xsl:when test="vf:isOptional(.)">
-        <xsl:value-of select="concat(name, ': Optional[Union[str, ', $type, ']] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,'}, default=None)')"/>
+        <xsl:value-of select="concat(name, ': Optional[Union[str, ', $type, ']] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,'}, default=None)')"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:value-of select="concat(name, ': Union[str, ', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,'})')"/>
+        <xsl:value-of select="concat(name, ': Union[str, ', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,'})')"/>
       </xsl:otherwise>
     </xsl:choose>
     <xsl:text>
@@ -437,6 +437,8 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
                 return None
             if isinstance(value, (str, int, float)):
                 return value
+            if hasattr(value, "id") and getattr(value, "id") is not None:
+                return getattr(value, "id")
             if hasattr(value, "_id") and getattr(value, "_id") is not None:
                 return getattr(value, "_id")
             if hasattr(value, "name") and getattr(value, "name") is not None:
@@ -487,7 +489,7 @@ class </xsl:text><xsl:value-of select="$refsClass"/><xsl:text>(_VodmlXmlBase):
     <xsl:for-each select="$references-vodmlref">
       <xsl:variable name="rtype" select="vf:PythonType(.)"/>
       <xsl:variable name="rtag" select="vf:lowerFirst($models/key('ellookup',current())/name)"/>
-      <xsl:text>    </xsl:text><xsl:value-of select="$rtag"/><xsl:text>: List[</xsl:text><xsl:value-of select="$rtype"/><xsl:text>] = xsfield({'type': 'Element', 'name': '</xsl:text><xsl:value-of select="$rtag"/><xsl:text>'}, default_factory=list)
+      <xsl:text>    </xsl:text><xsl:value-of select="$rtag"/><xsl:text>: List[</xsl:text><xsl:value-of select="$rtype"/><xsl:text>] = xsfield({'type': 'Element', 'name': '</xsl:text><xsl:value-of select="$rtag"/><xsl:text>', 'namespace': ''}, default_factory=list)
 </xsl:text>
     </xsl:for-each>
     <xsl:if test="empty($references-vodmlref)">
@@ -499,12 +501,12 @@ class </xsl:text><xsl:value-of select="$modelClass"/><xsl:text>(_VodmlXmlBase):
     class Meta:
         name = "</xsl:text><xsl:value-of select="$rootTag"/><xsl:text>"
         namespace = "</xsl:text><xsl:value-of select="$rootNs"/><xsl:text>"
-    refs: Optional[</xsl:text><xsl:value-of select="$refsClass"/><xsl:text>] = xsfield({'type': 'Element', 'name': 'refs'}, default=None)
+    refs: Optional[</xsl:text><xsl:value-of select="$refsClass"/><xsl:text>] = xsfield({'type': 'Element', 'name': 'refs', 'namespace': ''}, default=None)
 </xsl:text>
     <xsl:for-each select="$contentTypes">
       <xsl:variable name="ctype" select="vf:PythonType(vf:asvodmlref(current()))"/>
       <xsl:variable name="ctag" select="vf:lowerFirst($models/key('ellookup',vf:asvodmlref(current()))/name)"/>
-      <xsl:text>    </xsl:text><xsl:value-of select="$ctag"/><xsl:text>: List[</xsl:text><xsl:value-of select="$ctype"/><xsl:text>] = xsfield({'type': 'Element', 'name': '</xsl:text><xsl:value-of select="$ctag"/><xsl:text>'}, default_factory=list)
+      <xsl:text>    </xsl:text><xsl:value-of select="$ctag"/><xsl:text>: List[</xsl:text><xsl:value-of select="$ctype"/><xsl:text>] = xsfield({'type': 'Element', 'name': '</xsl:text><xsl:value-of select="$ctag"/><xsl:text>', 'namespace': ''}, default_factory=list)
 </xsl:text>
     </xsl:for-each>
   </xsl:template>
