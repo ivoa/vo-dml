@@ -120,10 +120,13 @@ python {
     pip("pydantic:2.12.5")
     pip("sqlmodel:0.0.22")
     pip("xsdata-pydantic:24.5")
-    pip("pydantic-xml:2.19.0")
+ //   pip("pydantic-xml:2.19.0")
 }
 
 
+tasks.named<Delete>("clean") {
+    delete(vodml.outputPythonDir) //additional clean up of generated python code when doing a clean build - note that even though it looks like it default behaviour is not being overridden
+}
 
 tasks.register("tpath") {
     group = "Other"
