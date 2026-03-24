@@ -429,26 +429,7 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
 
   <xsl:template match="reference" mode="serializer">
     <xsl:variable name="method-name" select="replace(name,'[^A-Za-z0-9_]','_')"/>
-    <xsl:text>
-    @field_serializer("</xsl:text><xsl:value-of select="name"/><xsl:text>")
-    def _serialize_ref_</xsl:text><xsl:value-of select="$method-name"/><xsl:text>(self, v: Any) -> Any:
-        def _as_id(value: Any) -> Any:
-            if value is None:
-                return None
-            if isinstance(value, (str, int, float)):
-                return value
-            if hasattr(value, "id") and getattr(value, "id") is not None:
-                return getattr(value, "id")
-            if hasattr(value, "_id") and getattr(value, "_id") is not None:
-                return getattr(value, "_id")
-            if hasattr(value, "name") and getattr(value, "name") is not None:
-                return getattr(value, "name")
-            return str(value)
-
-        if isinstance(v, list):
-            return [_as_id(i) for i in v]
-        return _as_id(v)
-</xsl:text>
+      <!--TODO - need to add custom serializer to handle serialisation of references as either embedded elements or as keys (ie. as in the java case if an instance has already been serialized then just emit an id reference - otherwise emit the full object) -->
   </xsl:template>
 
   <xsl:template match="vo-dml:model" mode="model-wrapper">
