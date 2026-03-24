@@ -1,0 +1,67 @@
+{
+  "refs": {
+    "referredTo3": [
+      {
+        "id": "jpatest-ReferredTo3_1002",
+        "sval": "ref in dtype",
+        "ival": 3
+      }
+    ],
+    "referredTo2": [
+      {
+        "id": "jpatest-ReferredTo2_1004",
+        "sval": "lower ref"
+      }
+    ],
+    "referredTo1": [
+      {
+        "id": "jpatest-ReferredTo1_1003",
+        "sval": "top level ref"
+      }
+    ]
+  },
+  "parent": [
+    {
+      "dval": {
+        "basestr": "base",
+        "dref": "jpatest-ReferredTo3_1002",
+        "intatt": "intatt",
+        "dvalr": 1.1,
+        "dvals": "astring"
+      },
+      "eval": {
+        "basestr": "basestre_e",
+        "dref": "jpatest-ReferredTo3_1002",
+        "intatt": "intatt_e",
+        "evalr": 1.2,
+        "evals": "evals"
+      },
+      "rval": "jpatest-ReferredTo1_1003",
+      "cval": {
+        "rval": "jpatest-ReferredTo2_1004"
+      },
+      "tval": {
+        "p": {
+          "x": 1.5,
+          "y": 3.0
+        },
+        "dt": "thing"
+      },
+      "lval": [
+        {
+          "sval": "First",
+          "ival": 1
+        },
+        {
+          "sval": "Second",
+          "ival": 2
+        },
+        {
+          "sval": "Third",
+          "ival": 3
+        }
+      ]
+    }
+  ],
+  "sub": []
+}

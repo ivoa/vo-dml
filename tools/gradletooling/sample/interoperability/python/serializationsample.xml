@@ -1,48 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ns0:MyModelModel xmlns:ns0="http://ivoa.net/vodml/sample/serialization">
-  <ns0:refs>
-    <ns0:refa>
-      <ns0:val>
-        <ns0:value>
-          <ns0:value>urn:value</ns0:value>
-        </ns0:value>
-      </ns0:val>
-    </ns0:refa>
-    <ns0:refb>
-      <ns0:name>naturalkey</ns0:name>
-      <ns0:val>
-        <ns0:value>
-          <ns0:value>ivo:val</ns0:value>
-        </ns0:value>
-      </ns0:val>
-    </ns0:refb>
-  </ns0:refs>
-  <ns0:someContent>
-    <ns0:ref1>
-      <ns0:val>
-        <ns0:value>
-          <ns0:value>urn:value</ns0:value>
-        </ns0:value>
-      </ns0:val>
-    </ns0:ref1>
-    <ns0:ref2>
-      <ns0:name>naturalkey</ns0:name>
-      <ns0:val>
-        <ns0:value>
-          <ns0:value>ivo:val</ns0:value>
-        </ns0:value>
-      </ns0:val>
-    </ns0:ref2>
-    <ns0:zval>some</ns0:zval>
-    <ns0:zval>z</ns0:zval>
-    <ns0:zval>values</ns0:zval>
-    <ns0:con xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="Dcont">
-      <ns0:bname>dval</ns0:bname>
-      <ns0:dval>N1</ns0:dval>
-    </ns0:con>
-    <ns0:con xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="Econt">
-      <ns0:bname>eval</ns0:bname>
-      <ns0:evalue>cube</ns0:evalue>
-    </ns0:con>
-  </ns0:someContent>
-</ns0:MyModelModel>
+<ser:MyModelModel xmlns:ser="http://ivoa.net/vodml/sample/serialization">
+  <refs>
+    <refa _id="refa-1">
+      <val>
+        <value>
+          <value>urn:value</value>
+        </value>
+      </val>
+    </refa>
+    <refb>
+      <name>naturalkey</name>
+      <val>
+        <value>
+          <value>ivo:val</value>
+        </value>
+      </val>
+    </refb>
+  </refs>
+  <someContent>
+    <ref1>refa-1</ref1>
+    <ref2>naturalkey</ref2>
+    <zvals>
+      <zval>some</zval>
+      <zval>z</zval>
+      <zval>values</zval>
+    </zvals>
+    <con>
+      <baseC xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ser:Dcont">
+        <bname>dval</bname>
+        <dval>N1</dval>
+      </baseC>
+      <baseC xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ser:Econt">
+        <bname>eval</bname>
+        <evalue>cube</evalue>
+      </baseC>
+    </con>
+  </someContent>
+</ser:MyModelModel>

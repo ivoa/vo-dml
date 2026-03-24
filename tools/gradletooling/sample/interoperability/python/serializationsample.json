@@ -2,7 +2,7 @@
   "refs": {
     "refa": [
       {
-        "id": null,
+        "id": "refa-1",
         "val": {
           "value": {
             "value": "urn:value"
@@ -23,7 +23,7 @@
   },
   "someContent": [
     {
-      "ref1": "id=None val=altURL(value=anyURI(value='urn:value'))",
+      "ref1": "refa-1",
       "ref2": "naturalkey",
       "zval": [
         "some",

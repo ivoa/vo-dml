@@ -1,133 +1,139 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ns0:sampleModel xmlns:ns0="http://ivoa.net/dm/sample/sample/v1">
-  <ns0:refs>
-    <ns0:skyCoordinateFrame>
-      <ns0:name>J2000</ns0:name>
-      <ns0:documentURI>
-        <ns0:value>http://coord.net</ns0:value>
-      </ns0:documentURI>
-      <ns0:equinox>J2000.0</ns0:equinox>
-    </ns0:skyCoordinateFrame>
-  </ns0:refs>
-  <ns0:sourceCatalogue>
-    <ns0:name>testCat</ns0:name>
-    <ns0:entry xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="SDSSSource">
-      <ns0:label>cepheid</ns0:label>
-      <ns0:name>testSource</ns0:name>
-      <ns0:position>
-        <ns0:longitude xsi:type="RealQuantity">
-          <ns0:unit>
-            <ns0:value>degree</ns0:value>
-          </ns0:unit>
-          <ns0:value>2.5</ns0:value>
-        </ns0:longitude>
-        <ns0:latitude xsi:type="RealQuantity">
-          <ns0:unit>
-            <ns0:value>degree</ns0:value>
-          </ns0:unit>
-          <ns0:value>52.5</ns0:value>
-        </ns0:latitude>
-        <ns0:frame>
-          <ns0:name>J2000</ns0:name>
-          <ns0:documentURI>
-            <ns0:value>http://coord.net</ns0:value>
-          </ns0:documentURI>
-          <ns0:equinox>J2000.0</ns0:equinox>
-        </ns0:frame>
-      </ns0:position>
-      <ns0:classification>AGN</ns0:classification>
-      <ns0:luminosity>
-        <ns0:value xsi:type="RealQuantity">
-          <ns0:unit>
-            <ns0:value>Jy</ns0:value>
-          </ns0:unit>
-          <ns0:value>2.5</ns0:value>
-        </ns0:value>
-        <ns0:type>flux</ns0:type>
-        <ns0:filter>
-          <ns0:name>C-Band</ns0:name>
-          <ns0:description>radio band</ns0:description>
-          <ns0:bandName>C-Band</ns0:bandName>
-          <ns0:dataValidityFrom>20-01-01T00:00:00Z</ns0:dataValidityFrom>
-          <ns0:dataValidityTo>25-01-01T20:12:16Z</ns0:dataValidityTo>
-          <ns0:spectralLocation xsi:type="RealQuantity">
-            <ns0:unit>
-              <ns0:value>GHz</ns0:value>
-            </ns0:unit>
-            <ns0:value>5.0</ns0:value>
-          </ns0:spectralLocation>
-        </ns0:filter>
-        <ns0:error xsi:type="RealQuantity">
-          <ns0:unit>
-            <ns0:value>Jy</ns0:value>
-          </ns0:unit>
-          <ns0:value>0.25</ns0:value>
-        </ns0:error>
-        <ns0:description>lummeas</ns0:description>
-      </ns0:luminosity>
-      <ns0:luminosity>
-        <ns0:value xsi:type="RealQuantity">
-          <ns0:unit>
-            <ns0:value>Jy</ns0:value>
-          </ns0:unit>
-          <ns0:value>3.5</ns0:value>
-        </ns0:value>
-        <ns0:type>flux</ns0:type>
-        <ns0:filter>
-          <ns0:name>L-Band</ns0:name>
-          <ns0:description>radio band</ns0:description>
-          <ns0:bandName>L-Band</ns0:bandName>
-          <ns0:dataValidityFrom>20-01-01T00:00:00Z</ns0:dataValidityFrom>
-          <ns0:dataValidityTo>25-01-01T13:12:00Z</ns0:dataValidityTo>
-          <ns0:spectralLocation xsi:type="RealQuantity">
-            <ns0:unit>
-              <ns0:value>GHz</ns0:value>
-            </ns0:unit>
-            <ns0:value>1.5</ns0:value>
-          </ns0:spectralLocation>
-        </ns0:filter>
-        <ns0:error xsi:type="RealQuantity">
-          <ns0:unit>
-            <ns0:value>Jy</ns0:value>
-          </ns0:unit>
-          <ns0:value>0.25</ns0:value>
-        </ns0:error>
-        <ns0:description>lummeas2</ns0:description>
-      </ns0:luminosity>
-      <ns0:positionError xsi:type="AlignedEllipse">
-        <ns0:longError>0.2</ns0:longError>
-        <ns0:latError>0.1</ns0:latError>
-      </ns0:positionError>
-    </ns0:entry>
-  </ns0:sourceCatalogue>
-  <ns0:photometricSystem>
-    <ns0:detectorType>1</ns0:detectorType>
-    <ns0:description>test photometric system</ns0:description>
-    <ns0:photometryFilter>
-      <ns0:name>C-Band</ns0:name>
-      <ns0:description>radio band</ns0:description>
-      <ns0:bandName>C-Band</ns0:bandName>
-      <ns0:dataValidityFrom>20-01-01T00:00:00Z</ns0:dataValidityFrom>
-      <ns0:dataValidityTo>25-01-01T20:12:16Z</ns0:dataValidityTo>
-      <ns0:spectralLocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="RealQuantity">
-        <ns0:unit>
-          <ns0:value>GHz</ns0:value>
-        </ns0:unit>
-        <ns0:value>5.0</ns0:value>
-      </ns0:spectralLocation>
-    </ns0:photometryFilter>
-    <ns0:photometryFilter>
-      <ns0:name>L-Band</ns0:name>
-      <ns0:description>radio band</ns0:description>
-      <ns0:bandName>L-Band</ns0:bandName>
-      <ns0:dataValidityFrom>20-01-01T00:00:00Z</ns0:dataValidityFrom>
-      <ns0:dataValidityTo>25-01-01T13:12:00Z</ns0:dataValidityTo>
-      <ns0:spectralLocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="RealQuantity">
-        <ns0:unit>
-          <ns0:value>GHz</ns0:value>
-        </ns0:unit>
-        <ns0:value>1.5</ns0:value>
-      </ns0:spectralLocation>
-    </ns0:photometryFilter>
-  </ns0:photometricSystem>
-</ns0:sampleModel>
+<simp:sampleModel xmlns:simp="http://ivoa.net/dm/sample/sample/v1">
+  <refs>
+    <skyCoordinateFrame>
+      <name>J2000</name>
+      <documentURI>
+        <value>http://coord.net</value>
+      </documentURI>
+      <equinox>J2000.0</equinox>
+    </skyCoordinateFrame>
+  </refs>
+  <sourceCatalogue>
+    <name>testCat</name>
+    <entry>
+      <abstractSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="simp:SDSSSource">
+        <label>cepheid</label>
+        <name>testSource</name>
+        <position>
+          <longitude xsi:type="RealQuantity">
+            <unit>
+              <value>degree</value>
+            </unit>
+            <value>2.5</value>
+          </longitude>
+          <latitude xsi:type="RealQuantity">
+            <unit>
+              <value>degree</value>
+            </unit>
+            <value>52.5</value>
+          </latitude>
+          <frame>
+            <name>J2000</name>
+            <documentURI>
+              <value>http://coord.net</value>
+            </documentURI>
+            <equinox>J2000.0</equinox>
+          </frame>
+        </position>
+        <classification>AGN</classification>
+        <luminosity>
+          <luminosityMeasurement>
+            <value xsi:type="RealQuantity">
+              <unit>
+                <value>Jy</value>
+              </unit>
+              <value>2.5</value>
+            </value>
+            <type>flux</type>
+            <filter>
+              <name>C-Band</name>
+              <description>radio band</description>
+              <bandName>C-Band</bandName>
+              <dataValidityFrom>20-01-01T00:00:00Z</dataValidityFrom>
+              <dataValidityTo>25-01-01T20:12:16Z</dataValidityTo>
+              <spectralLocation xsi:type="RealQuantity">
+                <unit>
+                  <value>GHz</value>
+                </unit>
+                <value>5.0</value>
+              </spectralLocation>
+            </filter>
+            <error xsi:type="RealQuantity">
+              <unit>
+                <value>Jy</value>
+              </unit>
+              <value>0.25</value>
+            </error>
+            <description>lummeas</description>
+          </luminosityMeasurement>
+          <luminosityMeasurement>
+            <value xsi:type="RealQuantity">
+              <unit>
+                <value>Jy</value>
+              </unit>
+              <value>3.5</value>
+            </value>
+            <type>flux</type>
+            <filter>
+              <name>L-Band</name>
+              <description>radio band</description>
+              <bandName>L-Band</bandName>
+              <dataValidityFrom>20-01-01T00:00:00Z</dataValidityFrom>
+              <dataValidityTo>25-01-01T13:12:00Z</dataValidityTo>
+              <spectralLocation xsi:type="RealQuantity">
+                <unit>
+                  <value>GHz</value>
+                </unit>
+                <value>1.5</value>
+              </spectralLocation>
+            </filter>
+            <error xsi:type="RealQuantity">
+              <unit>
+                <value>Jy</value>
+              </unit>
+              <value>0.25</value>
+            </error>
+            <description>lummeas2</description>
+          </luminosityMeasurement>
+        </luminosity>
+        <positionError>
+          <longError>0.2</longError>
+          <latError>0.1</latError>
+        </positionError>
+      </abstractSource>
+    </entry>
+  </sourceCatalogue>
+  <photometricSystem>
+    <detectorType>1</detectorType>
+    <description>test photometric system</description>
+    <photometryFilter>
+      <photometryFilter>
+        <name>C-Band</name>
+        <description>radio band</description>
+        <bandName>C-Band</bandName>
+        <dataValidityFrom>20-01-01T00:00:00Z</dataValidityFrom>
+        <dataValidityTo>25-01-01T20:12:16Z</dataValidityTo>
+        <spectralLocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="RealQuantity">
+          <unit>
+            <value>GHz</value>
+          </unit>
+          <value>5.0</value>
+        </spectralLocation>
+      </photometryFilter>
+      <photometryFilter>
+        <name>L-Band</name>
+        <description>radio band</description>
+        <bandName>L-Band</bandName>
+        <dataValidityFrom>20-01-01T00:00:00Z</dataValidityFrom>
+        <dataValidityTo>25-01-01T13:12:00Z</dataValidityTo>
+        <spectralLocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="RealQuantity">
+          <unit>
+            <value>GHz</value>
+          </unit>
+          <value>1.5</value>
+        </spectralLocation>
+      </photometryFilter>
+    </photometryFilter>
+  </photometricSystem>
+</simp:sampleModel>
