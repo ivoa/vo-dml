@@ -61,6 +61,8 @@ C/Java-like syntax with the following characteristics;
 
 - multiplicities are introduced by `@`
 
+- processing instructions can be attached to `dtype`, `otype`, and attributes using `! ... !`
+
 The syntax of various parts of the language are described in the
 following sections. For a fuller description of the semantics of the
 language, the VO-DML standard itself should be consulted.
@@ -169,8 +171,31 @@ otype multiplicities "the @ sign introduces a multiplicity"
     m2 : ivoa:integer @* "0 or many";
     m3 : ivoa:integer @+ "1 or many";
     m4 : ivoa:integer @[2] "twice (as an array?)";
+    m5 : ivoa:integer @[3,-1] "three or more";
 }
 ```
+
+### Processing Instructions
+
+Processing instructions (PIs) can be attached to `dtype`, `otype`, and attributes.
+They are written with `! ... !` and are emitted as XML processing instructions in generated VO-DML.
+
+``` vodsl
+!meta ucd="phys.background"!
+dtype Flux "a flux data type" {
+    !meta ucd="instr.background"!
+    value : ivoa:real "the flux value";
+}
+
+otype Source "a source object type" {
+    !meta ucd="meta.id"!
+    name : ivoa:string "source name";
+}
+```
+
+The text immediately following the `!` is the target of the processing instruction and the rest of the text is the content. In the above example, the `meta` target is used to indicate that the content is a meta-data key-value pair, but in principle any target could be used and any content could be attached to it.
+
+The use of processing instructions is outside the core VO-DML language, but it is a useful mechanism for attaching additional information to the model that might be used by code generation or other tools. For instance, the above example shows how UCDs could be attached to types and attributes using processing instructions.
 
 ### References and Compositions
 
@@ -289,6 +314,7 @@ otype multiplicities "the @ sign introduces a multiplicity"
     m2 : ivoa:integer @* "0 or many";
     m3 : ivoa:integer @+ "1 or many";
     m4 : ivoa:integer @[2] "twice (as an array?)";
+    m5 : ivoa:integer @[3,-1] "three or more";
 }
 
  /*  this referred to otype is not affected by the lifecycle
