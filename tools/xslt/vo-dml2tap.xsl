@@ -10,7 +10,7 @@ FIXME This is not yet complete
 note the need to make the columnID unique over whole document (as it is an XML ID) - done by prepending the schema and table names delimited with "."
    -  this should be removed before writing DDL for an actual RDB
 
-TODO similarly the scheme should be appended for table names - however this has not been done yet
+TODO similarly the schema should be appended for table names - however this has not been done yet
  -->
 
 
@@ -559,7 +559,9 @@ TODO similarly the scheme should be appended for table names - however this has 
 
     <xsl:function name="vf:tapTableName">
         <xsl:param name="vodml-ref" as="xsd:string" />
-        <xsl:sequence select="vf:rdbTableName($vodml-ref)"/>
+        <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
+        <xsl:variable name="thisModelName" select="$el/ancestor-or-self::vo-dml:model/name"/>
+        <xsl:sequence select="concat(vf:schemaName($thisModelName),'.',vf:rdbTableName($vodml-ref))"/>
     </xsl:function>
     <!-- need to make the columnID unique over whole document - done by prepending the table name
     this will have to be removed before writing to tapschema db -->
