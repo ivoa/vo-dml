@@ -8,7 +8,7 @@
       <uri/>
       <title></title>
       <version>1.0</version>
-      <lastModified>2026-03-31T12:44:36Z</lastModified>
+      <lastModified>2026-04-01T12:30:22Z</lastModified>
       <import>
         <name>ivoa</name>
         <version>1.0</version>
@@ -141,7 +141,7 @@
                             <vodml-id>types.BaseC</vodml-id>
                             <name>BaseC</name>
                             <description></description>	    
-                            <?xml isAttribute="true"?>
+                            <?xmlmeta isAttribute="true"?>
                             <attribute>
                               <vodml-id>types.BaseC.bname</vodml-id>
                               <name>bname</name>

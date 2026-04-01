@@ -22,7 +22,7 @@ otype Refb  ""
 
 package types "" {
 abstract otype BaseC {
-    !xml isAttribute="true"!
+    !xmlmeta isAttribute="true"!
 	bname: ivoa:string "";
 }
 
