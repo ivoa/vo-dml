@@ -1,0 +1,43 @@
+{
+  "refs": {
+    "refa": [
+      {
+        "id": "refa-1",
+        "val": {
+          "value": {
+            "value": "urn:value"
+          }
+        }
+      }
+    ],
+    "refb": [
+      {
+        "name": "naturalkey",
+        "val": {
+          "value": {
+            "value": "ivo:val"
+          }
+        }
+      }
+    ]
+  },
+  "someContent": [
+    {
+      "ref1": "refa-1",
+      "ref2": "naturalkey",
+      "zval": [
+        "some",
+        "z",
+        "values"
+      ],
+      "con": [
+        {
+          "bname": "dval"
+        },
+        {
+          "bname": "eval"
+        }
+      ]
+    }
+  ]
+}

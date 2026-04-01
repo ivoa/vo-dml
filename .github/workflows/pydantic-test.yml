@@ -1,0 +1,63 @@
+# This workflow builds the VO-DML tooling, generates pydantic-xml model classes from
+# the sample VO-DML models, and runs the Python interoperability test suite
+# (PydanticInteropTest.py).
+#
+# Build order:
+#   1. Publish the shared Java runtime library to Maven Local.
+#   2. Publish the IVOA base model to Maven Local (sample depends on it).
+#   3. Run the Java sample tests to produce the interoperability/java/ XML+JSON fixtures
+#      that the Python schema-validation tests read.
+#   4. Generate the IVOA pydantic package (org.ivoa.dm.ivoa) into the shared generated dir.
+#   5. Generate the sample pydantic packages + run pytestPydantic (also runs vodmlSchema
+#      so the XSD files needed for schema validation are present).
+
+name: Python pydantic model tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  pydantic-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write        # required by publish-unit-test-result-action
+      pull-requests: write # required by publish-unit-test-result-action
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Python 3
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build runtime library
+        run: ./gradlew :java:publishToMavenLocal -PskipSigning=True
+
+      - name: Build and publish IVOA base model
+        run: ./gradlew :ivoa:publishToMavenLocal -PskipSigning=True
+
+      - name: Run Java sample tests (generates interoperability/java/ fixtures)
+        run: ./gradlew :sample:test -PskipSigning=True
+
+      - name: Generate ivoa pydantic package and run pydantic interop tests
+        run: ./gradlew :ivoa:vodmlPydanticGenerate :sample:pytestPydantic -PskipSigning=True
+
+      - name: Publish pydantic test results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: tools/gradletooling/sample/build/reports/pytestPydantic/results.xml

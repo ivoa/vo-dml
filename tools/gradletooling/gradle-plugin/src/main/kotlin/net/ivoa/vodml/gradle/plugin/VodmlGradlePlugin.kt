@@ -33,6 +33,7 @@ class VodmlGradlePlugin: Plugin<Project> {
         const val VODML_VODSL_TASK_NAME = "vodslToVodml"
         const val VODML_TO_VODSL_TASK_NAME = "vodmlToVodsl"
         const val VODML_TO_PYTHON_TASK_NAME = "vodmlPythonGenerate"
+        const val VODML_TO_PYDANTIC_TASK_NAME = "vodmlPydanticGenerate"
         const val VODML_SCHEMA_TASK_NAME = "vodmlSchema"
         const val XSD_TO_VODSL_TASK_NAME = "vodmlXsdToVodsl"
     }
@@ -159,6 +160,13 @@ class VodmlGradlePlugin: Plugin<Project> {
         project.tasks.register(VODML_TO_PYTHON_TASK_NAME,VodmlPythonTask::class.java) { task ->
             task.description = "generate python classes from VO-DML models"
             setVodmlFiles(task,extension,project)
+            task.pythonGenDir.set(extension.outputPythonDir)
+        }
+
+        // pydantic task
+        project.tasks.register(VODML_TO_PYDANTIC_TASK_NAME, VodmlPydanticTask::class.java) { task ->
+            task.description = "generate pydantic model classes from VO-DML models"
+            setVodmlFiles(task, extension, project)
             task.pythonGenDir.set(extension.outputPythonDir)
         }
 

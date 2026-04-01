@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ser:MyModelModel xmlns:ser="http://ivoa.net/vodml/sample/serialization">
+  <refs>
+    <refa _id="refa-1">
+      <val>
+        <value>
+          <value>urn:value</value>
+        </value>
+      </val>
+    </refa>
+    <refb>
+      <name>naturalkey</name>
+      <val>
+        <value>
+          <value>ivo:val</value>
+        </value>
+      </val>
+    </refb>
+  </refs>
+  <someContent>
+    <ref1>refa-1</ref1>
+    <ref2>naturalkey</ref2>
+    <zvals>
+      <zval>some</zval>
+      <zval>z</zval>
+      <zval>values</zval>
+    </zvals>
+    <con>
+      <baseC xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ser:Dcont">
+        <bname>dval</bname>
+        <dval>N1</dval>
+      </baseC>
+      <baseC xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ser:Econt">
+        <bname>eval</bname>
+        <evalue>cube</evalue>
+      </baseC>
+    </con>
+  </someContent>
+</ser:MyModelModel>
