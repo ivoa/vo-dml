@@ -1,6 +1,6 @@
 [project]
 name = "vodmltools"
-version = "0.1"
+version = "0.2"
 authors = [
     { name="Paul Harrison", email="paul.harrison@manchester.ac.uk" },
 ]
@@ -10,6 +10,11 @@ requires-python = ">=3.9"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
+]
+dependencies = [
+    "click",
+    "saxonche",
+    "pyyaml",
 ]
 
 [project.urls]
