@@ -66,7 +66,8 @@ class TestMakeCatalog:
         vf.write_text("<model/>")
         cat = make_catalog([str(vf)], catalog_path=str(tmp_path / "cat.xml"))
         assert os.path.exists(cat)
-        content = open(cat).read()
+        with open(cat) as f:
+            content = f.read()
         assert "test.vo-dml.xml" in content
         assert "urn:oasis:names:tc:entity:xmlns:xml:catalog" in content
 
@@ -76,7 +77,8 @@ class TestMakeCatalog:
         vf.write_text("<model/>")
         dep.write_text("<model/>")
         cat = make_catalog([str(vf)], deps=[str(dep)], catalog_path=str(tmp_path / "cat.xml"))
-        content = open(cat).read()
+        with open(cat) as f:
+            content = f.read()
         assert "main.vo-dml.xml" in content
         assert "dep.vo-dml.xml" in content
 
