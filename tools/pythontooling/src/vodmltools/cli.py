@@ -1,9 +1,10 @@
 import json
 import os
 import subprocess
-import sys
+from pathlib import PurePath
 
 import click
+import yaml
 
 from vodmltools.vodml import (
     Vodml2Gml,
@@ -20,13 +21,11 @@ from vodmltools.vodml import (
     TapSchema2PlantUML,
     Vodml2Catalogues,
     Xsd2Vodsl,
-    createCatalog,
 )
 from vodmltools.context import (
     binding_as_uri_csv,
     ensure_dir,
     make_catalog,
-    prepare_transform,
     resolve_binding,
     resolve_deps,
     DEFAULT_OUTPUT_DOC_DIR,
@@ -111,12 +110,10 @@ def schema(binding, deps, output_dir, vodmlfiles):
         )
         if raw_api:
             try:
-                import yaml  # noqa: F811
-
                 parsed_api = json.loads(raw_api)
                 _remove_key_recursively(parsed_api, "$comment")
                 yaml_str = yaml.dump(parsed_api, default_flow_style=False, sort_keys=False)
-            except (json.JSONDecodeError, ImportError):
+            except json.JSONDecodeError:
                 yaml_str = raw_api
             with open(os.path.join(outdir, f"{shortname}.yaml"), "w") as f:
                 f.write(yaml_str)
@@ -299,16 +296,9 @@ def site(binding, deps, output_dir, models_to_document, vodmlfiles):
         if imported_models:
             allnav.append({"Imported Models": imported_models})
 
-        try:
-            import yaml
-
-            allnav_path = os.path.join(outdir, "allnav.yml")
-            with open(allnav_path, "w") as f:
-                yaml.dump(allnav, f, default_flow_style=False, sort_keys=False)
-        except ImportError:
-            allnav_path = os.path.join(outdir, "allnav.json")
-            with open(allnav_path, "w") as f:
-                json.dump(allnav, f, indent=2)
+        allnav_path = os.path.join(outdir, "allnav.yml")
+        with open(allnav_path, "w") as f:
+            yaml.dump(allnav, f, default_flow_style=False, sort_keys=False)
     except Exception as e:  # noqa: BLE001
         click.echo(f"  Warning: nav aggregation failed: {e}", err=True)
 

@@ -51,7 +51,7 @@ class XSLTExecutionOnlyTransformer:
         for key, value in params.items():
             self.executable.set_parameter(key, self.proc.make_string_value(value))
 
-        self.executable.call_template_returning_string(self.template_name)
+        return self.executable.call_template_returning_string(self.template_name)
 
 
 Vodml2Gml = XSLTTransformer("vo-dml2gml.xsl", "xml")
