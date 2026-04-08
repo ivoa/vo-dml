@@ -144,3 +144,5 @@
   * TAPSchema enhancements 
   * update to vosdl 0.4.10 
     * bugfixes and new processing instruction construction.
+* 0.6.2
+  * Further TAPSchema enhancements
