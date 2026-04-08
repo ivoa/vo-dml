@@ -386,7 +386,7 @@ TODO similarly the schema should be appended for table names - however this has 
                 <column_name>{concat(vf:schemaName($thisModelName),'.',vf:rdbTableName(vf:asvodmlref($this/parent::*)),'.',$this/name,'_',vf:rdbJoinTargetColumnName(current()))}</column_name>
                 <xsl:comment>reference to {$this/datatype/vodml-ref} composite key case</xsl:comment>
                 <datatype>{vf:rdbTapType($nk/datatype/vodml-ref)}</datatype>
-                <description>{$this/description}</description>
+                <description>{concat($nk/description,' of ',$this/description)}</description>
                 <utype>{$vodml-ref}</utype><!--wrong -->
                 <indexed>false</indexed><!-- IMPL or true?! -->
                 <principal>false</principal><!-- TODO need a way of actually specifying this -->
