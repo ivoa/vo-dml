@@ -3,23 +3,20 @@
   <refs>
     <refa _id="refa-1">
       <val>
-        <value>
-          <value>urn:value</value>
-        </value>
+        <value>urn:value</value>
       </val>
     </refa>
     <refb>
       <name>naturalkey</name>
       <val>
-        <value>
-          <value>ivo:val</value>
-        </value>
+        <value>ivo:val</value>
       </val>
     </refb>
   </refs>
   <someContent>
     <ref1>refa-1</ref1>
     <ref2>naturalkey</ref2>
+    <uri>urn:uri</uri>
     <zvals>
       <zval>some</zval>
       <zval>z</zval>

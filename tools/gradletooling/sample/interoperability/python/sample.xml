@@ -3,9 +3,7 @@
   <refs>
     <skyCoordinateFrame>
       <name>J2000</name>
-      <documentURI>
-        <value>http://coord.net</value>
-      </documentURI>
+      <documentURI>http://coord.net</documentURI>
       <equinox>J2000.0</equinox>
     </skyCoordinateFrame>
   </refs>
@@ -16,13 +14,13 @@
         <label>cepheid</label>
         <name>testSource</name>
         <position>
-          <longitude xsi:type="RealQuantity">
+          <longitude>
             <unit>
               <value>degree</value>
             </unit>
             <value>2.5</value>
           </longitude>
-          <latitude xsi:type="RealQuantity">
+          <latitude>
             <unit>
               <value>degree</value>
             </unit>
@@ -30,16 +28,14 @@
           </latitude>
           <frame>
             <name>J2000</name>
-            <documentURI>
-              <value>http://coord.net</value>
-            </documentURI>
+            <documentURI>http://coord.net</documentURI>
             <equinox>J2000.0</equinox>
           </frame>
         </position>
         <classification>AGN</classification>
         <luminosity>
           <luminosityMeasurement>
-            <value xsi:type="RealQuantity">
+            <value>
               <unit>
                 <value>Jy</value>
               </unit>
@@ -52,14 +48,14 @@
               <bandName>C-Band</bandName>
               <dataValidityFrom>20-01-01T00:00:00Z</dataValidityFrom>
               <dataValidityTo>25-01-01T20:12:16Z</dataValidityTo>
-              <spectralLocation xsi:type="RealQuantity">
+              <spectralLocation>
                 <unit>
                   <value>GHz</value>
                 </unit>
                 <value>5.0</value>
               </spectralLocation>
             </filter>
-            <error xsi:type="RealQuantity">
+            <error>
               <unit>
                 <value>Jy</value>
               </unit>
@@ -68,7 +64,7 @@
             <description>lummeas</description>
           </luminosityMeasurement>
           <luminosityMeasurement>
-            <value xsi:type="RealQuantity">
+            <value>
               <unit>
                 <value>Jy</value>
               </unit>
@@ -81,14 +77,14 @@
               <bandName>L-Band</bandName>
               <dataValidityFrom>20-01-01T00:00:00Z</dataValidityFrom>
               <dataValidityTo>25-01-01T13:12:00Z</dataValidityTo>
-              <spectralLocation xsi:type="RealQuantity">
+              <spectralLocation>
                 <unit>
                   <value>GHz</value>
                 </unit>
                 <value>1.5</value>
               </spectralLocation>
             </filter>
-            <error xsi:type="RealQuantity">
+            <error>
               <unit>
                 <value>Jy</value>
               </unit>
@@ -114,7 +110,7 @@
         <bandName>C-Band</bandName>
         <dataValidityFrom>20-01-01T00:00:00Z</dataValidityFrom>
         <dataValidityTo>25-01-01T20:12:16Z</dataValidityTo>
-        <spectralLocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="RealQuantity">
+        <spectralLocation>
           <unit>
             <value>GHz</value>
           </unit>
@@ -127,7 +123,7 @@
         <bandName>L-Band</bandName>
         <dataValidityFrom>20-01-01T00:00:00Z</dataValidityFrom>
         <dataValidityTo>25-01-01T13:12:00Z</dataValidityTo>
-        <spectralLocation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="RealQuantity">
+        <spectralLocation>
           <unit>
             <value>GHz</value>
           </unit>

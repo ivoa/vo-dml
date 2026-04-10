@@ -16,7 +16,7 @@ from pathlib import Path
 from lxml import etree as _etree
 
 from org.ivoa.dm.filter.filter import PhotometricSystem, PhotometryFilter
-from org.ivoa.dm.ivoa import RealQuantity, Unit, anyURI
+from org.ivoa.dm.ivoa import RealQuantity, Unit
 from org.ivoa.dm.jpatest.jpatest import JpatestModel
 
 from org.ivoa.dm.lifecycle.lifecycleTest import LifecycleTestModel, LifecycleTestRefs
@@ -142,7 +142,7 @@ class SampleModelInteropTest(unittest.TestCase):
         frame = SkyCoordinateFrame(
             name="J2000",
             equinox="J2000.0",
-            documentURI=anyURI(value="http://coord.net"),
+            documentURI="http://coord.net",
         )
 
         c_band = PhotometryFilter(
@@ -322,8 +322,8 @@ class SerializationExampleInteropTest(unittest.TestCase):
         from org.ivoa.dm.serializationsample.MyModel import Refa, Refb, SomeContent, altURL, ivoid
         from org.ivoa.dm.serializationsample.MyModel_types import Dcont, Econt
 
-        refa = Refa(id="refa-1", val=altURL(value=anyURI(value="urn:value")))
-        refb = Refb(name="naturalkey", val=ivoid(value=anyURI(value="ivo:val")))
+        refa = Refa(id="refa-1", val=altURL(value="urn:value"))
+        refb = Refb(name="naturalkey", val=ivoid(value="ivo:val"))
         cls.model = MyModelModel(
             someContent=[
                 SomeContent(
@@ -334,6 +334,7 @@ class SerializationExampleInteropTest(unittest.TestCase):
                         Dcont(bname="dval", dval="N1"),
                         Econt(bname="eval", evalue="cube"),
                     ],
+                    uri="urn:uri"
                 )
             ],
             refs=MyModelRefs(refa=[refa], refb=[refb]),

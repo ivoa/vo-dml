@@ -46,6 +46,7 @@
 <type-mapping>
   <vodml-id>anyURI</vodml-id>
   <java-type jpa-atomic="true">String</java-type>
+  <python-type built-in="true">str</python-type>
   <xsd-type>xsd:anyURI</xsd-type>
   <json-type format="uri">string</json-type>
 </type-mapping>

@@ -4,9 +4,7 @@
       {
         "id": "refa-1",
         "val": {
-          "value": {
-            "value": "urn:value"
-          }
+          "value": "urn:value"
         }
       }
     ],
@@ -14,9 +12,7 @@
       {
         "name": "naturalkey",
         "val": {
-          "value": {
-            "value": "ivo:val"
-          }
+          "value": "ivo:val"
         }
       }
     ]
@@ -25,6 +21,7 @@
     {
       "ref1": "refa-1",
       "ref2": "naturalkey",
+      "uri": "urn:uri",
       "zval": [
         "some",
         "z",

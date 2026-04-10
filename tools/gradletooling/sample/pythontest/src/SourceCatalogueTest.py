@@ -28,7 +28,7 @@ class MyTestCase(unittest.TestCase):
         jansky = Unit("Jy")
         degree = Unit("degree")
         GHz = Unit("GHz")
-        frame = SkyCoordinateFrame(name="J2000", equinox="J2000.0", documentURI=anyURI("http://coord.net"))
+        frame = SkyCoordinateFrame(name="J2000", equinox="J2000.0", documentURI="http://coord.net")
 
         ellipseError = AlignedEllipse(longError=.2, latError=.1)
         # sdss =  SDSSSource(positionError=ellipseError)# UNUSED, but just checking position error subsetting.
