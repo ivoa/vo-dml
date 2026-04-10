@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><ser:MyModelModel xmlns:ser="http://ivoa.net/vodml/sample/serialization" xmlns:coord="http://notstc/coords/v1" xmlns:c1vdt="http://ivoa.net/dm/sample/c1vdt" xmlns:filt="http://ivoa.net/dm/sample/filter/v1" xmlns:jpat="http://ivoa.net/dm/sample/jpatest" xmlns:simp="http://ivoa.net/dm/sample/sample/v1" xmlns:life="http://ivoa.net/vodml/sample/lifecycle" xmlns:ivoa="http://ivoa.net/vodml/ivoa">
     <refs>
-        <refa _id="MyModel-Refa_1044">
+        <refa _id="MyModel-Refa_1000">
             <val>urn:value</val>
         </refa>
         <refb>
@@ -9,7 +9,7 @@
         </refb>
     </refs>
     <someContent>
-        <ref1>MyModel-Refa_1044</ref1>
+        <ref1>MyModel-Refa_1000</ref1>
         <ref2>naturalkey</ref2>
         <zvals>
             <zval>some</zval>
@@ -26,5 +26,6 @@
                 <evalue>cube</evalue>
             </baseC>
         </con>
+        <uri>urn:uri</uri>
     </someContent>
 </ser:MyModelModel>

@@ -23,6 +23,7 @@ otype Refb  ""
 package types "" {
 abstract otype BaseC {
 	bname: ivoa:string "";
+
 }
 
 otype Dcont -> BaseC {
@@ -37,7 +38,9 @@ otype SomeContent "" {
 	ref1 references Refa "";
 	ref2 references Refb "";
 	zval : ivoa:string @+ "";
-	con: types:BaseC @+ as composition ""; 
+	con: types:BaseC @+ as composition "";
+	uri : ivoa:anyURI "";
+
 }
 
 primitive ivoid -> ivoa:anyURI "a specialization for IVOIDs"
