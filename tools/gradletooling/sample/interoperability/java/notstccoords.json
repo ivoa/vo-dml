@@ -2,6 +2,20 @@
   "CoordsModel" : {
     "refs" : {
       "coords:CoordSys" : [ {
+        "@type" : "coords:SpaceSys",
+        "_id" : 1026,
+        "frame" : {
+          "@type" : "coords:SpaceFrame",
+          "_id" : 0,
+          "refPosition" : {
+            "@type" : "coords:StdRefLocation",
+            "_id" : 0,
+            "position" : "TOPOCENTER"
+          },
+          "spaceRefFrame" : "ICRS",
+          "planetaryEphem" : "DE432"
+        }
+      }, {
         "@type" : "coords:TimeSys",
         "_id" : 1027,
         "frame" : {
@@ -19,21 +33,7 @@
             "epoch" : "J2014.25",
             "position" : {
               "@type" : "coords:LonLatPoint",
-              "coordSys" : {
-                "@type" : "coords:SpaceSys",
-                "_id" : 1026,
-                "frame" : {
-                  "@type" : "coords:SpaceFrame",
-                  "_id" : 0,
-                  "refPosition" : {
-                    "@type" : "coords:StdRefLocation",
-                    "_id" : 0,
-                    "position" : "TOPOCENTER"
-                  },
-                  "spaceRefFrame" : "ICRS",
-                  "planetaryEphem" : "DE432"
-                }
-              },
+              "coordSys" : 1026,
               "lon" : {
                 "@type" : "ivoa:RealQuantity",
                 "unit" : {
@@ -58,7 +58,7 @@
             }
           }
         }
-      }, 1026 ]
+      } ]
     },
     "content" : [ {
       "@type" : "coords:AnObject",
