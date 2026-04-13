@@ -86,7 +86,7 @@
 
 
   <xsl:template match="vo-dml:model|package" mode="content">
-    <variable name="root_package_dir" select="$root_package_dir"/>
+    <xsl:variable name="root_package_dir" select="$root_package_dir"/>
       <xsl:variable name="ns" select="$mapping/bnd:mappedModels/model[name=current()/ancestor-or-self::vo-dml:model/name]/xml-targetnamespace"/>
 
       <xsl:variable name="file" select="concat($root_package_dir, '/',string-join(./ancestor-or-self::*/name,'_') , '.py')"/>
@@ -97,39 +97,12 @@
 
 <xsl:text>
 from __future__ import annotations
-from typing import Optional, List, Any, Union
+from typing import Optional, List, Any, Union, ClassVar
 from enum import Enum
-from pydantic import BaseModel, ConfigDict, field_serializer
 from xsdata_pydantic.fields import field as xsfield
-from xsdata.formats.dataclass.context import XmlContext
-from xsdata.formats.dataclass.serializers import XmlSerializer
-from xsdata.formats.dataclass.serializers.config import SerializerConfig
-from xsdata.formats.dataclass.parsers import XmlParser
+from vodml_runtime.VodmlXmlBase import _VodmlXmlBase
+
 import xsdata_pydantic.hooks.class_type  # register pydantic support with xsdata
-</xsl:text>
-
-<xsl:text>
-# base class to make swapping from pydantic-xml easier in tests -
-# TODO this could go in runtime - anyway, does not need to be class method really
-class _VodmlXmlBase(BaseModel):
-    """Base class providing Pydantic BaseModel with xsdata XML serialisation."""
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
-    def to_xml(self, pretty_print: bool = False) -> bytes:
-        config = SerializerConfig(indent="  " if pretty_print else None)
-        ctx = XmlContext(class_type="pydantic")
-</xsl:text>
-        <xsl:value-of select="concat('        ns_map = {', $dq,$ns/@prefix, $dq, ': ', $dq, normalize-space($ns/text()), $dq, '}')"/>
-<xsl:text>
-        return XmlSerializer(config=config, context=ctx).render(self, ns_map=ns_map).encode("utf-8")
-
-    @classmethod
-    def from_xml(cls, xml_bytes: bytes):
-        ctx = XmlContext(class_type="pydantic")
-        data = xml_bytes.decode("utf-8") if isinstance(xml_bytes, bytes) else xml_bytes
-        return XmlParser(context=ctx).from_string(data, cls)
-
-
 </xsl:text>
       <!-- cross-package imports -->
       <xsl:for-each select="distinct-values((*/((attribute|reference|composition|constraint[contains(@xsi:type,'SubsettedRole')])/datatype/vodml-ref)|*/extends/vodml-ref))">
@@ -196,7 +169,16 @@ class _VodmlXmlBase(BaseModel):
     """
 </xsl:text>
     <xsl:if test="vf:referredTo($vodml-ref) and not(attribute/constraint[ends-with(@xsi:type,':NaturalKey')]) and not(extends)">
-    <xsl:text>    id: Optional[str] = xsfield({'type': 'Attribute', 'name': '_id'}, default=None)  # an identifier field to allow referring to this object from other objects (e.g. via reference fields) without needing to embed it
+    <xsl:text>    id: Optional[str] = xsfield({'type': 'Attribute', 'name': '_id'}, default=None)  # surrogate identifier for XML IDREF resolution
+    _vodml_id_field: ClassVar[str] = "id"
+</xsl:text>
+    </xsl:if>
+    <xsl:if test="vf:referredTo($vodml-ref) and attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
+    <xsl:text>    _vodml_id_field: ClassVar[str] = "</xsl:text><xsl:value-of select="attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"/><xsl:text>"
+</xsl:text>
+    </xsl:if>
+    <xsl:if test="reference">
+    <xsl:text>    _vodml_refs: ClassVar[list[str]] = [</xsl:text><xsl:for-each select="reference"><xsl:if test="position() != 1"><xsl:text>, </xsl:text></xsl:if><xsl:text>"</xsl:text><xsl:value-of select="name"/><xsl:text>"</xsl:text></xsl:for-each><xsl:text>]
 </xsl:text>
     </xsl:if>
     <xsl:if test="not(@abstract='true') and (extends or vf:hasSubTypes($vodml-ref))">
@@ -238,6 +220,10 @@ class _VodmlXmlBase(BaseModel):
     * </xsl:text><xsl:value-of select="$vodmlauthor"/><xsl:text>
     """
 </xsl:text>
+    <xsl:if test="reference">
+    <xsl:text>    _vodml_refs: ClassVar[list[str]] = [</xsl:text><xsl:for-each select="reference"><xsl:if test="position() != 1"><xsl:text>, </xsl:text></xsl:if><xsl:text>"</xsl:text><xsl:value-of select="name"/><xsl:text>"</xsl:text></xsl:for-each><xsl:text>]
+</xsl:text>
+    </xsl:if>
     <xsl:if test="not(@abstract='true') and (extends or vf:hasSubTypes($vodml-ref))">
         <!-- TODO perphas need code to handle subtypes in serialisation - i.e. add a field to the base type to indicate the actual type of the instance (e.g. xsi:type) and then use this in serialisation to determine which type to serialise as -->
     <xsl:text>
@@ -447,7 +433,7 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
     <xsl:variable name="references-vodmlref" select="vf:refsToSerialize($modelName)"/>
     <xsl:variable name="contentTypes" as="element()*" select="vf:contentToSerialize($modelName)"/>
 
-
+<!--      <xsl:value-of select="concat('        ns_map = {', $dq,$ns/@prefix, $dq, ': ', $dq, normalize-space($ns/text()), $dq, '}')"/>-->
         <!-- import all content from other packages in the same model (but not the current package) - needed to resolve references across packages -->
 
         <xsl:for-each select="$contentTypes">
@@ -465,7 +451,6 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
               <xsl:value-of select="concat('from ',vf:PythonModule($vodml-ref),' import ',tokenize(vf:PythonType($vodml-ref), '\.')[last()],$nl)"/>
           </xsl:if>
       </xsl:for-each>
-
       <xsl:text>
 
 class </xsl:text><xsl:value-of select="$refsClass"/><xsl:text>(_VodmlXmlBase):
@@ -495,6 +480,17 @@ class </xsl:text><xsl:value-of select="$modelClass"/><xsl:text>(_VodmlXmlBase):
       <xsl:text>    </xsl:text><xsl:value-of select="$ctag"/><xsl:text>: List[</xsl:text><xsl:value-of select="$ctype"/><xsl:text>] = xsfield({'type': 'Element', 'name': '</xsl:text><xsl:value-of select="$ctag"/><xsl:text>', 'namespace': ''}, default_factory=list)
 </xsl:text>
     </xsl:for-each>
+    <xsl:if test="not(empty($references-vodmlref))">
+      <xsl:text>
+    @classmethod
+    def from_xml(cls, xml_bytes: bytes):
+        """Deserialise from XML, resolving IDREF strings to object instances."""
+        instance = super().from_xml(xml_bytes)
+        from vodml_runtime.references import resolve_references
+        resolve_references(instance)
+        return instance
+</xsl:text>
+    </xsl:if>
   </xsl:template>
 
 

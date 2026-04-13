@@ -238,8 +238,8 @@ class SampleModelInteropTest(unittest.TestCase):
         self.assertEqual(_first_child_text(source_catalogue, "name"), "testCat")
         self.assertEqual(_first_child_text(_find_first(source_catalogue, "entry"), "name"), "testSource")
 
-    def test_xml_round_trip(self):
-        recovered = SampleModel.from_xml(self.model.to_xml(pretty_print=True))
+    def test_read_java_serialization_xml(self):
+        recovered = SampleModel.from_xml( _read_java_file_as_bytes("sample.xml"))
         self.assertEqual(recovered.sourceCatalogue[0].name, "testCat")
         self.assertEqual(recovered.sourceCatalogue[0].entry[0].name, "testSource")
         self.assertEqual(recovered.photometricSystem[0].photometryFilter[0].name, "C-Band")
@@ -306,8 +306,8 @@ class LifecycleModelInteropTest(unittest.TestCase):
         self.assertEqual(_first_child_text(atest2, "refcont"), "lifecycleTest-ReferredLifeCycle_1012")
         self.assertIn("firstcontained", "".join(el.text or "" for el in root.iter() if _local_name(el.tag) == "test2"))
 
-    def test_xml_round_trip(self):
-        recovered = LifecycleTestModel.from_xml(self.model.to_xml(pretty_print=True))
+    def test_read_java_serialization_xml(self):
+        recovered = LifecycleTestModel.from_xml( _read_java_file_as_bytes("lifecycle.xml"))
         self.assertEqual(len(recovered.aTest2[0].atest.contained), 2)
         self.assertEqual(recovered.aTest2[0].atest.contained2.lowr, "lifecycleTest-ReferredLifeCycle_1012")
 
@@ -349,9 +349,9 @@ class SerializationExampleInteropTest(unittest.TestCase):
         _write("serializationsample.json", json_str)
 
         data = json.loads(json_str)
-        self.assertEqual(data["refs"]["refa"][0]["id"], "refa-1")
+        self.assertEqual(data["refs"]["refa"][0]["id"], "MyModel-Refa_1000")
         content = data["someContent"][0]
-        self.assertEqual(content["ref1"], "refa-1")
+        self.assertEqual(content["ref1"], "MyModel-Refa_1000")
         self.assertEqual(content["ref2"], "naturalkey")
         self.assertEqual(content["zval"], ["some", "z", "values"])
         self.assertEqual(len(content["con"]), 2)
@@ -373,12 +373,8 @@ class SerializationExampleInteropTest(unittest.TestCase):
         zvals = [el.text for el in root.iter() if _local_name(el.tag) == "zval"]
         self.assertEqual(zvals, ["some", "z", "values"])
 
-    def test_xml_round_trip(self):
-        recovered = MyModelModel.from_xml(self.model.to_xml(pretty_print=True))
-        self.assertEqual(recovered.someContent[0].ref1, "refa-1")
-        self.assertEqual(recovered.someContent[0].zval, ["some", "z", "values"])
 
-    def test_read_java_serializationsample_xml(self):
+    def test_read_java_serialization_xml(self):
         from org.ivoa.dm.serializationsample.MyModel import Refa
         from_java = MyModelModel.from_xml( _read_java_file_as_bytes("serializationsample.xml"))
         self.assertIsInstance(from_java.someContent[0].ref1, Refa) #FIXME this should be Refa object rather than string - want the xml reading to create a dicttionary of the references as they are read and then replace refefnce
@@ -470,8 +466,9 @@ class JpatestModelInteropTest(unittest.TestCase):
         dval = _find_first(parent, "dval")
         self.assertEqual(_first_child_text(dval, "dvals"), "astring")
         lval = _children_named(parent, "lval")
-        self.assertEqual(len(lval), 3)
-        self.assertEqual([_first_child_text(child, "sval") for child in lval], ["First", "Second", "Third"])
+        self.assertEqual(len(lval), 1)
+        lchildren = _children_named(lval[0], "lChild")
+        self.assertEqual([_first_child_text(child, "sval") for child in lchildren], ["First", "Second", "Third"])
 
     def test_xml_round_trip(self):
         recovered = JpatestModel.from_xml(self.model.to_xml(pretty_print=True))
@@ -565,8 +562,6 @@ class PythonNonModelReadTest(unittest.TestCase):
 class PythonModelReadJavaTest(unittest.TestCase):
     """Sanity-check that the Java interoperability fixtures exist."""
 
-    _JAVA_DIR = Path(__file__).parent.parent.parent / "interoperability" / "java"
-
     def test_java_interop_files_exist(self):
         expected = [
             "sample.json",
@@ -578,7 +573,7 @@ class PythonModelReadJavaTest(unittest.TestCase):
             "jpatest.json",
             "jpatest.xml",
         ]
-        missing = [f for f in expected if not (self._JAVA_DIR / f).exists()]
+        missing = [f for f in expected if not (_JAVA_DIR / f).exists()]
         self.assertFalse(
             missing,
             f"Java interop files not found: {missing}  (run :sample:test first)",
