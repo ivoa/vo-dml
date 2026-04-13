@@ -40,13 +40,6 @@
       "cval": {
         "rval": "jpatest-ReferredTo2_1004"
       },
-      "tval": {
-        "p": {
-          "x": 1.5,
-          "y": 3.0
-        },
-        "dt": "thing"
-      },
       "lval": [
         {
           "sval": "First",
@@ -60,7 +53,14 @@
           "sval": "Third",
           "ival": 3
         }
-      ]
+      ],
+      "tval": {
+        "p": {
+          "x": 1.5,
+          "y": 3.0
+        },
+        "dt": "thing"
+      }
     }
   ],
   "sub": []

@@ -2,7 +2,7 @@
   "refs": {
     "refa": [
       {
-        "id": "refa-1",
+        "id": "MyModel-Refa_1000",
         "val": {
           "value": "urn:value"
         }
@@ -19,9 +19,8 @@
   },
   "someContent": [
     {
-      "ref1": "refa-1",
+      "ref1": "MyModel-Refa_1000",
       "ref2": "naturalkey",
-      "uri": "urn:uri",
       "zval": [
         "some",
         "z",
@@ -34,7 +33,8 @@
         {
           "bname": "eval"
         }
-      ]
+      ],
+      "uri": "urn:uri"
     }
   ]
 }

@@ -31,13 +31,6 @@
     <cval>
       <rval>jpatest-ReferredTo2_1004</rval>
     </cval>
-    <tval>
-      <p>
-        <x>1.5</x>
-        <y>3.0</y>
-      </p>
-      <dt>thing</dt>
-    </tval>
     <lval>
       <lChild>
         <sval>First</sval>
@@ -52,5 +45,12 @@
         <ival>3</ival>
       </lChild>
     </lval>
+    <tval>
+      <p>
+        <x>1.5</x>
+        <y>3.0</y>
+      </p>
+      <dt>thing</dt>
+    </tval>
   </parent>
 </jpat:jpatestModel>

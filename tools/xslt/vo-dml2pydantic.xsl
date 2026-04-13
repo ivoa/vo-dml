@@ -204,10 +204,8 @@ class _VodmlXmlBase(BaseModel):
     <xsl:text>
 </xsl:text>
     </xsl:if>
-    <xsl:apply-templates select="(attribute|composition|reference)[multiplicity/minOccurs=1 and multiplicity/maxOccurs=1]" mode="declare"/>
-    <xsl:apply-templates select="(attribute|composition|reference)[not(multiplicity/minOccurs=1 and multiplicity/maxOccurs=1)]" mode="declare"/>
-    <xsl:apply-templates select="constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="declare"/>
-    <xsl:apply-templates select="reference" mode="serializer"/>
+    <xsl:apply-templates select="attribute|composition|reference|constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="declare"/>
+      <xsl:apply-templates select="reference" mode="serializer"/>
     <xsl:if test="not(attribute) and not(composition) and not(reference) and not(extends) and not(constraint[ends-with(@xsi:type,':SubsettedRole')])">
     <xsl:text>    pass
 </xsl:text>
@@ -245,9 +243,7 @@ class _VodmlXmlBase(BaseModel):
     <xsl:text>
 </xsl:text>
     </xsl:if>
-    <xsl:apply-templates select="(attribute|reference)[multiplicity/minOccurs=1 and multiplicity/maxOccurs=1]" mode="declare"/>
-    <xsl:apply-templates select="(attribute|reference)[not(multiplicity/minOccurs=1 and multiplicity/maxOccurs=1)]" mode="declare"/>
-    <xsl:apply-templates select="constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="declare"/>
+    <xsl:apply-templates select="attribute|reference|constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="declare"/>
     <xsl:apply-templates select="reference" mode="serializer"/>
     <xsl:if test="not(attribute) and not(reference) and not(extends) and not(constraint[ends-with(@xsi:type,':SubsettedRole')])">
     <xsl:text>    pass
@@ -278,10 +274,11 @@ class </xsl:text><xsl:value-of select="concat(name,'(str, Enum):')"/>
 
   <!-- primitiveType → simple xsdata-pydantic BaseModel with a value field -->
   <xsl:template match="primitiveType" mode="content">
+      <xsl:variable name="vodml-ref"  select="vf:asvodmlref(current())"/>
     <xsl:variable name="valuetype">
       <xsl:choose>
         <xsl:when test="extends">
-          <xsl:value-of select="vf:PythonType(extends/vodml-ref)"/>
+          <xsl:value-of select="vf:PythonType(vf:baseTypeIds($vodml-ref)[last()])"/>
         </xsl:when>
         <xsl:otherwise>
           <xsl:message>Primitive type <xsl:value-of select="name"/> represented as str</xsl:message>
@@ -302,7 +299,7 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
     *  </xsl:text><xsl:value-of select="$vodmlauthor"/><xsl:text>
     """
 
-    value: </xsl:text><xsl:value-of select="$valuetype"/><xsl:text> = xsfield({'type': 'Element', 'name': 'value', 'namespace': ''})
+    value: </xsl:text><xsl:value-of select="$valuetype"/><xsl:text> = xsfield({'type': 'Text'})
 
 
 </xsl:text>

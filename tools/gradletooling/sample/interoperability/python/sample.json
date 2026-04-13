@@ -16,6 +16,7 @@
         {
           "label": "cepheid",
           "name": "testSource",
+          "description": null,
           "position": {
             "longitude": {
               "unit": {
@@ -37,7 +38,6 @@
             }
           },
           "classification": "AGN",
-          "description": null,
           "luminosity": [
             {
               "value": {
@@ -46,9 +46,17 @@
                 },
                 "value": 2.5
               },
+              "error": {
+                "unit": {
+                  "value": "Jy"
+                },
+                "value": 0.25
+              },
+              "description": "lummeas",
               "type": "flux",
               "filter": {
                 "id": null,
+                "fpsIdentifier": null,
                 "name": "C-Band",
                 "description": "radio band",
                 "bandName": "C-Band",
@@ -59,16 +67,8 @@
                     "value": "GHz"
                   },
                   "value": 5.0
-                },
-                "fpsIdentifier": null
-              },
-              "error": {
-                "unit": {
-                  "value": "Jy"
-                },
-                "value": 0.25
-              },
-              "description": "lummeas"
+                }
+              }
             },
             {
               "value": {
@@ -77,9 +77,17 @@
                 },
                 "value": 3.5
               },
+              "error": {
+                "unit": {
+                  "value": "Jy"
+                },
+                "value": 0.25
+              },
+              "description": "lummeas2",
               "type": "flux",
               "filter": {
                 "id": null,
+                "fpsIdentifier": null,
                 "name": "L-Band",
                 "description": "radio band",
                 "bandName": "L-Band",
@@ -90,16 +98,8 @@
                     "value": "GHz"
                   },
                   "value": 1.5
-                },
-                "fpsIdentifier": null
-              },
-              "error": {
-                "unit": {
-                  "value": "Jy"
-                },
-                "value": 0.25
-              },
-              "description": "lummeas2"
+                }
+              }
             }
           ]
         }
@@ -110,11 +110,12 @@
   ],
   "photometricSystem": [
     {
-      "detectorType": 1,
       "description": "test photometric system",
+      "detectorType": 1,
       "photometryFilter": [
         {
           "id": null,
+          "fpsIdentifier": null,
           "name": "C-Band",
           "description": "radio band",
           "bandName": "C-Band",
@@ -125,11 +126,11 @@
               "value": "GHz"
             },
             "value": 5.0
-          },
-          "fpsIdentifier": null
+          }
         },
         {
           "id": null,
+          "fpsIdentifier": null,
           "name": "L-Band",
           "description": "radio band",
           "bandName": "L-Band",
@@ -140,8 +141,7 @@
               "value": "GHz"
             },
             "value": 1.5
-          },
-          "fpsIdentifier": null
+          }
         }
       ]
     }
