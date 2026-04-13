@@ -14,7 +14,7 @@ version = "1.0-SNAPSHOT"
 vodml {
     vodmlDir.set(file("vo-dml"))
     bindingFiles.setFrom(file("vo-dml/ivoa_base.vodml-binding.xml"))
-    outputPythonDir.set(layout.projectDirectory.dir("../../tools/gradletooling/sample/pythontest/generated"))
+    outputPythonDir.set(layout.projectDirectory.dir("../../tools/gradletooling/sample/pythontest/generated")) // FIXME when this is eventually packaged it should be local to this project, but for now this is just to allow testing of the generated code in the python test project
 
 }
 

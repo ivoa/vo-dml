@@ -28,6 +28,7 @@ from org.ivoa.dm.serializationsample.MyModel import MyModelModel, MyModelRefs
 # Output directory (relative to the sample project root).
 _SAMPLE_DIR = Path(__file__).parent.parent.parent
 _INTEROP_DIR = _SAMPLE_DIR / "interoperability" / "python"
+_JAVA_DIR = _SAMPLE_DIR / "interoperability" / "java"
 
 # Directory containing the generated XSD schemas (populated by :sample:vodmlSchema).
 _SCHEMA_DIR = _SAMPLE_DIR / "docs" / "schema"
@@ -115,6 +116,9 @@ def _read_json(filename: str) -> dict:
 def _read_xml_root(filename: str) -> ET.Element:
     return ET.parse(str(_INTEROP_DIR / filename)).getroot()
 
+def _read_java_file_as_bytes(path: str) -> bytes:
+    with open(_JAVA_DIR / path, "rb") as f:
+        return f.read()
 
 class SampleModelInteropTest(unittest.TestCase):
     """
@@ -322,7 +326,7 @@ class SerializationExampleInteropTest(unittest.TestCase):
         from org.ivoa.dm.serializationsample.MyModel import Refa, Refb, SomeContent, altURL, ivoid
         from org.ivoa.dm.serializationsample.MyModel_types import Dcont, Econt
 
-        refa = Refa(id="refa-1", val=altURL(value="urn:value"))
+        refa = Refa(id="MyModel-Refa_1000", val=altURL(value="urn:value"))
         refb = Refb(name="naturalkey", val=ivoid(value="ivo:val"))
         cls.model = MyModelModel(
             someContent=[
@@ -373,6 +377,11 @@ class SerializationExampleInteropTest(unittest.TestCase):
         recovered = MyModelModel.from_xml(self.model.to_xml(pretty_print=True))
         self.assertEqual(recovered.someContent[0].ref1, "refa-1")
         self.assertEqual(recovered.someContent[0].zval, ["some", "z", "values"])
+
+    def test_read_java_serializationsample_xml(self):
+        from org.ivoa.dm.serializationsample.MyModel import Refa
+        from_java = MyModelModel.from_xml( _read_java_file_as_bytes("serializationsample.xml"))
+        self.assertIsInstance(from_java.someContent[0].ref1, Refa) #FIXME this should be Refa object rather than string - want the xml reading to create a dicttionary of the references as they are read and then replace refefnce
 
 
 class JpatestModelInteropTest(unittest.TestCase):
