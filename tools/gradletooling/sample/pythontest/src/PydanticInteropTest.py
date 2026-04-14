@@ -502,12 +502,14 @@ class PythonNonModelReadTest(unittest.TestCase):
 
     def test_sample_xml_source_catalogue(self):
         root = _read_xml_root("sample.xml")
-        catalogue = _find_first(root, "sourceCatalogue")
+        catalogue = _find_first(root, "catalog.inner.SourceCatalogue") # note name includes package parts....
         self.assertIsNotNone(catalogue)
         self.assertEqual(_first_child_text(catalogue, "name"), "testCat")
         entry = _find_first(catalogue, "entry")
         self.assertEqual(_first_child_text(entry, "name"), "testSource")
         self.assertEqual(_first_child_text(entry, "classification"), "AGN")
+        position = _find_first(entry, "position")
+        self.assertEqual(_first_child_text(position, "frame"), "J2000") #note that this should be a reference tpo the frame not a frame instance...
 
     def test_lifecycle_json_atest2(self):
         data = _read_json("lifecycle.json")
