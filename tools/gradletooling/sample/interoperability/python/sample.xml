@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <simp:sampleModel xmlns:simp="http://ivoa.net/dm/sample/sample/v1">
   <refs>
-    <skyCoordinateFrame>
-      <name>J2000</name>
+    <skyCoordinateFrame name="J2000">
       <documentURI>http://coord.net</documentURI>
       <equinox>J2000.0</equinox>
     </skyCoordinateFrame>
@@ -22,8 +21,7 @@
             <unit>degree</unit>
             <value>52.5</value>
           </latitude>
-          <frame>
-            <name>J2000</name>
+          <frame name="J2000">
             <documentURI>http://coord.net</documentURI>
             <equinox>J2000.0</equinox>
           </frame>
