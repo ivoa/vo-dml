@@ -228,7 +228,7 @@ class SampleModelInteropTest(unittest.TestCase):
         self.assertEqual(recovered.refs.skyCoordinateFrame[0].name, "J2000")
 
     def test_xml_serialise(self):
-        xml_bytes = self.model.to_xml(pretty_print=True)
+        xml_bytes = self.model.full_model_to_xml(pretty_print=True)
         _write("sample.xml", xml_bytes)
         _validate_xml(xml_bytes, "Sample.vo-dml.xsd", self)
         root = ET.fromstring(xml_bytes)
@@ -296,7 +296,7 @@ class LifecycleModelInteropTest(unittest.TestCase):
         self.assertEqual(recovered.aTest2[0].refcont, "lifecycleTest-ReferredLifeCycle_1012")
 
     def test_xml_serialise(self):
-        xml_bytes = self.model.to_xml(pretty_print=True)
+        xml_bytes = self.model.full_model_to_xml(pretty_print=True)
         _write("lifecycle.xml", xml_bytes)
         _validate_xml(xml_bytes, "lifecycleTest.vo-dml.xsd", self)
         root = ET.fromstring(xml_bytes)
@@ -362,14 +362,14 @@ class SerializationExampleInteropTest(unittest.TestCase):
         self.assertEqual(recovered.refs.refb[0].name, "naturalkey")
 
     def test_xml_serialise(self):
-        xml_bytes = self.model.to_xml(pretty_print=True)
+        xml_bytes = self.model.full_model_to_xml(pretty_print=True)
         _write("serializationsample.xml", xml_bytes)
         _validate_xml(xml_bytes, "serializationExample.vo-dml.xsd", self)
         root = ET.fromstring(xml_bytes)
         self.assertEqual(_local_name(root.tag), "MyModelModel")
         some_content = _find_first(root, "someContent")
         self.assertIsNotNone(some_content)
-        self.assertEqual(_first_child_text(some_content, "ref1"), "refa-1")
+        self.assertEqual(_first_child_text(some_content, "ref1"), "MyModel-Refa_1000")
         zvals = [el.text for el in root.iter() if _local_name(el.tag) == "zval"]
         self.assertEqual(zvals, ["some", "z", "values"])
 
@@ -377,8 +377,7 @@ class SerializationExampleInteropTest(unittest.TestCase):
     def test_read_java_serialization_xml(self):
         from org.ivoa.dm.serializationsample.MyModel import Refa
         from_java = MyModelModel.from_xml( _read_java_file_as_bytes("serializationsample.xml"))
-        self.assertIsInstance(from_java.someContent[0].ref1, Refa) #FIXME this should be Refa object rather than string - want the xml reading to create a dicttionary of the references as they are read and then replace refefnce
-
+        self.assertIsInstance(from_java.someContent[0].ref1, Refa)
 
 class JpatestModelInteropTest(unittest.TestCase):
     """Round-trip tests for the jpatest model wrapper."""
@@ -455,7 +454,7 @@ class JpatestModelInteropTest(unittest.TestCase):
         self.assertEqual(parent.cval.rval, "jpatest-ReferredTo2_1004")
 
     def test_xml_serialise(self):
-        xml_bytes = self.model.to_xml(pretty_print=True)
+        xml_bytes = self.model.full_model_to_xml(pretty_print=True)
         _write("jpatest.xml", xml_bytes)
         _validate_xml(xml_bytes, "jpatest.vo-dml.xsd", self)
         root = ET.fromstring(xml_bytes)
@@ -529,7 +528,7 @@ class PythonNonModelReadTest(unittest.TestCase):
         data = _read_json("serializationsample.json")
         content = data["someContent"][0]
         self.assertEqual(content["zval"], ["some", "z", "values"])
-        self.assertEqual(content["ref1"], "refa-1")
+        self.assertEqual(content["ref1"], "MyModel-Refa_1000")
         self.assertEqual(content["ref2"], "naturalkey")
         self.assertEqual(len(content["con"]), 2)
 
@@ -537,7 +536,7 @@ class PythonNonModelReadTest(unittest.TestCase):
         root = _read_xml_root("serializationsample.xml")
         some_content = _find_first(root, "someContent")
         self.assertIsNotNone(some_content)
-        self.assertEqual(_first_child_text(some_content, "ref1"), "refa-1")
+        self.assertEqual(_first_child_text(some_content, "ref1"), "MyModel-Refa_1000")
         zvals = [el.text for el in root.iter() if _local_name(el.tag) == "zval"]
         self.assertEqual(zvals, ["some", "z", "values"])
 
@@ -556,7 +555,9 @@ class PythonNonModelReadTest(unittest.TestCase):
         self.assertEqual(_first_child_text(parent, "rval"), "jpatest-ReferredTo1_1003")
         self.assertEqual(_first_child_text(_find_first(parent, "tval"), "dt"), "thing")
         lvals = _children_named(parent, "lval")
-        self.assertEqual([_first_child_text(child, "sval") for child in lvals], ["First", "Second", "Third"])
+        self.assertEqual(len(lvals), 1)
+        lchildren = _children_named(lvals[0], "lChild")
+        self.assertEqual([_first_child_text(child, "sval") for child in lchildren], ["First", "Second", "Third"])
 
 
 class PythonModelReadJavaTest(unittest.TestCase):

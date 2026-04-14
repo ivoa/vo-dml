@@ -315,7 +315,14 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
           <xsl:value-of select="concat(name, ': Optional[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,$fmtpart,'}, default=None)')"/>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:value-of select="concat(name, ': ', $type, ' = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,$fmtpart,'})')"/>
+          <xsl:choose>
+            <xsl:when test="vf:isXMLAttribute($vodml-ref)">
+                <xsl:value-of select="concat(name, ': ', $type, ' = xsfield({',$sq,'type',$sq,': ',$sq,'Attribute',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,$fmtpart,'})')"/>
+            </xsl:when>
+              <xsl:otherwise>
+                  <xsl:value-of select="concat(name, ': ', $type, ' = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,$fmtpart,'})')"/>
+              </xsl:otherwise>
+          </xsl:choose>
         </xsl:otherwise>
       </xsl:choose>
       <xsl:text>
@@ -400,7 +407,7 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
     <xsl:text>
     </xsl:text>
     <xsl:choose>
-      <xsl:when test="multiplicity/maxOccurs != 1">
+      <xsl:when test="multiplicity/maxOccurs != 1"><!-- FIXME the type of the reference key needs to be correct - not always string - most often integer in fact-->
         <xsl:value-of select="concat(name, ': List[Union[str, ', $type, ']] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,'}, default_factory=list)')"/>
       </xsl:when>
       <xsl:when test="vf:isOptional(.)">
@@ -480,6 +487,12 @@ class </xsl:text><xsl:value-of select="$modelClass"/><xsl:text>(_VodmlXmlBase):
       <xsl:text>    </xsl:text><xsl:value-of select="$ctag"/><xsl:text>: List[</xsl:text><xsl:value-of select="$ctype"/><xsl:text>] = xsfield({'type': 'Element', 'name': '</xsl:text><xsl:value-of select="$ctag"/><xsl:text>', 'namespace': ''}, default_factory=list)
 </xsl:text>
     </xsl:for-each>
+    <xsl:text>
+    def full_model_to_xml(self, pretty_print: bool = False) -> bytes:
+        """Serialise the whole model to XML, converting any object references to IDREF strings. with namespace declarations on the root element."""
+        return self.to_xml(</xsl:text><xsl:value-of select="concat(' nsmap = {', $dq,$rootPrefix, $dq, ': ', $dq, normalize-space($rootNs), $dq, '}')"/><xsl:text>, pretty_print=pretty_print)
+
+</xsl:text>
     <xsl:if test="not(empty($references-vodmlref))">
       <xsl:text>
     @classmethod

@@ -594,11 +594,15 @@
             <xsl:otherwise>Long</xsl:otherwise>
         </xsl:choose>
     </xsl:function>
-
+    <xsl:function name="vf:isXMLAttribute" as="xsd:boolean">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:sequence select="vf:findTypeDetail($vodml-ref) and vf:findTypeDetail($vodml-ref)/isAttribute"/>
+    </xsl:function>
     <xsl:function name="vf:memberOrderXML" as="xsd:string*">
     <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:sequence select="for $m in vf:allInheritedMembers($vodml-ref) return $models/key('ellookup',$m)/name"/>
     </xsl:function>
+
 
     <xsl:function name="vf:XMLunwrapped" as="xsd:boolean">
         <xsl:param name="modelName" as="xsd:string"/>
