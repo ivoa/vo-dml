@@ -256,7 +256,7 @@ public abstract class AbstractBaseValidation {
     /**
      * set the prefix for the file to which the XML and JSON serializations are written.
      * The default is null so that no file is written.
-     * @return
+     * @return the prefix string - it can include directories.
      */
     protected String setSerializationDumpPrefix() {
         return null;
@@ -270,7 +270,7 @@ public abstract class AbstractBaseValidation {
                try {
 
                    final Path path = Paths.get(filename);
-                   java.nio.file.Files.createDirectories(path.getParent());
+                   if(path.getParent() != null) java.nio.file.Files.createDirectories(path.getParent());
                    java.nio.file.Files.write(path, content.getBytes());
 
                } catch (java.io.IOException e) {

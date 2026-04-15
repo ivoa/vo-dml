@@ -153,6 +153,7 @@
                             <vodml-id>types.BaseC</vodml-id>
                             <name>BaseC</name>
                             <description></description>	    
+                            <?xmlmeta isAttribute="true"?>
                             <attribute>
                               <vodml-id>types.BaseC.bname</vodml-id>
                               <name>bname</name>

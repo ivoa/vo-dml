@@ -141,4 +141,6 @@
   * First version hibernate 6.6+ (actually set at 7.2.6.Final ) with polymorphism for @Embeddables (i.e DataTypes in VO-DML) 
     * It should be noted that there is a hibernate bug (https://hibernate.atlassian.net/browse/HHH-19680) that limits the complexity of such hierarchies
 * 0.6.1
-  * TAPSchema enhancements -
+  * TAPSchema enhancements 
+  * update to vosdl 0.4.10 
+    * bugfixes and new processing instruction construction.
