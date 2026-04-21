@@ -144,7 +144,7 @@ The whole model is represented in a model diagram below
 
         <xsl:for-each select="//(dataType|objectType)[vf:asvodmlref(.) = distinct-values(//reference/datatype/vodml-ref)]">
             <xsl:sort select="name"/>
-* <xsl:call-template name="linkTo"/><xsl:if test="vf:isContained(vf:asvodmlref(current()))"> contained</xsl:if>
+* <xsl:call-template name="linkTo"/><xsl:if test="vf:isContainedInModels(vf:asvodmlref(current()),$models/vo-dml:model/name)"> contained</xsl:if>
 
         </xsl:for-each>
 
@@ -279,7 +279,7 @@ The whole model is represented in a model diagram below
 
       <xsl:for-each select="reference/datatype/vodml-ref">
           <xsl:choose>
-              <xsl:when test="vf:isContained(current())">
+              <xsl:when test="vf:isContainedInModels(current(),$models/vo-dml:model/name)">
 *  <xsl:value-of select="vf:doLink(current())"/> is contained in  <xsl:value-of select="string-join(for $i in vf:containingTypes(current()) return vf:doLink(vf:asvodmlref($i)),', ')"/>
               </xsl:when>
               <xsl:otherwise>
@@ -301,7 +301,7 @@ Has contained reference(s) <xsl:value-of select="string-join(for $i in vf:contai
 
     </xsl:if>
 
-    <xsl:if test="vf:isContained($vodml-ref)">
+    <xsl:if test="vf:isContainedInModels($vodml-ref,$models/vo-dml:model/name)">
 
 ## Containment
 

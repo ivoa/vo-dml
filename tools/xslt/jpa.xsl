@@ -26,7 +26,21 @@
 
   <xsl:output name="persistenceInfo" method="xml" encoding="UTF-8" indent="yes"  />
 
-  <xsl:template match="objectType[vf:noTableInComposition(vf:asvodmlref(.))]" mode="JPAAnnotation">
+    <xsl:variable name="jpafetch">
+        <xsl:choose>
+            <xsl:when test="$mapping/bnd:mappedModels/model[name=$themodelname]/rdb/@fetching = 'eager'">
+                <xsl:message>doing eager fetching</xsl:message>
+                <xsl:sequence select="'jakarta.persistence.FetchType.EAGER'"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message>doing lazy fetching</xsl:message>
+                <xsl:sequence select="'jakarta.persistence.FetchType.LAZY'"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+
+
+    <xsl:template match="objectType[vf:noTableInComposition(vf:asvodmlref(.))]" mode="JPAAnnotation">
      <xsl:if test="$models//composition[datatype/vodml-ref = vf:asvodmlref(current())]/multiplicity/maxOccurs != 1">
         <xsl:message terminate="yes">ObjectType <xsl:value-of select="vf:asvodmlref(current())"/> exists in a composition with maxOccurs &gt; 1 therefore must have separate table - check binding.</xsl:message>
      </xsl:if>

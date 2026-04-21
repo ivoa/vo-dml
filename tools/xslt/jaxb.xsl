@@ -56,7 +56,7 @@
   </xsl:choose>
 
     <xsl:choose>
-      <xsl:when test="not(vf:isContained(vf:asvodmlref(.))) and not(extends)">
+      <xsl:when test="not(vf:isContained(vf:asvodmlref(.),$themodelname)) and not(extends)">
 //@jakarta.xml.bind.annotation.XmlRootElement( name = "<xsl:value-of select="name"/>")
       </xsl:when>
      </xsl:choose>
