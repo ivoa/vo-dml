@@ -6,7 +6,7 @@
       <equinox>J2000.0</equinox>
     </skyCoordinateFrame>
   </refs>
-  <sourceCatalogue>
+  <catalog.inner.SourceCatalogue>
     <name>testCat</name>
     <entry>
       <abstractSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="simp:SDSSSource">
@@ -81,7 +81,7 @@
         </positionError>
       </abstractSource>
     </entry>
-  </sourceCatalogue>
+  </catalog.inner.SourceCatalogue>
   <photometricSystem>
     <description>test photometric system</description>
     <detectorType>1</detectorType>

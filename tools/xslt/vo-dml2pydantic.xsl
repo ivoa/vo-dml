@@ -484,7 +484,8 @@ class </xsl:text><xsl:value-of select="$modelClass"/><xsl:text>(_VodmlXmlBase):
     <xsl:for-each select="$contentTypes">
       <xsl:variable name="ctype" select="vf:PythonType(vf:asvodmlref(current()))"/>
       <xsl:variable name="ctag" select="vf:lowerFirst($models/key('ellookup',vf:asvodmlref(current()))/name)"/>
-      <xsl:text>    </xsl:text><xsl:value-of select="$ctag"/><xsl:text>: List[</xsl:text><xsl:value-of select="$ctype"/><xsl:text>] = xsfield({'type': 'Element', 'name': '</xsl:text><xsl:value-of select="$ctag"/><xsl:text>', 'namespace': ''}, default_factory=list)
+      <xsl:variable name="cElementName" select="vf:lowerFirst(vf:jaxbType(vf:asvodmlref(current())))"/>
+      <xsl:text>    </xsl:text><xsl:value-of select="$ctag"/><xsl:text>: List[</xsl:text><xsl:value-of select="$ctype"/><xsl:text>] = xsfield({'type': 'Element', 'name': '</xsl:text><xsl:value-of select="$cElementName"/><xsl:text>', 'namespace': ''}, default_factory=list)
 </xsl:text>
     </xsl:for-each>
     <xsl:text>

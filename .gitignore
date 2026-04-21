@@ -22,3 +22,5 @@ tools/gradletooling/gradle-plugin/bin/
 /tools/gradletooling/gradle-plugin/gradle/
 /tools/pythontooling/.venv/
 /tools/pythontooling/src/vodmltools/schxslt/
+/runtime/python/dist/
+/runtime/python/*.egg-info/
