@@ -1,0 +1,149 @@
+{
+  "refs": {
+    "skyCoordinateFrame": [
+      {
+        "name": "J2000",
+        "documentURI": "http://coord.net",
+        "equinox": "J2000.0",
+        "system": null
+      }
+    ]
+  },
+  "sourceCatalogue": [
+    {
+      "name": "testCat",
+      "entry": [
+        {
+          "label": "cepheid",
+          "name": "testSource",
+          "description": null,
+          "position": {
+            "longitude": {
+              "unit": {
+                "value": "degree"
+              },
+              "value": 2.5
+            },
+            "latitude": {
+              "unit": {
+                "value": "degree"
+              },
+              "value": 52.5
+            },
+            "frame": {
+              "name": "J2000",
+              "documentURI": "http://coord.net",
+              "equinox": "J2000.0",
+              "system": null
+            }
+          },
+          "classification": "AGN",
+          "luminosity": [
+            {
+              "value": {
+                "unit": {
+                  "value": "Jy"
+                },
+                "value": 2.5
+              },
+              "error": {
+                "unit": {
+                  "value": "Jy"
+                },
+                "value": 0.25
+              },
+              "description": "lummeas",
+              "type": "flux",
+              "filter": {
+                "id": null,
+                "fpsIdentifier": null,
+                "name": "C-Band",
+                "description": "radio band",
+                "bandName": "C-Band",
+                "dataValidityFrom": "2020-01-01T00:00:00Z",
+                "dataValidityTo": "2025-01-01T20:12:16Z",
+                "spectralLocation": {
+                  "unit": {
+                    "value": "GHz"
+                  },
+                  "value": 5.0
+                }
+              }
+            },
+            {
+              "value": {
+                "unit": {
+                  "value": "Jy"
+                },
+                "value": 3.5
+              },
+              "error": {
+                "unit": {
+                  "value": "Jy"
+                },
+                "value": 0.25
+              },
+              "description": "lummeas2",
+              "type": "flux",
+              "filter": {
+                "id": null,
+                "fpsIdentifier": null,
+                "name": "L-Band",
+                "description": "radio band",
+                "bandName": "L-Band",
+                "dataValidityFrom": "2020-01-01T00:00:00Z",
+                "dataValidityTo": "2025-01-01T13:12:00Z",
+                "spectralLocation": {
+                  "unit": {
+                    "value": "GHz"
+                  },
+                  "value": 1.5
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "aTest": null,
+      "aTestMore": null
+    }
+  ],
+  "photometricSystem": [
+    {
+      "description": "test photometric system",
+      "detectorType": 1,
+      "photometryFilter": [
+        {
+          "id": null,
+          "fpsIdentifier": null,
+          "name": "C-Band",
+          "description": "radio band",
+          "bandName": "C-Band",
+          "dataValidityFrom": "2020-01-01T00:00:00Z",
+          "dataValidityTo": "2025-01-01T20:12:16Z",
+          "spectralLocation": {
+            "unit": {
+              "value": "GHz"
+            },
+            "value": 5.0
+          }
+        },
+        {
+          "id": null,
+          "fpsIdentifier": null,
+          "name": "L-Band",
+          "description": "radio band",
+          "bandName": "L-Band",
+          "dataValidityFrom": "2020-01-01T00:00:00Z",
+          "dataValidityTo": "2025-01-01T13:12:00Z",
+          "spectralLocation": {
+            "unit": {
+              "value": "GHz"
+            },
+            "value": 1.5
+          }
+        }
+      ]
+    }
+  ]
+}

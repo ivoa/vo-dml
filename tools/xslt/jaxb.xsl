@@ -106,7 +106,7 @@
             <xsl:value-of select="$jsontypinfo"/>
         </xsl:if>
         <xsl:choose>
-            <xsl:when test="current()/name() = 'attribute' and vf:findTypeDetail(vf:asvodmlref(current()))/isAttribute">
+            <xsl:when test="current()/name() = 'attribute' and vf:isXMLAttribute(vf:asvodmlref(current()))">
     @jakarta.xml.bind.annotation.XmlAttribute(name = "<xsl:value-of select="name"/>", required =<xsl:apply-templates
                     select="." mode="required"/>)
             </xsl:when>
@@ -128,7 +128,7 @@
             <xsl:value-of select="$jsontypinfo"/>
         </xsl:if>
         <xsl:choose>
-            <xsl:when test=" vf:findTypeDetail(vf:asvodmlref(current()))/isAttribute">
+            <xsl:when test=" vf:isXMLAttribute(vf:asvodmlref(current()))">
                <xsl:message terminate="yes">cannot map <xsl:value-of select="vf:asvodmlref(current())"/> to attribute with multiplicity &gt; 1 </xsl:message>
             </xsl:when>
             <xsl:otherwise>

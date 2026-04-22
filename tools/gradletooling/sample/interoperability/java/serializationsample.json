@@ -2,7 +2,7 @@
   "MyModelModel" : {
     "refs" : {
       "MyModel:Refa" : [ {
-        "_id" : 1045,
+        "_id" : 1001,
         "val" : "urn:value"
       } ],
       "MyModel:Refb" : [ {
@@ -13,7 +13,7 @@
     "content" : [ {
       "@type" : "MyModel:SomeContent",
       "_id" : 0,
-      "ref1" : 1045,
+      "ref1" : 1001,
       "ref2" : "naturalkey",
       "zval" : [ "some", "z", "values" ],
       "con" : [ {
@@ -26,7 +26,8 @@
         "_id" : 0,
         "bname" : "eval",
         "evalue" : "cube"
-      } ]
+      } ],
+      "uri" : "urn:uri"
     } ]
   }
 }

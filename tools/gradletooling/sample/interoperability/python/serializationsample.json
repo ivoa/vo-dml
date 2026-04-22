@@ -1,0 +1,40 @@
+{
+  "refs": {
+    "refa": [
+      {
+        "id": "MyModel-Refa_1000",
+        "val": {
+          "value": "urn:value"
+        }
+      }
+    ],
+    "refb": [
+      {
+        "name": "naturalkey",
+        "val": {
+          "value": "ivo:val"
+        }
+      }
+    ]
+  },
+  "someContent": [
+    {
+      "ref1": "MyModel-Refa_1000",
+      "ref2": "naturalkey",
+      "zval": [
+        "some",
+        "z",
+        "values"
+      ],
+      "con": [
+        {
+          "bname": "dval"
+        },
+        {
+          "bname": "eval"
+        }
+      ],
+      "uri": "urn:uri"
+    }
+  ]
+}

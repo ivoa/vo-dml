@@ -1,0 +1,43 @@
+{
+  "refs": {
+    "referredTo": [
+      {
+        "id": "lifecycleTest-ReferredTo_1011",
+        "test1": 3
+      }
+    ]
+  },
+  "aTest2": [
+    {
+      "atest": {
+        "ref1": "lifecycleTest-ReferredTo_1011",
+        "contained2": {
+          "lowr": "lifecycleTest-ReferredLifeCycle_1012"
+        },
+        "contained": [
+          {
+            "test2": "firstcontained"
+          },
+          {
+            "test2": "secondContained"
+          }
+        ],
+        "refandcontained": [
+          {
+            "id": "lifecycleTest-ReferredLifeCycle_1012",
+            "test3": "rc1"
+          },
+          {
+            "id": "lifecycleTest-ReferredLifeCycle_1013",
+            "test3": "rc2"
+          }
+        ]
+      },
+      "refcont": "lifecycleTest-ReferredLifeCycle_1012",
+      "refagg": [
+        "lifecycleTest-ReferredTo_1011"
+      ]
+    }
+  ],
+  "aTest3": []
+}

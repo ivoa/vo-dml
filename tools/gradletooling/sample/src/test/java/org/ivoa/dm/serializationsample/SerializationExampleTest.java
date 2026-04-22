@@ -37,7 +37,7 @@ private Refb refb;
 
     List<BaseC> clist = List.of(new Dcont("N1", "dval"), new Econt("cube", "eval"));
 
-    someContent = new SomeContent(refa, refb, List.of("some","z","values"), clist);
+    someContent = new SomeContent(refa, refb, List.of("some","z","values"), clist, "urn:uri");
     themodel.addContent(someContent);
 
     return themodel;
