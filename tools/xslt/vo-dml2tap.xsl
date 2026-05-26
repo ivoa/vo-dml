@@ -269,14 +269,24 @@ TODO similarly the schema should be appended for table names - however this has 
 <!-- note  that these templates are matching on the construct created by the attrovercols2 mode on attributes -->
     <xsl:template match="att[not(*)]" mode="dtypeexpandcols">
         <xsl:param name="tableName"/>
-        <xsl:variable name="top-vodml-ref" select="ancestor-or-self::dt[last()]/@v"/>
+        <xsl:variable name="top-vodml-ref" select="ancestor-or-self::att[last()]/@v"/>
         <xsl:variable name="top-el" select="$models/key('ellookup',$top-vodml-ref)"/>
+        <xsl:variable name="this-el" select="$models/key('ellookup',current()/@v)"/>
         <xsl:variable name="thisModelName" select="$top-el/ancestor-or-self::vo-dml:model/name"/>
         <column>
             <column_name><xsl:value-of select="concat(vf:schemaName($thisModelName),'.',$tableName,'.',string-join(current()/ancestor-or-self::*/@c,'_'))"/></column_name>
             <xsl:comment>attribute from dtype</xsl:comment>
             <datatype>{vf:rdbTapType(@type)}</datatype>
-            <description>{$top-el/description}</description><!-- TODO would perhaps like to include datatype description too -->
+            <xsl:choose> <!-- heuristic to get good auto comment for when quantities have been used TODO needs to be improved -->
+                <xsl:when test="count(current()/ancestor-or-self::att) > 1 ">
+                    <description>{concat($this-el/description,' of ',$top-el/description)}</description>
+              </xsl:when>
+            <xsl:otherwise>
+                <description>{$this-el/description}</description>
+            </xsl:otherwise>
+
+            </xsl:choose>
+        <!-- TODO would perhaps like to include datatype description too -->
             <utype>{$top-vodml-ref}</utype> <!--FIXME almost certainly not the "correct" UType - but UTypes are broken -->
             <indexed>{count($top-el/constraint[ends-with(@xsi:type,':NaturalKey')])> 0}</indexed>
             <principal>false</principal><!-- TODO need a way of actually specifying this -->
