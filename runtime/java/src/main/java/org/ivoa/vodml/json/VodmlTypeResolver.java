@@ -28,8 +28,14 @@ import org.ivoa.vodml.nav.ReflectIveVodmlTypeGetter;
  */
 public class VodmlTypeResolver extends TypeIdResolverBase {
 
+   /**
+    * standard constructor.
+    */
+   public VodmlTypeResolver() {
+      super();
+    }
 
-    @SuppressWarnings("rawtypes")
+   @SuppressWarnings("rawtypes")
     private Map<String, Class> typeMap;
 
     /**
