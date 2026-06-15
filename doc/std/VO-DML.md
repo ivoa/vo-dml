@@ -314,7 +314,7 @@ standardized terms is through *annotations*. Data sets are represented
 in some standardized format that includes hooks for associating terms
 from a standardized source of semantic information. In the IVOA the main
 representations that allow this are the metadata annotation elements in
-VOTable \[4\] and the TAP_SCHEMA[^6] in the TAP specification \[5\].
+VOTable \[4\] and the TAP_SCHEMA[^6] in the TAP specification [@{2019ivoa.spec.0927D}].
 Each of these contains hooks for linking certain data components to the
 UCD semantic vocabulary (see \[6\] and \[7\]). Associating a term from
 that controlled list to say a FIELD (VOTable) or column (TAP) indicates
@@ -2660,7 +2660,7 @@ Note, the vodml-id of all types exactly follow the generation rules in
 Appendix C. E.g. to refer to the \'string\' type one should always use
 the vodml-ref \'ivoa:string\'
 
-![C:\\Users\\Gerar\\AppData\\Local\\Microsoft\\Windows\\INetCache\\Content.Word\\IVOA_UML.PNG](media/image23.png){width="6.0in"
+![](media/image23.png){width="6.0in"
 height="3.0695647419072616in"}
 
 Figure VO-UML diagram with the types from the basic \'ivoa\' data model.
@@ -2916,7 +2916,11 @@ Sometimes, in application contexts: derive one or more physical
 representations. Use as much as possible standard, if possible automated
 derivation methods of VO-DML to target representation.
 
-# References
+
+::: {#refs}
+:::
+
+# References (manual)
 
 1.  Abiteboul etal 2011 *Web Data Management*\
     Online version at <http://webdam.inria.fr/Jorge/files/wdm.pdf> )
@@ -3007,6 +3011,9 @@ derivation methods of VO-DML to target representation.
 31. *Standards RegExt: a VOResource Schema Extension for Describing IVOA
     Standards Version 1.0\
     *<http://www.ivoa.net/documents/StandardsRegExt/>
+
+
+# Appendices
 
 # Relation to UML {#relation-to-uml .Appendix-A}
 

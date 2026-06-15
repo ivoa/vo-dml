@@ -4,11 +4,7 @@
             targetNamespace="http://www.ivoa.net/xml/VODML/v1"
             attributeFormDefault="unqualified" elementFormDefault="unqualified"
             version="1.1-WD">
-<!--
-2017-09-23: 
-- added version attribute in schema 
-- removed minor version from targetNamespace and default xmlns declaration
--->
+
   <xsd:annotation>
     <xsd:documentation>
     
@@ -311,7 +307,9 @@ TBD continue based on VO-DML specification document.
      </xsd:sequence>
      <xsd:attribute name="vodmlVersion" type="xsd:string" use="optional">
         <xsd:annotation>
-           <xsd:documentation>the actual version of vodml that this model uses</xsd:documentation>
+           <xsd:documentation>the version of VO-DML metamodel that the model uses - this is distinct from the version of the model itself
+           which is denoted by the version element child of the model
+           </xsd:documentation>
         </xsd:annotation></xsd:attribute>
   </xsd:complexType>
   <xsd:complexType name="ModelImport">
@@ -324,11 +322,9 @@ TBD continue based on VO-DML specification document.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
-        <xsd:element name="name" type="ModelName" minOccurs="0" maxOccurs="1">
+        <xsd:element name="name" type="ModelName" minOccurs="1" maxOccurs="1">
             <xsd:annotation>
                <xsd:documentation>
-                  DEPRECATED - this just repeats information in the referenced model document
-
                     Name by which imported model is used in the current model and its documentation.
                     This name MUST be the same as the 'name' of the model definition in that remote document.
                     For all utypes pointing to elements in the imported model MUST use this name as prefix.
@@ -346,7 +342,7 @@ TBD continue based on VO-DML specification document.
         <xsd:element name="version" type="xsd:string" minOccurs="0">
             <xsd:annotation>
                 <xsd:documentation>
-                    Version of the imported model.
+                    Version of the imported model - Note that this is important to specify for minor versions to ensure compatibility.
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:element>
@@ -498,29 +494,29 @@ TBD continue based on VO-DML specification document.
     </xsd:annotation>
     <xsd:complexContent>
       <xsd:extension base="Type">
-        <xsd:sequence>
-          <xsd:element name="attribute" type="Attribute" minOccurs="0" maxOccurs="unbounded">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+          <xsd:element name="attribute" type="Attribute" minOccurs="1" maxOccurs="1">
             <xsd:annotation>
               <xsd:documentation>
                 TODO
               </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
-            <xsd:element name="composition" type="Composition" minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="composition" type="Composition" minOccurs="1" maxOccurs="1">
             <xsd:annotation>
               <xsd:documentation>
                 TODO
               </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
-          <xsd:element name="reference" type="Reference" minOccurs="0" maxOccurs="unbounded">
+          <xsd:element name="reference" type="Reference" minOccurs="1" maxOccurs="1">
             <xsd:annotation>
               <xsd:documentation>
                 TODO
               </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
-        </xsd:sequence>
+        </xsd:choice>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -556,22 +552,22 @@ TBD continue based on VO-DML specification document.
   <xsd:complexType name="DataType">
     <xsd:complexContent>
       <xsd:extension base="ValueType">
-        <xsd:sequence>
-          <xsd:element name="attribute" type="Attribute" minOccurs="0" maxOccurs="unbounded">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+          <xsd:element name="attribute" type="Attribute" minOccurs="1" maxOccurs="1">
             <xsd:annotation>
               <xsd:documentation>
                 TODO
               </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
-          <xsd:element name="reference" type="Reference" minOccurs="0" maxOccurs="unbounded">
+          <xsd:element name="reference" type="Reference" minOccurs="1" maxOccurs="1">
             <xsd:annotation>
               <xsd:documentation>
                 TODO
               </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
-        </xsd:sequence>
+        </xsd:choice>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -681,6 +677,7 @@ TBD continue based on VO-DML specification document.
                  </xsd:documentation>
               </xsd:annotation>
            </xsd:element>
+           <xsd:element name="UCD" type="xsd:string" minOccurs="0" maxOccurs="1"></xsd:element>
            <xsd:element name="constraint" type="Constraint" minOccurs="0" maxOccurs="1"></xsd:element><!-- TODO - allow more than one constraint? -->
         </xsd:sequence>
       </xsd:extension>
@@ -913,12 +910,14 @@ TBD continue based on VO-DML specification document.
              This constraint is used to indicate that an attribute is a natural key for its owning ObjectType, meaning that the
              attribute value should be globally unique. This may be applied multiple times to indicate that only a composition
              of several attributes make the globally unique key.
+
+             If the value is 0 then the primary key is made out of the  natural keys of the containing types.
           </xsd:documentation>
        </xsd:annotation>
        <xsd:complexContent>
           <xsd:extension base="Constraint">
              <xsd:sequence>
-                <xsd:element name="position" type="xsd:positiveInteger">
+                <xsd:element name="position" type="xsd:nonNegativeInteger">
                         <xsd:annotation>
                            <xsd:documentation>In the case where multiple attribute values make up the natural key, this
                            value indicates the ordinal number of this particular key in the compound key.</xsd:documentation>
