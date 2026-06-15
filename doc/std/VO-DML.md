@@ -314,7 +314,7 @@ standardized terms is through *annotations*. Data sets are represented
 in some standardized format that includes hooks for associating terms
 from a standardized source of semantic information. In the IVOA the main
 representations that allow this are the metadata annotation elements in
-VOTable \[4\] and the TAP_SCHEMA[^6] in the TAP specification \[5\].
+VOTable \[4\] and the TAP_SCHEMA[^6] in the TAP specification [@{2019ivoa.spec.0927D}].
 Each of these contains hooks for linking certain data components to the
 UCD semantic vocabulary (see \[6\] and \[7\]). Associating a term from
 that controlled list to say a FIELD (VOTable) or column (TAP) indicates
@@ -2916,7 +2916,11 @@ Sometimes, in application contexts: derive one or more physical
 representations. Use as much as possible standard, if possible automated
 derivation methods of VO-DML to target representation.
 
-# References
+
+::: {#refs}
+:::
+
+# References (manual)
 
 1.  Abiteboul etal 2011 *Web Data Management*\
     Online version at <http://webdam.inria.fr/Jorge/files/wdm.pdf> )

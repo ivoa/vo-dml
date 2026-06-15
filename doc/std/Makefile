@@ -32,7 +32,11 @@ VECTORFIGURES =
 AUX_FILES = 
 
 $(DOCNAME).html: $(DOCNAME).md ivoatex/pandoc/template.html
-	pandoc VO-DML.md -s --css=https://www.ivoa.net/misc/ivoa_wd.css --css=ivoatex/pandoc/page.css --template=ivoatex/pandoc/template.html --lua-filter=ivoatex/pandoc/number-sections.lua --toc   -o VO-DML.html
+	pandoc VO-DML.md -s --css=https://www.ivoa.net/misc/ivoa_wd.css --css=ivoatex/pandoc/page.css --template=ivoatex/pandoc/template.html \
+	--citeproc  --bibliography=ivoatex/docrepo.bib --bibliography=ivoatex/ivoabib.bib --metadata link-citations=true  \
+	--lua-filter=ivoatex/pandoc/number-sections.lua --toc   -o VO-DML.html
 
 $(DOCNAME).pdf: $(DOCNAME).md ivoatex/pandoc/template.html
-	pandoc VO-DML.md -s --css=https://www.ivoa.net/misc/ivoa_wd.css --css=ivoatex/pandoc/page.css  --template=ivoatex/pandoc/template.html --lua-filter=ivoatex/pandoc/number-sections.lua --to html --pdf-engine weasyprint --pdf-engine-opt="-u ." --toc   -o VO-DML.pdf
+	pandoc VO-DML.md -s --css=https://www.ivoa.net/misc/ivoa_wd.css --css=ivoatex/pandoc/page.css  --template=ivoatex/pandoc/template.html \
+	  --citeproc --bibliography=ivoatex/docrepo.bib --bibliography=ivoatex/ivoabib.bib --metadata link-citations=true  \
+	  --lua-filter=ivoatex/pandoc/number-sections.lua --to html --pdf-engine weasyprint --pdf-engine-opt="-u ." --toc   -o VO-DML.pdf
