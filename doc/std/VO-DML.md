@@ -3008,6 +3008,9 @@ derivation methods of VO-DML to target representation.
     Standards Version 1.0\
     *<http://www.ivoa.net/documents/StandardsRegExt/>
 
+
+# Appendices
+
 # Relation to UML {#relation-to-uml .Appendix-A}
 
 The following table summarizes the relation between VO-DML and UML. It

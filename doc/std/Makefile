@@ -7,7 +7,7 @@ DOCNAME = VO-DML
 DOCVERSION = 1.1
 
 # Publication date, ISO format; update manually for "releases"
-DOCDATE = 2018-09-05
+DOCDATE = 2025-12-31
 
 # What is it you're writing: NOTE, WD, PR, REC, PEN, or EN
 DOCTYPE = WD
@@ -31,8 +31,8 @@ VECTORFIGURES =
 # Additional files to distribute (e.g., CSS, schema files, examples...)
 AUX_FILES = 
 
-$(DOCNAME).html: $(DOCNAME).md template.html
-	pandoc VO-DML.md -s --css=https://www.ivoa.net/misc/ivoa_wd.css --template=template.html --toc -N  -o VO-DML.html
+$(DOCNAME).html: $(DOCNAME).md ivoatex/pandoc/template.html
+	pandoc VO-DML.md -s --css=https://www.ivoa.net/misc/ivoa_wd.css --css=ivoatex/pandoc/page.css --template=ivoatex/pandoc/template.html --lua-filter=ivoatex/pandoc/number-sections.lua --toc   -o VO-DML.html
 
-$(DOCNAME).pdf: $(DOCNAME).md template.html
-	pandoc VO-DML.md -s --css=https://www.ivoa.net/misc/ivoa_wd.css --template=template.html --to html --toc -N  -o VO-DML.pdf
+$(DOCNAME).pdf: $(DOCNAME).md ivoatex/pandoc/template.html
+	pandoc VO-DML.md -s --css=https://www.ivoa.net/misc/ivoa_wd.css --css=ivoatex/pandoc/page.css  --template=ivoatex/pandoc/template.html --lua-filter=ivoatex/pandoc/number-sections.lua --to html --pdf-engine weasyprint --pdf-engine-opt="-u ." --toc   -o VO-DML.pdf
