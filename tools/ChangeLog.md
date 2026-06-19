@@ -146,3 +146,5 @@
     * bugfixes and new processing instruction construction.
 * 0.6.2
   * Some TAPSchema fixes
+* 0.6.3
+  * 
