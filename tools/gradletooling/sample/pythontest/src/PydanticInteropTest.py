@@ -277,7 +277,7 @@ class LifecycleModelInteropTest(unittest.TestCase):
             contained2=ATest4(lowr=rc1.id),
         )
         top = ATest2(atest=atest, refcont=rc1, refagg=[ref1])
-        cls.model=LifecycleTestModel(aTest2=[top],refs=LifecycleTestRefs(referredTo=[ref1,rc1, rc2]))
+        cls.model=LifecycleTestModel(aTest2=[top],refs=LifecycleTestRefs(referredTo=[ref1]))
 
     def test_json_serialise(self):
         json_str = self.model.model_dump_json(indent=2)
