@@ -169,7 +169,7 @@
     <xsl:function name="vf:PythonFormat" as="xsd:string?">
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:if test="$vodml-ref='ivoa:datetime'">
-            <xsl:sequence select="'%y-%m-%dT%H:%M:%SZ'"/>
+            <xsl:sequence select="'%Y-%m-%dT%H:%M:%SZ'"/>
        </xsl:if>
     </xsl:function>
     <!-- also a bit of a hack will only be called on something that is a primitive -->
