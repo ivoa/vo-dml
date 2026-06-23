@@ -6,7 +6,7 @@
 <!ENTITY bl "<xsl:text> </xsl:text>">
 ]>
 
-<xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:vo-dml="http://www.ivoa.net/xml/VODML/v1"
                 xmlns:vf="http://www.ivoa.net/xml/VODML/functions"
                 xmlns:exsl="http://exslt.org/common"
@@ -15,7 +15,8 @@
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 extension-element-prefixes="exsl"
                 exclude-result-prefixes="bnd"
-                >
+                version="3.0"
+>
 <!--
   This XSLT script transforms a data model in VO-DML/XML representation to
   Python pydantic models using xsdata-pydantic for XML/JSON serialisation.
@@ -27,12 +28,12 @@
   Paul Harrison (JBO)
 -->
 
-
   <xsl:output method="xml" encoding="UTF-8" indent="yes" />
   <xsl:output name="python" method="text" encoding="UTF-8" omit-xml-declaration="yes"/>
 
   <xsl:strip-space elements="*" />
 
+  <xsl:include href="binding_setup.xsl" />
 
   <xsl:param name="lastModified"/>
   <xsl:param name="lastModifiedText"/>
@@ -40,7 +41,6 @@
   <xsl:param name="vo-dml_package" select="'org.ivoa.vodml.model'"/>
   <xsl:param name="binding"/>
   <xsl:param name="isMain"/>
-  <xsl:include href="binding_setup.xsl" />
 
   <!-- double-quote shorthand (used in value-of to embed quotes in generated Python) -->
   <xsl:variable name="dq">"</xsl:variable>
@@ -158,9 +158,17 @@ import xsdata_pydantic.hooks.class_type  # register pydantic support with xsdata
     </xsl:choose><xsl:text>):
     class Meta:
         name = "</xsl:text><xsl:value-of select="name"/><xsl:text>"
-        namespace = "</xsl:text><xsl:value-of select="$ns"/><xsl:text>"
-</xsl:text>
-    <xsl:text>    """
+        namespace = "</xsl:text><xsl:value-of select="$ns"/><xsl:text>"</xsl:text>
+        <xsl:variable name="keys" select="vf:keynames($vodml-ref)"/>
+        <xsl:if test="count($keys) gt 0">
+        <xsl:text>
+        keys = [</xsl:text><xsl:value-of select="string-join(for $k in $keys return concat($sq,$k,$sq),',')"/><xsl:text>]
+        </xsl:text>
+        </xsl:if>
+
+
+    <xsl:text>
+    """
     * </xsl:text><xsl:apply-templates select="." mode="desc"/><xsl:text>
     *
     * </xsl:text><xsl:value-of select="name()"/><xsl:text>: </xsl:text><xsl:value-of select="name"/><xsl:text>
@@ -169,12 +177,7 @@ import xsdata_pydantic.hooks.class_type  # register pydantic support with xsdata
     """
 </xsl:text>
     <xsl:if test="vf:referredTo($vodml-ref) and not(attribute/constraint[ends-with(@xsi:type,':NaturalKey')]) and not(extends)">
-    <xsl:text>    id: Optional[str] = xsfield({'type': 'Attribute', 'name': '_id'}, default=None)  # surrogate identifier for XML IDREF resolution
-    _vodml_id_field: ClassVar[str] = "id"
-</xsl:text>
-    </xsl:if>
-    <xsl:if test="vf:referredTo($vodml-ref) and attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
-    <xsl:text>    _vodml_id_field: ClassVar[str] = "</xsl:text><xsl:value-of select="attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"/><xsl:text>"
+    <xsl:text>    id: Optional[str] = xsfield({'type': 'Attribute', 'name': 'id'}, default=None)  # surrogate identifier for XML IDREF resolution
 </xsl:text>
     </xsl:if>
     <xsl:if test="reference">
@@ -408,13 +411,13 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
     </xsl:text>
     <xsl:choose>
       <xsl:when test="multiplicity/maxOccurs != 1"><!-- FIXME the type of the reference key needs to be correct - not always string - most often integer in fact-->
-        <xsl:value-of select="concat(name, ': List[Union[str, ', $type, ']] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,'}, default_factory=list)')"/>
+        <xsl:value-of select="concat(name, ': List[Union[str, ', $type, ']] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,', ',$sq,'idref',$sq,':True}, default_factory=list)')"/>
       </xsl:when>
       <xsl:when test="vf:isOptional(.)">
-        <xsl:value-of select="concat(name, ': Optional[Union[str, ', $type, ']] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,'}, default=None)')"/>
+        <xsl:value-of select="concat(name, ': Optional[Union[str, ', $type, ']] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,', ',$sq,'idref',$sq,':True}, default=None)')"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:value-of select="concat(name, ': Union[str, ', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,'})')"/>
+        <xsl:value-of select="concat(name, ': Union[str, ', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,', ',$sq,'idref',$sq,':True})')"/>
       </xsl:otherwise>
     </xsl:choose>
     <xsl:text>
@@ -550,6 +553,26 @@ class </xsl:text><xsl:value-of select="$modelClass"/><xsl:text>(_VodmlXmlBase):
     </xsl:result-document>
   </xsl:template>
 
+    <xsl:function name="vf:keynames" as="xsd:string*">
+        <xsl:param name="vodml-ref"/>
+        <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/><!-- TODO need to do supertypes too -->
+        <xsl:choose>
+            <xsl:when test="vf:referredTo($vodml-ref)">
+                <xsl:variable name="keyattr" select="sort($el/attribute[constraint/@xsi:type='vodml:NaturalKey'],(), function($k){xsd:integer($k/constraint/position)})"/>
+                <xsl:choose>
+                    <xsl:when test="count($keyattr) > 0">
+                        <xsl:sequence select="$keyattr/name"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="'id'"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="()"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
 
   <xsl:template name="vodmlAnnotation">
     <!-- nothing for now -->
