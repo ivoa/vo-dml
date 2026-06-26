@@ -20,3 +20,6 @@ tools/gradletooling/gradle-plugin/bin/
 /tools/gradletooling/gradle-plugin/gradle/
 /tools/pythontooling/.venv/
 /tools/pythontooling/src/vodmltools/schxslt/
+__pycache__/
+*.pyc
+.pytest_cache/
