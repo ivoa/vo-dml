@@ -39,7 +39,8 @@ class GetSchxslt(Command):
         """
         print("downloading schxslt "+ str(self.editable_mode))
         SCHXSLTVER = "1.10.1"
-        url = f"https://github.com/schxslt/schxslt/releases/download/v{SCHXSLTVER}/schxslt-{SCHXSLTVER}-xslt-only.zip"
+        # moved to https://codeberg.org/SchXslt/schxslt2/releases/download/v1.10.1/schxslt2-1.10.1.zip
+        url = f"https://codeberg.org/SchXslt/schxslt2/releases/download/v{SCHXSLTVER}/schxslt2-{SCHXSLTVER}.zip"
         schzip, headers = urlretrieve(url)
         if self.bdist_dir:
             self.bdist_dir.mkdir(parents=True, exist_ok=True)
