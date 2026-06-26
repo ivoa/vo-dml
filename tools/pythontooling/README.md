@@ -6,7 +6,7 @@ This is a python package for creating and manipulating VO-DML products.
 ## Installation
 
 ```shell
-pip install .
+pip install vodmltools  --extra-index-url https://repo.dev.uksrc.org/repository/pypi-public/simple
 ```
 
 For development:
