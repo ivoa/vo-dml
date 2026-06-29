@@ -5,6 +5,9 @@ on:
   push:
     tags:
       - 'pythontoolingv*'
+    branches:
+      - main
+
   workflow_dispatch: # allow manual run
 
 

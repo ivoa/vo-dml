@@ -320,6 +320,11 @@ def validate(deps, vodmlfiles):
     vodmlfiles = list(vodmlfiles)
     dep_list = resolve_deps(deps)
     cat = make_catalog(vodmlfiles, deps=dep_list)
+    print("Using catalog:", cat)
+    with open(cat) as f:
+        while line := f.readline():
+            print(line)
+        
 
     click.echo(f"Validating {', '.join(vodmlfiles)}")
 
@@ -329,7 +334,7 @@ def validate(deps, vodmlfiles):
         click.echo(f"  Validating {shortname}...")
 
         try:
-            sch = Schematron()
+            sch = Schematron(cat)
             sch.validate(vf)
         except Exception as e:  # noqa: BLE001
             click.echo(f"  ERROR validating {shortname}: {e}", err=True)

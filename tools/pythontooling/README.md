@@ -3,6 +3,8 @@ vodmltools
 
 This is a python package for creating and manipulating VO-DML products.
 
+note that because XML Catalogues do not seem to be working properly in python saxon, anything non-trivial is unlikely to work.
+
 ## Installation
 
 ```shell

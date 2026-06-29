@@ -23,10 +23,10 @@ Issues = "https://github.com/ivoa/vo-dml/issues"
 
 [build-system]
 requires = ["setuptools >= 77.0.3"
+    ,"wheel"
     ,"click",
     "saxonche"]
 build-backend = "setuptools.build_meta"
-
 
 
 [project.scripts]

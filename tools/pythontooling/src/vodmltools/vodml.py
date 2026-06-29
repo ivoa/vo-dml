@@ -13,7 +13,7 @@ class XSLTTransformer:
 
 
     def setCatalog(self,catalog):
-        self.proc.set_catalog_files([os.path.abspath(catalog)])# TODO the catalog can be fixed though - see comment below
+        self.proc.set_catalog_files([os.path.abspath(catalog)])# TODO this does not seem to be picked up properly
         self.xsltproc = self.proc.new_xslt30_processor() # unfortunately compared to the java version the catalog has to be set before stylesheet compilation - so what would otherwise be done in the constuctor is done here.
         inp_file = impresources.files(xslt) / self.script
         self.executable = self.xsltproc.compile_stylesheet(stylesheet_file=str(inp_file))
@@ -72,6 +72,7 @@ Vodml2Catalogues = XSLTExecutionOnlyTransformer("create-catalogues.xsl", "main")
 
 Vodml2md = XSLTTransformer("vo-dml2md.xsl", "text")
 Vodml2TAP = XSLTTransformer("vo-dml2tap.xsl", "xml")
+VodmlSchematron = XSLTTransformer("schematron.xsl", "text")
 TapSchema2PlantUML = XSLTTransformer("tapSchema2plantuml.xslt", "text")
 
 def createCatalog(cat, vodmlFiles):
