@@ -11,7 +11,7 @@ import os
 import tempfile
 from pathlib import Path, PurePath
 
-from vodmltools.vodml import createCatalog
+from vodmltools.vodml import XSLTTransformer, XSLTExecutionOnlyTransformer, createCatalog
 
 
 # Default directory conventions matching VodmlExtension.kt
@@ -24,7 +24,7 @@ DEFAULT_OUTPUT_JAVA_DIR = os.path.join("build", "generated", "sources", "vodml",
 DEFAULT_OUTPUT_PYTHON_DIR = os.path.join("build", "generated", "sources", "vodml", "python")
 
 
-def find_vodml_files(vodml_dir=None):
+def find_vodml_files(vodml_dir: str | None = None) -> list[str]:
     """Discover *.vo-dml.xml files in the given directory (or default)."""
     d = vodml_dir or DEFAULT_VODML_DIR
     if not os.path.isdir(d):
@@ -32,7 +32,7 @@ def find_vodml_files(vodml_dir=None):
     return sorted(glob.glob(os.path.join(d, "**", "*.vo-dml.xml"), recursive=True))
 
 
-def find_vodsl_files(vodsl_dir=None):
+def find_vodsl_files(vodsl_dir: str | None = None) -> list[str]:
     """Discover *.vodsl files in the given directory (or default)."""
     d = vodsl_dir or DEFAULT_VODSL_DIR
     if not os.path.isdir(d):
@@ -40,19 +40,19 @@ def find_vodsl_files(vodsl_dir=None):
     return sorted(glob.glob(os.path.join(d, "**", "*.vodsl"), recursive=True))
 
 
-def detect_binding_files(project_dir=None):
+def detect_binding_files(project_dir: str | None = None) -> list[str]:
     """Auto-detect ``*vodml-binding.xml`` files in the project root directory."""
     d = project_dir or "."
     return sorted(glob.glob(os.path.join(d, "*vodml-binding.xml")))
 
 
-def ensure_dir(path):
+def ensure_dir(path: str | Path) -> str | Path:
     """Create a directory (and parents) if it does not exist, return the path."""
     os.makedirs(path, exist_ok=True)
     return path
 
 
-def make_catalog(vodml_files, catalog_path=None, deps=None):
+def make_catalog(vodml_files: list[str], catalog_path: str | None = None, deps: list[str] | None = None) -> str:
     """Build an XML catalog covering *vodml_files* and optional *deps*.
 
     Parameters
@@ -79,7 +79,7 @@ def make_catalog(vodml_files, catalog_path=None, deps=None):
     return os.path.abspath(catalog_path)
 
 
-def resolve_binding(binding_arg, auto_detect=True):
+def resolve_binding(binding_arg: str | None, auto_detect: bool = True) -> list[str]:
     """Normalise a binding argument into a list of absolute paths.
 
     Parameters
@@ -102,13 +102,13 @@ def resolve_binding(binding_arg, auto_detect=True):
     return []
 
 
-def binding_as_uri_csv(binding_files):
+def binding_as_uri_csv(binding_files: list[str]) -> str:
     """Convert a list of binding file paths to a comma-separated URI string
     suitable for passing as an XSLT parameter (matches Gradle behaviour)."""
     return ",".join(PurePath(os.path.abspath(b)).as_uri() for b in binding_files)
 
 
-def resolve_deps(deps_arg):
+def resolve_deps(deps_arg: str | None) -> list[str]:
     """Normalise a deps argument into a list of paths.
 
     Parameters
@@ -125,7 +125,12 @@ def resolve_deps(deps_arg):
     return [d.strip() for d in deps_arg.split(",") if d.strip()]
 
 
-def prepare_transform(transformer, vodml_files, deps=None, catalog_path=None):
+def prepare_transform(
+    transformer: XSLTTransformer | XSLTExecutionOnlyTransformer,
+    vodml_files: list[str],
+    deps: list[str] | None = None,
+    catalog_path: str | None = None,
+) -> str:
     """Set up the catalog on *transformer* and return the catalog path.
 
     This is the common pattern used by most commands:
