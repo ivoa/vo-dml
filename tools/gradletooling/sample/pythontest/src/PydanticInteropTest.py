@@ -274,10 +274,11 @@ class LifecycleModelInteropTest(unittest.TestCase):
                 Contained(test2="secondContained"),
             ],
             refandcontained=[rc1, rc2],
-            contained2=ATest4(lowr=rc1.id),
+            contained2=ATest4(lowr=rc1),
         )
         top = ATest2(atest=atest, refcont=rc1, refagg=[ref1])
         cls.model=LifecycleTestModel(aTest2=[top],refs=LifecycleTestRefs(referredTo=[ref1]))
+        print(f"LifecycleModelInteropTest: setUpClass created model {cls.model}")
 
     def test_json_serialise(self):
         json_str = self.model.model_dump_json(indent=2)
@@ -309,7 +310,8 @@ class LifecycleModelInteropTest(unittest.TestCase):
     def test_read_java_serialization_xml(self):
         recovered = LifecycleTestModel.from_xml( _read_java_file_as_bytes("lifecycle.xml"))
         self.assertEqual(len(recovered.aTest2[0].atest.contained), 2)
-        self.assertEqual(recovered.aTest2[0].atest.contained2.lowr, "lifecycleTest-ReferredLifeCycle_1012")
+        self.assertEqual(recovered.aTest2[0].atest.contained2.lowr.id, "lifecycleTest-ReferredLifeCycle_1012")
+        self.assertEqual(recovered, self.model)
 
 
 class SerializationExampleInteropTest(unittest.TestCase):
@@ -331,8 +333,8 @@ class SerializationExampleInteropTest(unittest.TestCase):
         cls.model = MyModelModel(
             someContent=[
                 SomeContent(
-                    ref1=refa.id,
-                    ref2=refb.name,
+                    ref1=refa,
+                    ref2=refb,
                     zval=["some", "z", "values"],
                     con=[
                         Dcont(bname="dval", dval="N1"),
@@ -405,20 +407,20 @@ class JpatestModelInteropTest(unittest.TestCase):
         parent = Parent(
             dval=ADtype(
                 basestr="base",
-                dref=ref3.id,
+                dref=ref3,
                 intatt="intatt",
                 dvalr=1.1,
                 dvals="astring",
             ),
             eval=AEtype(
                 basestr="basestre_e",
-                dref=ref3.id,
+                dref=ref3,
                 intatt="intatt_e",
                 evalr=1.2,
                 evals="evals",
             ),
-            rval=ref1.id,
-            cval=Child(rval=ref2.id),
+            rval=ref1,
+            cval=Child(rval=ref2),
             lval=[
                 LChild(sval="First", ival=1),
                 LChild(sval="Second", ival=2),
