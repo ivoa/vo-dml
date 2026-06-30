@@ -1,6 +1,8 @@
 """
 XML ID/IDREF resolution for VO-DML pydantic models.
 
+TODO this should be mainly replaced by the xsdata https://github.com/tefra/xsdata/pull/1222
+
 This module provides the Python equivalent of the Java JAXB ``@XmlID`` /
 ``@XmlIDREF`` mechanism.  After xsdata deserialises an XML document into
 pydantic model instances, ``resolve_references`` walks the object tree,

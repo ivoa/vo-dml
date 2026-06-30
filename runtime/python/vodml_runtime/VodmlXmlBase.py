@@ -2,6 +2,7 @@
 from pydantic import BaseModel, ConfigDict, field_serializer
 from xsdata.formats.dataclass.context import XmlContext
 from xsdata.formats.dataclass.serializers import XmlSerializer
+from vodml_runtime.xsdata.serializers import JsonSerializer
 from xsdata.formats.dataclass.serializers.config import SerializerConfig
 from xsdata.formats.dataclass.parsers import XmlParser
 
@@ -21,3 +22,8 @@ class _VodmlXmlBase(BaseModel):
         data = xml_bytes.decode("utf-8") if isinstance(xml_bytes, bytes) else xml_bytes
         return XmlParser(context=ctx).from_string(data, cls)
 
+
+    def to_xsjson(self,pretty_print: bool = False) -> bytes: # TODO should try to override the pydantic BaseModel to_json method.
+        config = SerializerConfig(indent="  " if pretty_print else None)
+        ctx = XmlContext(class_type="pydantic")
+        return JsonSerializer(config=config, context=ctx).render(self).encode("utf-8")

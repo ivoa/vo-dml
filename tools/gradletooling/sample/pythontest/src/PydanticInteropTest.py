@@ -14,6 +14,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from lxml import etree as _etree
+from sqlalchemy import true
 
 from org.ivoa.dm.filter.filter import PhotometricSystem, PhotometryFilter
 from org.ivoa.dm.ivoa import RealQuantity, Unit
@@ -281,7 +282,7 @@ class LifecycleModelInteropTest(unittest.TestCase):
         print(f"LifecycleModelInteropTest: setUpClass created model {cls.model}")
 
     def test_json_serialise(self):
-        json_str = self.model.model_dump_json(indent=2)
+        json_str = self.model.to_xsjson(pretty_print=True)
         _write("lifecycle.json", json_str)
 
         data = json.loads(json_str)
@@ -347,7 +348,7 @@ class SerializationExampleInteropTest(unittest.TestCase):
         )
 
     def test_json_serialise(self):
-        json_str = self.model.model_dump_json(indent=2)
+        json_str = self.model.to_xsjson(pretty_print=True)
         _write("serializationsample.json", json_str)
 
         data = json.loads(json_str)
@@ -362,6 +363,8 @@ class SerializationExampleInteropTest(unittest.TestCase):
         recovered = MyModelModel.model_validate_json(self.model.model_dump_json())
         self.assertEqual(recovered.someContent[0].zval, ["some", "z", "values"])
         self.assertEqual(recovered.refs.refb[0].name, "naturalkey")
+
+
 
     def test_xml_serialise(self):
         xml_bytes = self.model.full_model_to_xml(pretty_print=True)
