@@ -106,11 +106,11 @@ import xsdata_pydantic.hooks.class_type  # register pydantic support with xsdata
 </xsl:text>
       <!-- cross-package imports -->
       <xsl:for-each select="distinct-values((*/((attribute|reference|composition|constraint[contains(@xsi:type,'SubsettedRole')])/datatype/vodml-ref)|*/extends/vodml-ref))">
-        <xsl:if test="not(vf:isPythonBuiltin(.))">
+        <xsl:if test="not(vf:isPythonBuiltin(current()))">
           <xsl:variable name="typepackage" select="concat(substring-before(.,':'),':',string-join(tokenize(substring-after(.,':'),'\.')[position() != last()],'.'))"/>
-          <xsl:if test="(vf:hasMapping(.,'python') or $typepackage != $package-vodml-ref)">
-            <xsl:variable name="fulltype" select="vf:FullPythonType(.,true())"/>
-              <xsl:value-of select="concat('from ',vf:PythonModule(.),' import ',tokenize($fulltype, '\.')[last()],$nl)"/>
+          <xsl:if test="(vf:hasMapping(current(),'python') or $typepackage != $package-vodml-ref)">
+            <xsl:variable name="fulltype" select="vf:FullPythonType(current(),true())"/>
+              <xsl:value-of select="concat('from ',vf:PythonModule(current()),' import ',tokenize($fulltype, '\.')[last()],$nl)"/>
           </xsl:if>
         </xsl:if>
       </xsl:for-each>
@@ -162,7 +162,7 @@ import xsdata_pydantic.hooks.class_type  # register pydantic support with xsdata
         <xsl:variable name="keys" select="vf:keynames($vodml-ref)"/>
         <xsl:if test="count($keys) gt 0">
         <xsl:text>
-        keys = [</xsl:text><xsl:value-of select="string-join(for $k in $keys return concat($sq,$k,$sq),',')"/><xsl:text>]
+        key = [</xsl:text><xsl:value-of select="string-join(for $k in $keys return concat($sq,$k,$sq),',')"/><xsl:text>]
         </xsl:text>
         </xsl:if>
 
@@ -177,13 +177,10 @@ import xsdata_pydantic.hooks.class_type  # register pydantic support with xsdata
     """
 </xsl:text>
     <xsl:if test="vf:referredTo($vodml-ref) and not(attribute/constraint[ends-with(@xsi:type,':NaturalKey')]) and not(extends)">
-    <xsl:text>    id: Optional[str] = xsfield({'type': 'Attribute', 'name': 'id'}, default=None)  # surrogate identifier for XML IDREF resolution
+    <xsl:text>    id: Optional[str] = xsfield({'type': 'Attribute', 'name': '_id'}, default=None)  # surrogate identifier for XML IDREF resolution
 </xsl:text>
     </xsl:if>
-    <xsl:if test="reference">
-    <xsl:text>    _vodml_refs: ClassVar[list[str]] = [</xsl:text><xsl:for-each select="reference"><xsl:if test="position() != 1"><xsl:text>, </xsl:text></xsl:if><xsl:text>"</xsl:text><xsl:value-of select="name"/><xsl:text>"</xsl:text></xsl:for-each><xsl:text>]
-</xsl:text>
-    </xsl:if>
+
     <xsl:if test="not(@abstract='true') and (extends or vf:hasSubTypes($vodml-ref))">
         <!-- TODO perhaps need code to handle subtypes in serialisation - i.e. add a field to the base type to indicate the actual type of the instance (e.g. xsi:type) and then use this in serialisation to determine which type to serialise as -->
     <xsl:text>
@@ -411,13 +408,13 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
     </xsl:text>
     <xsl:choose>
       <xsl:when test="multiplicity/maxOccurs != 1"><!-- FIXME the type of the reference key needs to be correct - not always string - most often integer in fact-->
-        <xsl:value-of select="concat(name, ': List[Union[str, ', $type, ']] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,', ',$sq,'idref',$sq,':True}, default_factory=list)')"/>
+        <xsl:value-of select="concat(name, ': List[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,', ',$sq,'idref',$sq,':True}, default_factory=list)')"/>
       </xsl:when>
       <xsl:when test="vf:isOptional(.)">
-        <xsl:value-of select="concat(name, ': Optional[Union[str, ', $type, ']] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,', ',$sq,'idref',$sq,':True}, default=None)')"/>
+        <xsl:value-of select="concat(name, ': Optional[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,', ',$sq,'idref',$sq,':True}, default=None)')"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:value-of select="concat(name, ': Union[str, ', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,', ',$sq,'idref',$sq,':True})')"/>
+        <xsl:value-of select="concat(name, ': ', $type, ' = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,', ',$sq,'idref',$sq,':True})')"/>
       </xsl:otherwise>
     </xsl:choose>
     <xsl:text>
@@ -555,10 +552,10 @@ class </xsl:text><xsl:value-of select="$modelClass"/><xsl:text>(_VodmlXmlBase):
 
     <xsl:function name="vf:keynames" as="xsd:string*">
         <xsl:param name="vodml-ref"/>
-        <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/><!-- TODO need to do supertypes too -->
+        <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/><!-- TODO need to do supertypes too? - no xsdata does the type search -->
         <xsl:choose>
             <xsl:when test="vf:referredTo($vodml-ref)">
-                <xsl:variable name="keyattr" select="sort($el/attribute[constraint/@xsi:type='vodml:NaturalKey'],(), function($k){xsd:integer($k/constraint/position)})"/>
+                <xsl:variable name="keyattr" select="sort($el/attribute[constraint/@xsi:type='vo-dml:NaturalKey'],(), function($k){xsd:integer($k/constraint/position)})"/>
                 <xsl:choose>
                     <xsl:when test="count($keyattr) > 0">
                         <xsl:sequence select="$keyattr/name"/>

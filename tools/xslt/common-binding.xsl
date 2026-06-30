@@ -511,7 +511,7 @@
     <xsl:function name="vf:isPythonBuiltin" as="xsd:boolean"> <!-- TODO does this really mean python primitive? -->
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:variable name="modelname" select="substring-before($vodml-ref,':')" />
-        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/python-type/@built-in = 'true'"/>
+        <xsl:sequence select="$mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/python-type/@built-in = 'true'"/>
     </xsl:function>
 
     <!-- will ensure that a member name is not a keyword byu appending '_' if it is-->
