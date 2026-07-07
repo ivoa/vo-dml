@@ -2,6 +2,10 @@ package org.ivoa.dm.c1vdt;
 
 import org.ivoa.vodml.testing.AutoDBRoundTripTest;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /*
  * Created on 21/02/2025 by Paul Harrison (paul.harrison@manchester.ac.uk).
  */
@@ -34,7 +38,10 @@ class C1vdtModelTest extends AutoDBRoundTripTest<C1vdtModel,Long,O2> {
 
     @Override
     public void testModel(C1vdtModel c1vdtModel) {
-
+       List<O2> cont = c1vdtModel.getContent(O2.class);
+       assertEquals(1, cont.size());
+       List<O1> cont1 = c1vdtModel.getContent(O1.class);
+       assertEquals(1, cont1.size());
     }
 
     @Override

@@ -37,6 +37,7 @@ public class JPAStdTest extends AutoDBRoundTripTest<JpatestModel,Long,Parent> {
    public JpatestModel createModel() {
       final ReferredTo1 referredTo = new ReferredTo1("top level ref");
       final ReferredTo2 referredToin = new ReferredTo2("lower ref");
+      final ReferredTo3 refInSub = new ReferredTo3(3, "ref in sub");
       Child refcont = new Child(referredToin);
       List<LChild> ll = new ArrayList<LChild>(//IMPL make mutable
             List.of(new LChild("First", 1), new LChild("Second", 2), new LChild("Third", 3)));
@@ -52,8 +53,13 @@ public class JPAStdTest extends AutoDBRoundTripTest<JpatestModel,Long,Parent> {
                      a.lval = ll;
                      a.tval = new DThing(new Point(1.5,3.0), "thing");
                   });
+
+
+      Sub sub = new Sub(atest, "this is a subtype",List.of(new AEtype(1.3, "subevals", "intatt_sub", "basestre_sub", refInSub)));
+
       JpatestModel retval = new JpatestModel();
       retval.addContent(atest);
+      retval.addContent(sub);
       return retval;
    }
 
@@ -69,10 +75,19 @@ protected String setDbDumpFile() {
 
    @Override
    public void testModel(JpatestModel jpatestModelTest) {
-      Parent pl = jpatestModelTest.getContent(Parent.class).get(0);
+       
+      final List<Parent> content = jpatestModelTest.getContent(Parent.class);
+      assertEquals(2,content.size());
+      Parent pl = content.get(0);
       assertNotNull(pl);
       assertEquals("intatt", pl.getDval().getIntatt());
       assertEquals("intatt_e", pl.getEval().getIntatt());
       assertEquals(new Point(1.5,3.0), pl.getTval().p);
+      
+      final List<Sub> content2 = jpatestModelTest.getContent(Sub.class);
+      assertEquals(1,content2.size());
+      Sub sub = content2.get(0);
+      assertNotNull(sub);
+      assertEquals("this is a subtype", sub.getSubval());
    }
 }
