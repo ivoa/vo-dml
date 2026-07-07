@@ -1,13 +1,18 @@
 name: site
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: [ "Publish Gradle Plugin" ]
+    branches: [ main ]
+    types:
+      - completed
+  workflow_dispatch: # allow manual run
+
 permissions:
   contents: write
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    if: github.repository == 'ivoa/vo-dml' &&  github.event.workflow_run.conclusion == 'success'
     steps:
       - uses: actions/checkout@v3
       - name: Setup dependencies
