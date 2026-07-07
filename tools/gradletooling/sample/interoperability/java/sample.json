@@ -7,13 +7,13 @@
         "equinox" : "J2000.0"
       } ]
     },
-    "content" : [ {
-      "@type" : "filter:PhotometricSystem",
+    "sample:catalog.AstroObject" : [ ],
+    "filter:PhotometricSystem" : [ {
       "_id" : 0,
       "description" : "test photometric system",
       "detectorType" : 1,
       "photometryFilter" : [ {
-        "_id" : 1034,
+        "_id" : 1036,
         "name" : "C-Band",
         "description" : "radio band",
         "bandName" : "C-Band",
@@ -27,7 +27,7 @@
           "value" : 5.0
         }
       }, {
-        "_id" : 1035,
+        "_id" : 1037,
         "name" : "L-Band",
         "description" : "radio band",
         "bandName" : "L-Band",
@@ -41,8 +41,8 @@
           "value" : 1.5
         }
       } ]
-    }, {
-      "@type" : "sample:catalog.inner.SourceCatalogue",
+    } ],
+    "sample:catalog.inner.SourceCatalogue" : [ {
       "_id" : 0,
       "name" : "testCat",
       "entry" : [ {
@@ -91,7 +91,7 @@
           },
           "description" : "lummeas",
           "type" : "flux",
-          "filter" : 1034
+          "filter" : 1036
         }, {
           "_id" : 0,
           "value" : {
@@ -110,7 +110,7 @@
           },
           "description" : "lummeas2",
           "type" : "flux",
-          "filter" : 1035
+          "filter" : 1037
         } ]
       } ]
     } ]

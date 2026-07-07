@@ -128,13 +128,13 @@ public abstract class AbstractBaseValidation {
         StringWriter sw = new StringWriter();
         Marshaller m = jc.createMarshaller();
 
-        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.FALSE);
         m.marshal(model, sw);
         // Actually pretty Print - as the above formatting instruction does not seem to work
         // Set up the output transformer
         TransformerFactory transfac = TransformerFactory.newInstance();
         Transformer trans = transfac.newTransformer();
-        trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "NO");
         trans.setOutputProperty(OutputKeys.INDENT, "yes"); 
 
         StringWriter sw2 = new StringWriter();

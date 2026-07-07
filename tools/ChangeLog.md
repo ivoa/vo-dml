@@ -146,5 +146,6 @@
     * bugfixes and new processing instruction construction.
 * 0.6.2
   * Some TAPSchema fixes
-* 0.6.3
-  * 
+* 0.7.0
+  * Change the JSON serialization to be more like the XML serialiation (also helps with pydantic serialization)
+    * the content property is removed and the objects below it are directly serialized with properties equal to their type.

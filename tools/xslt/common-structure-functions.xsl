@@ -62,6 +62,7 @@ note - only define functions in here as it is included in the schematron rules
 
     </xsl:function>
 
+    <!-- returns the baseTypeId for a particular type - should only be called with a derived type-->
     <xsl:function name="vf:baseTypeId" as="xsd:string">
         <xsl:param name="vodml-ref"/>
         <xsl:sequence select="vf:baseTypeIds($vodml-ref)[last()]"/>
@@ -191,8 +192,9 @@ note - only define functions in here as it is included in the schematron rules
         <xsl:param name="name" as="xsd:string"/>
         <!-- imported model names -->
         <xsl:variable name="modelsInScope" select="($name,vf:importedModelNames($name))"/>
+        <xsl:variable name="candidates" as="element()*">
         <xsl:sequence >
-            <xsl:for-each select="$models/vo-dml:model[name = $modelsInScope ]//objectType[not(@abstract='true')and not(vf:isContainedInModels(vf:asvodmlref(.),$modelsInScope))]">
+            <xsl:for-each select="$models/vo-dml:model[name = $modelsInScope ]//objectType[not(vf:isContainedInModels(vf:asvodmlref(.),$modelsInScope))]">
                 <xsl:variable name="cont" select="vf:containedTypes(vf:asvodmlref(current()))"/>
                 <xsl:variable name="refby" select="vf:referredByInModels(vf:asvodmlref(current()),$modelsInScope)"/>
 <!--                <xsl:message><xsl:value-of select="concat('content cand=',vf:asvodmlref(current()),' contained=',string-join($cont,','), ' refby=',string-join($refby,','), ' decision=',empty($refby[not(. = $cont)]))"/></xsl:message>-->
@@ -201,6 +203,12 @@ note - only define functions in here as it is included in the schematron rules
                 </xsl:if>
             </xsl:for-each>
         </xsl:sequence>
+        </xsl:variable>
+        <!-- if the base type is already explicitly included then do not allow subtypes -->
+        <xsl:variable name="allvodmlids" select="distinct-values(for $v in $candidates return vf:asvodmlref($v))"/>
+        <!-- also sort by the number of references in the containment hierarchy - this is a simplistic way to try and get the order right for saving, i.e. the contained
+         references are emitted before being used - to do this properly a tree should be made of the containment -->
+        <xsl:sequence select="sort($candidates[not(extends) or not(vf:baseTypeId(vf:asvodmlref(.)) = $allvodmlids)],default-collation(),function($e){count(vf:referenceTypesInContainmentHierarchy(vf:asvodmlref($e)))})"/>
     </xsl:function>
 
 

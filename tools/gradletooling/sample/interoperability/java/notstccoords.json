@@ -3,7 +3,7 @@
     "refs" : {
       "coords:CoordSys" : [ {
         "@type" : "coords:TimeSys",
-        "_id" : 1027,
+        "_id" : 1029,
         "frame" : {
           "@type" : "coords:TimeFrame",
           "_id" : 0,
@@ -21,7 +21,7 @@
               "@type" : "coords:LonLatPoint",
               "coordSys" : {
                 "@type" : "coords:SpaceSys",
-                "_id" : 1026,
+                "_id" : 1028,
                 "frame" : {
                   "@type" : "coords:SpaceFrame",
                   "_id" : 0,
@@ -58,14 +58,14 @@
             }
           }
         }
-      }, 1026 ]
+      }, 1028 ]
     },
-    "content" : [ {
-      "@type" : "coords:AnObject",
+    "coords:CoordSpace" : [ ],
+    "coords:AnObject" : [ {
       "_id" : 0,
       "position" : {
         "@type" : "coords:LonLatPoint",
-        "coordSys" : 1026,
+        "coordSys" : 1028,
         "lon" : {
           "@type" : "ivoa:RealQuantity",
           "unit" : {
@@ -90,12 +90,12 @@
       },
       "time" : {
         "@type" : "coords:MJD",
-        "coordSys" : 1027,
+        "coordSys" : 1029,
         "date" : 60000.0
       },
       "sys" : {
         "@type" : "coords:GenericSys",
-        "_id" : 1028,
+        "_id" : 1030,
         "frame" : {
           "@type" : "coords:GenericFrame",
           "_id" : 0,

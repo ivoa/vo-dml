@@ -125,17 +125,14 @@ that allow for successful JSON round tripping.
 
     <xsl:template match="vo-dml:model" mode="content">
         <xsl:variable name="contentTypes" as="element()*" select="vf:contentToSerialize(name)"/>
-        ,"content" : {
-           "type" : "array"
-            ,"items" : {
-                "anyOf" : [
                 <xsl:for-each select="$contentTypes">
-                    <xsl:if test="position() != 1">,</xsl:if>{<xsl:value-of select="vf:jsonType(vf:asvodmlref(current()),$jsonmode)"/>}
+                    ,"<xsl:value-of select="vf:utype(vf:asvodmlref(current()))"/>" : {
+                    "type" : "array"
+                    ,"items" : {
+                     <xsl:value-of select="vf:jsonType(vf:asvodmlref(current()),$jsonmode)"/>
+                             }
+                    }
                 </xsl:for-each>
-            ]
-        }
-        ,"additionalProperties": false
-        }
     </xsl:template>
 
   <xsl:template match="description">
@@ -358,11 +355,15 @@ that allow for successful JSON round tripping.
         , "<xsl:value-of select="name"/>" : {
         "type":"array"
         ,"items": {
-        <xsl:value-of select="vf:jsonReferenceType(datatype/vodml-ref,$jsonmode)"/>
+        "oneOf" : [
+        {<xsl:value-of select="vf:jsonReferenceType(datatype/vodml-ref,$jsonmode)"/>},
+        {<xsl:value-of select="vf:jsonType(datatype/vodml-ref,$jsonmode)"/>}
+        ]
         }
         ,<xsl:apply-templates select="description"/>
         }
     </xsl:template>
+
 
 
     <xsl:template match="reference" > <!-- IMPL normally this will be just an integer reference to an existing instance - apart from first occurrence of contained reference

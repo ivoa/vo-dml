@@ -3,28 +3,33 @@
     "refs" : {
       "jpatest:ReferredTo3" : [ {
         "@type" : "jpatest:ReferredTo3",
-        "_id" : 1005,
+        "_id" : 1006,
         "sval" : "ref in dtype",
+        "ival" : 3
+      }, {
+        "@type" : "jpatest:ReferredTo3",
+        "_id" : 1009,
+        "sval" : "ref in sub",
         "ival" : 3
       } ],
       "jpatest:ReferredTo2" : [ {
         "@type" : "jpatest:ReferredTo2",
-        "_id" : 1007,
+        "_id" : 1008,
         "sval" : "lower ref"
       } ],
       "jpatest:ReferredTo1" : [ {
         "@type" : "jpatest:ReferredTo1",
-        "_id" : 1006,
+        "_id" : 1007,
         "sval" : "top level ref"
       } ]
     },
-    "content" : [ {
+    "jpatest:Parent" : [ {
       "@type" : "jpatest:Parent",
       "_id" : 0,
       "dval" : {
         "@type" : "jpatest:ADtype",
         "basestr" : "base",
-        "dref" : 1005,
+        "dref" : 1006,
         "intatt" : "intatt",
         "dvalr" : 1.1,
         "dvals" : "astring"
@@ -32,15 +37,15 @@
       "eval" : {
         "@type" : "jpatest:AEtype",
         "basestr" : "basestre_e",
-        "dref" : 1005,
+        "dref" : 1006,
         "intatt" : "intatt_e",
         "evalr" : 1.2,
         "evals" : "evals"
       },
-      "rval" : 1006,
+      "rval" : 1007,
       "cval" : {
         "_id" : 0,
-        "rval" : 1007
+        "rval" : 1008
       },
       "lval" : [ {
         "_id" : 0,
@@ -62,6 +67,59 @@
         },
         "dt" : "thing"
       }
+    }, {
+      "@type" : "jpatest:Sub",
+      "_id" : 0,
+      "dval" : {
+        "@type" : "jpatest:ADtype",
+        "basestr" : "base",
+        "dref" : 1006,
+        "intatt" : "intatt",
+        "dvalr" : 1.1,
+        "dvals" : "astring"
+      },
+      "eval" : {
+        "@type" : "jpatest:AEtype",
+        "basestr" : "basestre_e",
+        "dref" : 1006,
+        "intatt" : "intatt_e",
+        "evalr" : 1.2,
+        "evals" : "evals"
+      },
+      "rval" : 1007,
+      "cval" : {
+        "_id" : 0,
+        "rval" : 1008
+      },
+      "lval" : [ {
+        "_id" : 0,
+        "sval" : "First",
+        "ival" : 1
+      }, {
+        "_id" : 0,
+        "sval" : "Second",
+        "ival" : 2
+      }, {
+        "_id" : 0,
+        "sval" : "Third",
+        "ival" : 3
+      } ],
+      "tval" : {
+        "p" : {
+          "x" : 1.5,
+          "y" : 3.0
+        },
+        "dt" : "thing"
+      },
+      "subval" : "this is a subtype",
+      "slist" : [ {
+        "@type" : "jpatest:AEtype",
+        "basestr" : "basestre_sub",
+        "dref" : 1009,
+        "intatt" : "intatt_sub",
+        "evalr" : 1.3,
+        "evals" : "subevals"
+      } ]
     } ]
   }
 }
