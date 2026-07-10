@@ -1,6 +1,6 @@
 [project]
 name = "vodmltools"
-version = "0.1"
+version = "0.2"
 authors = [
     { name="Paul Harrison", email="paul.harrison@manchester.ac.uk" },
 ]
@@ -11,6 +11,11 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
 ]
+dependencies = [
+    "click",
+    "saxonche",
+    "pyyaml",
+]
 
 [project.urls]
 Homepage = "https://github.com/ivoa/vo-dml"
@@ -18,10 +23,10 @@ Issues = "https://github.com/ivoa/vo-dml/issues"
 
 [build-system]
 requires = ["setuptools >= 77.0.3"
+    ,"wheel"
     ,"click",
     "saxonche"]
 build-backend = "setuptools.build_meta"
-
 
 
 [project.scripts]

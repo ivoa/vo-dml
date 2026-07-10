@@ -32,14 +32,14 @@
         <xsl:for-each select="$mapping/bnd:mappedModels/model">
             <xsl:choose>
                 <xsl:when test="file"> <!-- prefer local file for reading defn -->
+<!--                    <xsl:message>attempting loading model file <xsl:value-of select="file"/></xsl:message>-->
                     <xsl:choose>
                         <xsl:when test="doc-available(file)">
-<!--                            <xsl:message>loading model file <xsl:value-of select="file"/></xsl:message>-->
                             <xsl:copy-of
                                     select="document(file)/vo-dml:model" />
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:message terminate="yes">cannot find file <xsl:value-of select="file"/></xsl:message>
+                            <xsl:message terminate="yes">cannot load file <xsl:value-of select="file"/> check file for internal errors</xsl:message>
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:when>

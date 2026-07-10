@@ -110,6 +110,29 @@ ignore - all the names are placed in the top level namespace.(This might result 
            <xsd:documentation>customization of the JSON serialization</xsd:documentation>
         </xsd:annotation>
         <xsd:complexType>
+           
+              <xsd:attribute name="polymorphism" default="wrapped" use="optional">
+                 <xsd:simpleType>
+                                <xsd:annotation>
+                                   <xsd:documentation>how to distinguish the type of polymorphic objects in the places where there could be some ambiguity if not made explicit 
+                                  </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:restriction base="xsd:string">
+                       <xsd:enumeration value="property">
+                         <xsd:annotation>
+                            <xsd:documentation>The type is specified with a property within the object called "@type"</xsd:documentation>
+                         </xsd:annotation>
+                       </xsd:enumeration>
+                       <xsd:enumeration value="wrapped">
+                          <xsd:annotation>
+                             <xsd:documentation>The type is specified with a property that has the type as its key that "wraps" the whole object (which is the property value)</xsd:documentation>
+                          </xsd:annotation>
+                       </xsd:enumeration>
+                    </xsd:restriction>
+                 </xsd:simpleType>
+              </xsd:attribute>
+           
+
            <xsd:attribute name="lax" type="xsd:boolean" use="optional" default="false">
               <xsd:annotation>
                  <xsd:documentation>

@@ -5,10 +5,12 @@ create a json schema
 this is still not a complete representation of the JSON produced - it will validate the "syntax", but is still not
 capable of flagging all errors that might be present
 
-* typing using @type
+* typing using @type or via a wrapper object
 * references - via their ID
 
 that allow for successful JSON round tripping.
+
+TODO subsetting not specifically checked
  -->
 
 <!DOCTYPE stylesheet [
@@ -74,15 +76,12 @@ that allow for successful JSON round tripping.
              }
              ,"additionalProperties": false
             }
-
          }
-
         ,"$defs" : {
         "$comment" : "placeholder to make commas easier!"
 
         <xsl:apply-templates select="(primitiveType|objectType|dataType|enumeration|package)" />
         }
-
       }
 
   </xsl:template>
@@ -111,8 +110,10 @@ that allow for successful JSON round tripping.
                 ,"<xsl:value-of select="current()"/>" : {
                    "type": "array"
                    ,"items" : {
-                      "oneOf" : [
+                      "anyOf" : [
+                         <xsl:for-each select="(current(),vf:subTypeIds(current()))">
                          {<xsl:value-of select="vf:jsonType(current(),$jsonmode)"/>},
+                         </xsl:for-each>
                          {<xsl:value-of select="vf:jsonReferenceType(current(),$jsonmode)"/>}
                        ]
                    }
@@ -123,26 +124,32 @@ that allow for successful JSON round tripping.
             }
     </xsl:template>
 
+
     <xsl:template match="vo-dml:model" mode="content">
         <xsl:variable name="contentTypes" as="element()*" select="vf:contentToSerialize(name)"/>
-        ,"content" : {
-           "type" : "array"
-            ,"items" : {
-                "anyOf" : [
                 <xsl:for-each select="$contentTypes">
-                    <xsl:if test="position() != 1">,</xsl:if>{<xsl:value-of select="vf:jsonType(vf:asvodmlref(current()),$jsonmode)"/>}
+                    <xsl:variable name="thisvodml-ref" select="vf:asvodmlref(current())"/>
+                    ,"<xsl:value-of select="vf:utype($thisvodml-ref)"/>" : {
+                    "type" : "array"
+                    ,"items" : {
+                    <xsl:choose>
+                        <xsl:when test="vf:hasSubTypes($thisvodml-ref) and vf:jsonPolymorphicByWrapping($themodelname) ">
+                            <xsl:value-of select="replace(vf:jsonType($thisvodml-ref,$jsonmode),'&quot;$','_wrapper&quot;')"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                     <xsl:value-of select="vf:jsonType($thisvodml-ref,$jsonmode)"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                             }
+                    }
                 </xsl:for-each>
-            ]
-        }
-        ,"additionalProperties": false
-        }
     </xsl:template>
 
   <xsl:template match="description">
     "description" : "<xsl:value-of select="normalize-space(translate(current(),$dq,$sq))"/>"
   </xsl:template>
   <xsl:template name="defnName">
-    "<xsl:value-of select="substring-after(vf:asvodmlref(current()),':')"/>"
+    <xsl:value-of select="substring-after(vf:asvodmlref(current()),':')"/>
   </xsl:template>
 
 
@@ -171,16 +178,16 @@ that allow for successful JSON round tripping.
   </xsl:template>
 
   <xsl:template match="objectType">
-    ,<xsl:call-template name="defnName"/> : {
+    <xsl:variable name="thisvodml-ref" select="vf:asvodmlref(current())"/>
+    ,"<xsl:call-template name="defnName"/>" : {
     <xsl:if test="extends">
         "allOf" : [
-
         {<xsl:value-of select="vf:jsonType(extends/vodml-ref,$jsonmode)"/>},
         {
     </xsl:if>
     "type": "object"
     ,<xsl:apply-templates select="description"/>
-    <xsl:if test="$jsonmode = 'openapi' and (not(current()/extends) and vf:hasSubTypes(vf:asvodmlref(current())))">
+    <xsl:if test="not(vf:jsonPolymorphicByWrapping($themodelname)) and $jsonmode = 'openapi' and (not(current()/extends) and vf:hasSubTypes(vf:asvodmlref(current())))">
         <!-- IMPL this is using the https://redocly.com/learn/openapi/discriminator#allof-for-inheritance pattern -->
       ,"discriminator": {"propertyName": "@type","mapping": {
         <xsl:for-each select="vf:subTypes(vf:asvodmlref(current()))">
@@ -195,7 +202,7 @@ that allow for successful JSON round tripping.
     </xsl:if>
     ,"properties" : {
     "$comment" : "placeholder to make commas easier"
-     <xsl:if test="not(extends)">
+     <xsl:if test="not(vf:jsonPolymorphicByWrapping($themodelname)) and not(extends)">
       ,"@type" : { "type": "string", "description":"UType as type discriminator"}
      </xsl:if>
       <xsl:apply-templates select="(attribute|composition|reference)"/>
@@ -209,11 +216,36 @@ that allow for successful JSON round tripping.
       </xsl:if>
     <xsl:call-template name="makeStrict"/>
     }
-   &cr;&cr;
+
+    <xsl:call-template name="addwrapper"/>
+      &cr;&cr;
   </xsl:template>
 
+    <xsl:template name="addwrapper">
+        <xsl:variable name="thisvodml-ref" select="vf:asvodmlref(current())"/>
+        <xsl:if test="vf:jsonPolymorphicByWrapping($themodelname) and (vf:hasSubTypes($thisvodml-ref) or vf:hasSuperTypes($thisvodml-ref) )">
+            ,"<xsl:call-template name="defnName"/>_wrapper" : {
+            "type" : "object",
+            "properties" : {
+            "oneOf" : [
+            <xsl:for-each select="($thisvodml-ref,vf:subTypeIds($thisvodml-ref))">
+                <xsl:if test="position() != 1">
+                    <xsl:value-of select="concat(',',$nl)"/>
+                </xsl:if>
+                { "type" : "object",
+                "properties" : {
+                "<xsl:value-of select="vf:utype(current())"/>" : {<xsl:value-of select="vf:jsonType(current(),$jsonmode)"/>}
+                }}
+            </xsl:for-each>
+            ]
+            }
+            }
+        </xsl:if>
+    </xsl:template>
+
     <xsl:template match="dataType">
-        ,<xsl:call-template name="defnName"/> : {
+        <xsl:variable name="thisvodml-ref" select="vf:asvodmlref(current())"/>
+        ,"<xsl:call-template name="defnName"/>" : {
         <xsl:if test="extends">
             "allOf" : [
 
@@ -224,7 +256,7 @@ that allow for successful JSON round tripping.
         ,<xsl:apply-templates select="description"/>
         ,"properties" : {
         "$comment" : "placeholder to make commas easier!"
-        <xsl:if test="not(extends) and vf:hasSubTypes(vf:asvodmlref(current()))">
+        <xsl:if test="not(vf:jsonPolymorphicByWrapping($themodelname)) and not(extends) and vf:hasSubTypes(vf:asvodmlref(current()))">
         ,"@type" : { "type": "string"}
         </xsl:if>
         <xsl:apply-templates select="attribute|reference"/>
@@ -232,9 +264,12 @@ that allow for successful JSON round tripping.
         <xsl:call-template name="required"/>
         <xsl:if test="extends">
             } ]
+
         </xsl:if>
         <xsl:call-template name="makeStrict"/>
         }
+
+        <xsl:call-template name="addwrapper"/>
         &cr;&cr;
 
     </xsl:template>
@@ -244,7 +279,7 @@ that allow for successful JSON round tripping.
         ,"required": [
       <xsl:variable name="req" as="xsd:string*">
           <!-- require @type when a base type is being emitted -->
-          <xsl:if test="not(current()/extends) and vf:hasSubTypes(vf:asvodmlref(current()))">
+          <xsl:if test="not(vf:jsonPolymorphicByWrapping($themodelname)) and not(current()/extends) and vf:hasSubTypes(vf:asvodmlref(current()))">
               <xsl:sequence select="concat($dq,'@type',$dq)"/>
           </xsl:if>
           <xsl:for-each select="(attribute|reference|composition)">
@@ -259,7 +294,7 @@ that allow for successful JSON round tripping.
 
 
   <xsl:template match="enumeration">
-      ,<xsl:call-template name="defnName"/> :
+      ,"<xsl:call-template name="defnName"/>" :
     {
     <xsl:apply-templates select="description"/>
     ,"enum": [<xsl:value-of select="string-join(for $x in literal/name return concat($dq,$x,$dq),',')"/>]
@@ -272,7 +307,7 @@ that allow for successful JSON round tripping.
 
   <xsl:template match="primitiveType[not(vf:isJsonPrimitive(vf:asvodmlref(.)))]">
       <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
-      ,<xsl:call-template name="defnName"/> : {
+      ,"<xsl:call-template name="defnName"/>" : {
           <xsl:value-of select="vf:jsonType($vodml-ref,$jsonmode)"/>
 
       }
@@ -282,10 +317,21 @@ that allow for successful JSON round tripping.
         <!-- do nothing - already mapped to primitive-->
     </xsl:template>
 
+    <xsl:template name="doAttributeType">
+        <xsl:choose>
+            <!-- not sure if this should be true for any supertypes -->
+            <xsl:when  test="vf:typeRole(datatype/vodml-ref) = 'dataType' and vf:jsonPolymorphicByWrapping($themodelname) and ( vf:hasSubTypes(datatype/vodml-ref) or vf:immediateSuperType(datatype/vodml-ref)/@abstract   )">
+                <xsl:value-of select="replace(vf:jsonType(datatype/vodml-ref,$jsonmode),'&quot;$','_wrapper&quot;')"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="vf:jsonType(datatype/vodml-ref,$jsonmode)"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
 
   <xsl:template match="attribute[multiplicity/maxOccurs=1]" >
       , "<xsl:value-of select="name"/>" : {
-       <xsl:value-of select="vf:jsonType(datatype/vodml-ref,$jsonmode)"/>
+        <xsl:call-template name="doAttributeType"/>
        ,<xsl:apply-templates select="description"/>
     }
   </xsl:template>
@@ -294,7 +340,7 @@ that allow for successful JSON round tripping.
         , "<xsl:value-of select="name"/>" : {
         "type":"array"
         ,"items": {
-        <xsl:value-of select="vf:jsonType(datatype/vodml-ref,$jsonmode)"/>
+        <xsl:call-template name="doAttributeType"/>
         }
         ,<xsl:apply-templates select="description"/>
         }
@@ -319,19 +365,31 @@ that allow for successful JSON round tripping.
     </xsl:if>
   </xsl:template>
 
+    <xsl:template name="doCompositionSubTypes">
+        <xsl:choose>
+            <!-- also doing for supertypes - ideally not really required in that case, but it seems that the java is putting the type into in -->
+            <xsl:when test="vf:hasSubTypes(datatype/vodml-ref) or vf:hasSuperTypes(datatype/vodml-ref)">
+                <xsl:choose>
+                    <xsl:when  test="vf:jsonPolymorphicByWrapping($themodelname)">
+                         <xsl:value-of select="replace(vf:jsonType(datatype/vodml-ref,$jsonmode),'&quot;$','_wrapper&quot;')"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        "anyOf": [
+                        <xsl:value-of select="string-join(for $v in vf:subTypeIds(datatype/vodml-ref) return concat('{',vf:jsonType($v,$jsonmode),'}') ,',')"/>
+                        ]
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="vf:jsonType(datatype/vodml-ref,$jsonmode)"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
     <xsl:template match="composition[multiplicity/maxOccurs=1]" >
         ,"<xsl:value-of select="name"/>" : {
         "type":"object"
-        <xsl:choose>
-            <xsl:when test="vf:hasSubTypes(datatype/vodml-ref)">
-                ,"anyOf": [
-                <xsl:value-of select="string-join(for $v in vf:subTypeIds(datatype/vodml-ref) return concat('{',vf:jsonType($v,$jsonmode),'}') ,',')"/>
-                ]
-            </xsl:when>
-            <xsl:otherwise>
-                ,<xsl:value-of select="vf:jsonType(datatype/vodml-ref,$jsonmode)"/>
-            </xsl:otherwise>
-        </xsl:choose>
+         ,<xsl:call-template name="doCompositionSubTypes"/>
         }
     </xsl:template>
 
@@ -339,16 +397,7 @@ that allow for successful JSON round tripping.
       ,"<xsl:value-of select="name"/>" : {
       "type":"array"
       ,"items": {
-           <xsl:choose>
-               <xsl:when test="vf:hasSubTypes(datatype/vodml-ref)">
-                  "anyOf": [
-                    <xsl:value-of select="string-join(for $v in vf:subTypeIds(datatype/vodml-ref) return concat('{',vf:jsonType($v,$jsonmode),'}') ,',')"/>
-                   ]
-               </xsl:when>
-               <xsl:otherwise>
-                   <xsl:value-of select="vf:jsonType(datatype/vodml-ref,$jsonmode)"/>
-               </xsl:otherwise>
-           </xsl:choose>
+      <xsl:call-template name="doCompositionSubTypes"/>
          }
       }
   </xsl:template>
@@ -358,19 +407,34 @@ that allow for successful JSON round tripping.
         , "<xsl:value-of select="name"/>" : {
         "type":"array"
         ,"items": {
-        <xsl:value-of select="vf:jsonReferenceType(datatype/vodml-ref,$jsonmode)"/>
+        "oneOf" : [
+        {<xsl:value-of select="vf:jsonReferenceType(datatype/vodml-ref,$jsonmode)"/>},
+        {<xsl:call-template name="doTypeReference"/>}
+        ]
         }
         ,<xsl:apply-templates select="description"/>
         }
     </xsl:template>
 
 
+    <xsl:template name="doTypeReference">
+        <xsl:param name="thisvodml-ref" select="datatype/vodml-ref"/>
+        <xsl:choose>
+            <xsl:when test="vf:jsonPolymorphicByWrapping($themodelname) and vf:hasSubTypes($thisvodml-ref) and vf:typeRole($thisvodml-ref) = ('objectType','dataType')">
+                <xsl:value-of select="replace(vf:jsonType($thisvodml-ref,$jsonmode),'&quot;$','_wrapper&quot;')"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="vf:jsonType($thisvodml-ref,$jsonmode)"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
     <xsl:template match="reference" > <!-- IMPL normally this will be just an integer reference to an existing instance - apart from first occurrence of contained reference
   IMPL - ideally this would just be a reference - however if there is a reference within a reference then the first instance might be the object-->
       , "<xsl:value-of select="name"/>" : {
       "oneOf" : [
       {<xsl:value-of select="vf:jsonReferenceType(datatype/vodml-ref,$jsonmode)"/>},
-      {<xsl:value-of select="vf:jsonType(datatype/vodml-ref,$jsonmode)"/>}
+      {<xsl:call-template name="doTypeReference"/>}
       ]
       ,<xsl:apply-templates select="description"/>
       }

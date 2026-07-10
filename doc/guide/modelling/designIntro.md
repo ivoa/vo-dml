@@ -7,11 +7,22 @@ The initial test as to whether a model is good is to run [validation](Validation
 
 ## Purpose of the Model
 
-The intended purpose of the model will affect the overall design 
+The main intended purpose of the model will affect the overall design 
 
 * Data Discovery
 * Data Labelling
-* Data Modelling
+* Data Serialization (e.g. for transport or storage)
+
+Historically most of the models in the IVOA have been designed for data labelling, and consequently typically have a complex design with many levels of inheritance and a large number of classes - an example of such a data model is [Coords](https://www.ivoa.net/documents/Coords/).
+However, if the main purpose of the model is data discovery then a much simpler design with fewer classes and less inheritance might be more appropriate to reduce the number of joins. An example of such a data model is [ObsCore](https://www.ivoa.net/documents/ObsCore/), which has only 12 classes and no inheritance.
+If the main purpose is data serialization then the design might be somewhere between the two in complexity of the inheritance hierarchy and number of classes. Clearly, in this sort of design might be appropriate for all three use cases, as it is a compromise between the two extremes.
+
+
+Data models that are designed for data labelling and can might be used most often in combination with [MIVOT](https://www.ivoa.net/documents/MIVOT/)  to create a "semantic layer" that can be used to label data in a way that is more meaningful to users than the raw data labels, but that is still machine readable. 
+
+Data models that are designed for data discovery might be used most often in combination with [TAP](https://www.ivoa.net/documents/TAP/) to create a "data discovery layer" that can be quite complex. The vo-dml tools can be used to generate a TAP schema from the model that can be used to create a TAP service that allows users to query for data that matches the model.
+
+Data models that are designed for data serialization might be used in combination with the various serializations that the vo-dml tools can generate to create a "data serialization layer" that can be used to transport data between different systems and services. The vo-dml tools can be used to generate OpenAPI schema from the model that can be used to create a REST API that allows users to query for data that matches the model, as well as JSON and XML schema that can be used to serialize data according to the model.
 
 ## Testing serialization.
 

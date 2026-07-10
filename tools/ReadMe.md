@@ -32,7 +32,7 @@ Information for [developers of the plugin itself](./Developing.md)
 
 ## Python tooling
 
-_Still under construction_
+This is still in the alpha stage, but see [python tooling ReadMe](./pythontooling/README.md) for details of usage.
 
 ```shell
 pip install vodmltools

@@ -62,9 +62,22 @@ note - only define functions in here as it is included in the schematron rules
 
     </xsl:function>
 
+    <!-- returns the baseTypeId for a particular type - should only be called with a derived type-->
     <xsl:function name="vf:baseTypeId" as="xsd:string">
         <xsl:param name="vodml-ref"/>
         <xsl:sequence select="vf:baseTypeIds($vodml-ref)[last()]"/>
+    </xsl:function>
+
+    <xsl:function name="vf:immediateSuperType" as="element()*">
+        <xsl:param name="vodml-ref"/>
+        <xsl:choose>
+            <xsl:when test="$models/key('ellookup',$vodml-ref)">
+                <xsl:copy-of select="$models/key('ellookup',$models/key('ellookup',$vodml-ref)/extends/vodml-ref)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">type <xsl:value-of select="$vodml-ref"/> not in considered models</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:function>
 
     <xsl:function name="vf:subTypes" as="element()*">
@@ -112,6 +125,21 @@ note - only define functions in here as it is included in the schematron rules
         </xsl:choose>
 
     </xsl:function>
+
+    <!-- tis this type the base of an inheritance hierarcy -->
+    <xsl:function name="vf:isBaseType" as="xsd:boolean">
+        <xsl:param name="vodml-ref"/>
+        <xsl:choose>
+            <xsl:when test="$models/key('ellookup',$vodml-ref)">
+                <xsl:value-of select="not($models/key('ellookup',$vodml-ref)/extends) and count($models//extends[vodml-ref = $vodml-ref])> 0"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">type <xsl:value-of select="$vodml-ref"/> not in considered models</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:function>
+
 
     <!-- this means does the model have children in inheritance hierarchy -->
     <xsl:function name="vf:hasSubTypes" as="xsd:boolean">
@@ -170,29 +198,24 @@ note - only define functions in here as it is included in the schematron rules
     </xsl:function>
     <!-- returns the types that are contained references in models -->
     <xsl:function name="vf:containedReferencesInModels" as="xsd:string*">
-        <xsl:sequence select="distinct-values($models//reference/datatype/vodml-ref[vf:isContained(.)])"/>
+        <xsl:sequence select="distinct-values($models//reference/datatype/vodml-ref[vf:isContainedInModels(.,$models/vo-dml:model/name)])"/>
     </xsl:function>
 
     <xsl:function name="vf:refsToSerialize" as="xsd:string*">
     <xsl:param name="name" as="xsd:string"/>
     <!-- imported model names -->
     <xsl:variable name="modelsInScope" select="($name,vf:importedModelNames($name))"/>
-    <xsl:variable name="possibleRefs" select="distinct-values($models/vo-dml:model[name = $modelsInScope ]//reference/datatype/vodml-ref)" as="xsd:string*"/>
-       <xsl:sequence>
-          <xsl:for-each select="$possibleRefs">
-              <xsl:if test="not(vf:isContainedReferenceInModels(current(),$modelsInScope))">
-                  <xsl:sequence select="current()"/>
-              </xsl:if>
-          </xsl:for-each>
-       </xsl:sequence>
+    <xsl:variable name="possibleRefs" select="distinct-values($models/vo-dml:model[name = $modelsInScope ]//reference/datatype/vodml-ref[not(vf:isContainedReferenceInModels(.,$modelsInScope))])" as="xsd:string*"/>
+       <xsl:sequence select="vf:orderReferences(distinct-values((for $v in $possibleRefs[vf:hasSuperTypes(.)] return vf:baseTypeId($v),for $v in $possibleRefs[not(vf:hasSuperTypes(.))] return $v)))"/>
     </xsl:function>
 
     <xsl:function name="vf:contentToSerialize" as="element()*">
         <xsl:param name="name" as="xsd:string"/>
         <!-- imported model names -->
         <xsl:variable name="modelsInScope" select="($name,vf:importedModelNames($name))"/>
+        <xsl:variable name="candidates" as="element()*">
         <xsl:sequence >
-            <xsl:for-each select="$models/vo-dml:model[name = $modelsInScope ]//objectType[not(@abstract='true')and not(vf:isContainedInModels(vf:asvodmlref(.),$modelsInScope))]">
+            <xsl:for-each select="$models/vo-dml:model[name = $modelsInScope ]//objectType[not(vf:isContainedInModels(vf:asvodmlref(.),$modelsInScope))]">
                 <xsl:variable name="cont" select="vf:containedTypes(vf:asvodmlref(current()))"/>
                 <xsl:variable name="refby" select="vf:referredByInModels(vf:asvodmlref(current()),$modelsInScope)"/>
 <!--                <xsl:message><xsl:value-of select="concat('content cand=',vf:asvodmlref(current()),' contained=',string-join($cont,','), ' refby=',string-join($refby,','), ' decision=',empty($refby[not(. = $cont)]))"/></xsl:message>-->
@@ -201,6 +224,12 @@ note - only define functions in here as it is included in the schematron rules
                 </xsl:if>
             </xsl:for-each>
         </xsl:sequence>
+        </xsl:variable>
+        <!-- if the base type is already explicitly included then do not allow subtypes -->
+        <xsl:variable name="allvodmlids" select="distinct-values(for $v in $candidates return vf:asvodmlref($v))"/>
+        <!-- also sort by the number of references in the containment hierarchy - this is a simplistic way to try and get the order right for saving, i.e. the contained
+         references are emitted before being used - to do this properly a tree should be made of the containment -->
+        <xsl:sequence select="sort($candidates[not(extends) or not(vf:baseTypeId(vf:asvodmlref(.)) = $allvodmlids)],default-collation(),function($e){count(vf:referenceTypesInContainmentHierarchy(vf:asvodmlref($e)))})"/>
     </xsl:function>
 
 
@@ -265,6 +294,7 @@ note - only define functions in here as it is included in the schematron rules
             <xsl:when test="$models/key('ellookup',$vodml-ref)">
                 <xsl:variable name="hier" select="vf:typeHierarchy($vodml-ref)"/>
                 <xsl:variable name="numcont" select="count($models/vo-dml:model[name = $modelsToSearch]//objectType[composition/datatype/vodml-ref = $hier])"/>
+<!--                <xsl:message>container_hierarchy <xsl:value-of select="concat($vodml-ref,' numcont=', $numcont, ' hier=',string-join($hier,','))"/></xsl:message>-->
                 <xsl:choose>
                 <xsl:when test=" $numcont = 1">
                     <xsl:variable name="cont" select="vf:asvodmlref($models/vo-dml:model[name = $modelsToSearch]//objectType[composition/datatype/vodml-ref = $hier])"/>
@@ -352,8 +382,10 @@ note - only define functions in here as it is included in the schematron rules
     <xsl:function name="vf:hasContainedReferencesInContainmentHierarchy" as="xsd:boolean">
         <xsl:param name="vodml-ref"/>
         <xsl:param name="root-vodml-ref"/>
+        <xsl:param name="thisModelName"/>
+<!--        <xsl:message>has_contained_refs_in_hier <xsl:value-of select="concat('vodml-ref=',$vodml-ref,' root=', $root-vodml-ref, ' rcont=',vf:isContained($root-vodml-ref,$thisModelName))"/></xsl:message>-->
         <xsl:choose>
-            <xsl:when test="vf:isContained($root-vodml-ref)">
+            <xsl:when test="vf:isContained($root-vodml-ref,$thisModelName)">
                 <xsl:variable name="top-container" select="vf:ContainerHierarchyInOwnModel($root-vodml-ref)[1]"/><!-- IMPL this may go wrong if multiply contained -->
                 <xsl:sequence select="count(vf:referenceTypesInContainmentHierarchy($vodml-ref)[vf:isTypeContainedBelow(.,$top-container)]) != 0"/>
             </xsl:when>
@@ -483,7 +515,7 @@ note - only define functions in here as it is included in the schematron rules
             <xsl:when test="$models/key('ellookup',$vodml-ref)">
                 <xsl:variable name="hier" select="vf:typeHierarchy($vodml-ref)"/>
                 <!--                <xsl:message>refs <xsl:value-of select="concat ($vodml-ref,' ',count($models//reference/datatype[vodml-ref = $hier])> 0,' h=',string-join($hier,','))"/></xsl:message>-->
-                <xsl:value-of select="count($models/vo-dml:model[name = $modelsToSearch]//reference/datatype[vodml-ref = $hier and vf:isContained(.)])> 0"/>
+                <xsl:value-of select="count($models/vo-dml:model[name = $modelsToSearch]//reference/datatype[vodml-ref = $hier and vf:isContainedInModels(.,$modelsToSearch)])> 0"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:message terminate="yes"><xsl:value-of select="concat('type', $vodml-ref,' not in considered models= ',string-join($modelsToSearch,','))"/></xsl:message>
@@ -491,9 +523,11 @@ note - only define functions in here as it is included in the schematron rules
         </xsl:choose>
     </xsl:function>
 
+    <!-- is a type contained in this model and the models it imports -->
     <xsl:function name="vf:isContained" as="xsd:boolean">
-    <xsl:param name="vodml-ref" as="xsd:string"/>
-        <xsl:sequence select="vf:isContainedInModels($vodml-ref,$models/vo-dml:model/name)"/>
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:param name="thisModelName" as="xsd:string"/>
+        <xsl:sequence select="vf:isContainedInModels($vodml-ref,($thisModelName,vf:importedModelNames($thisModelName)))"/>
     </xsl:function>
     <!-- is the type (or supertypes) contained anywhere -->
     <xsl:function name="vf:isContainedInModels" as="xsd:boolean">
@@ -510,7 +544,7 @@ note - only define functions in here as it is included in the schematron rules
                         <xsl:value-of select="count($models/vo-dml:model[name = $modelsToSearch]//composition/datatype[vodml-ref=$vodml-ref])>0"/>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="count($models/vo-dml:model[name = $modelsToSearch]//composition/datatype[vodml-ref=$vodml-ref])>0 or vf:isContained($el/extends/vodml-ref)"/>
+                        <xsl:value-of select="count($models/vo-dml:model[name = $modelsToSearch]//composition/datatype[vodml-ref=$vodml-ref])>0 or vf:isContainedInModels($el/extends/vodml-ref,$modelsToSearch)"/>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
@@ -576,13 +610,14 @@ note - only define functions in here as it is included in the schematron rules
                 <xsl:message terminate="yes">type '<xsl:value-of select="$vodml-ref"/>' not in considered models</xsl:message>
             </xsl:otherwise>
         </xsl:choose>
+
     </xsl:function>
     <xsl:function name="vf:typeRole" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <!--        <xsl:message select="concat('subsetting in hierarchy for=',$vodml-ref)"/>-->
         <xsl:choose>
             <xsl:when test="$models/key('ellookup',$vodml-ref)">
-                <xsl:value-of select="$models/key('ellookup',$vodml-ref)/name()"/>
+                <xsl:sequence select="$models/key('ellookup',$vodml-ref)/name()"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:message terminate="yes">type '<xsl:value-of select="$vodml-ref"/>' not in considered models</xsl:message>

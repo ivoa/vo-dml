@@ -5,7 +5,7 @@ import ru.vyarus.gradle.plugin.python.task.PythonTask
  * 
  */
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.6.1"
+    id("net.ivoa.vo-dml.vodmltools") version "0.7.0"
     id("com.diffplug.spotless") version "6.25.0"
     id("ru.vyarus.use-python") version "4.1.0"
 
@@ -88,7 +88,7 @@ tasks.test {
 
 dependencies {
     implementation("net.ivoa.vo-dml:ivoa-base")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:6.0.1")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("com.networknt:json-schema-validator:1.5.6")
     implementation("org.slf4j:slf4j-api:2.0.9")

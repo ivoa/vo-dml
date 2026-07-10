@@ -453,6 +453,9 @@
     </xsl:function>
 
 
+
+
+
     <xsl:function name="vf:jsonReferenceType" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:param name="jsonmode"/>
@@ -484,10 +487,16 @@
         <xsl:value-of select="concat(substring-before($mapping/bnd:mappedModels/model[name=$modelName]/file,'.xml'),'.json')"/>
     </xsl:function>
 
+    <xsl:function name="vf:jsonPolymorphicByWrapping" as="xsd:boolean">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:sequence select="not($mapping/bnd:mappedModels/model[name=$modelName]/json/@polymorphism='property')"/>
+    </xsl:function>
+
+
     <xsl:function name="vf:hasTypeDetail" as="xsd:boolean">
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:variable name="modelname" select="substring-before($vodml-ref,':')" />
-        <xsl:value-of select="count($mapping/bnd:mappedModels/model[name=$modelname]/type-detail[@vodml-id=substring-after($vodml-ref,':')]) > 0"/>
+        <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelname]/type-detail[@vodml-id=substring-after($vodml-ref,':')]) > 0"/>
     </xsl:function>
 
     <xsl:function name="vf:findTypeDetail" as="element()">
@@ -825,7 +834,7 @@
     <!-- IMPL this code is still template based rather than function based - it does return a new structure representing the datatypes subtrees though, so templates probably best -->
     <xsl:template match="dataType" mode="attrovercols2" >
         <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
-        <dt v="{$vodml-ref}" n="{name}" poly="{extends and vf:dtypeHierarchyUsedPolymorphically($vodml-ref)}">
+        <dt v="{$vodml-ref}" n="{name}" poly="{extends and vf:dtypeHierarchyUsedPolymorphically($vodml-ref)}" abstr="{@abstract = 'true'}">
 
 <!--            <xsl:apply-templates select="(attribute|reference, vf:baseTypes(vf:asvodmlref(current()))/(attribute|reference))" mode="attrovercols2"/> -->
 
@@ -857,14 +866,16 @@
 
     <xsl:template match="attribute" mode="attrovercols2" >
         <att v="{vf:asvodmlref(current())}" c="{name}">
-            <xsl:if test="not(current()/parent::objectType[not(vf:noTableInComposition(vf:asvodmlref(.)))])">
-                <xsl:attribute name="f" select="name"/>
 
-            </xsl:if>
             <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
             <xsl:attribute name="type" select="datatype/vodml-ref"/>
             <xsl:attribute name="nullable" select="number(multiplicity/minOccurs) = 0"/>
-            <xsl:apply-templates select="$type" mode="attrovercols2"/>
+            <xsl:if test="$type/name() = 'dataType' and not(current()/parent::objectType[not(vf:noTableInComposition(vf:asvodmlref(.)))])">
+                <xsl:attribute name="f" select="name"/>
+            </xsl:if>
+            <xsl:apply-templates select="$type" mode="attrovercols2">
+                <xsl:with-param name="parentname" select="name"/>
+            </xsl:apply-templates>
         </att>
     </xsl:template>
     <xsl:template match="reference" mode="attrovercols2" >
@@ -875,6 +886,7 @@
     </xsl:template>
 
     <xsl:template match="primitiveType" mode="attrovercols2" >
+        <xsl:param name="parentname" as="xsd:string"/>
         <xsl:variable name="type" select="vf:asvodmlref(current())"/>
                 <xsl:choose>
                     <xsl:when test="vf:hasMapping(vf:asvodmlref(current()),'java')">
@@ -882,21 +894,17 @@
                         <xsl:choose><!--TODO - the idea that a type is "atomic" needs to be set higher in the mapping - generally unified -->
                             <xsl:when test="$pmap/@jpa-atomic">
                                 <xsl:attribute name="atomic" select="true()"/>
+                                <xsl:attribute name="f" select="$parentname"/>
                             </xsl:when>
                             <xsl:when test="$pmap/@primitive-value-field">
-                                <att type="{$type}">
-                                <xsl:attribute name="f" select="$pmap/@primitive-value-field"/>
-                                <xsl:attribute name="nullable" select="number(multiplicity/minOccurs) = 0"/>
-                                </att>
+                                <xsl:attribute name="f" select="concat($parentname, '.', $pmap/@primitive-value-field)"/>
                             </xsl:when>
                             <xsl:otherwise>
-                                <att f="value" type="{$type}">
-                                    <xsl:attribute name="nullable" select="number(multiplicity/minOccurs) = 0"/>
-                                </att>
+                                <xsl:attribute name="f" select="concat($parentname, '.value')"/>
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:when>
-                    <xsl:otherwise>
+                    <xsl:otherwise> <!-- TODO this needs to be checked -->
                         <xsl:choose>
                             <xsl:when test="extends">
                                 <att f="value" type="{current()/extends/vodml-ref}" extends="{true()}">

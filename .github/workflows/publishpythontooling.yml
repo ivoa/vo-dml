@@ -1,0 +1,40 @@
+# note that this publishes to the UKSRC Nexus PyPI repository, not the public PyPI repository.
+name: Publish Python Tooling
+
+on:
+  push:
+    tags:
+      - 'pythontoolingv*'
+    branches:
+      - main
+
+  workflow_dispatch: # allow manual run
+
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    if: github.repository == 'ivoa/vo-dml' # Don't run on forks
+
+    steps:
+      - name: Checkout Sources
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install build tools
+        run: pip install build twine
+
+      - name: Build package
+        working-directory: tools/pythontooling
+        run: python -m build
+
+      - name: Publish to Nexus PyPI
+        working-directory: tools/pythontooling
+        run: twine upload --repository-url https://repo.dev.uksrc.org/repository/localpypi/ dist/*
+        env:
+          TWINE_USERNAME: ${{ secrets.UKSRC_REPO_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.UKSRC_REPO_PASSWORD }}

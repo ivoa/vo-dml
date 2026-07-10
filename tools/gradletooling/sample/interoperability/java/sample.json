@@ -7,111 +7,121 @@
         "equinox" : "J2000.0"
       } ]
     },
-    "content" : [ {
-      "@type" : "filter:PhotometricSystem",
+    "sample:catalog.AstroObject" : [ ],
+    "filter:PhotometricSystem" : [ {
       "_id" : 0,
       "description" : "test photometric system",
       "detectorType" : 1,
       "photometryFilter" : [ {
-        "_id" : 1034,
+        "_id" : 1036,
         "name" : "C-Band",
         "description" : "radio band",
         "bandName" : "C-Band",
         "dataValidityFrom" : "2020-01-01T00:00:00.000+00:00",
         "dataValidityTo" : "2025-01-01T20:12:16.000+00:00",
         "spectralLocation" : {
-          "@type" : "ivoa:RealQuantity",
-          "unit" : {
-            "value" : "GHz"
-          },
-          "value" : 5.0
+          "ivoa:RealQuantity" : {
+            "unit" : {
+              "value" : "GHz"
+            },
+            "value" : 5.0
+          }
         }
       }, {
-        "_id" : 1035,
+        "_id" : 1037,
         "name" : "L-Band",
         "description" : "radio band",
         "bandName" : "L-Band",
         "dataValidityFrom" : "2020-01-01T00:00:00.000+00:00",
         "dataValidityTo" : "2025-01-01T13:12:00.000+00:00",
         "spectralLocation" : {
-          "@type" : "ivoa:RealQuantity",
-          "unit" : {
-            "value" : "GHz"
-          },
-          "value" : 1.5
+          "ivoa:RealQuantity" : {
+            "unit" : {
+              "value" : "GHz"
+            },
+            "value" : 1.5
+          }
         }
       } ]
-    }, {
-      "@type" : "sample:catalog.inner.SourceCatalogue",
+    } ],
+    "sample:catalog.inner.SourceCatalogue" : [ {
       "_id" : 0,
       "name" : "testCat",
       "entry" : [ {
-        "@type" : "sample:catalog.SDSSSource",
-        "_id" : 0,
-        "label" : "cepheid",
-        "name" : "testSource",
-        "position" : {
-          "longitude" : {
-            "@type" : "ivoa:RealQuantity",
-            "unit" : {
-              "value" : "degree"
-            },
-            "value" : 2.5
-          },
-          "latitude" : {
-            "@type" : "ivoa:RealQuantity",
-            "unit" : {
-              "value" : "degree"
-            },
-            "value" : 52.5
-          },
-          "frame" : "J2000"
-        },
-        "positionError" : {
-          "@type" : "sample:catalog.AlignedEllipse",
-          "longError" : 0.2,
-          "latError" : 0.1
-        },
-        "classification" : "AGN",
-        "luminosity" : [ {
+        "sample:catalog.SDSSSource" : {
           "_id" : 0,
-          "value" : {
-            "@type" : "ivoa:RealQuantity",
-            "unit" : {
-              "value" : "Jy"
+          "label" : "cepheid",
+          "name" : "testSource",
+          "position" : {
+            "longitude" : {
+              "ivoa:RealQuantity" : {
+                "unit" : {
+                  "value" : "degree"
+                },
+                "value" : 2.5
+              }
             },
-            "value" : 2.5
-          },
-          "error" : {
-            "@type" : "ivoa:RealQuantity",
-            "unit" : {
-              "value" : "Jy"
+            "latitude" : {
+              "ivoa:RealQuantity" : {
+                "unit" : {
+                  "value" : "degree"
+                },
+                "value" : 52.5
+              }
             },
-            "value" : 0.25
+            "frame" : "J2000"
           },
-          "description" : "lummeas",
-          "type" : "flux",
-          "filter" : 1034
-        }, {
-          "_id" : 0,
-          "value" : {
-            "@type" : "ivoa:RealQuantity",
-            "unit" : {
-              "value" : "Jy"
+          "positionError" : {
+            "sample:catalog.AlignedEllipse" : {
+              "longError" : 0.2,
+              "latError" : 0.1
+            }
+          },
+          "classification" : "AGN",
+          "luminosity" : [ {
+            "_id" : 0,
+            "value" : {
+              "ivoa:RealQuantity" : {
+                "unit" : {
+                  "value" : "Jy"
+                },
+                "value" : 2.5
+              }
             },
-            "value" : 3.5
-          },
-          "error" : {
-            "@type" : "ivoa:RealQuantity",
-            "unit" : {
-              "value" : "Jy"
+            "error" : {
+              "ivoa:RealQuantity" : {
+                "unit" : {
+                  "value" : "Jy"
+                },
+                "value" : 0.25
+              }
             },
-            "value" : 0.25
-          },
-          "description" : "lummeas2",
-          "type" : "flux",
-          "filter" : 1035
-        } ]
+            "description" : "lummeas",
+            "type" : "flux",
+            "filter" : 1036
+          }, {
+            "_id" : 0,
+            "value" : {
+              "ivoa:RealQuantity" : {
+                "unit" : {
+                  "value" : "Jy"
+                },
+                "value" : 3.5
+              }
+            },
+            "error" : {
+              "ivoa:RealQuantity" : {
+                "unit" : {
+                  "value" : "Jy"
+                },
+                "value" : 0.25
+              }
+            },
+            "description" : "lummeas2",
+            "type" : "flux",
+            "filter" : 1037
+          } ]
+        }
       } ]
     } ]
   }

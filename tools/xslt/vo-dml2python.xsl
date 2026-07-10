@@ -393,7 +393,7 @@ class <xsl:value-of select="name"/>
                     </xsl:choose>
                 </xsl:element>
             </xsl:for-each>
-            <xsl:if test="vf:isContained($vodml-ref)">
+            <xsl:if test="vf:isContained($vodml-ref,$models/vo-dml:model/name)">
                 <xsl:for-each select="vf:containingTypes($vodml-ref)"><!--TODO need to deal with natural keys -->
                     <xsl:element name="member">
                         <xsl:attribute name="name" select="concat(upper-case(current()/name),'_ID')"/>

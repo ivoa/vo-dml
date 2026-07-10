@@ -21,9 +21,16 @@
 
 
   <xsl:variable name="jsontypinfo">
-  @com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver(value = org.ivoa.vodml.json.VodmlTypeResolver.class)
-   //   @com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.WRAPPER_OBJECT )
+      @com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver(value = org.ivoa.vodml.json.VodmlTypeResolver.class)
+
+      <xsl:choose>
+          <xsl:when test="vf:jsonPolymorphicByWrapping($themodelname)">
+       @com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.WRAPPER_OBJECT )
+          </xsl:when>
+            <xsl:otherwise>
   @com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY,property = "@type" )
+            </xsl:otherwise>
+      </xsl:choose>
   </xsl:variable>
 
   <xsl:template match="objectType|dataType" mode="JAXBAnnotation">
@@ -34,29 +41,18 @@
       <!-- proporder is troublesome with subSetting TODO rethink subsetting -->
 <!--      ,propOrder={<xsl:value-of select="string-join(for $v in vf:memberOrderXML($vodml-ref) return concat($dq,$v,$dq),',')"/>}-->
       )
-  <xsl:choose>
-      <xsl:when test="vf:hasSubTypes($vodml-ref)"> <!-- TODO perhaps only necessary if abstract -->
+      <xsl:if test="vf:hasSubTypes($vodml-ref)"> <!-- TODO perhaps only necessary if abstract -->
   @jakarta.xml.bind.annotation.XmlSeeAlso({ <xsl:value-of select="string-join(for $s in vf:subTypes($vodml-ref) return concat(vf:QualifiedJavaType(vf:asvodmlref($s)),'.class'),',')"/>  })
   @com.fasterxml.jackson.annotation.JsonSubTypes({
           <xsl:value-of select="string-join(for $s in vf:subTypes($vodml-ref) return
               concat('@com.fasterxml.jackson.annotation.JsonSubTypes.Type(value=',vf:QualifiedJavaType(vf:asvodmlref($s)),'.class,name=&quot;',vf:utype(vf:asvodmlref($s)),'&quot;)'),',')"/>
   })
           <xsl:value-of select="$jsontypinfo" />
-      </xsl:when>
-      <xsl:otherwise>
-          <xsl:choose>
-              <xsl:when test="extends">
-@com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME )
-              </xsl:when>
-              <xsl:otherwise>
-@com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NONE )
-              </xsl:otherwise>
-          </xsl:choose>
-      </xsl:otherwise>
-  </xsl:choose>
+
+      </xsl:if>
 
     <xsl:choose>
-      <xsl:when test="not(vf:isContained(vf:asvodmlref(.))) and not(extends)">
+      <xsl:when test="not(vf:isContained(vf:asvodmlref(.),$themodelname)) and not(extends)">
 //@jakarta.xml.bind.annotation.XmlRootElement( name = "<xsl:value-of select="name"/>")
       </xsl:when>
      </xsl:choose>
@@ -223,6 +219,7 @@
       <xsl:variable name="hasReferences" select="count($references-vodmlref) > 0"/>
     <xsl:message>filtered refs=<xsl:value-of select="string-join($references-vodmlref,',')"/> </xsl:message>
     <xsl:variable name="ModelClass" select="concat(vf:upperFirst(name),'Model')"/>
+    <xsl:variable name="contentTypes" as="element()*" select="vf:contentToSerialize(name)"/>
     <xsl:result-document href="{$file}">
     package <xsl:value-of select="$root_package"/>;
     import java.io.IOException;
@@ -247,6 +244,7 @@
     import jakarta.xml.bind.JAXBException;
 
     import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+    import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     import com.fasterxml.jackson.annotation.JsonTypeInfo;
     import com.fasterxml.jackson.databind.ObjectMapper;
     import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
@@ -269,7 +267,10 @@
     @XmlRootElement(name="<xsl:value-of select="name"/>Model")
     @XmlType(propOrder = {"refs","content"} )
     @JsonTypeInfo(include=JsonTypeInfo.As.WRAPPER_OBJECT, use=JsonTypeInfo.Id.NAME)
-    @JsonIgnoreProperties({"refmap"})
+    @JsonIgnoreProperties({"refmap","content"})
+    <xsl:if test="$contentTypes"  >
+    @JsonPropertyOrder({"refs",<xsl:value-of select="string-join($contentTypes ! concat('&quot;',vf:lowerFirst(vf:asvodmlref(.)),'&quot;'),',')"/>})
+    </xsl:if>
     @VoDml(id="<xsl:value-of select="name"/>" ,role = VodmlRole.model, type="<xsl:value-of select="name"/>")
         public class <xsl:value-of select="$ModelClass"/> implements VodmlModel&lt;<xsl:value-of select="$ModelClass"/>&gt; {
 
@@ -282,7 +283,16 @@
         @XmlElement(name="<xsl:value-of select='vf:lowerFirst(vf:jaxbType(current()))'/>")
         @JsonProperty("<xsl:value-of select="vf:utype(.)"/>")
         <xsl:if test="$models/key('ellookup',current())/@abstract or vf:hasSubTypes(current())">
-            <xsl:value-of select="$jsontypinfo"/>
+            @com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver(value = org.ivoa.vodml.json.VodmlTypeResolver.class)
+
+            <xsl:choose>
+                <xsl:when test="vf:jsonPolymorphicByWrapping($themodelname)">
+                    @com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.WRAPPER_OBJECT )
+                </xsl:when>
+                <xsl:otherwise>
+                    @com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY,property = "@type" )
+                </xsl:otherwise>
+            </xsl:choose>
         </xsl:if>
         private Set&lt;<xsl:value-of select="vf:QualifiedJavaType(current())"/>&gt;&bl; <xsl:value-of select="vf:lowerFirst($models/key('ellookup',current())/name)"/> = new HashSet&lt;&gt;();
         void add(<xsl:value-of select="vf:QualifiedJavaType(current())"/> r){<xsl:value-of select="vf:lowerFirst($models/key('ellookup',current())/name)"/>.add(r);}
@@ -325,7 +335,6 @@
         );
     }
     </xsl:if>
-    <xsl:variable name="contentTypes" as="element()*" select="vf:contentToSerialize(name)"/>
     @XmlElements(value = {
       <xsl:for-each select="$contentTypes">
           <xsl:variable name="tv" select="vf:asvodmlref(current())"/>
@@ -334,7 +343,7 @@
                     <xsl:if test="position() != last()">,</xsl:if>
       </xsl:for-each>
     })
-        <xsl:value-of select="$jsontypinfo"/>
+<!--        <xsl:value-of select="$jsontypinfo"/>-->
     private List&lt;Object&gt; content  = new ArrayList&lt;&gt;();
 
     /** default constructor.
@@ -350,6 +359,36 @@
         </xsl:choose>
     }
 
+    <xsl:if test="$contentTypes">
+    /** constructor for deserialization from JSON. Though it can be used manually too.
+        * @param refs_ the references
+        <xsl:for-each select="$contentTypes">
+            * @param <xsl:value-of select="vf:lowerFirst(current()/name)"/>_ the content of type <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(current()))"/>
+        </xsl:for-each>
+        */
+    @com.fasterxml.jackson.annotation.JsonCreator
+    public <xsl:value-of select="$ModelClass"/>(@JsonProperty("refs") References refs_,
+        <xsl:for-each select="$contentTypes">
+            <xsl:variable name="tv" select="vf:asvodmlref(current())"/>
+            @JsonProperty("<xsl:value-of select="vf:utype($tv)"/>") List&lt;<xsl:value-of select="vf:QualifiedJavaType($tv)"/>&gt; <xsl:value-of select="vf:lowerFirst(current()/name)"/>_
+            <xsl:if test="position() != last()">,</xsl:if>
+        </xsl:for-each>
+        ){
+        this.refs = refs_;
+        <xsl:for-each select="$contentTypes">
+            this.content.addAll(<xsl:value-of select="vf:lowerFirst(current()/name)"/>_);
+        </xsl:for-each>
+
+        <xsl:choose>
+            <xsl:when test="$hasReferences">
+                refmap = updateRefmap();
+            </xsl:when>
+            <xsl:otherwise>
+                //no references
+            </xsl:otherwise>
+        </xsl:choose>
+        }
+    </xsl:if>
     private static volatile Map&lt;String,Vocabulary&gt; vocabs;
 
         private static void loadVocabs() {
@@ -388,29 +427,34 @@
 <!--         <xsl:message>ref in hierarchy <xsl:value-of select="vf:asvodmlref(.)"/> refs= <xsl:value-of select="vf:referenceTypesInContainmentHierarchy(vf:asvodmlref(.))"/>  </xsl:message>-->
       /**
       * add <xsl:value-of select="current()/name"/> to model.
-      * @param c  <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/>
+      * @param c_  <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/>
           */
-          public void addContent( final <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/> c)
+          public void addContent( final <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/> c_)
       {
-      content.add(c);
+      content.add(c_);
       <xsl:if test="$hasReferences">
-          org.ivoa.vodml.nav.Util.findReferences(c, refmap);
+          org.ivoa.vodml.nav.Util.findReferences(c_, refmap);
       </xsl:if>
       }
           /**
           * remove <xsl:value-of select="current()/name"/> from model.
-          *  @param c  <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/>
+          *  @param c_  <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/>
           */
-      public void deleteContent( final <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/> c)
+      public void deleteContent( final <xsl:value-of select="vf:QualifiedJavaType(vf:asvodmlref(.))"/> c_)
       {
-      content.remove(c);
+      content.remove(c_);
       <xsl:if test="$hasReferences">
           //FIXME this is not  removing the right references - need to remove need to search for references and in content and then remove if last one...
-          if(refmap.containsKey(c.getClass()))
+          if(refmap.containsKey(c_.getClass()))
           {
-          refmap.get(c.getClass()).remove(c);
+          refmap.get(c_.getClass()).remove(c_);
           }
       </xsl:if>
+      }
+            @JsonProperty("<xsl:value-of select="vf:utype(vf:asvodmlref(.))"/>")
+      public <xsl:value-of  select="concat('List',$lt,vf:QualifiedJavaType(vf:asvodmlref(current())),$gt, ' get',vf:capitalize(current()/name))"/> () {
+
+            return getContent(<xsl:value-of select="concat(vf:QualifiedJavaType(vf:asvodmlref(current())),'.class')"/>);
       }
 
       </xsl:for-each>
@@ -445,7 +489,7 @@
                 content.stream()
             </xsl:otherwise>
         </xsl:choose>
-        .filter(p -> p.getClass().isAssignableFrom(c)).collect(
+        .filter(p -> c.isAssignableFrom(p.getClass())).collect(
       Collectors.toUnmodifiableList()
       );
 

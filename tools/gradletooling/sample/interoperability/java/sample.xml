@@ -9,7 +9,7 @@
         <description>test photometric system</description>
         <detectorType>1</detectorType>
         <photometryFilter>
-            <photometryFilter _id="filter-PhotometryFilter_1032">
+            <photometryFilter _id="filter-PhotometryFilter_1034">
                 <name>C-Band</name>
                 <description>radio band</description>
                 <bandName>C-Band</bandName>
@@ -20,7 +20,7 @@
                     <value>5.0</value>
                 </spectralLocation>
             </photometryFilter>
-            <photometryFilter _id="filter-PhotometryFilter_1033">
+            <photometryFilter _id="filter-PhotometryFilter_1035">
                 <name>L-Band</name>
                 <description>radio band</description>
                 <bandName>L-Band</bandName>
@@ -65,7 +65,7 @@
                 </error>
                 <description>lummeas</description>
                 <type>flux</type>
-                <filter>filter-PhotometryFilter_1032</filter>
+                <filter>filter-PhotometryFilter_1034</filter>
             </luminosity>
             <luminosity>
                 <value>
@@ -78,7 +78,7 @@
                 </error>
                 <description>lummeas2</description>
                 <type>flux</type>
-                <filter>filter-PhotometryFilter_1033</filter>
+                <filter>filter-PhotometryFilter_1035</filter>
             </luminosity>
         </entry>
     </catalog.inner.SourceCatalogue>

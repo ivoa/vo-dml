@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "net.ivoa.vo-dml"
-version = "0.6.1"
+version = "0.7.0"
 
 repositories {
     mavenLocal() // FIXME remove this when releasing - just here to pick up local vodsl updates
@@ -27,7 +27,7 @@ repositories {
 
 
 dependencies {
-    implementation("org.javastro.ivoa.vo-dml:vodml-runtime:0.8.11")
+    implementation("org.javastro.ivoa.vo-dml:vodml-runtime:0.8.13")
     implementation("net.sf.saxon:Saxon-HE:12.5") // for xslt 3.0
     implementation("name.dmaus.schxslt:java:3.1.1") // for modern schematron
     implementation("name.dmaus.schxslt:schxslt:1.10") // force to use more updated schematron than the java wrapper naturally uses -
@@ -42,7 +42,7 @@ dependencies {
 
     // Use the Kotlin JUnit integration.
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:6.0.1")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     implementation("org.slf4j:slf4j-api:2.0.9")

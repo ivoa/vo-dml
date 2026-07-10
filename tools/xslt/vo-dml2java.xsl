@@ -28,8 +28,6 @@
   Gerard Lemson (mpa)/Laurent Bourges (grenoble), Paul Harrison (JBO)
 -->
 
-  <xsl:include href="jaxb.xsl"/>
-  <xsl:include href="jpa.xsl"/>
 
  
 
@@ -50,20 +48,12 @@
   <xsl:param name="pu_name" select="'model_pu'"/> <!--FIXME not used -->
 
     <xsl:param name="isMain"/>
-  <xsl:include href="binding_setup.xsl"/>
+    <xsl:include href="binding_setup.xsl"/>
+    <xsl:include href="jaxb.xsl"/>
+    <xsl:include href="jpa.xsl"/>
 
-  <xsl:variable name="jpafetch">
-      <xsl:choose>
-          <xsl:when test="$mapping/bnd:mappedModels/model[name=$themodelname]/rdb/@fetching = 'eager'">
-              <xsl:message>doing eager fetching</xsl:message>
-              <xsl:sequence select="'jakarta.persistence.FetchType.EAGER'"/>
-          </xsl:when>
-          <xsl:otherwise>
-              <xsl:message>doing lazy fetching</xsl:message>
-            <xsl:sequence select="'jakarta.persistence.FetchType.LAZY'"/>
-          </xsl:otherwise>
-      </xsl:choose>
-  </xsl:variable>
+
+
 
   <!-- main pattern : processes for root node model -->
   <xsl:template match="/">
@@ -198,7 +188,7 @@
 
     <!-- open file for this class -->
       <xsl:message >Writing to Class file <xsl:value-of select="$file"/> base=<xsl:value-of select="vf:baseTypes($vodml-ref)/vf:capitalize(name)"/> haschildren=<xsl:value-of
-              select="vf:hasSubTypes($vodml-ref)"/> st=<xsl:value-of select="string-join(vf:subTypeIds($vodml-ref),',')"/> contained=<xsl:value-of select="vf:isContained($vodml-ref)"/> referredto=<xsl:value-of
+              select="vf:hasSubTypes($vodml-ref)"/> st=<xsl:value-of select="string-join(vf:subTypeIds($vodml-ref),',')"/> contained=<xsl:value-of select="vf:isContained($vodml-ref, $themodelname)"/> referredto=<xsl:value-of
               select="vf:referredTo($vodml-ref)"/> ct=<xsl:value-of select="string-join(vf:containingTypes($vodml-ref)/name,',')"/></xsl:message>
       
       <xsl:result-document href="{$file}">
@@ -423,10 +413,10 @@
             <xsl:for-each select="$localmembers">
                 <xsl:variable name="m" select="$models/key('ellookup',current())"/>
                 <xsl:choose>
-                    <xsl:when test="$m/name()='reference' and vf:isContained($m/datatype/vodml-ref)">
+                    <xsl:when test="$m/name()='reference' and vf:isContained($m/datatype/vodml-ref, $themodelname)">
                         this.<xsl:value-of select="concat(vf:javaMemberName($m/name),' = org.ivoa.vodml.ModelContext.current().cache(',vf:JavaType($m/datatype/vodml-ref),'.class).get(this.',vf:javaMemberName($m/name),');')"/>
                     </xsl:when>
-                    <xsl:when test=" vf:hasContainedReferencesInContainmentHierarchy($m/datatype/vodml-ref,vf:asvodmlref($this))">
+                    <xsl:when test=" vf:hasContainedReferencesInContainmentHierarchy($m/datatype/vodml-ref,vf:asvodmlref($this), $themodelname)">
                         if(<xsl:value-of select="concat('this.',vf:javaMemberName($m/name),'!= null')"/>){
                         <xsl:choose>
                         <xsl:when test="vf:isCollection($m)">
@@ -439,7 +429,7 @@
                         }
                     </xsl:when>
                     <xsl:otherwise>
-                        //  this.<xsl:value-of select="concat(vf:javaMemberName($m/name),' ', vf:hasReferencesInContainmentHierarchy($m/datatype/vodml-ref), ' ', vf:hasContainedReferencesInContainmentHierarchy($m/datatype/vodml-ref,vf:asvodmlref($this)),' ', string-join(vf:referenceTypesInContainmentHierarchy($m/datatype/vodml-ref),','),' ch=',string-join(vf:ContainerHierarchyInOwnModel(vf:asvodmlref($this)),','))"/>;
+                        //  this.<xsl:value-of select="concat(vf:javaMemberName($m/name),' refsincont=', vf:hasReferencesInContainmentHierarchy($m/datatype/vodml-ref), ' hascontref=', vf:hasContainedReferencesInContainmentHierarchy($m/datatype/vodml-ref,vf:asvodmlref($this), $themodelname),' ', string-join(vf:referenceTypesInContainmentHierarchy($m/datatype/vodml-ref),','),' ch=',string-join(vf:ContainerHierarchyInOwnModel(vf:asvodmlref($this)),','))"/>;
                     </xsl:otherwise>
                 </xsl:choose>
 
