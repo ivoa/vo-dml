@@ -21,9 +21,16 @@
 
 
   <xsl:variable name="jsontypinfo">
-  @com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver(value = org.ivoa.vodml.json.VodmlTypeResolver.class)
-   //   @com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.WRAPPER_OBJECT )
+      @com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver(value = org.ivoa.vodml.json.VodmlTypeResolver.class)
+
+      <xsl:choose>
+          <xsl:when test="vf:jsonPolymorphicByWrapping($themodelname)">
+       @com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.WRAPPER_OBJECT )
+          </xsl:when>
+            <xsl:otherwise>
   @com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY,property = "@type" )
+            </xsl:otherwise>
+      </xsl:choose>
   </xsl:variable>
 
   <xsl:template match="objectType|dataType" mode="JAXBAnnotation">
@@ -34,8 +41,7 @@
       <!-- proporder is troublesome with subSetting TODO rethink subsetting -->
 <!--      ,propOrder={<xsl:value-of select="string-join(for $v in vf:memberOrderXML($vodml-ref) return concat($dq,$v,$dq),',')"/>}-->
       )
-  <xsl:choose>
-      <xsl:when test="vf:hasSubTypes($vodml-ref)"> <!-- TODO perhaps only necessary if abstract -->
+      <xsl:if test="vf:hasSubTypes($vodml-ref)"> <!-- TODO perhaps only necessary if abstract -->
   @jakarta.xml.bind.annotation.XmlSeeAlso({ <xsl:value-of select="string-join(for $s in vf:subTypes($vodml-ref) return concat(vf:QualifiedJavaType(vf:asvodmlref($s)),'.class'),',')"/>  })
   @com.fasterxml.jackson.annotation.JsonSubTypes({
           <xsl:value-of select="string-join(for $s in vf:subTypes($vodml-ref) return
@@ -43,18 +49,7 @@
   })
           <xsl:value-of select="$jsontypinfo" />
 
-      </xsl:when>
-      <xsl:otherwise>
-          <xsl:choose>
-              <xsl:when test="extends">
-@com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME )
-              </xsl:when>
-              <xsl:otherwise>
-@com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NONE )
-              </xsl:otherwise>
-          </xsl:choose>
-      </xsl:otherwise>
-  </xsl:choose>
+      </xsl:if>
 
     <xsl:choose>
       <xsl:when test="not(vf:isContained(vf:asvodmlref(.),$themodelname)) and not(extends)">
@@ -288,7 +283,16 @@
         @XmlElement(name="<xsl:value-of select='vf:lowerFirst(vf:jaxbType(current()))'/>")
         @JsonProperty("<xsl:value-of select="vf:utype(.)"/>")
         <xsl:if test="$models/key('ellookup',current())/@abstract or vf:hasSubTypes(current())">
-            <xsl:value-of select="$jsontypinfo"/>
+            @com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver(value = org.ivoa.vodml.json.VodmlTypeResolver.class)
+
+            <xsl:choose>
+                <xsl:when test="vf:jsonPolymorphicByWrapping($themodelname)">
+                    @com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.WRAPPER_OBJECT )
+                </xsl:when>
+                <xsl:otherwise>
+                    @com.fasterxml.jackson.annotation.JsonTypeInfo (use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY,property = "@type" )
+                </xsl:otherwise>
+            </xsl:choose>
         </xsl:if>
         private Set&lt;<xsl:value-of select="vf:QualifiedJavaType(current())"/>&gt;&bl; <xsl:value-of select="vf:lowerFirst($models/key('ellookup',current())/name)"/> = new HashSet&lt;&gt;();
         void add(<xsl:value-of select="vf:QualifiedJavaType(current())"/> r){<xsl:value-of select="vf:lowerFirst($models/key('ellookup',current())/name)"/>.add(r);}

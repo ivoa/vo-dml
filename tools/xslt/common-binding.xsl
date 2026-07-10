@@ -453,6 +453,9 @@
     </xsl:function>
 
 
+
+
+
     <xsl:function name="vf:jsonReferenceType" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:param name="jsonmode"/>
@@ -484,10 +487,16 @@
         <xsl:value-of select="concat(substring-before($mapping/bnd:mappedModels/model[name=$modelName]/file,'.xml'),'.json')"/>
     </xsl:function>
 
+    <xsl:function name="vf:jsonPolymorphicByWrapping" as="xsd:boolean">
+        <xsl:param name="modelName" as="xsd:string"/>
+        <xsl:sequence select="not($mapping/bnd:mappedModels/model[name=$modelName]/json/@polymorphism='property')"/>
+    </xsl:function>
+
+
     <xsl:function name="vf:hasTypeDetail" as="xsd:boolean">
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:variable name="modelname" select="substring-before($vodml-ref,':')" />
-        <xsl:value-of select="count($mapping/bnd:mappedModels/model[name=$modelname]/type-detail[@vodml-id=substring-after($vodml-ref,':')]) > 0"/>
+        <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=$modelname]/type-detail[@vodml-id=substring-after($vodml-ref,':')]) > 0"/>
     </xsl:function>
 
     <xsl:function name="vf:findTypeDetail" as="element()">
@@ -511,7 +520,7 @@
     <xsl:function name="vf:isPythonBuiltin" as="xsd:boolean"> <!-- TODO does this really mean python primitive? -->
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:variable name="modelname" select="substring-before($vodml-ref,':')" />
-        <xsl:value-of select="$mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/python-type/@built-in = 'true'"/>
+        <xsl:sequence select="$mapping/bnd:mappedModels/model[name=$modelname]/type-mapping[vodml-id=substring-after($vodml-ref,':')]/python-type/@built-in = 'true'"/>
     </xsl:function>
 
     <!-- will ensure that a member name is not a keyword byu appending '_' if it is-->

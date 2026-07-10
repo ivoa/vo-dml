@@ -16,15 +16,17 @@
       "ref2" : "naturalkey",
       "zval" : [ "some", "z", "values" ],
       "con" : [ {
-        "@type" : "MyModel:types.Dcont",
-        "_id" : 0,
-        "bname" : "dval",
-        "dval" : "N1"
+        "MyModel:types.Dcont" : {
+          "_id" : 0,
+          "bname" : "dval",
+          "dval" : "N1"
+        }
       }, {
-        "@type" : "MyModel:types.Econt",
-        "_id" : 0,
-        "bname" : "eval",
-        "evalue" : "cube"
+        "MyModel:types.Econt" : {
+          "_id" : 0,
+          "bname" : "eval",
+          "evalue" : "cube"
+        }
       } ]
     } ]
   }

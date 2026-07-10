@@ -68,6 +68,18 @@ note - only define functions in here as it is included in the schematron rules
         <xsl:sequence select="vf:baseTypeIds($vodml-ref)[last()]"/>
     </xsl:function>
 
+    <xsl:function name="vf:immediateSuperType" as="element()*">
+        <xsl:param name="vodml-ref"/>
+        <xsl:choose>
+            <xsl:when test="$models/key('ellookup',$vodml-ref)">
+                <xsl:copy-of select="$models/key('ellookup',$models/key('ellookup',$vodml-ref)/extends/vodml-ref)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">type <xsl:value-of select="$vodml-ref"/> not in considered models</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
     <xsl:function name="vf:subTypes" as="element()*">
         <xsl:param name="vodml-ref"/>
         <xsl:choose>
@@ -113,6 +125,21 @@ note - only define functions in here as it is included in the schematron rules
         </xsl:choose>
 
     </xsl:function>
+
+    <!-- tis this type the base of an inheritance hierarcy -->
+    <xsl:function name="vf:isBaseType" as="xsd:boolean">
+        <xsl:param name="vodml-ref"/>
+        <xsl:choose>
+            <xsl:when test="$models/key('ellookup',$vodml-ref)">
+                <xsl:value-of select="not($models/key('ellookup',$vodml-ref)/extends) and count($models//extends[vodml-ref = $vodml-ref])> 0"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">type <xsl:value-of select="$vodml-ref"/> not in considered models</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:function>
+
 
     <!-- this means does the model have children in inheritance hierarchy -->
     <xsl:function name="vf:hasSubTypes" as="xsd:boolean">
@@ -178,14 +205,8 @@ note - only define functions in here as it is included in the schematron rules
     <xsl:param name="name" as="xsd:string"/>
     <!-- imported model names -->
     <xsl:variable name="modelsInScope" select="($name,vf:importedModelNames($name))"/>
-    <xsl:variable name="possibleRefs" select="distinct-values($models/vo-dml:model[name = $modelsInScope ]//reference/datatype/vodml-ref)" as="xsd:string*"/>
-       <xsl:sequence>
-          <xsl:for-each select="$possibleRefs">
-              <xsl:if test="not(vf:isContainedReferenceInModels(current(),$modelsInScope))">
-                  <xsl:sequence select="current()"/>
-              </xsl:if>
-          </xsl:for-each>
-       </xsl:sequence>
+    <xsl:variable name="possibleRefs" select="distinct-values($models/vo-dml:model[name = $modelsInScope ]//reference/datatype/vodml-ref[not(vf:isContainedReferenceInModels(.,$modelsInScope))])" as="xsd:string*"/>
+       <xsl:sequence select="vf:orderReferences(distinct-values((for $v in $possibleRefs[vf:hasSuperTypes(.)] return vf:baseTypeId($v),for $v in $possibleRefs[not(vf:hasSuperTypes(.))] return $v)))"/>
     </xsl:function>
 
     <xsl:function name="vf:contentToSerialize" as="element()*">
@@ -589,13 +610,14 @@ note - only define functions in here as it is included in the schematron rules
                 <xsl:message terminate="yes">type '<xsl:value-of select="$vodml-ref"/>' not in considered models</xsl:message>
             </xsl:otherwise>
         </xsl:choose>
+
     </xsl:function>
     <xsl:function name="vf:typeRole" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <!--        <xsl:message select="concat('subsetting in hierarchy for=',$vodml-ref)"/>-->
         <xsl:choose>
             <xsl:when test="$models/key('ellookup',$vodml-ref)">
-                <xsl:value-of select="$models/key('ellookup',$vodml-ref)/name()"/>
+                <xsl:sequence select="$models/key('ellookup',$vodml-ref)/name()"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:message terminate="yes">type '<xsl:value-of select="$vodml-ref"/>' not in considered models</xsl:message>
