@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><coord:coordsModel xmlns:coord="http://notstc/coords/v1" xmlns:ser="http://ivoa.net/vodml/sample/serialization" xmlns:c1vdt="http://ivoa.net/dm/sample/c1vdt" xmlns:filt="http://ivoa.net/dm/sample/filter/v1" xmlns:jpat="http://ivoa.net/dm/sample/jpatest" xmlns:simp="http://ivoa.net/dm/sample/sample/v1" xmlns:life="http://ivoa.net/vodml/sample/lifecycle" xmlns:ivoa="http://ivoa.net/vodml/ivoa">
     <refs>
-        <coordSys xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="coord:SpaceSys" _id="coords-SpaceSys_1006">
+        <coordSys xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="coord:SpaceSys" _id="coords-SpaceSys_1025">
             <frame xsi:type="coord:SpaceFrame">
                 <refPosition xsi:type="coord:StdRefLocation">
                     <position>TOPOCENTER</position>
@@ -9,7 +9,7 @@
                 <planetaryEphem>DE432</planetaryEphem>
             </frame>
         </coordSys>
-        <coordSys xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="coord:TimeSys" _id="coords-TimeSys_1007">
+        <coordSys xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="coord:TimeSys" _id="coords-TimeSys_1026">
             <frame xsi:type="coord:TimeFrame">
                 <refPosition xsi:type="coord:StdRefLocation">
                     <position>TOPOCENTER</position>
@@ -18,7 +18,7 @@
                 <refDirection xsi:type="coord:CustomRefLocation">
                     <epoch>J2014.25</epoch>
                     <position xsi:type="coord:LonLatPoint">
-                        <coordSys>coords-SpaceSys_1006</coordSys>
+                        <coordSys>coords-SpaceSys_1025</coordSys>
                         <lon>
                             <unit>deg</unit>
                             <value>6.752477</value>
@@ -38,7 +38,7 @@
     </refs>
     <anObject>
         <position>
-            <coordSys>coords-SpaceSys_1006</coordSys>
+            <coordSys>coords-SpaceSys_1025</coordSys>
             <lon>
                 <unit>deg</unit>
                 <value>45.0</value>
@@ -53,10 +53,10 @@
             </dist>
         </position>
         <time>
-            <coordSys>coords-TimeSys_1007</coordSys>
+            <coordSys>coords-TimeSys_1026</coordSys>
             <date>60000.0</date>
         </time>
-        <sys _id="coords-GenericSys_1008">
+        <sys _id="coords-GenericSys_1027">
             <frame xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="coord:GenericFrame">
                 <refPosition xsi:type="coord:StdRefLocation">
                     <position>TOPOCENTER</position>

@@ -27,7 +27,8 @@
           "bname" : "eval",
           "evalue" : "cube"
         }
-      } ]
+      } ],
+      "uri" : "urn:uri"
     } ]
   }
 }

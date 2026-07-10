@@ -26,5 +26,6 @@
                 <evalue>cube</evalue>
             </baseC>
         </con>
+        <uri>urn:uri</uri>
     </someContent>
 </ser:MyModelModel>
