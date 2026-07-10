@@ -158,7 +158,9 @@ import xsdata_pydantic.hooks.class_type  # register pydantic support with xsdata
     </xsl:choose><xsl:text>):
     class Meta:
         name = "</xsl:text><xsl:value-of select="name"/><xsl:text>"
-        namespace = "</xsl:text><xsl:value-of select="$ns"/><xsl:text>"</xsl:text>
+        namespace = "</xsl:text><xsl:value-of select="$ns"/><xsl:text>"
+        utype = "</xsl:text><xsl:value-of select="vf:utype($vodml-ref)"/><xsl:text>"
+</xsl:text>
         <xsl:variable name="keys" select="vf:keynames($vodml-ref)"/>
         <xsl:if test="count($keys) gt 0">
         <xsl:text>
@@ -211,6 +213,8 @@ import xsdata_pydantic.hooks.class_type  # register pydantic support with xsdata
     class Meta:
         name = "</xsl:text><xsl:value-of select="name"/><xsl:text>"
         namespace = "</xsl:text><xsl:value-of select="$ns"/><xsl:text>"
+        utype = "</xsl:text><xsl:value-of select="vf:utype($vodml-ref)"/><xsl:text>"
+
 </xsl:text>
     <xsl:text>    """
     * </xsl:text><xsl:apply-templates select="." mode="desc"/><xsl:text>
