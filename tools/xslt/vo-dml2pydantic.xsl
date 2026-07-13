@@ -306,7 +306,7 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
     <xsl:variable name="fmt" select="vf:PythonFormat(datatype/vodml-ref)"/>
     <xsl:variable name="fmtpart" select="if (string-length($fmt) gt 0) then concat(', ',$sq,'format',$sq,': ',$sq,$fmt,$sq) else ''"/>
     <xsl:variable name="wrapper" select="concat(',',$sq,'wrapper',$sq,':',$sq,name,'s',$sq)"/> <!--TODO should check in binding if wrapping really needed -->
-    <xsl:if test="not(vf:isSubSetted($vodml-ref))">
+<!--    <xsl:if test="not(vf:isSubSetted($vodml-ref))">-->
       <xsl:text>
     </xsl:text>
       <xsl:call-template name="vodmlAnnotation"/>
@@ -336,12 +336,14 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
     </xsl:text><xsl:apply-templates select="." mode="desc"/><xsl:text>
     """
 </xsl:text>
-    </xsl:if>
+<!--    </xsl:if>-->
   </xsl:template>
 
 
   <!-- SubsettedRole constraint: add a narrowed-type field -->
   <xsl:template match="constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="declare">
+
+    <!-- unfortunately doing the below in pydantic loses any the polymorphism of the subsetted role - better not to try
     <xsl:variable name="subsetted" select="$models/key('ellookup',current()/role/vodml-ref)"/>
     <xsl:if test="name($subsetted)='attribute' and datatype/vodml-ref != $subsetted/datatype/vodml-ref">
       <xsl:variable name="stype" select="vf:PythonType(datatype/vodml-ref)"/>
@@ -357,6 +359,7 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
     """
 </xsl:text>
     </xsl:if>
+    -->
   </xsl:template>
 
 
