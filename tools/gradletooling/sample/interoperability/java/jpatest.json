@@ -1,7 +1,7 @@
 {
   "JpatestModel" : {
     "refs" : {
-      "jpatest:Refbase" : [ {
+      "refbase" : [ {
         "jpatest:ReferredTo3" : {
           "_id" : 1009,
           "sval" : "ref in sub",
@@ -25,7 +25,7 @@
         }
       } ]
     },
-    "jpatest:Parent" : [ {
+    "parent" : [ {
       "jpatest:Parent" : {
         "_id" : 0,
         "dval" : {

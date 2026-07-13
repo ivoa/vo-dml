@@ -107,7 +107,7 @@ TODO subsetting not specifically checked
                ,"properties" : {
             "$comment" : "placeholder to make commas easier!"
             <xsl:for-each select="$references-vodmlref"><!-- IMPL mostly expecting the actual reference object mostly in the refs array - but could be a ref to an object if it has occurred as contained reference in a preceding reference object -->
-                ,"<xsl:value-of select="current()"/>" : {
+                ,"<xsl:value-of select="vf:lowerFirst(vf:jaxbType(current()))"/>" : {
                    "type": "array"
                    ,"items" : {
                       "anyOf" : [
@@ -129,7 +129,7 @@ TODO subsetting not specifically checked
         <xsl:variable name="contentTypes" as="element()*" select="vf:contentToSerialize(name)"/>
                 <xsl:for-each select="$contentTypes">
                     <xsl:variable name="thisvodml-ref" select="vf:asvodmlref(current())"/>
-                    ,"<xsl:value-of select="vf:utype($thisvodml-ref)"/>" : {
+                    ,"<xsl:value-of select="vf:lowerFirst(vf:jaxbType($thisvodml-ref))"/>" : {
                     "type" : "array"
                     ,"items" : {
                     <xsl:choose>

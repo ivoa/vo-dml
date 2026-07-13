@@ -1,9 +1,9 @@
 {
   "CoordsModel" : {
     "refs" : {
-      "coords:CoordSys" : [ {
+      "coordSys" : [ {
         "coords:SpaceSys" : {
-          "_id" : 1028,
+          "_id" : 1025,
           "frame" : {
             "coords:SpaceFrame" : {
               "_id" : 0,
@@ -20,7 +20,7 @@
         }
       }, {
         "coords:TimeSys" : {
-          "_id" : 1029,
+          "_id" : 1026,
           "frame" : {
             "coords:TimeFrame" : {
               "_id" : 0,
@@ -37,7 +37,7 @@
                   "epoch" : "J2014.25",
                   "position" : {
                     "coords:LonLatPoint" : {
-                      "coordSys" : 1028,
+                      "coordSys" : 1025,
                       "lon" : {
                         "ivoa:RealQuantity" : {
                           "unit" : {
@@ -71,12 +71,12 @@
         }
       } ]
     },
-    "coords:CoordSpace" : [ ],
-    "coords:AnObject" : [ {
+    "coordSpace" : [ ],
+    "anObject" : [ {
       "_id" : 0,
       "position" : {
         "coords:LonLatPoint" : {
-          "coordSys" : 1028,
+          "coordSys" : 1025,
           "lon" : {
             "ivoa:RealQuantity" : {
               "unit" : {
@@ -105,13 +105,13 @@
       },
       "time" : {
         "coords:MJD" : {
-          "coordSys" : 1029,
+          "coordSys" : 1026,
           "date" : 60000.0
         }
       },
       "sys" : {
         "coords:GenericSys" : {
-          "_id" : 1030,
+          "_id" : 1027,
           "frame" : {
             "coords:GenericFrame" : {
               "_id" : 0,

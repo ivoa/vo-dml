@@ -281,7 +281,7 @@
     <xsl:for-each select="$references-vodmlref"> <!-- looking at all possible refs -->
         <xsl:message>ref=<xsl:value-of select="concat(current(),'  references=',string-join(vf:referenceTypesInContainmentHierarchy(current()),','))"/></xsl:message>
         @XmlElement(name="<xsl:value-of select='vf:lowerFirst(vf:jaxbType(current()))'/>")
-        @JsonProperty("<xsl:value-of select="vf:utype(.)"/>")
+        @JsonProperty("<xsl:value-of select="vf:lowerFirst(vf:jaxbType(current()))"/>")
         <xsl:if test="$models/key('ellookup',current())/@abstract or vf:hasSubTypes(current())">
             @com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver(value = org.ivoa.vodml.json.VodmlTypeResolver.class)
 
@@ -370,7 +370,7 @@
     public <xsl:value-of select="$ModelClass"/>(@JsonProperty("refs") References refs_,
         <xsl:for-each select="$contentTypes">
             <xsl:variable name="tv" select="vf:asvodmlref(current())"/>
-            @JsonProperty("<xsl:value-of select="vf:utype($tv)"/>") List&lt;<xsl:value-of select="vf:QualifiedJavaType($tv)"/>&gt; <xsl:value-of select="vf:lowerFirst(current()/name)"/>_
+            @JsonProperty("<xsl:value-of select="vf:lowerFirst(vf:jaxbType($tv))"/>") List&lt;<xsl:value-of select="vf:QualifiedJavaType($tv)"/>&gt; <xsl:value-of select="vf:lowerFirst(current()/name)"/>_
             <xsl:if test="position() != last()">,</xsl:if>
         </xsl:for-each>
         ){
@@ -451,7 +451,7 @@
           }
       </xsl:if>
       }
-            @JsonProperty("<xsl:value-of select="vf:utype(vf:asvodmlref(.))"/>")
+            @JsonProperty("<xsl:value-of select="vf:lowerFirst(vf:jaxbType(vf:asvodmlref(.)))"/>")//IMPL there is a chance of a name clash - would probably be better to use utype
       public <xsl:value-of  select="concat('List',$lt,vf:QualifiedJavaType(vf:asvodmlref(current())),$gt, ' get',vf:capitalize(current()/name))"/> () {
 
             return getContent(<xsl:value-of select="concat(vf:QualifiedJavaType(vf:asvodmlref(current())),'.class')"/>);
