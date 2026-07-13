@@ -157,7 +157,7 @@ import xsdata_pydantic.hooks.class_type  # register pydantic support with xsdata
       <xsl:otherwise>_VodmlXmlBase</xsl:otherwise>
     </xsl:choose><xsl:text>):
     class Meta:
-        name = "</xsl:text><xsl:value-of select="name"/><xsl:text>"
+        name = "</xsl:text><xsl:value-of select="vf:jaxbType($vodml-ref)"/><xsl:text>"
         namespace = "</xsl:text><xsl:value-of select="$ns"/><xsl:text>"
         utype = "</xsl:text><xsl:value-of select="vf:utype($vodml-ref)"/><xsl:text>"
 </xsl:text>
@@ -211,7 +211,7 @@ import xsdata_pydantic.hooks.class_type  # register pydantic support with xsdata
       <xsl:otherwise>_VodmlXmlBase</xsl:otherwise>
     </xsl:choose><xsl:text>):
     class Meta:
-        name = "</xsl:text><xsl:value-of select="name"/><xsl:text>"
+        name = "</xsl:text><xsl:value-of select="vf:jaxbType($vodml-ref)"/><xsl:text>"
         namespace = "</xsl:text><xsl:value-of select="$ns"/><xsl:text>"
         utype = "</xsl:text><xsl:value-of select="vf:utype($vodml-ref)"/><xsl:text>"
 
@@ -469,9 +469,9 @@ class </xsl:text><xsl:value-of select="$refsClass"/><xsl:text>(_VodmlXmlBase):
         name = "refs"
 </xsl:text>
     <xsl:for-each select="$references-vodmlref">
-      <xsl:variable name="rtype" select="vf:PythonType(.)"/>
-      <xsl:variable name="rtag" select="vf:lowerFirst($models/key('ellookup',current())/name)"/>
-      <xsl:text>    </xsl:text><xsl:value-of select="$rtag"/><xsl:text>: List[</xsl:text><xsl:value-of select="$rtype"/><xsl:text>] = xsfield({'type': 'Element', 'name': '</xsl:text><xsl:value-of select="$rtag"/><xsl:text>', 'namespace': ''}, default_factory=list)
+      <xsl:variable name="rtype" select="vf:PythonType(current())"/>
+      <xsl:variable name="rtag" select="vf:lowerFirst(vf:jaxbType(current()))"/>
+      <xsl:text>    </xsl:text><xsl:value-of select="replace($rtag,'\.','_')"/><xsl:text>: List[</xsl:text><xsl:value-of select="$rtype"/><xsl:text>] = xsfield({'type': 'Element', 'name': '</xsl:text><xsl:value-of select="$rtag"/><xsl:text>', 'namespace': ''}, default_factory=list)
 </xsl:text>
     </xsl:for-each>
     <xsl:if test="empty($references-vodmlref)">
