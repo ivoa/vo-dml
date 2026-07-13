@@ -313,7 +313,15 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
       <xsl:choose>
         <xsl:when test="multiplicity/maxOccurs = -1 or number(multiplicity/maxOccurs) gt 1">
           <!-- list-valued attribute -->
-          <xsl:value-of select="concat(name, ': List[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,$wrapper,$fmtpart,'}, default_factory=list)')"/>
+          <xsl:choose>
+              <xsl:when test="vf:XMLunwrapped($themodelname)">
+                  <xsl:value-of select="concat(name, ': List[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,$wrapper,$fmtpart,'}, default_factory=list)')"/>
+              </xsl:when>
+              <xsl:otherwise>
+                  <xsl:value-of select="concat(name, ': List[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,$wrapper,$fmtpart,'}, default_factory=list)')"/>
+              </xsl:otherwise>
+          </xsl:choose>
+
         </xsl:when>
         <xsl:when test="vf:isOptional(.)">
           <xsl:value-of select="concat(name, ': Optional[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,$fmtpart,'}, default=None)')"/>
@@ -369,8 +377,15 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
     <xsl:call-template name="vodmlAnnotation"/>
     <xsl:text>
     </xsl:text>
-    <xsl:value-of select="concat(name, ': List[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,vf:lowerFirst($type),$sq,', ',$sq,'wrapper',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,'}, default_factory=list)')"/>
-    <xsl:text>
+      <xsl:choose>
+      <xsl:when test="vf:XMLunwrapped($themodelname)">
+          <xsl:value-of select="concat(name, ': List[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,vf:lowerFirst(name),$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,'}, default_factory=list)')"/>
+      </xsl:when>
+      <xsl:otherwise>
+         <xsl:value-of select="concat(name, ': List[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,vf:lowerFirst($type),$sq,', ',$sq,'wrapper',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,'}, default_factory=list)')"/>
+      </xsl:otherwise>
+      </xsl:choose>
+      <xsl:text>
     """
     *
     * Composition </xsl:text><xsl:value-of select="name"/><xsl:text> : ( Multiplicity : </xsl:text><xsl:apply-templates select="multiplicity" mode="tostring"/><xsl:text>)
