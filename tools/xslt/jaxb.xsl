@@ -151,7 +151,7 @@
 
     </xsl:template>
   <!-- reference resolved via JAXB -->
-  <xsl:template match="reference" mode="JAXBAnnotation">
+  <xsl:template match="reference[multiplicity/maxOccurs = 1]" mode="JAXBAnnotation">
       <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
       <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref)">
           <xsl:value-of select="$jsontypinfo"/>
@@ -159,10 +159,23 @@
     @jakarta.xml.bind.annotation.XmlIDREF
   </xsl:template>
 
-  <xsl:template match="reference" mode="JAXBAnnotation_reference">
-    <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
-    @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = Reference.class)
-  </xsl:template>
+    <xsl:template match="reference[multiplicity/maxOccurs != 1]" mode="JAXBAnnotation">
+        <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
+        <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref)">
+            <xsl:value-of select="$jsontypinfo"/>
+        </xsl:if>
+        <xsl:choose>
+            <xsl:when test="vf:XMLunwrapped(current()/ancestor-or-self::vo-dml:model/name)">
+                @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+            </xsl:when>
+            <xsl:otherwise>
+                @jakarta.xml.bind.annotation.XmlElementWrapper( name = "<xsl:value-of select="name"/>")
+                @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="vf:lowerFirst($models/key('ellookup',current()/datatype/vodml-ref)/name)"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+            </xsl:otherwise>
+        </xsl:choose>
+        @jakarta.xml.bind.annotation.XmlIDREF
+    </xsl:template>
+
 
   <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="JAXBAnnotation">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>

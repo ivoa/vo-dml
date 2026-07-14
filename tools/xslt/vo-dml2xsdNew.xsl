@@ -461,7 +461,7 @@ note that this schema is substantially different from the era when this code was
   </xsl:template>
 
 
-  <xsl:template match="reference" >
+  <xsl:template match="reference[multiplicity/maxOccurs =1 or(multiplcity/maxOccurs != 1 and vf:XMLunwrapped($modelname))]" >
     <xsl:comment><xsl:text>this is a reference</xsl:text></xsl:comment>
     <xsd:element>
 
@@ -475,6 +475,25 @@ note that this schema is substantially different from the era when this code was
     </xsd:element>
   </xsl:template>
 
+  <xsl:template match="reference[multiplicity/maxOccurs != 1 and not(vf:XMLunwrapped($modelname))]" >
+    <xsl:comment><xsl:text>this is a reference</xsl:text></xsl:comment>
+    <xsd:element>
+      <xsl:attribute name="name" >
+        <xsl:value-of select="name"/>
+      </xsl:attribute>
+      <xsd:complexType>
+        <xsd:sequence>
+          <xsd:element>
+            <xsl:attribute name="name" >
+              <xsl:value-of select="vf:lowerFirst($models/key('ellookup',current()/datatype/vodml-ref)/name)"/>
+            </xsl:attribute>
+            <xsl:attribute name="type" >xsd:IDREF</xsl:attribute>
+            <xsl:apply-templates select="multiplicity"/>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:element>
+  </xsl:template>
 
   <xsl:template match="attribute" mode="declare">
 

@@ -2,17 +2,20 @@
   "LifecycleTestModel" : {
     "refs" : {
       "referredTo" : [ {
-        "_id" : 1013,
+        "_id" : 1005,
+        "test1" : 4
+      }, {
+        "_id" : 1004,
         "test1" : 3
       } ]
     },
     "aTest3" : [ ],
     "aTest2" : [ {
       "_id" : 0,
-      "refagg" : [ 1013 ],
+      "refagg" : [ 1004, 1005 ],
       "atest" : {
         "_id" : 0,
-        "ref1" : 1013,
+        "ref1" : 1004,
         "contained" : [ {
           "_id" : 0,
           "test2" : "firstcontained"
@@ -21,18 +24,18 @@
           "test2" : "secondContained"
         } ],
         "refandcontained" : [ {
-          "_id" : 1014,
+          "_id" : 1006,
           "test3" : "rc1"
         }, {
-          "_id" : 1015,
+          "_id" : 1007,
           "test3" : "rc2"
         } ],
         "contained2" : {
           "_id" : 0,
-          "lowr" : 1014
+          "lowr" : 1006
         }
       },
-      "refcont" : 1014
+      "refcont" : 1006
     } ]
   }
 }

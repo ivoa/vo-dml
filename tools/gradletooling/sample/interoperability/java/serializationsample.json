@@ -2,7 +2,7 @@
   "MyModelModel" : {
     "refs" : {
       "refa" : [ {
-        "_id" : 1044,
+        "_id" : 1049,
         "val" : "urn:value"
       } ],
       "refb" : [ {
@@ -12,9 +12,8 @@
     },
     "someContent" : [ {
       "_id" : 0,
-      "ref1" : 1044,
+      "ref1" : 1049,
       "ref2" : "naturalkey",
-      "zval" : [ "some", "z", "values" ],
       "con" : [ {
         "MyModel:types.Dcont" : {
           "_id" : 0,
@@ -28,7 +27,8 @@
           "evalue" : "cube"
         }
       } ],
-      "uri" : "urn:uri"
+      "uri" : "urn:uri",
+      "zvals" : [ "some", "z", "values" ]
     } ]
   }
 }
