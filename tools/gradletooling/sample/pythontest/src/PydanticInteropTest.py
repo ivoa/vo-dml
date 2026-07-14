@@ -212,23 +212,23 @@ class SampleModelInteropTest(unittest.TestCase):
     # ------------------------------------------------------------------
 
     def test_json_serialise(self):
-        json_str = self.model.model_dump_json(indent=2)
+        json_str = self.model.to_xsjson(pretty_print=True)
         _write("sample.json", json_str)
 
         data = json.loads(json_str)
-        self.assertEqual(data["sourceCatalogue"][0]["name"], "testCat")
-        entry = data["sourceCatalogue"][0]["entry"][0]
+        self.assertEqual(data["SampleModel"]["sourceCatalogue"][0]["name"], "testCat")
+        entry = data["SampleModel"]["sourceCatalogue"][0]["entry"][0]["sample:catalog.SDSSSource"]
         self.assertEqual(entry["name"], "testSource")
         self.assertEqual(entry["position"]["frame"], "J2000")
         self.assertEqual(len(entry["luminosity"]), 2)
-        self.assertAlmostEqual(entry["position"]["longitude"]["value"], 2.5)
-        self.assertEqual(data["photometricSystem"][0]["photometryFilter"][1]["name"], "L-Band")
+        self.assertAlmostEqual(entry["position"]["longitude"]["ivoa:RealQuantity"]["value"], 2.5)
+        self.assertEqual(data["SampleModel"]["photometricSystem"][0]["photometryFilter"][1]["name"], "L-Band")
 
     def test_json_round_trip(self):
         recovered = SampleModel.model_validate_json(self.model.model_dump_json())
         self.assertEqual(recovered.sourceCatalogue[0].name, "testCat")
         self.assertEqual(recovered.sourceCatalogue[0].entry[0].name, "testSource")
-        self.assertEqual(recovered.refs.skyCoordinateFrame[0].name, "J2000")
+        self.assertEqual(recovered.refs.catalog_SkyCoordinateFrame[0].name, "J2000")
 
     def test_xml_serialise(self):
         xml_bytes = self.model.full_model_to_xml(pretty_print=True)
@@ -267,9 +267,10 @@ class LifecycleModelInteropTest(unittest.TestCase):
             ReferredTo,
         )
         #FIXME really need to add equivalent of the java processReferences() runtime functionality to set up the ids for references - and make tests not dependent on the exact values...
-        ref1 = ReferredTo(id="lifecycleTest-ReferredTo_1013", test1=3)
-        rc1 = ReferredLifeCycle(id="lifecycleTest-ReferredLifeCycle_1014", test3="rc1")
-        rc2 = ReferredLifeCycle(id="lifecycleTest-ReferredLifeCycle_1015", test3="rc2")
+        ref1 = ReferredTo(id="lifecycleTest-ReferredTo_1000", test1=3)
+        ref2 = ReferredTo(id="lifecycleTest-ReferredTo_1001", test1=4)
+        rc1 = ReferredLifeCycle(id="lifecycleTest-ReferredLifeCycle_1002", test3="rc1")
+        rc2 = ReferredLifeCycle(id="lifecycleTest-ReferredLifeCycle_1003", test3="rc2")
         atest = ATest(
             ref1=ref1,
             contained=[
@@ -279,8 +280,8 @@ class LifecycleModelInteropTest(unittest.TestCase):
             refandcontained=[rc1, rc2],
             contained2=ATest4(lowr=rc1),
         )
-        top = ATest2(atest=atest, refcont=rc1, refagg=[ref1])
-        cls.model=LifecycleTestModel(aTest2=[top],refs=LifecycleTestRefs(referredTo=[ref1]))
+        top = ATest2(atest=atest, refcont=rc1, refagg=[ref1, ref2])
+        cls.model=LifecycleTestModel(aTest2=[top],refs=LifecycleTestRefs(referredTo=[ref1, ref2]))
         print(f"LifecycleModelInteropTest: setUpClass created model {cls.model}")
 
     def test_json_serialise(self):
@@ -288,16 +289,16 @@ class LifecycleModelInteropTest(unittest.TestCase):
         _write("lifecycle.json", json_str)
 
         data = json.loads(json_str)
-        self.assertEqual(data["refs"]["referredTo"][0]["test1"], 3)
-        atest2 = data["aTest2"][0]
-        self.assertEqual(atest2["refcont"], "lifecycleTest-ReferredLifeCycle_1014")
+        self.assertEqual(data["LifecycleTestModel"]["refs"]["referredTo"][0]["test1"], 3)
+        atest2 = data["LifecycleTestModel"]["aTest2"][0]
+        self.assertEqual(atest2["refcont"], "lifecycleTest-ReferredLifeCycle_1002")
         self.assertEqual(len(atest2["atest"]["contained"]), 2)
         self.assertEqual(atest2["atest"]["refandcontained"][1]["test3"], "rc2")
 
     def test_json_round_trip(self):
         recovered = LifecycleTestModel.model_validate_json(self.model.model_dump_json())
         self.assertEqual(recovered.aTest2[0].atest.contained[0].test2, "firstcontained")
-        self.assertEqual(recovered.aTest2[0].refcont, "lifecycleTest-ReferredLifeCycle_1014")
+        self.assertEqual(recovered.aTest2[0].refcont.id, "lifecycleTest-ReferredLifeCycle_1002")
 
     def test_xml_serialise(self):
         xml_bytes = self.model.full_model_to_xml(pretty_print=True)
@@ -307,13 +308,13 @@ class LifecycleModelInteropTest(unittest.TestCase):
         self.assertEqual(_local_name(root.tag), "lifecycleTestModel")
         atest2 = _find_first(root, "aTest2")
         self.assertIsNotNone(atest2)
-        self.assertEqual(_first_child_text(atest2, "refcont"), "lifecycleTest-ReferredLifeCycle_1014")
+        self.assertEqual(_first_child_text(atest2, "refcont"), "lifecycleTest-ReferredLifeCycle_1002")
         self.assertIn("firstcontained", "".join(el.text or "" for el in root.iter() if _local_name(el.tag) == "test2"))
 
     def test_read_java_serialization_xml(self):
         recovered = LifecycleTestModel.from_xml( _read_java_file_as_bytes("lifecycle.xml"))
         self.assertEqual(len(recovered.aTest2[0].atest.contained), 2)
-        self.assertEqual(recovered.aTest2[0].atest.contained2.lowr.id, "lifecycleTest-ReferredLifeCycle_1014")
+        self.assertEqual(recovered.aTest2[0].atest.contained2.lowr.id, "lifecycleTest-ReferredLifeCycle_1002")
         self.assertEqual(recovered, self.model)
 
 
@@ -354,11 +355,11 @@ class SerializationExampleInteropTest(unittest.TestCase):
         _write("serializationsample.json", json_str)
 
         data = json.loads(json_str)
-        self.assertEqual(data["refs"]["refa"][0]["id"], "MyModel-Refa_1000")
-        content = data["someContent"][0]
+        self.assertEqual(data["MyModelModel"]["refs"]["refa"][0]["_id"], "MyModel-Refa_1000")
+        content = data["MyModelModel"]["someContent"][0]
         self.assertEqual(content["ref1"], "MyModel-Refa_1000")
         self.assertEqual(content["ref2"], "naturalkey")
-        self.assertEqual(content["zval"], ["some", "z", "values"])
+        self.assertEqual(content["zvals"], ["some", "z", "values"])
         self.assertEqual(len(content["con"]), 2)
 
     def test_json_round_trip(self):
@@ -469,13 +470,13 @@ class JpatestModelInteropTest(unittest.TestCase):
         )
 
     def test_json_serialise(self):
-        json_str = self.model.model_dump_json(indent=2)
+        json_str = self.model.to_xsjson(pretty_print=True)
         _write("jpatest.json", json_str)
 
         data = json.loads(json_str)
-        self.assertEqual(data["refs"]["refbase"][2]["ival"], 3)
-        parent = data["parent"][0]
-        self.assertEqual(parent["dval"]["dref"], "jpatest-ReferredTo3_1002")
+        self.assertEqual(data["JpatestModel"]["refs"]["refbase"][0]["jpatest:ReferredTo3"]["ival"], 3)
+        parent = data["JpatestModel"]["parent"][0]["jpatest:Parent"]
+        self.assertEqual(parent["dval"]["jpatest:ADtype"]["dref"], "jpatest-ReferredTo3_1002")
         self.assertEqual(parent["rval"], "jpatest-ReferredTo1_1003")
         self.assertEqual(parent["cval"]["rval"], "jpatest-ReferredTo2_1004")
         self.assertEqual([child["sval"] for child in parent["lval"]], ["First", "Second", "Third"])
@@ -487,7 +488,7 @@ class JpatestModelInteropTest(unittest.TestCase):
         self.assertEqual(parent.dval.intatt, "intatt")
         self.assertEqual(parent.eval.intatt, "intatt_e")
         self.assertEqual(parent.tval.p.x, 1.5)
-        self.assertEqual(parent.cval.rval, "jpatest-ReferredTo2_1004")
+        self.assertEqual(parent.cval.rval.id, "jpatest-ReferredTo2_1004")
 
     def test_xml_serialise(self):
         xml_bytes = self.model.full_model_to_xml(pretty_print=True)
@@ -519,19 +520,19 @@ class PythonNonModelReadTest(unittest.TestCase):
 
     def test_sample_json_source_catalogue(self):
         data = _read_json("sample.json")
-        self.assertIn("sourceCatalogue", data)
-        self.assertIn("photometricSystem", data)
+        self.assertIn("sourceCatalogue", data["SampleModel"])
+        self.assertIn("photometricSystem", data["SampleModel"])
 
-        catalogue = data["sourceCatalogue"][0]
+        catalogue = data["SampleModel"]["sourceCatalogue"][0]
         self.assertEqual(catalogue["name"], "testCat")
-        entry = catalogue["entry"][0]
+        entry = catalogue["entry"][0]["sample:catalog.SDSSSource"]
         self.assertEqual(entry["name"], "testSource")
         self.assertEqual(entry["classification"], "AGN")
         self.assertEqual(entry["position"]["frame"], "J2000")
 
     def test_sample_json_photometric_system(self):
         data = _read_json("sample.json")
-        ps = data["photometricSystem"][0]
+        ps = data["SampleModel"]["photometricSystem"][0]
         self.assertEqual(ps["detectorType"], 1)
         names = [item["name"] for item in ps["photometryFilter"]]
         self.assertEqual(names, ["C-Band", "L-Band"])
@@ -549,23 +550,23 @@ class PythonNonModelReadTest(unittest.TestCase):
 
     def test_lifecycle_json_atest2(self):
         data = _read_json("lifecycle.json")
-        atest2 = data["aTest2"][0]
-        self.assertEqual(atest2["refagg"], ["lifecycleTest-ReferredTo_1011"])
+        atest2 = data["LifecycleTestModel"]["aTest2"][0]
+        self.assertEqual(atest2["refagg"], ["lifecycleTest-ReferredTo_1000","lifecycleTest-ReferredTo_1001"])
         self.assertEqual(len(atest2["atest"]["contained"]), 2)
-        self.assertEqual(atest2["atest"]["contained2"]["lowr"], "lifecycleTest-ReferredLifeCycle_1012")
+        self.assertEqual(atest2["atest"]["contained2"]["lowr"], "lifecycleTest-ReferredLifeCycle_1002")
 
     def test_lifecycle_xml_atest2(self):
         root = _read_xml_root("lifecycle.xml")
         atest2 = _find_first(root, "aTest2")
         self.assertIsNotNone(atest2)
-        self.assertEqual(_first_child_text(atest2, "refcont"), "lifecycleTest-ReferredLifeCycle_1014")
+        self.assertEqual(_first_child_text(atest2, "refcont"), "lifecycleTest-ReferredLifeCycle_1002")
         contained_values = [el.text for el in root.iter() if _local_name(el.tag) == "test2"]
         self.assertEqual(contained_values, ["firstcontained", "secondContained"])
 
     def test_serializationsample_json_somecontent(self):
         data = _read_json("serializationsample.json")
-        content = data["someContent"][0]
-        self.assertEqual(content["zval"], ["some", "z", "values"])
+        content = data["MyModelModel"]["someContent"][0]
+        self.assertEqual(content["zvals"], ["some", "z", "values"])
         self.assertEqual(content["ref1"], "MyModel-Refa_1000")
         self.assertEqual(content["ref2"], "naturalkey")
         self.assertEqual(len(content["con"]), 2)
@@ -580,9 +581,9 @@ class PythonNonModelReadTest(unittest.TestCase):
 
     def test_jpatest_json_parent(self):
         data = _read_json("jpatest.json")
-        parent = data["parent"][0]
-        self.assertEqual(parent["dval"]["dvals"], "astring")
-        self.assertEqual(parent["eval"]["evals"], "evals")
+        parent = data["JpatestModel"]["parent"][0]["jpatest:Parent"]
+        self.assertEqual(parent["dval"]["jpatest:ADtype"]["dvals"], "astring")
+        self.assertEqual(parent["eval"]["jpatest:AEtype"]["evals"], "evals")
         self.assertEqual(parent["cval"]["rval"], "jpatest-ReferredTo2_1004")
         self.assertEqual(parent["tval"]["dt"], "thing")
 

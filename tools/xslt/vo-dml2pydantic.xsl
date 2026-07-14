@@ -159,8 +159,12 @@ import xsdata_pydantic.hooks.class_type  # register pydantic support with xsdata
     class Meta:
         name = "</xsl:text><xsl:value-of select="vf:jaxbType($vodml-ref)"/><xsl:text>"
         namespace = "</xsl:text><xsl:value-of select="$ns"/><xsl:text>"
+</xsl:text>
+<xsl:if test="extends or vf:hasSubTypes($vodml-ref)">
+<xsl:text>
         utype = "</xsl:text><xsl:value-of select="vf:utype($vodml-ref)"/><xsl:text>"
 </xsl:text>
+</xsl:if>
         <xsl:variable name="keys" select="vf:keynames($vodml-ref)"/>
         <xsl:if test="count($keys) gt 0">
         <xsl:text>
@@ -179,7 +183,7 @@ import xsdata_pydantic.hooks.class_type  # register pydantic support with xsdata
     """
 </xsl:text>
     <xsl:if test="vf:referredTo($vodml-ref) and not(attribute/constraint[ends-with(@xsi:type,':NaturalKey')]) and not(extends)">
-    <xsl:text>    id: Optional[str] = xsfield({'type': 'Attribute', 'name': '_id'}, default=None)  # surrogate identifier for XML IDREF resolution
+    <xsl:text>    id: Optional[str|int] = xsfield({'type': 'Attribute', 'name': '_id'}, default=None)  # surrogate identifier for XML IDREF resolution (allowing str or int for now)
 </xsl:text>
     </xsl:if>
 
@@ -213,10 +217,15 @@ import xsdata_pydantic.hooks.class_type  # register pydantic support with xsdata
     class Meta:
         name = "</xsl:text><xsl:value-of select="vf:jaxbType($vodml-ref)"/><xsl:text>"
         namespace = "</xsl:text><xsl:value-of select="$ns"/><xsl:text>"
-        utype = "</xsl:text><xsl:value-of select="vf:utype($vodml-ref)"/><xsl:text>"
-
 </xsl:text>
-    <xsl:text>    """
+      <xsl:if test="extends or vf:hasSubTypes($vodml-ref)">
+      <xsl:text>
+        utype = "</xsl:text><xsl:value-of select="vf:utype($vodml-ref)"/><xsl:text>"
+      </xsl:text>
+</xsl:if>
+
+    <xsl:text>
+    """
     * </xsl:text><xsl:apply-templates select="." mode="desc"/><xsl:text>
     *
     * </xsl:text><xsl:value-of select="name()"/><xsl:text>: </xsl:text><xsl:value-of select="name"/><xsl:text>
@@ -315,7 +324,7 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
           <!-- list-valued attribute -->
           <xsl:choose>
               <xsl:when test="vf:XMLunwrapped($themodelname)">
-                  <xsl:value-of select="concat(name, ': List[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,$wrapper,$fmtpart,'}, default_factory=list)')"/>
+                  <xsl:value-of select="concat(name, ': List[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,$fmtpart,'}, default_factory=list)')"/>
               </xsl:when>
               <xsl:otherwise>
                   <xsl:value-of select="concat(name, ': List[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,$wrapper,$fmtpart,'}, default_factory=list)')"/>
@@ -430,7 +439,16 @@ class </xsl:text><xsl:value-of select="name"/><xsl:text>(_VodmlXmlBase):
     </xsl:text>
     <xsl:choose>
       <xsl:when test="multiplicity/maxOccurs != 1"><!-- FIXME the type of the reference key needs to be correct - not always string - most often integer in fact-->
-        <xsl:value-of select="concat(name, ': List[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,', ',$sq,'idref',$sq,':True}, default_factory=list)')"/>
+
+          <xsl:choose>
+              <xsl:when test="vf:XMLunwrapped($themodelname)">
+                  <xsl:value-of select="concat(name, ': List[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,', ',$sq,'idref',$sq,':True}, default_factory=list)')"/>
+              </xsl:when>
+          <xsl:otherwise>
+              <xsl:variable name="wrapper" select="concat(',',$sq,'wrapper',$sq,':',$sq,name,$sq)"/>
+              <xsl:value-of select="concat(name, ': List[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,vf:lowerFirst($type),$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,$wrapper,', ',$sq,'idref',$sq,':True}, default_factory=list)')"/>
+          </xsl:otherwise>
+          </xsl:choose>
       </xsl:when>
       <xsl:when test="vf:isOptional(.)">
         <xsl:value-of select="concat(name, ': Optional[', $type, '] = xsfield({',$sq,'type',$sq,': ',$sq,'Element',$sq,', ',$sq,'name',$sq,': ',$sq,name,$sq,', ',$sq,'namespace',$sq,': ',$sq,$sq,', ',$sq,'idref',$sq,':True}, default=None)')"/>
@@ -501,6 +519,7 @@ class </xsl:text><xsl:value-of select="$modelClass"/><xsl:text>(_VodmlXmlBase):
     class Meta:
         name = "</xsl:text><xsl:value-of select="$rootTag"/><xsl:text>"
         namespace = "</xsl:text><xsl:value-of select="$rootNs"/><xsl:text>"
+        utype = "</xsl:text><xsl:value-of select="concat(vf:upperFirst(name),'Model')"/><xsl:text>"
     refs: Optional[</xsl:text><xsl:value-of select="$refsClass"/><xsl:text>] = xsfield({'type': 'Element', 'name': 'refs', 'namespace': ''}, default=None)
 </xsl:text>
     <xsl:for-each select="$contentTypes">

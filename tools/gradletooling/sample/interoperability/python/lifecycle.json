@@ -1,43 +1,50 @@
 {
-  "refs": {
-    "referredTo": [
+  "LifecycleTestModel": {
+    "refs": {
+      "referredTo": [
+        {
+          "_id": "lifecycleTest-ReferredTo_1000",
+          "test1": 3
+        },
+        {
+          "_id": "lifecycleTest-ReferredTo_1001",
+          "test1": 4
+        }
+      ]
+    },
+    "aTest3": [],
+    "aTest2": [
       {
-        "id": "lifecycleTest-ReferredTo_1011",
-        "test1": 3
+        "refagg": [
+          "lifecycleTest-ReferredTo_1000",
+          "lifecycleTest-ReferredTo_1001"
+        ],
+        "atest": {
+          "ref1": "lifecycleTest-ReferredTo_1000",
+          "contained": [
+            {
+              "test2": "firstcontained"
+            },
+            {
+              "test2": "secondContained"
+            }
+          ],
+          "refandcontained": [
+            {
+              "_id": "lifecycleTest-ReferredLifeCycle_1002",
+              "test3": "rc1"
+            },
+            {
+              "_id": "lifecycleTest-ReferredLifeCycle_1003",
+              "test3": "rc2"
+            }
+          ],
+          "contained2": {
+            "lowr": "lifecycleTest-ReferredLifeCycle_1002"
+          }
+        },
+        "refcont": "lifecycleTest-ReferredLifeCycle_1002"
       }
     ]
-  },
-  "aTest2": [
-    {
-      "atest": {
-        "ref1": "lifecycleTest-ReferredTo_1011",
-        "contained2": {
-          "lowr": "lifecycleTest-ReferredLifeCycle_1012"
-        },
-        "contained": [
-          {
-            "test2": "firstcontained"
-          },
-          {
-            "test2": "secondContained"
-          }
-        ],
-        "refandcontained": [
-          {
-            "id": "lifecycleTest-ReferredLifeCycle_1012",
-            "test3": "rc1"
-          },
-          {
-            "id": "lifecycleTest-ReferredLifeCycle_1013",
-            "test3": "rc2"
-          }
-        ]
-      },
-      "refcont": "lifecycleTest-ReferredLifeCycle_1012",
-      "refagg": [
-        "lifecycleTest-ReferredTo_1011"
-      ]
-    }
-  ],
-  "aTest3": []
+  }
 }
