@@ -81,7 +81,12 @@ class DictEncoder:
             return self.dict_factory(((var.local_name, self.encode(value, var, True)),))
 
         if self.context.class_type.is_model(value):
-            return self.dict_factory(self.next_value(value))
+            polymorphic_count = sum(1 for b in value.__class__.__mro__ if hasattr(b, 'Meta') and hasattr(b.Meta, 'utype'))
+            encoded = self.dict_factory(self.next_value(value))
+            if polymorphic_count > 0:
+                utype = value.__class__.Meta.utype
+                return self.dict_factory(((utype, encoded),))
+            return encoded
 
         if collections.is_array(value):
             return type(value)(self.encode(val, var, wrapped) for val in value)
@@ -109,11 +114,15 @@ class DictEncoder:
         for var in meta.get_all_vars():
             value = getattr(obj, var.name)
             if (
-                not var.is_attribute
-                or not ignore_optionals
+                not ignore_optionals
                 or not var.is_optional(value)
             ):
+                name = var.name
+                if name == "id": # this is kludge!
+                    name = "_id"
+
                 if var.wrapper:
-                    yield var.wrapper, self.encode(value, var)
+                    yield var.wrapper, self.encode(value, var, True)
                 else:
-                    yield var.local_name, self.encode(value, var)
+                    yield name, self.encode(value, var)
+

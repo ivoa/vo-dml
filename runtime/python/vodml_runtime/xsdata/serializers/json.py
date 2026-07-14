@@ -4,6 +4,8 @@ from dataclasses import dataclass, field
 from io import StringIO
 from typing import Any, TextIO
 
+from xsdata.formats.dataclass.models.elements import XmlVar
+
 from vodml_runtime.xsdata.serializers import DictEncoder
 
 
@@ -40,4 +42,7 @@ class JsonSerializer(DictEncoder):
             out: The output text stream
             obj: The input model instance to serialize
         """
-        self.dump_factory(self.encode(obj), out, indent=self.config.indent)
+        if hasattr(obj, "Meta"):
+            self.dump_factory(self.dict_factory(((obj.Meta.utype, self.encode(obj)), )), out, indent=self.config.indent)
+        else:
+            self.dump_factory(self.encode(obj), out, indent=self.config.indent)
