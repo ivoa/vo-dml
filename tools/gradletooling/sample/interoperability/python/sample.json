@@ -13,6 +13,7 @@
     "astroObject": [],
     "photometricSystem": [
       {
+        "_id": null,
         "description": "test photometric system",
         "detectorType": 1,
         "photometryFilter": [
@@ -55,10 +56,12 @@
     ],
     "sourceCatalogue": [
       {
+        "_id": null,
         "name": "testCat",
         "entry": [
           {
             "sample:catalog.SDSSSource": {
+              "_id": null,
               "label": "cepheid",
               "name": "testSource",
               "description": null,
@@ -90,6 +93,7 @@
               "classification": "AGN",
               "luminosity": [
                 {
+                  "_id": null,
                   "value": {
                     "ivoa:RealQuantity": {
                       "unit": {
@@ -111,6 +115,7 @@
                   "filter": "filter-PhotometryFilter_1034"
                 },
                 {
+                  "_id": null,
                   "value": {
                     "ivoa:RealQuantity": {
                       "unit": {

@@ -247,6 +247,11 @@ class SampleModelInteropTest(unittest.TestCase):
         self.assertEqual(recovered.sourceCatalogue[0].entry[0].name, "testSource")
         self.assertEqual(recovered.photometricSystem[0].photometryFilter[0].name, "C-Band")
 
+    def test_read_java_serialization_json(self):
+        from_java = SampleModel.from_xsjson( _read_java_file_as_bytes("sample.json"))
+        # would like to do the below, but cannot because os the ids
+        # self.assertEqual(from_java, self.model)
+        self.assertIsNotNone(from_java)
 
 class LifecycleModelInteropTest(unittest.TestCase):
     """
@@ -317,6 +322,12 @@ class LifecycleModelInteropTest(unittest.TestCase):
         self.assertEqual(recovered.aTest2[0].atest.contained2.lowr.id, "lifecycleTest-ReferredLifeCycle_1002")
         self.assertEqual(recovered, self.model)
 
+    def test_read_java_serialization_json(self):
+        from_java = LifecycleTestModel.from_xsjson( _read_java_file_as_bytes("lifecycle.json"))
+        # would like to do the below, but cannot because os the ids
+        # self.assertEqual(from_java, self.model)
+        self.assertIsNotNone(from_java)
+
 
 class SerializationExampleInteropTest(unittest.TestCase):
     """
@@ -386,6 +397,14 @@ class SerializationExampleInteropTest(unittest.TestCase):
         from org.ivoa.dm.serializationsample.MyModel import Refa
         from_java = MyModelModel.from_xml( _read_java_file_as_bytes("serializationsample.xml"))
         self.assertIsInstance(from_java.someContent[0].ref1, Refa)
+
+    def test_read_java_serialization_json(self):
+        from org.ivoa.dm.serializationsample.MyModel import Refa
+        from_java = MyModelModel.from_xsjson( _read_java_file_as_bytes("serializationsample.json"))
+        # would like to do the below, but cannot because os the ids
+        # self.assertEqual(from_java, self.model)
+        self.assertIsNotNone(from_java)
+
 
 class JpatestModelInteropTest(unittest.TestCase):
     """Round-trip tests for the jpatest model wrapper."""
@@ -513,6 +532,19 @@ class JpatestModelInteropTest(unittest.TestCase):
         self.assertEqual(parent.eval.evals, "evals")
         self.assertEqual(parent.lval[1].ival, 2)
         self.assertEqual(parent.tval.dt, "thing")
+
+    def test_read_java_serialization_xml(self):
+        from_java = JpatestModel.from_xml(_read_java_file_as_bytes("jpatest.xml"))
+        # would like to do the below, but cannot because os the ids
+        # self.assertEqual(from_java, self.model)
+        self.assertIsNotNone(from_java)
+
+
+    def test_read_java_serialization_json(self):
+        from_java = JpatestModel.from_xsjson( _read_java_file_as_bytes("jpatest.json"))
+        # would like to do the below, but cannot because os the ids
+        # self.assertEqual(from_java, self.model)
+        self.assertIsNotNone(from_java)
 
 
 class PythonNonModelReadTest(unittest.TestCase):

@@ -5,8 +5,10 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
-from xsdata.formats.dataclass.parsers import DictDecoder
+from xsdata.exceptions import ParserError
 from xsdata.formats.types import T
+
+from vodml_runtime.xsdata.parsers.dict import DictDecoder, _utype_of
 
 
 @dataclass
@@ -66,11 +68,8 @@ class JsonParser(DictDecoder):
         """
         return self.parse(io.BytesIO(source), clazz)
 
-    def parse(self, source: Any, clazz: type[T] | None = None) -> T:
+    def parse(self, source: Any, clazz: type[T] ) -> T:
         """Parse the input stream into the target class type.
-
-        If no clazz is provided, the binding context will try
-        to locate it from imported dataclasses.
 
         Args:
             source: The source file name or stream to parse
@@ -80,7 +79,15 @@ class JsonParser(DictDecoder):
             An instance of the specified class representing the parsed content.
         """
         data = self.load_json(source)
-        return self.decode(data, clazz)
+        if len(data) == 1:
+            inner = data.get(_utype_of(clazz),None)
+            if inner is not None:
+                return self.decode(inner, clazz)
+            else:
+                raise ParserError(f"The input JSON data's root key '{key}' does not match the expected utype '{_utype_of(clazz)}' for the target class type '{clazz.__name__}'.")
+        else:
+            raise ParserError("The input JSON data must contain exactly one object to parse into the target class type.")
+
 
     def load_json(self, source: Any) -> dict | list:
         """Load the given json source filename or stream.

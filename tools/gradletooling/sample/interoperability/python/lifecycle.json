@@ -15,17 +15,21 @@
     "aTest3": [],
     "aTest2": [
       {
+        "_id": null,
         "refagg": [
           "lifecycleTest-ReferredTo_1000",
           "lifecycleTest-ReferredTo_1001"
         ],
         "atest": {
+          "_id": null,
           "ref1": "lifecycleTest-ReferredTo_1000",
           "contained": [
             {
+              "_id": null,
               "test2": "firstcontained"
             },
             {
+              "_id": null,
               "test2": "secondContained"
             }
           ],
@@ -40,6 +44,7 @@
             }
           ],
           "contained2": {
+            "_id": null,
             "lowr": "lifecycleTest-ReferredLifeCycle_1002"
           }
         },

@@ -20,6 +20,7 @@
     },
     "someContent": [
       {
+        "_id": null,
         "ref1": "MyModel-Refa_1000",
         "ref2": "naturalkey",
         "zvals": [
@@ -30,12 +31,14 @@
         "con": [
           {
             "MyModel:types.Dcont": {
+              "_id": null,
               "bname": "dval",
               "dval": "N1"
             }
           },
           {
             "MyModel:types.Econt": {
+              "_id": null,
               "bname": "eval",
               "evalue": "cube"
             }

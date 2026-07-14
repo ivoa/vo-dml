@@ -1,7 +1,10 @@
 #  Copyright (c) 2026. Paul Harrison, University of Manchester
 from pydantic import BaseModel, ConfigDict, field_serializer
 from xsdata.formats.dataclass.context import XmlContext
+from xsdata.formats.dataclass.parsers.config import ParserConfig
 from xsdata.formats.dataclass.serializers import XmlSerializer
+
+from vodml_runtime.xsdata.parsers.json import JsonParser
 from vodml_runtime.xsdata.serializers import JsonSerializer
 from xsdata.formats.dataclass.serializers.config import SerializerConfig
 from xsdata.formats.dataclass.parsers import XmlParser
@@ -27,3 +30,8 @@ class _VodmlXmlBase(BaseModel):
         config = SerializerConfig(indent="  " if pretty_print else None)
         ctx = XmlContext(class_type="pydantic")
         return JsonSerializer(config=config, context=ctx).render(self).encode("utf-8")
+
+    @classmethod
+    def from_xsjson(cls, json_bytes: bytes):
+        ctx = XmlContext(class_type="pydantic")
+        return JsonParser(config=ParserConfig(), context=ctx).from_bytes(json_bytes,cls)

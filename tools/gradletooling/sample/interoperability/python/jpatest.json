@@ -33,6 +33,7 @@
     "parent": [
       {
         "jpatest:Parent": {
+          "_id": null,
           "dval": {
             "jpatest:ADtype": {
               "basestr": "base",
@@ -53,18 +54,22 @@
           },
           "rval": "jpatest-ReferredTo1_1003",
           "cval": {
+            "_id": null,
             "rval": "jpatest-ReferredTo2_1004"
           },
           "lval": [
             {
+              "_id": null,
               "sval": "First",
               "ival": 1
             },
             {
+              "_id": null,
               "sval": "Second",
               "ival": 2
             },
             {
+              "_id": null,
               "sval": "Third",
               "ival": 3
             }
@@ -80,6 +85,7 @@
       },
       {
         "jpatest:Sub": {
+          "_id": null,
           "dval": {
             "jpatest:ADtype": {
               "basestr": "base",
@@ -100,18 +106,22 @@
           },
           "rval": "jpatest-ReferredTo1_1003",
           "cval": {
+            "_id": null,
             "rval": "jpatest-ReferredTo2_1004"
           },
           "lval": [
             {
+              "_id": null,
               "sval": "First",
               "ival": 1
             },
             {
+              "_id": null,
               "sval": "Second",
               "ival": 2
             },
             {
+              "_id": null,
               "sval": "Third",
               "ival": 3
             }
