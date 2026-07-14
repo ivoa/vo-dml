@@ -141,6 +141,7 @@
                             <xsl:otherwise>
                                 @jakarta.xml.bind.annotation.XmlElementWrapper( name = "<xsl:value-of select="concat(name,'s')"/>")
                                 @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+                                @com.fasterxml.jackson.annotation.JsonProperty("<xsl:value-of select="concat(name,'s')"/>")
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:otherwise>
