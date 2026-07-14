@@ -182,20 +182,24 @@ import xsdata_pydantic.hooks.class_type  # register pydantic support with xsdata
     * </xsl:text><xsl:value-of select="$vodmlauthor"/><xsl:text>
     """
 </xsl:text>
-    <xsl:if test="vf:referredTo($vodml-ref) and not(attribute/constraint[ends-with(@xsi:type,':NaturalKey')]) and not(extends)">
-    <xsl:text>    id: Optional[str|int] = xsfield({'type': 'Attribute', 'name': '_id'}, default=None)  # surrogate identifier for XML IDREF resolution (allowing str or int for now)
+      <xsl:choose>
+          <xsl:when test="vf:referredTo($vodml-ref) and not(attribute/constraint[ends-with(@xsi:type,':NaturalKey')]) and not(extends)">
+              <xsl:text>    id: Union[str|int] = xsfield({'type': 'Attribute', 'name': '_id'}, default=None)  # surrogate identifier for XML IDREF resolution (allowing str or int for now)
 </xsl:text>
-    </xsl:if>
+          </xsl:when>
+          <xsl:when test="not(vf:referredTo($vodml-ref)) and not(attribute/constraint[ends-with(@xsi:type,':NaturalKey')]) and not(extends)">
+              <xsl:text>    id: Optional[str|int] = xsfield({'type': 'Attribute', 'name': '_id'}, default=None)  # surrogate identifier for DB ID (allowing str or int for now)
+</xsl:text>
+          </xsl:when>
+      </xsl:choose>
 
     <xsl:if test="not(@abstract='true') and (extends or vf:hasSubTypes($vodml-ref))">
         <!-- TODO perhaps need code to handle subtypes in serialisation - i.e. add a field to the base type to indicate the actual type of the instance (e.g. xsi:type) and then use this in serialisation to determine which type to serialise as -->
-    <xsl:text>
-</xsl:text>
     </xsl:if>
     <xsl:apply-templates select="attribute|composition|reference|constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="declare"/>
       <xsl:apply-templates select="reference" mode="serializer"/>
     <xsl:if test="not(attribute) and not(composition) and not(reference) and not(extends) and not(constraint[ends-with(@xsi:type,':SubsettedRole')])">
-    <xsl:text>    pass
+<xsl:text>    pass
 </xsl:text>
     </xsl:if>
   </xsl:template>
