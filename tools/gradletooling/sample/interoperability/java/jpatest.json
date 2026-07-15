@@ -1,37 +1,37 @@
 {
   "JpatestModel" : {
     "refs" : {
-      "jpatest:Refbase" : [ {
-        "jpatest:ReferredTo3" : {
-          "_id" : 1024,
-          "sval" : "ref in sub",
-          "ival" : 3
-        }
-      }, {
-        "jpatest:ReferredTo1" : {
-          "_id" : 1022,
-          "sval" : "top level ref"
-        }
-      }, {
+      "refbase" : [ {
         "jpatest:ReferredTo2" : {
-          "_id" : 1023,
+          "_id" : 1016,
           "sval" : "lower ref"
         }
       }, {
         "jpatest:ReferredTo3" : {
-          "_id" : 1021,
+          "_id" : 1014,
           "sval" : "ref in dtype",
+          "ival" : 3
+        }
+      }, {
+        "jpatest:ReferredTo1" : {
+          "_id" : 1015,
+          "sval" : "top level ref"
+        }
+      }, {
+        "jpatest:ReferredTo3" : {
+          "_id" : 1017,
+          "sval" : "ref in sub",
           "ival" : 3
         }
       } ]
     },
-    "jpatest:Parent" : [ {
+    "parent" : [ {
       "jpatest:Parent" : {
         "_id" : 0,
         "dval" : {
           "jpatest:ADtype" : {
             "basestr" : "base",
-            "dref" : 1021,
+            "dref" : 1014,
             "intatt" : "intatt",
             "dvalr" : 1.1,
             "dvals" : "astring"
@@ -40,16 +40,16 @@
         "eval" : {
           "jpatest:AEtype" : {
             "basestr" : "basestre_e",
-            "dref" : 1021,
+            "dref" : 1014,
             "intatt" : "intatt_e",
             "evalr" : 1.2,
             "evals" : "evals"
           }
         },
-        "rval" : 1022,
+        "rval" : 1015,
         "cval" : {
           "_id" : 0,
-          "rval" : 1023
+          "rval" : 1016
         },
         "lval" : [ {
           "_id" : 0,
@@ -78,7 +78,7 @@
         "dval" : {
           "jpatest:ADtype" : {
             "basestr" : "base",
-            "dref" : 1021,
+            "dref" : 1014,
             "intatt" : "intatt",
             "dvalr" : 1.1,
             "dvals" : "astring"
@@ -87,16 +87,16 @@
         "eval" : {
           "jpatest:AEtype" : {
             "basestr" : "basestre_e",
-            "dref" : 1021,
+            "dref" : 1014,
             "intatt" : "intatt_e",
             "evalr" : 1.2,
             "evals" : "evals"
           }
         },
-        "rval" : 1022,
+        "rval" : 1015,
         "cval" : {
           "_id" : 0,
-          "rval" : 1023
+          "rval" : 1016
         },
         "lval" : [ {
           "_id" : 0,
@@ -119,10 +119,10 @@
           "dt" : "thing"
         },
         "subval" : "this is a subtype",
-        "slist" : [ {
+        "slists" : [ {
           "jpatest:AEtype" : {
             "basestr" : "basestre_sub",
-            "dref" : 1024,
+            "dref" : 1017,
             "intatt" : "intatt_sub",
             "evalr" : 1.3,
             "evals" : "subevals"

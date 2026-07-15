@@ -1,18 +1,21 @@
 {
   "LifecycleTestModel" : {
     "refs" : {
-      "lifecycleTest:ReferredTo" : [ {
-        "_id" : 1031,
+      "referredTo" : [ {
+        "_id" : 1005,
+        "test1" : 4
+      }, {
+        "_id" : 1004,
         "test1" : 3
       } ]
     },
-    "lifecycleTest:ATest3" : [ ],
-    "lifecycleTest:ATest2" : [ {
+    "aTest3" : [ ],
+    "aTest2" : [ {
       "_id" : 0,
-      "refagg" : [ 1031 ],
+      "refagg" : [ 1004, 1005 ],
       "atest" : {
         "_id" : 0,
-        "ref1" : 1031,
+        "ref1" : 1004,
         "contained" : [ {
           "_id" : 0,
           "test2" : "firstcontained"
@@ -21,18 +24,18 @@
           "test2" : "secondContained"
         } ],
         "refandcontained" : [ {
-          "_id" : 1032,
+          "_id" : 1006,
           "test3" : "rc1"
         }, {
-          "_id" : 1033,
+          "_id" : 1007,
           "test3" : "rc2"
         } ],
         "contained2" : {
           "_id" : 0,
-          "lowr" : 1032
+          "lowr" : 1006
         }
       },
-      "refcont" : 1032
+      "refcont" : 1006
     } ]
   }
 }

@@ -8,7 +8,7 @@
       <uri/>
       <title></title>
       <version>1.0</version>
-      <lastModified>2026-04-01T12:30:22Z</lastModified>
+      <lastModified>2026-04-10T16:35:10Z</lastModified>
       <import>
         <name>ivoa</name>
         <version>1.0</version>
@@ -132,6 +132,18 @@
                    <maxOccurs>-1</maxOccurs>
                  </multiplicity>
                </composition>
+               <attribute>
+                 <vodml-id>SomeContent.uri</vodml-id>
+                 <name>uri</name>
+                 <description></description>	    
+                 <datatype>
+                    <vodml-ref>ivoa:anyURI</vodml-ref>
+                 </datatype>
+                 <multiplicity>
+                   <minOccurs>1</minOccurs>
+                   <maxOccurs>1</maxOccurs>
+                 </multiplicity>
+               </attribute>
             </objectType>
             <package>
                <vodml-id>types</vodml-id>

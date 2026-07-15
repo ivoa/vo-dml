@@ -107,7 +107,7 @@ TODO subsetting not specifically checked
                ,"properties" : {
             "$comment" : "placeholder to make commas easier!"
             <xsl:for-each select="$references-vodmlref"><!-- IMPL mostly expecting the actual reference object mostly in the refs array - but could be a ref to an object if it has occurred as contained reference in a preceding reference object -->
-                ,"<xsl:value-of select="current()"/>" : {
+                ,"<xsl:value-of select="vf:lowerFirst(vf:jaxbType(current()))"/>" : {
                    "type": "array"
                    ,"items" : {
                       "anyOf" : [
@@ -129,7 +129,7 @@ TODO subsetting not specifically checked
         <xsl:variable name="contentTypes" as="element()*" select="vf:contentToSerialize(name)"/>
                 <xsl:for-each select="$contentTypes">
                     <xsl:variable name="thisvodml-ref" select="vf:asvodmlref(current())"/>
-                    ,"<xsl:value-of select="vf:utype($thisvodml-ref)"/>" : {
+                    ,"<xsl:value-of select="vf:lowerFirst(vf:jaxbType($thisvodml-ref))"/>" : {
                     "type" : "array"
                     ,"items" : {
                     <xsl:choose>
@@ -283,8 +283,15 @@ TODO subsetting not specifically checked
               <xsl:sequence select="concat($dq,'@type',$dq)"/>
           </xsl:if>
           <xsl:for-each select="(attribute|reference|composition)">
-              <xsl:if test="number(multiplicity/minOccurs) = 1"> <!-- TODO need to think about array -->
-                  <xsl:sequence select="concat($dq,name,$dq)"/>
+              <xsl:if test="number(multiplicity/minOccurs) = 1">
+                  <xsl:choose>
+                      <xsl:when test="number(multiplicity/maxOccurs) = 1 or current()/name()=('composition','reference') or vf:XMLunwrapped(current()/ancestor-or-self::vo-dml:model/name)" > <!-- TODO need to think about array -->
+                          <xsl:sequence select="concat($dq,name,$dq)"/>
+                      </xsl:when>
+                      <xsl:otherwise>
+                          <xsl:sequence select="concat($dq,name,'s',$dq)"/>
+                      </xsl:otherwise>
+                  </xsl:choose>
               </xsl:if>
           </xsl:for-each>
       </xsl:variable>
@@ -337,7 +344,14 @@ TODO subsetting not specifically checked
   </xsl:template>
     <!-- allow attributes with multiplicity > 1 -->
     <xsl:template match="attribute[multiplicity/maxOccurs!=1]" >
+        <xsl:choose>
+            <xsl:when test="vf:XMLunwrapped(current()/ancestor-or-self::vo-dml:model/name)">
         , "<xsl:value-of select="name"/>" : {
+            </xsl:when>
+            <xsl:otherwise>
+        , "<xsl:value-of select="concat(name,'s')"/>" : {
+            </xsl:otherwise>
+        </xsl:choose>
         "type":"array"
         ,"items": {
         <xsl:call-template name="doAttributeType"/>

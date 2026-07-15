@@ -1,0 +1,45 @@
+[project]
+name = "vodml-runtime"
+version = "0.1.0"
+description = "Python runtime support library for code generated from VO-DML models"
+readme = "README.md"
+license = "CC-BY-SA-4.0"
+requires-python = ">=3.10"
+authors = [
+    { name = "Paul Harrison", email = "paul.harrison@manchester.ac.uk" },
+]
+keywords = ["ivoa", "vo-dml", "astronomy", "data-model"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "pydantic>=2.0",
+    "xsdata-pydantic>=24.0",
+]
+
+[project.optional-dependencies]
+sqlalchemy = [
+    "sqlalchemy>=2.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/ivoa/vo-dml"
+Documentation = "https://ivoa.github.io/vo-dml/"
+Repository = "https://github.com/ivoa/vo-dml"
+Issues = "https://github.com/ivoa/vo-dml/issues"
+
+[build-system]
+requires = ["setuptools>=77.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["vodml_runtime*"]
+

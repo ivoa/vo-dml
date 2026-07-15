@@ -1,0 +1,152 @@
+{
+  "JpatestModel": {
+    "refs": {
+      "refbase": [
+        {
+          "jpatest:ReferredTo3": {
+            "_id": "jpatest-ReferredTo3_1002",
+            "sval": "ref in dtype",
+            "ival": 3
+          }
+        },
+        {
+          "jpatest:ReferredTo1": {
+            "_id": "jpatest-ReferredTo1_1003",
+            "sval": "top level ref"
+          }
+        },
+        {
+          "jpatest:ReferredTo2": {
+            "_id": "jpatest-ReferredTo2_1004",
+            "sval": "lower ref"
+          }
+        },
+        {
+          "jpatest:ReferredTo3": {
+            "_id": "jpatest-ReferredTo3_1005",
+            "sval": "ref in sub",
+            "ival": 3
+          }
+        }
+      ]
+    },
+    "parent": [
+      {
+        "jpatest:Parent": {
+          "_id": null,
+          "dval": {
+            "jpatest:ADtype": {
+              "basestr": "base",
+              "dref": "jpatest-ReferredTo3_1002",
+              "intatt": "intatt",
+              "dvalr": 1.1,
+              "dvals": "astring"
+            }
+          },
+          "eval": {
+            "jpatest:AEtype": {
+              "basestr": "basestre_e",
+              "dref": "jpatest-ReferredTo3_1002",
+              "intatt": "intatt_e",
+              "evalr": 1.2,
+              "evals": "evals"
+            }
+          },
+          "rval": "jpatest-ReferredTo1_1003",
+          "cval": {
+            "_id": null,
+            "rval": "jpatest-ReferredTo2_1004"
+          },
+          "lval": [
+            {
+              "_id": null,
+              "sval": "First",
+              "ival": 1
+            },
+            {
+              "_id": null,
+              "sval": "Second",
+              "ival": 2
+            },
+            {
+              "_id": null,
+              "sval": "Third",
+              "ival": 3
+            }
+          ],
+          "tval": {
+            "p": {
+              "x": 1.5,
+              "y": 3.0
+            },
+            "dt": "thing"
+          }
+        }
+      },
+      {
+        "jpatest:Sub": {
+          "_id": null,
+          "dval": {
+            "jpatest:ADtype": {
+              "basestr": "base",
+              "dref": "jpatest-ReferredTo3_1002",
+              "intatt": "intatt",
+              "dvalr": 1.1,
+              "dvals": "astring"
+            }
+          },
+          "eval": {
+            "jpatest:AEtype": {
+              "basestr": "basestre_e",
+              "dref": "jpatest-ReferredTo3_1002",
+              "intatt": "intatt_e",
+              "evalr": 1.2,
+              "evals": "evals"
+            }
+          },
+          "rval": "jpatest-ReferredTo1_1003",
+          "cval": {
+            "_id": null,
+            "rval": "jpatest-ReferredTo2_1004"
+          },
+          "lval": [
+            {
+              "_id": null,
+              "sval": "First",
+              "ival": 1
+            },
+            {
+              "_id": null,
+              "sval": "Second",
+              "ival": 2
+            },
+            {
+              "_id": null,
+              "sval": "Third",
+              "ival": 3
+            }
+          ],
+          "tval": {
+            "p": {
+              "x": 1.5,
+              "y": 3.0
+            },
+            "dt": "thing"
+          },
+          "subval": "this is a subtype",
+          "slists": [
+            {
+              "jpatest:AEtype": {
+                "basestr": "basestre_sub",
+                "dref": "jpatest-ReferredTo3_1005",
+                "intatt": "intatt_sub",
+                "evalr": 1.3,
+                "evals": "subevals"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

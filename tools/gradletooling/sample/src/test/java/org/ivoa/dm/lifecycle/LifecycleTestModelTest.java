@@ -61,6 +61,7 @@ class LifecycleTestModelTest extends AutoRoundTripTest<LifecycleTestModel> {
   @Override
   public LifecycleTestModel createModel() {
     final ReferredTo referredTo = new ReferredTo(3);
+    final ReferredTo referredTo2 = new ReferredTo(4);
      List<ReferredLifeCycle> refcont =
         Arrays.asList(new ReferredLifeCycle("rc1"), new ReferredLifeCycle("rc2"));
     List<Contained> contained =
@@ -74,7 +75,7 @@ class LifecycleTestModelTest extends AutoRoundTripTest<LifecycleTestModel> {
               a.refandcontained = refcont;
               a.contained2 = new ATest4( refcont.get(0));
             });
-    atest2 = new ATest2( Arrays.asList(referredTo), atest, refcont.get(0));
+    atest2 = new ATest2( Arrays.asList(referredTo, referredTo2), atest, refcont.get(0));
 
     LifecycleTestModel model = new LifecycleTestModel();
    // model.addContent(atest);

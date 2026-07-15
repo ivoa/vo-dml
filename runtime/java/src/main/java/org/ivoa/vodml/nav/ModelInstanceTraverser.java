@@ -269,20 +269,20 @@ public class ModelInstanceTraverser {
             else {
                 alreadyVisited = false;
 
-                if(ob.o.getClass().isArray()) { //FIXME think about arrays of primitives.... not yet in our models...
-                    children = Arrays.stream((Object[]) ob.o).map(ao->{return ao != null ? new ObjBase(ao): null;}).iterator();
+                if(ob.o.getClass().isArray()) {
+                    children = Arrays.stream((Object[]) ob.o).map(ao->{return ao != null ? new ObjBase(ao,ob.vodmlt): null;}).iterator();
 
                 }
                 else if(ob.o instanceof Collection) {
                     Collection<Object> col = (Collection<Object>) ob.o;
                     List<ObjBase> vals = new ArrayList<>(col.size());  
-                    col.forEach(co -> {if (co != null)vals.add(new ObjBase(co));});
+                    col.forEach(co -> {if (co != null)vals.add(new ObjBase(co,ob.vodmlt));});
                     children = vals.iterator();
 
                 } else if (ob.o instanceof Map) { ///IMPL there are actually no maps created by current model generation....
                     Map m = ((Map) ob.o);
                     List<ObjBase> vals = new ArrayList<>(m.size()*2);   
-                    m.forEach((t, u) -> {vals.add(new ObjBase(t));vals.add(new ObjBase(u));});
+                    m.forEach((t, u) -> {vals.add(new ObjBase(t));vals.add(new ObjBase(u,ob.vodmlt));});
                     children = vals.iterator();
 
                 } else if (ob.vodmlt.role != VodmlRole.primitiveType)

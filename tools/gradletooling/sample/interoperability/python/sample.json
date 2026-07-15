@@ -1,0 +1,148 @@
+{
+  "SampleModel": {
+    "refs": {
+      "catalog_SkyCoordinateFrame": [
+        {
+          "name": "J2000",
+          "documentURI": "http://coord.net",
+          "equinox": "J2000.0",
+          "system": null
+        }
+      ]
+    },
+    "astroObject": [],
+    "photometricSystem": [
+      {
+        "_id": null,
+        "description": "test photometric system",
+        "detectorType": 1,
+        "photometryFilter": [
+          {
+            "_id": "filter-PhotometryFilter_1034",
+            "fpsIdentifier": null,
+            "name": "C-Band",
+            "description": "radio band",
+            "bandName": "C-Band",
+            "dataValidityFrom": "2020-01-01T00:00:00Z",
+            "dataValidityTo": "2025-01-01T20:12:16Z",
+            "spectralLocation": {
+              "ivoa:RealQuantity": {
+                "unit": {
+                  "value": "GHz"
+                },
+                "value": 5.0
+              }
+            }
+          },
+          {
+            "_id": "filter-PhotometryFilter_1035",
+            "fpsIdentifier": null,
+            "name": "L-Band",
+            "description": "radio band",
+            "bandName": "L-Band",
+            "dataValidityFrom": "2020-01-01T00:00:00Z",
+            "dataValidityTo": "2025-01-01T13:12:00Z",
+            "spectralLocation": {
+              "ivoa:RealQuantity": {
+                "unit": {
+                  "value": "GHz"
+                },
+                "value": 1.5
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "sourceCatalogue": [
+      {
+        "_id": null,
+        "name": "testCat",
+        "entry": [
+          {
+            "sample:catalog.SDSSSource": {
+              "_id": null,
+              "label": "cepheid",
+              "name": "testSource",
+              "description": null,
+              "position": {
+                "longitude": {
+                  "ivoa:RealQuantity": {
+                    "unit": {
+                      "value": "degree"
+                    },
+                    "value": 2.5
+                  }
+                },
+                "latitude": {
+                  "ivoa:RealQuantity": {
+                    "unit": {
+                      "value": "degree"
+                    },
+                    "value": 52.5
+                  }
+                },
+                "frame": "J2000"
+              },
+              "positionError": {
+                "sample:catalog.AlignedEllipse": {
+                  "longError": 0.2,
+                  "latError": 0.1
+                }
+              },
+              "classification": "AGN",
+              "luminosity": [
+                {
+                  "_id": null,
+                  "value": {
+                    "ivoa:RealQuantity": {
+                      "unit": {
+                        "value": "Jy"
+                      },
+                      "value": 2.5
+                    }
+                  },
+                  "error": {
+                    "ivoa:RealQuantity": {
+                      "unit": {
+                        "value": "Jy"
+                      },
+                      "value": 0.25
+                    }
+                  },
+                  "description": "lummeas",
+                  "type": "flux",
+                  "filter": "filter-PhotometryFilter_1034"
+                },
+                {
+                  "_id": null,
+                  "value": {
+                    "ivoa:RealQuantity": {
+                      "unit": {
+                        "value": "Jy"
+                      },
+                      "value": 3.5
+                    }
+                  },
+                  "error": {
+                    "ivoa:RealQuantity": {
+                      "unit": {
+                        "value": "Jy"
+                      },
+                      "value": 0.25
+                    }
+                  },
+                  "description": "lummeas2",
+                  "type": "flux",
+                  "filter": "filter-PhotometryFilter_1035"
+                }
+              ]
+            }
+          }
+        ],
+        "aTest": null,
+        "aTestMore": null
+      }
+    ]
+  }
+}

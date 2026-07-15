@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<life:lifecycleTestModel xmlns:life="http://ivoa.net/vodml/sample/lifecycle">
+  <refs>
+    <referredTo _id="lifecycleTest-ReferredTo_1000">
+      <test1>3</test1>
+    </referredTo>
+    <referredTo _id="lifecycleTest-ReferredTo_1001">
+      <test1>4</test1>
+    </referredTo>
+  </refs>
+  <aTest2>
+    <refagg>
+      <referredTo>lifecycleTest-ReferredTo_1000</referredTo>
+      <referredTo>lifecycleTest-ReferredTo_1001</referredTo>
+    </refagg>
+    <atest>
+      <ref1>lifecycleTest-ReferredTo_1000</ref1>
+      <contained>
+        <contained>
+          <test2>firstcontained</test2>
+        </contained>
+        <contained>
+          <test2>secondContained</test2>
+        </contained>
+      </contained>
+      <refandcontained>
+        <referredLifeCycle _id="lifecycleTest-ReferredLifeCycle_1002">
+          <test3>rc1</test3>
+        </referredLifeCycle>
+        <referredLifeCycle _id="lifecycleTest-ReferredLifeCycle_1003">
+          <test3>rc2</test3>
+        </referredLifeCycle>
+      </refandcontained>
+      <contained2>
+        <lowr>lifecycleTest-ReferredLifeCycle_1002</lowr>
+      </contained2>
+    </atest>
+    <refcont>lifecycleTest-ReferredLifeCycle_1002</refcont>
+  </aTest2>
+</life:lifecycleTestModel>

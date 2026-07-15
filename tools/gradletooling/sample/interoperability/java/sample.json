@@ -1,19 +1,19 @@
 {
   "SampleModel" : {
     "refs" : {
-      "sample:catalog.SkyCoordinateFrame" : [ {
+      "catalog.SkyCoordinateFrame" : [ {
         "name" : "J2000",
         "documentURI" : "http://coord.net",
         "equinox" : "J2000.0"
       } ]
     },
-    "sample:catalog.AstroObject" : [ ],
-    "filter:PhotometricSystem" : [ {
+    "catalog.AstroObject" : [ ],
+    "photometricSystem" : [ {
       "_id" : 0,
       "description" : "test photometric system",
       "detectorType" : 1,
       "photometryFilter" : [ {
-        "_id" : 1036,
+        "_id" : 1038,
         "name" : "C-Band",
         "description" : "radio band",
         "bandName" : "C-Band",
@@ -28,7 +28,7 @@
           }
         }
       }, {
-        "_id" : 1037,
+        "_id" : 1039,
         "name" : "L-Band",
         "description" : "radio band",
         "bandName" : "L-Band",
@@ -44,7 +44,7 @@
         }
       } ]
     } ],
-    "sample:catalog.inner.SourceCatalogue" : [ {
+    "catalog.inner.SourceCatalogue" : [ {
       "_id" : 0,
       "name" : "testCat",
       "entry" : [ {
@@ -98,7 +98,7 @@
             },
             "description" : "lummeas",
             "type" : "flux",
-            "filter" : 1036
+            "filter" : 1038
           }, {
             "_id" : 0,
             "value" : {
@@ -119,7 +119,7 @@
             },
             "description" : "lummeas2",
             "type" : "flux",
-            "filter" : 1037
+            "filter" : 1039
           } ]
         }
       } ]

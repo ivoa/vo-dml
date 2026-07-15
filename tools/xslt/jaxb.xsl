@@ -102,7 +102,7 @@
             <xsl:value-of select="$jsontypinfo"/>
         </xsl:if>
         <xsl:choose>
-            <xsl:when test="current()/name() = 'attribute' and vf:findTypeDetail(vf:asvodmlref(current()))/isAttribute">
+            <xsl:when test="current()/name() = 'attribute' and vf:isXMLAttribute(vf:asvodmlref(current()))">
     @jakarta.xml.bind.annotation.XmlAttribute(name = "<xsl:value-of select="name"/>", required =<xsl:apply-templates
                     select="." mode="required"/>)
             </xsl:when>
@@ -124,7 +124,7 @@
             <xsl:value-of select="$jsontypinfo"/>
         </xsl:if>
         <xsl:choose>
-            <xsl:when test=" vf:findTypeDetail(vf:asvodmlref(current()))/isAttribute">
+            <xsl:when test=" vf:isXMLAttribute(vf:asvodmlref(current()))">
                <xsl:message terminate="yes">cannot map <xsl:value-of select="vf:asvodmlref(current())"/> to attribute with multiplicity &gt; 1 </xsl:message>
             </xsl:when>
             <xsl:otherwise>
@@ -141,6 +141,7 @@
                             <xsl:otherwise>
                                 @jakarta.xml.bind.annotation.XmlElementWrapper( name = "<xsl:value-of select="concat(name,'s')"/>")
                                 @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+                                @com.fasterxml.jackson.annotation.JsonProperty("<xsl:value-of select="concat(name,'s')"/>")
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:otherwise>
@@ -150,7 +151,7 @@
 
     </xsl:template>
   <!-- reference resolved via JAXB -->
-  <xsl:template match="reference" mode="JAXBAnnotation">
+  <xsl:template match="reference[multiplicity/maxOccurs = 1]" mode="JAXBAnnotation">
       <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
       <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref)">
           <xsl:value-of select="$jsontypinfo"/>
@@ -158,10 +159,23 @@
     @jakarta.xml.bind.annotation.XmlIDREF
   </xsl:template>
 
-  <xsl:template match="reference" mode="JAXBAnnotation_reference">
-    <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
-    @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = Reference.class)
-  </xsl:template>
+    <xsl:template match="reference[multiplicity/maxOccurs != 1]" mode="JAXBAnnotation">
+        <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
+        <xsl:if test="$models/key('ellookup',current()/datatype/vodml-ref)/@abstract or vf:hasSubTypes(current()/datatype/vodml-ref)">
+            <xsl:value-of select="$jsontypinfo"/>
+        </xsl:if>
+        <xsl:choose>
+            <xsl:when test="vf:XMLunwrapped(current()/ancestor-or-self::vo-dml:model/name)">
+                @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+            </xsl:when>
+            <xsl:otherwise>
+                @jakarta.xml.bind.annotation.XmlElementWrapper( name = "<xsl:value-of select="name"/>")
+                @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="vf:lowerFirst($models/key('ellookup',current()/datatype/vodml-ref)/name)"/>", required = <xsl:apply-templates select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+            </xsl:otherwise>
+        </xsl:choose>
+        @jakarta.xml.bind.annotation.XmlIDREF
+    </xsl:template>
+
 
   <xsl:template match="composition[multiplicity/maxOccurs != 1]" mode="JAXBAnnotation">
     <xsl:variable name="type" select="vf:JavaType(datatype/vodml-ref)"/>
@@ -281,7 +295,7 @@
     <xsl:for-each select="$references-vodmlref"> <!-- looking at all possible refs -->
         <xsl:message>ref=<xsl:value-of select="concat(current(),'  references=',string-join(vf:referenceTypesInContainmentHierarchy(current()),','))"/></xsl:message>
         @XmlElement(name="<xsl:value-of select='vf:lowerFirst(vf:jaxbType(current()))'/>")
-        @JsonProperty("<xsl:value-of select="vf:utype(.)"/>")
+        @JsonProperty("<xsl:value-of select="vf:lowerFirst(vf:jaxbType(current()))"/>")
         <xsl:if test="$models/key('ellookup',current())/@abstract or vf:hasSubTypes(current())">
             @com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver(value = org.ivoa.vodml.json.VodmlTypeResolver.class)
 
@@ -370,7 +384,7 @@
     public <xsl:value-of select="$ModelClass"/>(@JsonProperty("refs") References refs_,
         <xsl:for-each select="$contentTypes">
             <xsl:variable name="tv" select="vf:asvodmlref(current())"/>
-            @JsonProperty("<xsl:value-of select="vf:utype($tv)"/>") List&lt;<xsl:value-of select="vf:QualifiedJavaType($tv)"/>&gt; <xsl:value-of select="vf:lowerFirst(current()/name)"/>_
+            @JsonProperty("<xsl:value-of select="vf:lowerFirst(vf:jaxbType($tv))"/>") List&lt;<xsl:value-of select="vf:QualifiedJavaType($tv)"/>&gt; <xsl:value-of select="vf:lowerFirst(current()/name)"/>_
             <xsl:if test="position() != last()">,</xsl:if>
         </xsl:for-each>
         ){
@@ -451,7 +465,7 @@
           }
       </xsl:if>
       }
-            @JsonProperty("<xsl:value-of select="vf:utype(vf:asvodmlref(.))"/>")
+            @JsonProperty("<xsl:value-of select="vf:lowerFirst(vf:jaxbType(vf:asvodmlref(.)))"/>")//IMPL there is a chance of a name clash - would probably be better to use utype
       public <xsl:value-of  select="concat('List',$lt,vf:QualifiedJavaType(vf:asvodmlref(current())),$gt, ' get',vf:capitalize(current()/name))"/> () {
 
             return getContent(<xsl:value-of select="concat(vf:QualifiedJavaType(vf:asvodmlref(current())),'.class')"/>);

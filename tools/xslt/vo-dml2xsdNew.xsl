@@ -211,9 +211,9 @@ note that this schema is substantially different from the era when this code was
     <xsl:variable name="numprops" select="count(attribute|reference[not(subsets)]|composition)"/>
     <xsl:if test="number($numprops) > 0">
       <xsd:sequence>
-        <xsl:apply-templates select="attribute[not(vf:findTypeDetail(vf:asvodmlref(.))/isAttribute)]|composition[not(subsets)]|reference[not(subsets)]"/>
+        <xsl:apply-templates select="attribute[not(vf:isXMLAttribute(vf:asvodmlref(.)))]|composition[not(subsets)]|reference[not(subsets)]"/>
       </xsd:sequence>
-      <xsl:apply-templates select="attribute[vf:findTypeDetail(vf:asvodmlref(.))/isAttribute]"/>
+      <xsl:apply-templates select="attribute[vf:isXMLAttribute(vf:asvodmlref(.))]"/>
     </xsl:if>
   </xsl:template>
 
@@ -256,9 +256,9 @@ note that this schema is substantially different from the era when this code was
     <xsl:variable name="numprops" select="count(attribute|reference[not(subsets)])"/>
     <xsl:if test="number($numprops) > 0">
       <xsd:sequence>
-        <xsl:apply-templates select="attribute[not(vf:findTypeDetail(vf:asvodmlref(.))/isAttribute)]|reference[not(subsets)]"/>
+        <xsl:apply-templates select="attribute[not(vf:isXMLAttribute(vf:asvodmlref(.)))]|reference[not(subsets)]"/>
       </xsd:sequence>
-      <xsl:apply-templates select="attribute[vf:findTypeDetail(vf:asvodmlref(.))/isAttribute]"/>
+      <xsl:apply-templates select="attribute[vf:isXMLAttribute(vf:asvodmlref(.))]"/>
     </xsl:if>
   </xsl:template>
 
@@ -317,7 +317,7 @@ note that this schema is substantially different from the era when this code was
 
 
 
-  <xsl:template match="attribute[vf:findTypeDetail(vf:asvodmlref(.))/isAttribute]" >
+  <xsl:template match="attribute[vf:isXMLAttribute(vf:asvodmlref(.))]" >
     <xsd:attribute>
       <xsl:attribute name="name" >
         <xsl:value-of select="name"/>
@@ -342,7 +342,7 @@ note that this schema is substantially different from the era when this code was
     </xsd:attribute>
    </xsl:template>
 
-  <xsl:template match="attribute[not(vf:findTypeDetail(vf:asvodmlref(.))/isAttribute) and (vf:XMLunwrapped(ancestor::vo-dml:model/name) or multiplicity/maxOccurs = 1)]" >
+  <xsl:template match="attribute[not(vf:isXMLAttribute(vf:asvodmlref(.))) and (vf:XMLunwrapped(ancestor::vo-dml:model/name) or multiplicity/maxOccurs = 1)]" >
   <xsd:element>
     <xsl:attribute name="name" >
       <xsl:value-of select="name"/>
@@ -461,7 +461,7 @@ note that this schema is substantially different from the era when this code was
   </xsl:template>
 
 
-  <xsl:template match="reference" >
+  <xsl:template match="reference[multiplicity/maxOccurs =1 or(multiplcity/maxOccurs != 1 and vf:XMLunwrapped($modelname))]" >
     <xsl:comment><xsl:text>this is a reference</xsl:text></xsl:comment>
     <xsd:element>
 
@@ -475,6 +475,25 @@ note that this schema is substantially different from the era when this code was
     </xsd:element>
   </xsl:template>
 
+  <xsl:template match="reference[multiplicity/maxOccurs != 1 and not(vf:XMLunwrapped($modelname))]" >
+    <xsl:comment><xsl:text>this is a reference</xsl:text></xsl:comment>
+    <xsd:element>
+      <xsl:attribute name="name" >
+        <xsl:value-of select="name"/>
+      </xsl:attribute>
+      <xsd:complexType>
+        <xsd:sequence>
+          <xsd:element>
+            <xsl:attribute name="name" >
+              <xsl:value-of select="vf:lowerFirst($models/key('ellookup',current()/datatype/vodml-ref)/name)"/>
+            </xsl:attribute>
+            <xsl:attribute name="type" >xsd:IDREF</xsl:attribute>
+            <xsl:apply-templates select="multiplicity"/>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:element>
+  </xsl:template>
 
   <xsl:template match="attribute" mode="declare">
 

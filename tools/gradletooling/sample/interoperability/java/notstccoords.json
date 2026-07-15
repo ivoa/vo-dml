@@ -1,9 +1,26 @@
 {
   "CoordsModel" : {
     "refs" : {
-      "coords:CoordSys" : [ {
+      "coordSys" : [ {
+        "coords:SpaceSys" : {
+          "_id" : 1030,
+          "frame" : {
+            "coords:SpaceFrame" : {
+              "_id" : 0,
+              "refPosition" : {
+                "coords:StdRefLocation" : {
+                  "_id" : 0,
+                  "position" : "TOPOCENTER"
+                }
+              },
+              "spaceRefFrame" : "ICRS",
+              "planetaryEphem" : "DE432"
+            }
+          }
+        }
+      }, {
         "coords:TimeSys" : {
-          "_id" : 1010,
+          "_id" : 1031,
           "frame" : {
             "coords:TimeFrame" : {
               "_id" : 0,
@@ -20,24 +37,7 @@
                   "epoch" : "J2014.25",
                   "position" : {
                     "coords:LonLatPoint" : {
-                      "coordSys" : {
-                        "coords:SpaceSys" : {
-                          "_id" : 1009,
-                          "frame" : {
-                            "coords:SpaceFrame" : {
-                              "_id" : 0,
-                              "refPosition" : {
-                                "coords:StdRefLocation" : {
-                                  "_id" : 0,
-                                  "position" : "TOPOCENTER"
-                                }
-                              },
-                              "spaceRefFrame" : "ICRS",
-                              "planetaryEphem" : "DE432"
-                            }
-                          }
-                        }
-                      },
+                      "coordSys" : 1030,
                       "lon" : {
                         "ivoa:RealQuantity" : {
                           "unit" : {
@@ -69,14 +69,14 @@
             }
           }
         }
-      }, 1009 ]
+      } ]
     },
-    "coords:CoordSpace" : [ ],
-    "coords:AnObject" : [ {
+    "coordSpace" : [ ],
+    "anObject" : [ {
       "_id" : 0,
       "position" : {
         "coords:LonLatPoint" : {
-          "coordSys" : 1009,
+          "coordSys" : 1030,
           "lon" : {
             "ivoa:RealQuantity" : {
               "unit" : {
@@ -105,13 +105,13 @@
       },
       "time" : {
         "coords:MJD" : {
-          "coordSys" : 1010,
+          "coordSys" : 1031,
           "date" : 60000.0
         }
       },
       "sys" : {
         "coords:GenericSys" : {
-          "_id" : 1011,
+          "_id" : 1032,
           "frame" : {
             "coords:GenericFrame" : {
               "_id" : 0,

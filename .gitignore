@@ -14,6 +14,8 @@ tools/gradletooling/gradle-plugin/bin/
 /tools/gradletooling/sample/docs/
 /tools/gradletooling/sample/allnav.yml
 /tools/gradletooling/sample/pythontest/generated/
+**/__pycache__/
+**/*.pyc
 /tools/gradletooling/sample/mkdocs.yml
 /runtime/java/bin/
 /tools/gradletooling/sample/tmp/
@@ -21,6 +23,6 @@ tools/gradletooling/gradle-plugin/bin/
 /tools/pythontooling/.venv/
 /tools/pythontooling/src/vodmltools/schxslt/
 /tools/pythontooling/dist/
-__pycache__/
-*.pyc
+/runtime/python/dist/
+/runtime/python/*.egg-info/
 .pytest_cache/
