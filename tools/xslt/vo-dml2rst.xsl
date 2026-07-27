@@ -87,7 +87,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
                 <xsl:when test="number($m/minOccurs) eq 0 and number($m/maxOccurs) lt 1">0..*</xsl:when>
                 <xsl:when test="(not($m/minOccurs) or number($m/minOccurs) eq 1) and number($m/maxOccurs) lt 1">1..*</xsl:when>
                 <xsl:when test="not($m/minOccurs) and $m/maxOccurs"><xsl:value-of select="concat('1..', $m/maxOccurs)"/></xsl:when>
-                <xsl:when test="not($m/maxOccurs) and $m/minOccurs"><xsl:value-of select="concat($m/minOccurs,'..', $m/maxOccurs)"/></xsl:when>
+                <xsl:when test="not($m/maxOccurs) and $m/minOccurs"><xsl:value-of select="concat($m/minOccurs,'..*')"/></xsl:when>
                 <xsl:otherwise><xsl:value-of select="concat($m/minOccurs,'..', $m/maxOccurs)"/></xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
@@ -402,7 +402,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         <!-- Indent every non-empty line with 3 spaces for RST directive content -->
         <xsl:value-of select="string-join(
             for $line in tokenize(string($diagContent), '\n')
-            return (if (normalize-space($line) != '') then concat('   ', normalize-space($line)) else ''),
+            return (if ($line != '') then concat('   ', $line) else ''),
             $nl)"/>
         <xsl:value-of select="concat($nl, $nl)"/>
     </xsl:template>
