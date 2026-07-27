@@ -96,7 +96,7 @@
              name="<xsl:value-of select="concat($className,'_loadAll')"/>",
              attributeNodes = {
                <xsl:for-each select="reference[multiplicity/maxOccurs != 1]|composition[multiplicity/maxOccurs != 1]">
-                   @jakarta.persistence.NamedAttributeNode(value="<xsl:value-of select='name'/>")<xsl:if test="position() != last()">,</xsl:if>
+                   @jakarta.persistence.NamedAttributeNode(value="<xsl:value-of select='vf:javaMemberName(name)'/>")<xsl:if test="position() != last()">,</xsl:if>
                </xsl:for-each>
             }
           <!-- TODO need to think about subgraphs -->
