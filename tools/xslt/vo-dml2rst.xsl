@@ -87,7 +87,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
                 <xsl:when test="number($m/minOccurs) eq 0 and number($m/maxOccurs) lt 1">0..*</xsl:when>
                 <xsl:when test="(not($m/minOccurs) or number($m/minOccurs) eq 1) and number($m/maxOccurs) lt 1">1..*</xsl:when>
                 <xsl:when test="not($m/minOccurs) and $m/maxOccurs"><xsl:value-of select="concat('1..', $m/maxOccurs)"/></xsl:when>
-                <xsl:when test="not($m/maxOccurs) and $m/minOccurs"><xsl:value-of select="concat($m/maxOccurs,'..', $m/maxOccurs)"/></xsl:when>
+                <xsl:when test="not($m/maxOccurs) and $m/minOccurs"><xsl:value-of select="concat($m/minOccurs,'..', $m/maxOccurs)"/></xsl:when>
                 <xsl:otherwise><xsl:value-of select="concat($m/minOccurs,'..', $m/maxOccurs)"/></xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
@@ -331,7 +331,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         <xsl:value-of select="$nl"/>
         <xsl:text>     - </xsl:text><xsl:apply-templates select="datatype/vodml-ref"/><xsl:value-of select="$nl"/>
         <xsl:text>     - </xsl:text><xsl:apply-templates select="multiplicity"/><xsl:if test="@isOrdered"> ordered</xsl:if><xsl:value-of select="$nl"/>
-        <xsl:text>     - </xsl:text><xsl:value-of select="string-join(for $s in description/text() return normalize-space($s),' ')"/><xsl:value-of select="$nl"/>
+        <xsl:text>     - </xsl:text><xsl:apply-templates select="description"/><xsl:value-of select="$nl"/>
     </xsl:template>
 
     <xsl:template match="constraint[@xsi:type='vo-dml:SubsettedRole']" mode="row">
@@ -340,7 +340,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         <xsl:value-of select="concat(' (subset of ', vf:nameFromVodmlref(role/vodml-ref), ')')"/>
         <xsl:value-of select="$nl"/>
         <xsl:text>     - </xsl:text><xsl:apply-templates select="multiplicity"/><xsl:if test="@isOrdered"> ordered</xsl:if><xsl:value-of select="$nl"/>
-        <xsl:text>     - </xsl:text><xsl:value-of select="string-join(for $s in description/text() return normalize-space($s),' ')"/><xsl:value-of select="$nl"/>
+        <xsl:text>     - </xsl:text><xsl:apply-templates select="description"/><xsl:value-of select="$nl"/>
     </xsl:template>
 
     <xsl:template match="constraint[@xsi:type='vo-dml:SubsettedRole']" mode="ssdetail">
