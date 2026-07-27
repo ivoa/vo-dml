@@ -41,6 +41,23 @@ internal class XSLTTransformerTest {
     fun doTAP() {
         Vodml2TAP.doTransform(model, File(tmpDir,"testvodsl.tap"))
     }
+    @org.junit.jupiter.api.Test
+    fun doRst() {
+        tmpDir.mkdirs()
+        // Create a catalog to allow the XSLT to resolve the model file by name
+        val catalogFile = File(tmpDir, "catalog-rst.xml")
+        catalogFile.writeText("""
+            <?xml version="1.0"?>
+            <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+               <group prefer="system">
+                  <uri name="${model.name}" uri="${model.toURI()}"/>
+               </group>
+            </catalog>
+        """.trimIndent())
+        Vodml2rst.doTransform(model, mapOf(
+            "binding" to binding.toURI().toURL().toString()
+        ), catalogFile, File(tmpDir, "testRst.rst"))
+    }
 //    @org.junit.jupiter.api.Test
 //    fun doXsd() { //the xsd generation is not a straight model transform TODO would need a catalogue
 //        Vodml2xsd.doTransform(model, mapOf(

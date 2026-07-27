@@ -29,6 +29,12 @@ import javax.inject.Inject
      @Input @Optional
      val modelsToDocument : Property<String> = project.objects.property(String::class.java)
 
+     /**
+      * The type of site to generate. Supported values: "mkdocs" (default) or "sphinx".
+      */
+     @Input @Optional
+     val siteType : Property<String> = project.objects.property(String::class.java)
+
      @TaskAction
      fun doDocumentation() {
          logger.info("Creating site for VO-DML models ${vodmlFiles.files.joinToString { it.name }}")
@@ -37,6 +43,8 @@ import javax.inject.Inject
          val actualCatalog = eh.makeCatalog(vodmlFiles,catalogFile)
          val allBinding = bindingFiles.files.plus(eh.externalBinding())
          val allVodml = vodmlFiles.files.plus(eh.externalModelFiles())
+
+         val isSphinx = siteType.getOrElse("mkdocs") == "sphinx"
 
          allVodml.forEach{
              val shortname = it.nameWithoutExtension
@@ -62,44 +70,61 @@ import javax.inject.Inject
              if (proc.exitValue() != 0)
                  logger.error(proc.errorStream.bufferedReader().readText())
 
-             outfile = docDir.file("$shortname.md")
              val params = mutableMapOf(
-                 "graphviz_png" to docDir.file("$shortname.svg").get().asFile.absolutePath,
                  "binding" to allBinding.joinToString(separator = ",") { it.toURI().toURL().toString() },
              )
              if (modelsToDocument.isPresent) params["modelsToDocument"] = modelsToDocument.get()
-             Vodml2md.doTransform(it.absoluteFile, params,
-                 actualCatalog, outfile.get().asFile)
+
+             if (isSphinx) {
+                 outfile = docDir.file("$shortname.rst")
+                 Vodml2rst.doTransform(it.absoluteFile, params, actualCatalog, outfile.get().asFile)
+             } else {
+                 params["graphviz_png"] = docDir.file("$shortname.svg").get().asFile.absolutePath
+                 outfile = docDir.file("$shortname.md")
+                 Vodml2md.doTransform(it.absoluteFile, params, actualCatalog, outfile.get().asFile)
+             }
+
              outfile = docDir.file("$shortname.graphml")
              Vodml2Gml.doTransform(it.absoluteFile, emptyMap(), actualCatalog, outfile.get().asFile)
-
-
          }
 
-         val mapper = ObjectMapper()
-         var allnav = mapper.createArrayNode();
-         vodmlFiles.forEach {
-             val shortname = it.nameWithoutExtension
-             val infile =  docDir.file("${shortname}_nav.json").get().asFile
-             val json = mapper.readTree(infile)
-             allnav.add(json)
+         if (isSphinx) {
+             // Generate a top-level index.rst for Sphinx
+             val indexFile = docDir.file("index.rst").get().asFile
+             indexFile.bufferedWriter().use { out ->
+                 out.write("Model Documentation\n")
+                 out.write("===================\n\n")
+                 out.write(".. toctree::\n")
+                 out.write("   :maxdepth: 2\n\n")
+                 vodmlFiles.forEach { f ->
+                     out.write("   ${f.nameWithoutExtension}\n")
+                 }
+             }
+         } else {
+             // Build the mkdocs navigation YAML
+             val mapper = ObjectMapper()
+             var allnav = mapper.createArrayNode();
+             vodmlFiles.forEach {
+                 val shortname = it.nameWithoutExtension
+                 val infile =  docDir.file("${shortname}_nav.json").get().asFile
+                 val json = mapper.readTree(infile)
+                 allnav.add(json)
+             }
+             val importnode:ObjectNode = mapper.createObjectNode()
+             allnav.add(importnode)
+             var imported = importnode.putArray("Imported Models")
+
+
+             eh.externalModelFiles().forEach {
+                 val shortname = it.nameWithoutExtension
+                 val infile =  docDir.file("${shortname}_nav.json").get().asFile
+                 val json = mapper.readTree(infile)
+                 imported.add(json)
+             }
+
+             val outmapper = ObjectMapper(YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER))
+             outmapper.writeValue(docDir.file("allnav.yml").get().asFile, allnav)
          }
-         val importnode:ObjectNode = mapper.createObjectNode()
-         allnav.add(importnode)
-         var imported = importnode.putArray("Imported Models")
-
-
-         eh.externalModelFiles().forEach {
-             val shortname = it.nameWithoutExtension
-             val infile =  docDir.file("${shortname}_nav.json").get().asFile
-             val json = mapper.readTree(infile)
-             imported.add(json)
-         }
-
-         val outmapper = ObjectMapper(YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER))
-         outmapper.writeValue(docDir.file("allnav.yml").get().asFile, allnav)
-
-
      }
 
 

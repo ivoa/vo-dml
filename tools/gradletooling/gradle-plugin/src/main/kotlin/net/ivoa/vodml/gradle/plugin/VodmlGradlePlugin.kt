@@ -55,10 +55,11 @@ class VodmlGradlePlugin: Plugin<Project> {
         }
         // register the site doc task
         project.tasks.register(VODML_SITE_DOC_TASK_NAME,VodmlSiteTask::class.java) {
-            it.description = "create mkdocs site for VO-DML models"
+            it.description = "create mkdocs or sphinx site for VO-DML models"
             setVodmlFiles(it,extension,project)
             it.docDir.set(extension.outputSiteDir)
             it.modelsToDocument.set(extension.modelsToDocument)
+            it.siteType.set(extension.siteType)
         }
         // register the schema task
         val schematask: TaskProvider<VodmlSchemaTask> = project.tasks.register(VODML_SCHEMA_TASK_NAME,VodmlSchemaTask::class.java) { task->

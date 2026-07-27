@@ -150,5 +150,6 @@ object Vodml2json : XSLTTransformer("vo-dml2jsonschema.xsl", "text")
 object Vodml2Catalogues : XSLTExecutionOnlyTransformer("create-catalogues.xsl", "main")
 
 object Vodml2md : XSLTTransformer("vo-dml2md.xsl", "text")
+object Vodml2rst : XSLTTransformer("vo-dml2rst.xsl", "text")
 object Vodml2TAP : XSLTTransformer("vo-dml2tap.xsl", "xml")
 object TapSchema2PlantUML: XSLTTransformer("tapSchema2plantuml.xslt", "text")
