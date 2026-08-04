@@ -294,9 +294,12 @@ must create next as variable to select from inside the atomic context of the dis
 
   <xsl:template name="hyperlink" as="xsd:string">
     <xsl:choose>
-      <xsl:when test="$linkmode = 'md'"> <!-- note assuming mkdocs "directory style linking" -->
+      <xsl:when test="$linkmode = 'mkdocs'"> <!-- note assuming mkdocs "directory style linking" -->
         <xsl:variable name="vodmlid" select="tokenize(vf:asvodmlref(current()),':')" as="xsd:string*"/>
         <xsl:value-of select="concat('URL=',$dq,'../',$vodmlid[1],'/',$vodmlid[2],$dq)"/>
+      </xsl:when>
+      <xsl:when test="$linkmode = 'sphinx'">
+        <xsl:value-of select="concat('URL=',$dq,':ref:`',replace(vf:asvodmlref(current()), '[:.]', '_'),'`',$dq)"/>
       </xsl:when>
       <xsl:otherwise><xsl:value-of select="concat('URL=',$dq,'#',vodml-id,$dq)"/></xsl:otherwise>
     </xsl:choose>

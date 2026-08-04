@@ -18,8 +18,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
 
     <xsl:include href="binding_setup.xsl"/>
 
-    <xsl:variable name="nl" select="'&#10;'"/>
-    <xsl:variable name="dq" select="'&quot;'"/>
+
     <xsl:variable name="thisModelName" select="/vo-dml:model/name"/>
 
     <xsl:variable name="docmods" as="xsd:string*">
@@ -77,22 +76,6 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         <xsl:value-of select="string-join($result)"/>
     </xsl:function>
 
-    <xsl:function name="vf:multiplicityForDiagram" as="xsd:string*">
-        <xsl:param name="m" as="element()"/>
-        <xsl:variable name="r">
-            <xsl:choose>
-                <xsl:when test="not($m/minOccurs) and not($m/maxOccurs)">1</xsl:when>
-                <xsl:when test="number($m/minOccurs) eq 1 and number($m/maxOccurs) eq 1">1</xsl:when>
-                <xsl:when test="number($m/minOccurs) eq 0 and (number($m/maxOccurs) eq 1 or not($m/maxOccurs))">0..1</xsl:when>
-                <xsl:when test="number($m/minOccurs) eq 0 and number($m/maxOccurs) lt 1">0..*</xsl:when>
-                <xsl:when test="(not($m/minOccurs) or number($m/minOccurs) eq 1) and number($m/maxOccurs) lt 1">1..*</xsl:when>
-                <xsl:when test="not($m/minOccurs) and $m/maxOccurs"><xsl:value-of select="concat('1..', $m/maxOccurs)"/></xsl:when>
-                <xsl:when test="not($m/maxOccurs) and $m/minOccurs"><xsl:value-of select="concat($m/minOccurs,'..*')"/></xsl:when>
-                <xsl:otherwise><xsl:value-of select="concat($m/minOccurs,'..', $m/maxOccurs)"/></xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
-        <xsl:sequence select="concat($dq,$r,$dq)"/>
-    </xsl:function>
 
     <!-- Entry point -->
     <xsl:template match="/">
@@ -212,10 +195,18 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         <xsl:apply-templates select="(primitiveType|enumeration|dataType|objectType|package)"/>
     </xsl:template>
 
+
+
+
+    <xsl:template name="makeTarget">
+        <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
+        <xsl:value-of select="concat('.. _', replace($vodml-ref, '[:.]', '_'), ':', $nl, $nl)"/>
+    </xsl:template>
     <!-- desc templates for each type -->
 
     <xsl:template match="dataType|objectType" mode="desc">
         <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
+        <xsl:call-template name="makeTarget"/>
         <xsl:variable name="header">
             <xsl:if test="@abstract">abstract </xsl:if>
             <xsl:value-of select="concat(name(), ' ', name)"/>
@@ -231,7 +222,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         <xsl:apply-templates select="description"/>
         <xsl:value-of select="concat($nl, $nl)"/>
 
-        <xsl:apply-templates select="current()" mode="mermdiag"/>
+        <xsl:apply-templates select="current()" mode="plantdiag"/>
 
         <xsl:if test="attribute|reference|composition|constraint[@xsi:type='vo-dml:SubsettedRole']">
             <xsl:text>Members</xsl:text>
@@ -287,6 +278,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
     </xsl:template>
 
     <xsl:template match="enumeration" mode="desc">
+        <xsl:call-template name="makeTarget"/>
         <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
         <xsl:variable name="header" select="concat('enumeration ', name)"/>
         <xsl:value-of select="concat($header, $nl, vf:underline($header, '='), $nl, $nl)"/>
@@ -294,7 +286,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         <xsl:apply-templates select="description"/>
         <xsl:value-of select="concat($nl, $nl)"/>
 
-        <xsl:apply-templates select="current()" mode="mermdiag"/>
+        <xsl:apply-templates select="current()" mode="plantdiag"/>
 
         <xsl:text>Values</xsl:text>
         <xsl:value-of select="concat($nl, vf:underline('Values', '-'), $nl, $nl)"/>
@@ -302,6 +294,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
     </xsl:template>
 
     <xsl:template match="primitiveType" mode="desc">
+        <xsl:call-template name="makeTarget"/>
         <xsl:variable name="header" select="concat('primitiveType ', name)"/>
         <xsl:value-of select="concat($header, $nl, vf:underline($header, '='), $nl, $nl)"/>
         <xsl:apply-templates select="description"/>
@@ -309,6 +302,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
     </xsl:template>
 
     <xsl:template match="package" mode="desc">
+        <xsl:call-template name="makeTarget"/>
         <xsl:variable name="header" select="concat('Package ', name)"/>
         <xsl:value-of select="concat($header, $nl, vf:underline($header, '='), $nl, $nl)"/>
         <xsl:apply-templates select="description"/>
@@ -394,7 +388,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
     </xsl:template>
 
     <!-- PlantUML diagram wrapper for Sphinx (sphinxcontrib-plantuml) -->
-    <xsl:template match="enumeration|dataType|objectType" mode="mermdiag">
+    <xsl:template match="enumeration|dataType|objectType" mode="plantdiag">
         <xsl:variable name="diagContent">
             <xsl:apply-templates select="current()" mode="diag"/>
         </xsl:variable>
@@ -433,6 +427,8 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         <xsl:call-template name="doComposition"/>
         <xsl:call-template name="doComposedBy"/>
         <xsl:call-template name="doReferredTo"/>
+        <xsl:call-template name="doDiagLinks"><xsl:with-param name="vodml-ref" select="$vodml-ref"/> </xsl:call-template>
+
     </xsl:template>
 
     <xsl:template match="attribute" mode="diag">
@@ -447,6 +443,37 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         <!-- suppress general constraints in diagrams -->
     </xsl:template>
 
+    <xsl:template name="doDiagLinks">
+        <xsl:param name="vodml-ref"/>
+        <xsl:variable name="thisClass" as="element()">
+            <xsl:copy-of select="$models/key('ellookup',$vodml-ref)" />
+        </xsl:variable>
+        <xsl:variable name="classIds" as="xsd:string*">
+            <xsl:sequence  select="vf:baseTypeIds($vodml-ref)"/>
+            <xsl:sequence select="for $x in $models/vo-dml:model[name = $modelsInScope ]//*[extends/vodml-ref = $vodml-ref] return vf:asvodmlref($x)"/>
+            <xsl:sequence select="$thisClass/reference/datatype/vodml-ref"/>
+            <xsl:sequence select="$thisClass/composition/datatype/vodml-ref"/>
+            <xsl:sequence select="distinct-values(for $x in $models/vo-dml:model[name = $modelsInScope ]//objectType[composition/datatype/vodml-ref = $vodml-ref] return vf:asvodmlref($x))"/>
+            <xsl:sequence select="distinct-values(for $x in $models/vo-dml:model[name = $modelsInScope ]//objectType[reference/datatype/vodml-ref = $vodml-ref] return vf:asvodmlref($x))"/>
+        </xsl:variable>
+        <xsl:for-each select="$classIds">
+            <xsl:value-of select="concat($nl,vf:doPlantUMLLink(current()))"/>
+        </xsl:for-each>
+
+    </xsl:template>
+
+    <!-- IMPL this uses https://github.com/mi-parkes/sphinx-diagram-connect -->
+    <xsl:function name="vf:doPlantUMLLink" >
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:choose>
+            <xsl:when test="substring-before($vodml-ref,':') = $docmods">
+                <xsl:value-of select="concat('url of ',vf:nameFromVodmlref($vodml-ref),' is [[',$dq,':ref:`',replace($vodml-ref, '[:.]', '_'),'`',$dq,']]')"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <!-- do nothing - TODO link to external? -->
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
     <xsl:template name="doSupers">
         <xsl:param name="vodml-ref"/>
         <xsl:if test="vf:hasSuperTypes($vodml-ref)">

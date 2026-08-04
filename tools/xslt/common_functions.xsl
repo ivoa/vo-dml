@@ -53,5 +53,22 @@
             <xsl:otherwise><xsl:value-of select="concat($m/@minOccurs,'..', $m/@maxOccurs)"/></xsl:otherwise>
         </xsl:choose>
     </xsl:function>
+    <xsl:function name="vf:multiplicityForDiagram" as="xsd:string*">
+        <xsl:param name="m" as="element()"/>
+        <xsl:variable name="r">
+            <xsl:choose>
+                <xsl:when test="not($m/minOccurs) and not($m/maxOccurs)">1</xsl:when>
+                <xsl:when test="number($m/minOccurs) eq 1 and number($m/maxOccurs) eq 1">1</xsl:when>
+                <xsl:when test="number($m/minOccurs) eq 0 and (number($m/maxOccurs) eq 1 or not($m/maxOccurs))">0..1</xsl:when>
+                <xsl:when test="number($m/minOccurs) eq 0 and number($m/maxOccurs) lt 1">0..*</xsl:when>
+                <xsl:when test="(not($m/minOccurs) or number($m/minOccurs) eq 1) and number($m/maxOccurs) lt 1">1..*</xsl:when>
+                <xsl:when test="not($m/minOccurs) and $m/maxOccurs"><xsl:value-of select="concat('1..', $m/maxOccurs)"/></xsl:when>
+                <xsl:when test="not($m/maxOccurs) and $m/minOccurs"><xsl:value-of select="concat($m/minOccurs,'..*')"/></xsl:when>
+                <xsl:otherwise><xsl:value-of select="concat($m/minOccurs,'..', $m/maxOccurs)"/></xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:sequence select="concat($dq,$r,$dq)"/>
+    </xsl:function>
+
 
 </xsl:stylesheet>
