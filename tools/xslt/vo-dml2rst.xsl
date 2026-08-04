@@ -47,14 +47,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:choose>
             <xsl:when test="substring-before($vodml-ref,':') = $docmods">
-                <xsl:choose>
-                    <xsl:when test="substring-before($vodml-ref,':') = $thisModelName">
-                        <xsl:value-of select="concat(':doc:`',vf:nameFromVodmlref($vodml-ref),' &lt;',substring-after($vodml-ref,':'),'&gt;`')"/>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="concat(':doc:`',vf:nameFromVodmlref($vodml-ref),' &lt;../',substring-before($vodml-ref,':'),'/',substring-after($vodml-ref,':'),'&gt;`')"/>
-                    </xsl:otherwise>
-                </xsl:choose>
+                <xsl:value-of select="concat(':ref:`',vf:nameFromVodmlref($vodml-ref),' &lt;',replace($vodml-ref, '[:.]', '_'),'&gt;`')"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:value-of select="$vodml-ref"/>
@@ -166,7 +159,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
             <xsl:for-each select="//(primitiveType|enumeration|dataType|objectType)">
                 <xsl:sort select="vf:asvodmlref(current())"/>
                 <xsl:variable name="vodml-id" select="tokenize(vf:asvodmlref(current()),':')" as="xsd:string*"/>
-                <xsl:value-of select="concat('   ', $vodml-id[1], '/', $vodml-id[2], $nl)"/>
+                <xsl:value-of select="concat('   ',$vodml-id[2], ' ',$lt,$vodml-id[1], '/', string-join(tokenize($vodml-id[2],'[.]'),'/'), $gt,$nl)"/>
             </xsl:for-each>
         </xsl:if>
 
@@ -176,8 +169,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
 
     <!-- Write each top-level type to its own RST file -->
     <xsl:template match="primitiveType|enumeration|dataType|objectType">
-        <xsl:variable name="vodml-id" select="tokenize(vf:asvodmlref(current()),':')" as="xsd:string*"/>
-        <xsl:variable name="hr" select="concat($vodml-id[1], '/', $vodml-id[2], '.rst')"/>
+        <xsl:variable name="hr" select="concat(string-join(tokenize(vf:asvodmlref(current()),'[:.]'),'/'), '.rst')"/>
         <xsl:message>writing RST description to <xsl:value-of select="$hr"/></xsl:message>
         <xsl:result-document method="text" encoding="UTF-8" href="{$hr}">
             <xsl:apply-templates select="current()" mode="desc"/>
@@ -352,7 +344,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
     <!-- link for overview context: path is {modelname}/{id} -->
     <xsl:template name="linkToOverview">
         <xsl:variable name="vodml-id" select="tokenize(vf:asvodmlref(current()),':')" as="xsd:string*"/>
-        <xsl:value-of select="concat(':doc:`', $vodml-id[2], ' &lt;', $vodml-id[1], '/', $vodml-id[2], '&gt;`')"/>
+        <xsl:value-of select="concat(':doc:`', $vodml-id[2], ' &lt;', $vodml-id[1], '/', string-join(tokenize($vodml-id[2],'[.]'),'/'), '&gt;`')"/>
     </xsl:template>
 
     <!-- vodml-ref template: renders an RST cross-reference link -->
