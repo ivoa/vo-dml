@@ -149,3 +149,7 @@
 * 0.7.0
   * Change the JSON serialization to be more like the XML serialiation (also helps with pydantic serialization)
     * the content property is removed and the objects below it are directly serialized with properties equal to their type.
+    * can be set back to the old "@type property" style with a binding option,
+      but the pydantic code does not support that yet.
+  * "beta" level support for Pydantic model code generation - relies on a modified version of xsdata for the XML and JSON serialization see https://github.com/tefra/xsdata/pull/1222 to be interoperable with the Java generated code.
+    * The generated Pydantic code requires the VO-DML tools [python runtime](../runtime/python) at runtime.
