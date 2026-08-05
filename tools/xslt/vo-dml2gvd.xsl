@@ -299,7 +299,7 @@ must create next as variable to select from inside the atomic context of the dis
         <xsl:value-of select="concat('URL=',$dq,'../',$vodmlid[1],'/',$vodmlid[2],$dq)"/>
       </xsl:when>
       <xsl:when test="$linkmode = 'sphinx'">
-        <xsl:value-of select="concat('URL=',$dq,':ref:`',replace(vf:asvodmlref(current()), '[:.]', '_'),'`',$dq)"/>
+        <xsl:value-of select="concat('URL=',$dq,':ref:`',replace(vf:asvodmlref(current()), '[:.]', '_'),'`',$dq,$nl,'target=',$dq,'_parent',$dq,$nl)"/>
       </xsl:when>
       <xsl:otherwise><xsl:value-of select="concat('URL=',$dq,'#',vodml-id,$dq)"/></xsl:otherwise>
     </xsl:choose>

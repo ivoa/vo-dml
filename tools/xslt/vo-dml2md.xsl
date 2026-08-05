@@ -24,7 +24,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 
   <xsl:param name="binding"/>
   <!-- IF Graphviz png and map are available use these  -->
-  <xsl:param name="graphviz_png"/>
+  <xsl:param name="graphviz_svg"/>
     <xsl:variable name="modname">
         <xsl:choose>
             <xsl:when test="/vo-dml:model/vodml-id"><xsl:value-of select="/vo-dml:model/vodml-id"  /></xsl:when>
@@ -76,7 +76,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 <xsl:value-of select="author"/>
 
 
-    <xsl:if test="$graphviz_png">
+    <xsl:if test="$graphviz_svg">
 &cr;
 ### Overview diagram
 
@@ -85,7 +85,7 @@ The whole model is represented in a model diagram below
 
  <!-- IMPL should create temp file name -->
   <xsl:result-document format="svgform" href="/tmp/test.svg">
-  <xsl:apply-templates select="document($graphviz_png)" mode="svg"/>
+  <xsl:apply-templates select="document($graphviz_svg)" mode="svg"/>
   </xsl:result-document>
   <xsl:value-of select="unparsed-text('/tmp/test.svg')"/>
 

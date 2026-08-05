@@ -5,6 +5,7 @@ author = 'Paul Harrison'
 extensions = [
     'sphinxcontrib.plantuml',
     'sphinx_diagram_connect',
+    'sphinxcontrib.imagesvg',
 ]
 
 plantuml_output_format = 'svg'

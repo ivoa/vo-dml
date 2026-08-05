@@ -15,6 +15,8 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
 
     <xsl:param name="binding"/>
     <xsl:param name="modelsToDocument"/>
+    <xsl:param name="graphviz_svg"/> <!-- NB - this is an svg! -->
+
 
     <xsl:include href="binding_setup.xsl"/>
 
@@ -91,6 +93,15 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         <xsl:value-of select="concat($nl, vf:underline('Authors', '~'), $nl, $nl)"/>
         <xsl:value-of select="concat(author, $nl, $nl)"/>
 
+        <xsl:if test="$graphviz_svg">
+            <xsl:value-of select="concat($nl, vf:underline('Overview Diagram', '~'), $nl, $nl)"/>
+        <xsl:text>The whole model is represented in a model diagram below
+
+        </xsl:text>
+            <!-- IMPL this depends on https://github.com/sphinx-contrib/imagesvg -->
+            <xsl:value-of select="concat($nl,'.. imagesvg:: ', $graphviz_svg, $nl)"/>
+            <xsl:value-of select="concat('   :tagtype: object',$nl,$nl)"/>
+        </xsl:if>
         <xsl:if test="//package">
             <xsl:text>Packages</xsl:text>
             <xsl:value-of select="concat($nl, vf:underline('Packages', '-'), $nl, $nl)"/>

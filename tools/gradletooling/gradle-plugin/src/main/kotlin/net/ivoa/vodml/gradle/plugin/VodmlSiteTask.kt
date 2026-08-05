@@ -77,9 +77,10 @@ import javax.inject.Inject
 
              if (isSphinx) {
                  outfile = docDir.file("$shortname.rst")
+                 params["graphviz_svg"] = docDir.file("$shortname.svg").get().asFile.name
                  Vodml2rst.doTransform(it.absoluteFile, params, actualCatalog, outfile.get().asFile)
              } else {
-                 params["graphviz_png"] = docDir.file("$shortname.svg").get().asFile.absolutePath
+                 params["graphviz_svg"] = docDir.file("$shortname.svg").get().asFile.absolutePath
                  outfile = docDir.file("$shortname.md")
                  Vodml2md.doTransform(it.absoluteFile, params, actualCatalog, outfile.get().asFile)
              }
