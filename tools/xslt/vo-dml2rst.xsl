@@ -36,13 +36,15 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
 
     <xsl:variable name="modelsInScope" select="(/vo-dml:model/name, vf:importedModelNames(/vo-dml:model/name))"/>
 
-    <!-- Create an RST underline of the same length as the text -->
-    <xsl:function name="vf:underline" as="xsd:string">
+
+    <xsl:function name="vf:header" as="xsd:string">
         <xsl:param name="text"/>
         <xsl:param name="char"/>
         <xsl:variable name="len" select="string-length(string($text))"/>
-        <xsl:value-of select="string-join(for $i in 1 to $len return $char, '')"/>
+        <xsl:value-of select="concat($nl,$text,$nl,string-join(for $i in 1 to $len return $char, ''),$nl,$nl)"/>
     </xsl:function>
+
+
 
     <!-- RST :doc: link for use from within a type file -->
     <xsl:function name="vf:doRstLink">
@@ -81,30 +83,29 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
     <!-- Model overview: produces the main RST file with toctree -->
     <xsl:template match="vo-dml:model">
         <xsl:variable name="title" select="name"/>
-        <xsl:value-of select="concat($title, $nl, vf:underline($title, '='), $nl, $nl)"/>
+        <xsl:value-of select="vf:header($title, '=')"/>
         <xsl:value-of select="concat('**version ', version, '** *', (format-dateTime(xsd:dateTime(lastModified),'[Y0001]-[M01]-[D01]')), '*', $nl, $nl)"/>
 
-        <xsl:text>Introduction</xsl:text>
-        <xsl:value-of select="concat($nl, vf:underline('Introduction', '-'), $nl, $nl)"/>
+
+        <xsl:value-of select="vf:header('Introduction', '-')"/>
         <xsl:apply-templates select="description"/>
         <xsl:value-of select="concat($nl, $nl)"/>
 
-        <xsl:text>Authors</xsl:text>
-        <xsl:value-of select="concat($nl, vf:underline('Authors', '~'), $nl, $nl)"/>
+        <xsl:value-of select="vf:header('Authors', '~')"/>
         <xsl:value-of select="concat(author, $nl, $nl)"/>
 
         <xsl:if test="$graphviz_svg">
-            <xsl:value-of select="concat($nl, vf:underline('Overview Diagram', '~'), $nl, $nl)"/>
+            <xsl:value-of select="vf:header('Overview Diagram', '~')"/>
         <xsl:text>The whole model is represented in a model diagram below
 
         </xsl:text>
             <!-- IMPL this depends on https://github.com/sphinx-contrib/imagesvg -->
-            <xsl:value-of select="concat($nl,'.. imagesvg:: ', $graphviz_svg, $nl)"/>
-            <xsl:value-of select="concat('   :tagtype: object',$nl,$nl)"/>
+            <xsl:value-of select="concat($nl,'.. container:: overview-diagram',$nl)"/>
+            <xsl:value-of select="concat($nl,'   .. imagesvg:: ', $graphviz_svg)"/>
+            <xsl:value-of select="concat($nl,'      :tagtype: object',$nl,$nl)"/>
         </xsl:if>
         <xsl:if test="//package">
-            <xsl:text>Packages</xsl:text>
-            <xsl:value-of select="concat($nl, vf:underline('Packages', '-'), $nl, $nl)"/>
+            <xsl:value-of select="vf:header('Packages', '-')"/>
             <xsl:for-each select="//package">
                 <xsl:sort select="name"/>
                 <xsl:value-of select="concat('* *', name, '* ')"/><xsl:apply-templates select="description"/><xsl:value-of select="$nl"/>
@@ -113,8 +114,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         </xsl:if>
 
         <xsl:if test="//primitiveType">
-            <xsl:text>Primitives</xsl:text>
-            <xsl:value-of select="concat($nl, vf:underline('Primitives', '-'), $nl, $nl)"/>
+            <xsl:value-of select="vf:header('Primitives', '-')"/>
             <xsl:for-each select="//primitiveType">
                 <xsl:sort select="name"/>
                 <xsl:text>* </xsl:text><xsl:call-template name="linkToOverview"/><xsl:value-of select="$nl"/>
@@ -123,8 +123,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         </xsl:if>
 
         <xsl:if test="//enumeration">
-            <xsl:text>Enumerations</xsl:text>
-            <xsl:value-of select="concat($nl, vf:underline('Enumerations', '-'), $nl, $nl)"/>
+            <xsl:value-of select="vf:header('Enumerations', '-')"/>
             <xsl:for-each select="//enumeration">
                 <xsl:sort select="name"/>
                 <xsl:text>* </xsl:text><xsl:call-template name="linkToOverview"/><xsl:value-of select="$nl"/>
@@ -133,8 +132,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         </xsl:if>
 
         <xsl:if test="//dataType">
-            <xsl:text>DataTypes</xsl:text>
-            <xsl:value-of select="concat($nl, vf:underline('DataTypes', '-'), $nl, $nl)"/>
+            <xsl:value-of select="vf:header('DataTypes', '-')"/>
             <xsl:for-each select="//dataType">
                 <xsl:sort select="name"/>
                 <xsl:text>* </xsl:text><xsl:call-template name="linkToOverview"/><xsl:value-of select="$nl"/>
@@ -143,8 +141,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         </xsl:if>
 
         <xsl:if test="//objectType">
-            <xsl:text>ObjectTypes</xsl:text>
-            <xsl:value-of select="concat($nl, vf:underline('ObjectTypes', '-'), $nl, $nl)"/>
+            <xsl:value-of select="vf:header('ObjectTypes', '-')"/>
             <xsl:for-each select="//objectType">
                 <xsl:sort select="name"/>
                 <xsl:text>* </xsl:text><xsl:call-template name="linkToOverview"/><xsl:value-of select="$nl"/>
@@ -153,8 +150,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         </xsl:if>
 
         <xsl:if test="import">
-            <xsl:text>Imports</xsl:text>
-            <xsl:value-of select="concat($nl, vf:underline('Imports', '-'), $nl, $nl)"/>
+            <xsl:value-of select="vf:header('Imports', '-')"/>
             <xsl:for-each select="import">
                 <xsl:variable name="bnd" select="$mapping/bnd:mappedModels/model[file=current()/url]"/>
                 <xsl:value-of select="concat('* ', $bnd/name, $nl)"/>
@@ -214,7 +210,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
             <xsl:if test="@abstract">abstract </xsl:if>
             <xsl:value-of select="concat(name(), ' ', name)"/>
         </xsl:variable>
-        <xsl:value-of select="concat($header, $nl, vf:underline($header, '='), $nl, $nl)"/>
+        <xsl:value-of select="vf:header($header, '=')"/>
 
         <xsl:if test="extends">
             <xsl:text>extends </xsl:text>
@@ -228,8 +224,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         <xsl:apply-templates select="current()" mode="plantdiag"/>
 
         <xsl:if test="attribute|reference|composition|constraint[@xsi:type='vo-dml:SubsettedRole']">
-            <xsl:text>Members</xsl:text>
-            <xsl:value-of select="concat($nl, vf:underline('Members', '-'), $nl, $nl)"/>
+            <xsl:value-of select="vf:header('Members', '-')"/>
             <xsl:text>.. list-table::</xsl:text><xsl:value-of select="$nl"/>
             <xsl:text>   :widths: 20 20 10 50</xsl:text><xsl:value-of select="$nl"/>
             <xsl:text>   :header-rows: 1</xsl:text><xsl:value-of select="concat($nl, $nl)"/>
@@ -242,14 +237,12 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         </xsl:if>
 
         <xsl:if test="constraint[@xsi:type='vo-dml:SubsettedRole']">
-            <xsl:text>Subset Detail</xsl:text>
-            <xsl:value-of select="concat($nl, vf:underline('Subset Detail', '-'), $nl, $nl)"/>
+            <xsl:value-of select="vf:header('Subset Detail', '-')"/>
             <xsl:apply-templates select="constraint[@xsi:type='vo-dml:SubsettedRole']" mode="ssdetail"/>
         </xsl:if>
 
         <xsl:if test="vf:referredTo($vodml-ref) or vf:hasReferencesInContainmentHierarchy($vodml-ref)">
-            <xsl:text>References Detail</xsl:text>
-            <xsl:value-of select="concat($nl, vf:underline('References Detail', '-'), $nl, $nl)"/>
+            <xsl:value-of select="vf:header('References Detail', '-')"/>
             <xsl:for-each select="reference/datatype/vodml-ref">
                 <xsl:choose>
                     <xsl:when test="vf:isContainedInModels(current(),$models/vo-dml:model/name)">
@@ -274,8 +267,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         </xsl:if>
 
         <xsl:if test="vf:isContainedInModels($vodml-ref,$models/vo-dml:model/name)">
-            <xsl:text>Containment</xsl:text>
-            <xsl:value-of select="concat($nl, vf:underline('Containment', '-'), $nl, $nl)"/>
+            <xsl:value-of select="vf:header('Containment', '-')"/>
             <xsl:value-of select="concat('This is contained by ', string-join(for $i in vf:containingTypes($vodml-ref) return vf:doRstLink(vf:asvodmlref($i)),', '), $nl)"/>
         </xsl:if>
     </xsl:template>
@@ -284,22 +276,21 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         <xsl:call-template name="makeTarget"/>
         <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
         <xsl:variable name="header" select="concat('enumeration ', name)"/>
-        <xsl:value-of select="concat($header, $nl, vf:underline($header, '='), $nl, $nl)"/>
+        <xsl:value-of select="vf:header($header, '=')"/>
 
         <xsl:apply-templates select="description"/>
         <xsl:value-of select="concat($nl, $nl)"/>
 
         <xsl:apply-templates select="current()" mode="plantdiag"/>
 
-        <xsl:text>Values</xsl:text>
-        <xsl:value-of select="concat($nl, vf:underline('Values', '-'), $nl, $nl)"/>
+        <xsl:value-of select="vf:header('Values', '-')"/>
         <xsl:apply-templates select="literal"/>
     </xsl:template>
 
     <xsl:template match="primitiveType" mode="desc">
         <xsl:call-template name="makeTarget"/>
         <xsl:variable name="header" select="concat('primitiveType ', name)"/>
-        <xsl:value-of select="concat($header, $nl, vf:underline($header, '='), $nl, $nl)"/>
+        <xsl:value-of select=" vf:header($header, '=')"/>
         <xsl:apply-templates select="description"/>
         <xsl:value-of select="$nl"/>
     </xsl:template>
@@ -307,12 +298,12 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
     <xsl:template match="package" mode="desc">
         <xsl:call-template name="makeTarget"/>
         <xsl:variable name="header" select="concat('Package ', name)"/>
-        <xsl:value-of select="concat($header, $nl, vf:underline($header, '='), $nl, $nl)"/>
+        <xsl:value-of select=" vf:header($header, '=')"/>
         <xsl:apply-templates select="description"/>
         <xsl:value-of select="$nl"/>
         <xsl:if test="package">
             <xsl:text>Contained packages</xsl:text>
-            <xsl:value-of select="concat($nl, vf:underline('Contained packages', '-'), $nl, $nl)"/>
+            <xsl:value-of select="vf:header('Contained packages', '-')"/>
             <xsl:for-each select="package">
                 <xsl:variable name="vodml-id" select="tokenize(vf:asvodmlref(current()),':')" as="xsd:string*"/>
                 <xsl:value-of select="concat('* :doc:`', name, ' &lt;', $vodml-id[2], '&gt;`', $nl)"/>
@@ -346,7 +337,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
             <xsl:copy-of select="$models/key('ellookup',current()/role/vodml-ref)" />
         </xsl:variable>
         <xsl:variable name="subHeader" select="vf:nameFromVodmlref(role/vodml-ref)"/>
-        <xsl:value-of select="concat($subHeader, $nl, vf:underline($subHeader, '~'), $nl, $nl)"/>
+        <xsl:value-of select="vf:header($subHeader, '~')"/>
         <xsl:value-of select="concat('Subsets ', vf:nameFromVodmlref(role/vodml-ref), ' in ', vf:doRstLink($subSettedTypeId), ' from type ')"/>
         <xsl:value-of select="concat(vf:doRstLink($subsettedThing/datatype/vodml-ref), ' to ', vf:doRstLink(current()/datatype/vodml-ref))"/>
         <xsl:value-of select="$nl"/>
@@ -395,11 +386,12 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         <xsl:variable name="diagContent">
             <xsl:apply-templates select="current()" mode="diag"/>
         </xsl:variable>
-        <xsl:value-of select="concat($nl, '.. uml::', $nl, $nl)"/>
+        <xsl:value-of select="concat($nl,'.. container:: overview-diagram',$nl)"/>
+        <xsl:value-of select="concat($nl,'   .. uml::', $nl, $nl)"/>
         <!-- Indent every non-empty line with 3 spaces for RST directive content -->
         <xsl:value-of select="string-join(
             for $line in tokenize(string($diagContent), '\n')
-            return (if ($line != '') then concat('   ', $line) else ''),
+            return (if ($line != '') then concat('      ', $line) else ''),
             $nl)"/>
         <xsl:value-of select="concat($nl, $nl)"/>
     </xsl:template>

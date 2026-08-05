@@ -2,6 +2,12 @@
 project = 'VO-DML Documentation View'
 author = 'Paul Harrison'
 
+html_static_path = ['_static']
+
+html_css_files = [
+    'css/test.css',
+]
+
 extensions = [
     'sphinxcontrib.plantuml',
     'sphinx_diagram_connect',
