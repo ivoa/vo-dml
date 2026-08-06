@@ -27,6 +27,7 @@ open class VodmlExtension @Inject constructor(objects: ObjectFactory, layout: Pr
     override val catalogFile = objects.fileProperty()
     @Deprecated("imported models should be recognised automatically making this superfluous")
     override val modelsToDocument: Property<String> = objects.property(String::class.java)
+    override val siteType: Property<String> = objects.property(String::class.java)
     override val vodslDir: DirectoryProperty = objects.directoryProperty()
     override val vodslFiles = objects.fileCollection()
     override val vocabularyDir: DirectoryProperty = objects.directoryProperty()
@@ -48,6 +49,7 @@ open class VodmlExtension @Inject constructor(objects: ObjectFactory, layout: Pr
             outputSchemaDir.set(layout.buildDirectory.dir("generated/sources/vodml/schema/"))
             defaultPackage.set("vodml.generated")
             generateEpisode.set(false)
+            siteType.set("mkdocs")
             vodslDir.set(layout.projectDirectory.dir("src/main/vodsl"))
 
             groups.configureEach {
@@ -61,6 +63,7 @@ open class VodmlExtension @Inject constructor(objects: ObjectFactory, layout: Pr
                 generateEpisode.set(this@VodmlExtension.generateEpisode)
                 catalogFile.set(this@VodmlExtension.catalogFile)
                 modelsToDocument.set("")
+                siteType.set(this@VodmlExtension.siteType)
                 vodslDir.set(this@VodmlExtension.vodslDir)
 
             }

@@ -1,3 +1,5 @@
 /bin/
 ./*.xsd
 ./*.sql
+/site/
+/docs/schema/

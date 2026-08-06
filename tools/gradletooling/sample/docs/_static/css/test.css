@@ -1,0 +1,18 @@
+/*
+ * Copyright (c) 2026. Paul Harrison, University of Manchester
+ */
+
+/*
+make the diagrams use horizontal scroll if necessary
+ */
+.overview-diagram {
+    width: 100%;
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+.overview-diagram object {
+    /* Allows the object to expand to its native full resolution */
+    display: block;
+    max-width: none;
+}

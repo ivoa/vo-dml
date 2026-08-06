@@ -25,6 +25,7 @@ interface VodmlExtensionGroup {
     val bindingFiles: ConfigurableFileCollection
     val catalogFile: RegularFileProperty
     val modelsToDocument: Property<String>//use the model prefixes to specify which models have cross references in documentation (separate models with ,)
+    val siteType: Property<String> // the type of site to generate - either "mkdocs" (default) or "sphinx"
     val vodslDir :  DirectoryProperty
     val vodslFiles : ConfigurableFileCollection
     val vocabularyDir: DirectoryProperty

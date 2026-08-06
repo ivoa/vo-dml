@@ -15,16 +15,6 @@
   This XSLT script contains common  templates that depend only on a single instance of a VO-DML file being in scope.
 -->
 
-  <xsl:variable name="cr">
-<xsl:text>
-</xsl:text>
-  </xsl:variable>
-  <xsl:variable name="sq"><xsl:text>'</xsl:text></xsl:variable>
-  <xsl:variable name="dq"><xsl:text>"</xsl:text></xsl:variable>
-  <xsl:variable name='nl'><xsl:text>
-</xsl:text></xsl:variable>
-  <xsl:variable name='lt'><xsl:text disable-output-escaping="yes">&lt;</xsl:text></xsl:variable>
-  <xsl:variable name='gt'><xsl:text disable-output-escaping="yes">&gt;</xsl:text></xsl:variable>
 
   <!-- templates -->
   <xsl:template name="upperFirst">

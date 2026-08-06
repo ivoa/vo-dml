@@ -43,6 +43,7 @@ vodml {
     )
     outputDocDir.set(layout.projectDirectory.dir("docs"))
     outputSiteDir.set(outputDocDir.dir("generated"))
+    siteType.set("sphinx")
     outputSchemaDir.set(outputDocDir.dir("schema"))
     vodslDir.set(vodmlDir) // same place for source models
     outputPythonDir.set(layout.projectDirectory.dir("pythontest/generated"))
@@ -169,7 +170,22 @@ tasks.register<Exec>("siteNav")
     standardOutput = file("mkdocs.yml").outputStream()
     dependsOn("vodmlSite")
 }
-tasks.register<Exec>("testSite"){
+
+tasks.register<Copy>("copyJavaDocForSite") {
+    from(layout.buildDirectory.dir("docs/javadoc"))
+    into(vodml.outputSiteDir.dir("javadoc"))
+    dependsOn(tasks.javadoc)
+
+}
+
+
+tasks.register<Exec>("testMkdocs") {
     commandLine("mkdocs", "serve")
     dependsOn("siteNav")
+}
+
+tasks.register<Exec>("testSphinx"){
+    commandLine("sphinx-build", "-M", "html", "./docs/", "site")
+    dependsOn("copyJavaDocForSite")
+    dependsOn("vodmlSite")
 }
