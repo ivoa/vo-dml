@@ -4,8 +4,7 @@
   -->
 
 <!--
-This stylesheet creates reStructuredText (RST) documentation for Sphinx.
-It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdocs Markdown.
+This includable stylesheet contains templates for generating PlantUML diagrams from VO-DML models. It is intended to be used in conjunction with other XSLT stylesheets that process VO-DML XML files.
 -->
 <xsl:stylesheet version="3.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -44,7 +43,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         <xsl:text>class </xsl:text><xsl:value-of select="name"/>
         <xsl:if test="current()/name()='dataType'"><xsl:text> &lt;&lt;dataType&gt;&gt;</xsl:text></xsl:if>
         <xsl:text> #LightGray ##[bold]Purple</xsl:text>
-        <xsl:value-of select="concat(' {', $nl)"/>
+        <xsl:value-of select="concat(' {', $nl)" disable-output-escaping="yes"/>
         <xsl:apply-templates select="(attribute|constraint)" mode="diag"/>
         <xsl:value-of select="concat('}', $nl)"/>
         <xsl:call-template name="doSupers"><xsl:with-param name="vodml-ref" select="$vodml-ref"/></xsl:call-template>
