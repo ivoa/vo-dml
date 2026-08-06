@@ -285,9 +285,7 @@ hide empty members
         <xsl:variable name="diagContent">
             <xsl:apply-templates select="current()" mode="diag"/>
         </xsl:variable>
-        <xsl:message>plantuml:
-            <xsl:value-of select="concat($nl,string($diagContent))"/>
-        </xsl:message>
+<!--        <xsl:message>plantuml: <xsl:value-of select="concat($nl,string($diagContent))"/></xsl:message>-->
         <xsl:value-of select="concat($diagContent,$nl)"/>
         <xsl-text>```
 

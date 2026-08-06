@@ -2,6 +2,26 @@
 <!--
 This stylesheet creates reStructuredText (RST) documentation for Sphinx.
 It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdocs Markdown.
+
+note that the RST output is not intended to be a complete Sphinx project, but rather the content files for a Sphinx project. The user is expected to create a Sphinx project and include the generated RST files in the appropriate location.
+
+to make the diagrams scroll sideways the following CSS should be applied
+
+.overview-diagram {
+    width: 100%;
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+.overview-diagram object {
+    /* Allows the object to expand to its native full resolution */
+    display: block;
+    max-width: none;
+}
+
+
+TODO the way that toctrees are used depends a bit on the theme - perhaps parameterize some behaviours
+perhaps create a specific theme?
 -->
 <xsl:stylesheet version="3.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -151,6 +171,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         <xsl:if test="//(primitiveType|enumeration|dataType|objectType)">
             <xsl:value-of select="concat($nl, '.. toctree::', $nl)"/>
             <xsl:value-of select="concat('   :maxdepth: 1', $nl)"/>
+            <xsl:value-of select="concat('   :hidden:', $nl)"/>
             <xsl:value-of select="concat('   :caption: Types', $nl, $nl)"/>
             <xsl:for-each select="//(primitiveType|enumeration|dataType|objectType)">
                 <xsl:sort select="vf:asvodmlref(current())"/>
@@ -375,7 +396,7 @@ It is equivalent to vo-dml2md.xsl but produces RST/Sphinx output instead of mkdo
         <xsl:variable name="diagContent">
             <xsl:apply-templates select="current()" mode="diag"/>
         </xsl:variable>
-        <xsl:message>plantuml: <xsl:value-of select="concat($nl,string($diagContent))"/></xsl:message>
+<!--        <xsl:message>plantuml: <xsl:value-of select="concat($nl,string($diagContent))"/></xsl:message>-->
         <xsl:value-of select="concat($nl,'.. container:: overview-diagram',$nl)"/>
         <xsl:value-of select="concat($nl,'   .. uml::', $nl, $nl)"/>
         <!-- Indent every non-empty line with 3 spaces for RST directive content -->

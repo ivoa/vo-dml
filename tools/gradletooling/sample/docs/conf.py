@@ -2,6 +2,8 @@
 project = 'VO-DML Documentation View'
 author = 'Paul Harrison'
 
+#html_theme = 'classic'
+
 html_static_path = ['_static']
 
 html_css_files = [
