@@ -154,3 +154,5 @@
   * "beta" level support for Pydantic model code generation - relies on a modified version of xsdata for the XML and JSON serialization see https://github.com/tefra/xsdata/pull/1222 to be interoperable with the Java generated code.
     * The generated Pydantic code requires the VO-DML tools [python runtime](../runtime/python) at runtime.
   * Added option to the site docs generation to generate a sphinx site rather than a mkdocs site.
+* 0.7.1
+  * 
