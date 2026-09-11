@@ -833,6 +833,7 @@
     <!-- beginning of attribute override code for datatypes -->
     <!-- IMPL this code is still template based rather than function based - it does return a new structure representing the datatypes subtrees though, so templates probably best -->
     <xsl:template match="dataType" mode="attrovercols2" >
+<!--        <xsl:message>attrovercols2: Processing dataType: <xsl:value-of select="vf:asvodmlref(current())"/></xsl:message>-->
         <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
         <dt v="{$vodml-ref}" n="{name}" poly="{extends and vf:dtypeHierarchyUsedPolymorphically($vodml-ref)}" abstr="{@abstract = 'true'}">
 
@@ -865,6 +866,7 @@
     </xsl:template>
 
     <xsl:template match="attribute" mode="attrovercols2" >
+<!--        <xsl:message>attrovercols2: Processing attribute: <xsl:value-of select="name"/></xsl:message>-->
         <att v="{vf:asvodmlref(current())}" c="{name}">
 
             <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
@@ -887,6 +889,8 @@
 
     <xsl:template match="primitiveType" mode="attrovercols2" >
         <xsl:param name="parentname" as="xsd:string"/>
+<!--        <xsl:message>attrovercols2: Processing primitiveType: <xsl:value-of select="concat(vf:asvodmlref(current()), ' (', $parentname, ') extends=', count(extends))"/></xsl:message>-->
+
         <xsl:variable name="type" select="vf:asvodmlref(current())"/>
                 <xsl:choose>
                     <xsl:when test="vf:hasMapping(vf:asvodmlref(current()),'java')">
@@ -909,7 +913,9 @@
                             <xsl:when test="extends">
                                 <att f="value" type="{current()/extends/vodml-ref}" extends="{true()}">
                                     <xsl:attribute name="f" select="'value'"/>
-                                    <xsl:apply-templates select="$models/key('ellookup',current()/extends/vodml-ref)" mode="attrovercols2"/>
+                                    <xsl:apply-templates select="$models/key('ellookup',current()/extends/vodml-ref)" mode="attrovercols2">
+                                        <xsl:with-param name="parentname" select="$parentname"/>
+                                    </xsl:apply-templates>
                                 </att>
                             </xsl:when>
                             <xsl:otherwise>

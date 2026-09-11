@@ -175,8 +175,9 @@
         <xsl:variable name="name" select="name"/>
         <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
         <xsl:variable name="thisattr"  select="."/>
+
+<!--        <xsl:message>****jpa attr name=<xsl:value-of select="name"/>  ref=<xsl:value-of select="datatype/vodml-ref"/> type="<xsl:value-of select="name($type)"/>" </xsl:message>-->
         <xsl:choose>
-            <!--     <xsl:message>****jpa attr  ref=<xsl:value-of select="datatype/vodml-ref"/> type="<xsl:value-of select="name($type)"/>" </xsl:message> -->
             <xsl:when test="name($type) = 'primitiveType'">
                 <xsl:choose>
                     <xsl:when test="xsd:int(multiplicity/maxOccurs) = -1">
@@ -289,7 +290,7 @@
 
     <xsl:template name="doEmbeddedAssociationOverrides">
         <xsl:param name="nillable"/>
-
+<!--        <xsl:message>doEmbeddedAssociationOverrides: parentType=<xsl:value-of select="current()/parent::*/name()"/></xsl:message>-->
         <xsl:if test="current()/parent::objectType">
         <xsl:variable name="attovers" as="xsd:string*">
 
