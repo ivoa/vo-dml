@@ -67,7 +67,7 @@ note that this schema is substantially different from the era when this code was
       </xsl:choose>
     </xsl:variable>
 
-    <xsl:message >Generating XSD for  <xsl:value-of select="$modelname "/> - considering models <xsl:value-of select="string-join($models/vo-dml:model/name,', ')" /></xsl:message>
+    <xsl:message >Generating XSD for  <xsl:value-of select="$modelname "/> - considering models <xsl:value-of select="string-join($models/vo-dml:model/name,', ')" /> wrap=<xsl:value-of select="not(vf:XMLunwrapped($modelname))"/></xsl:message>
 
 
 
@@ -209,6 +209,7 @@ note that this schema is substantially different from the era when this code was
  -->
   <xsl:template match="objectType" mode="content">
     <xsl:variable name="numprops" select="count(attribute|reference[not(subsets)]|composition)"/>
+<!--    <xsl:message>content: Processing objectType: <xsl:value-of select="name"/> with <xsl:value-of select="$numprops"/> properties</xsl:message>-->
     <xsl:if test="number($numprops) > 0">
       <xsd:sequence>
         <xsl:apply-templates select="attribute[not(vf:isXMLAttribute(vf:asvodmlref(.)))]|composition[not(subsets)]|reference[not(subsets)]"/>
@@ -318,6 +319,7 @@ note that this schema is substantially different from the era when this code was
 
 
   <xsl:template match="attribute[vf:isXMLAttribute(vf:asvodmlref(.))]" >
+<!--    <xsl:message>Processing attribute <xsl:value-of select="name"/> with multiplicity <xsl:value-of select="vf:multiplicityAsSymbol(multiplicity)"/></xsl:message>-->
     <xsd:attribute>
       <xsl:attribute name="name" >
         <xsl:value-of select="name"/>
@@ -342,8 +344,10 @@ note that this schema is substantially different from the era when this code was
     </xsd:attribute>
    </xsl:template>
 
+
   <xsl:template match="attribute[not(vf:isXMLAttribute(vf:asvodmlref(.))) and (vf:XMLunwrapped(ancestor::vo-dml:model/name) or multiplicity/maxOccurs = 1)]" >
-  <xsd:element>
+<!--    <xsl:message>Processing attribute <xsl:value-of select="name"/> with multiplicity <xsl:value-of select="vf:multiplicityAsSymbol(multiplicity)"/></xsl:message>-->
+    <xsd:element>
     <xsl:attribute name="name" >
       <xsl:value-of select="name"/>
     </xsl:attribute>
@@ -364,6 +368,7 @@ note that this schema is substantially different from the era when this code was
 
 
 <xsl:template match="attribute[multiplicity/maxOccurs != 1 and not(vf:XMLunwrapped(ancestor::vo-dml:model/name))]" >
+<!--   <xsl:message>Processing attribute <xsl:value-of select="name"/> with multiplicity <xsl:value-of select="vf:multiplicityAsSymbol(multiplicity)"/></xsl:message>-->
     <xsd:element>
       <xsl:attribute name="name" >
         <xsl:choose>
@@ -428,6 +433,7 @@ note that this schema is substantially different from the era when this code was
   </xsl:template>
 
   <xsl:template match="composition[multiplicity/maxOccurs != 1 and not(vf:XMLunwrapped($modelname))]" >
+<!--    <xsl:message>Processing composition <xsl:value-of select="name"/> with multiplicity <xsl:value-of select="vf:multiplicityAsSymbol(multiplicity)"/></xsl:message>-->
     <xsd:element>
       <xsl:attribute name="name" >
         <xsl:value-of select="name"/>
@@ -449,6 +455,7 @@ note that this schema is substantially different from the era when this code was
   </xsl:template>
 
   <xsl:template match="composition" >
+<!--    <xsl:message>Processing composition <xsl:value-of select="name"/> with multiplicity <xsl:value-of select="vf:multiplicityAsSymbol(multiplicity)"/></xsl:message>-->
     <xsd:element>
       <xsl:attribute name="name" >
         <xsl:value-of select="name"/>
@@ -461,8 +468,9 @@ note that this schema is substantially different from the era when this code was
   </xsl:template>
 
 
-  <xsl:template match="reference[multiplicity/maxOccurs =1 or(multiplcity/maxOccurs != 1 and vf:XMLunwrapped($modelname))]" >
+  <xsl:template match="reference[multiplicity/maxOccurs =1 or(multiplicity/maxOccurs != 1 and vf:XMLunwrapped($modelname))]" >
     <xsl:comment><xsl:text>this is a reference</xsl:text></xsl:comment>
+<!--    <xsl:message>Processing reference <xsl:value-of select="name"/> with multiplicity <xsl:value-of select="vf:multiplicityAsSymbol(multiplicity)"/></xsl:message>-->
     <xsd:element>
 
       <xsl:attribute name="name" >
@@ -477,6 +485,7 @@ note that this schema is substantially different from the era when this code was
 
   <xsl:template match="reference[multiplicity/maxOccurs != 1 and not(vf:XMLunwrapped($modelname))]" >
     <xsl:comment><xsl:text>this is a reference</xsl:text></xsl:comment>
+<!--    <xsl:message>Processing reference <xsl:value-of select="name"/> with multiplicity <xsl:value-of select="vf:multiplicityAsSymbol(multiplicity)"/></xsl:message>-->
     <xsd:element>
       <xsl:attribute name="name" >
         <xsl:value-of select="name"/>
