@@ -176,8 +176,10 @@ public abstract class AbstractBaseValidation {
      */
     protected <M, I, T extends JPAManipulationsForObjectType<I>> RoundTripResult<T> roundtripRDB(ModelManagement<M> modelManagement, T  entity)
     {
-       
-        jakarta.persistence.EntityManager em = setupH2Db(modelManagement.pu_name(), modelManagement.description().allClassNames());
+
+        List<String> allclasses = new ArrayList<>(modelManagement.description().allClassNames());
+        allclasses.addAll(additionalJPAClasses());
+        jakarta.persistence.EntityManager em = setupH2Db(modelManagement.pu_name(), allclasses);
         em.getTransaction().begin();
         modelManagement.persistRefs(em);
         em.persist(entity);
@@ -251,6 +253,14 @@ public abstract class AbstractBaseValidation {
      */
     protected String setDbDumpFile() {
         return  null;
+    }
+
+    /**
+     * Return a list of additional JPA classes to be included in the persistence unit.
+     * @return the list of additional classes.
+     */
+    protected List<String> additionalJPAClasses() {
+        return Collections.emptyList();
     }
 
     /**
