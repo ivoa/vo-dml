@@ -316,7 +316,7 @@ public abstract class AbstractBaseValidation {
             // properties.put(PersistenceUnitProperties.TARGET_DATABASE, "org.eclipse.persistence.platform.database.DerbyPlatform");
 
             //        //h2
-            properties.put("jakarta.persistence.jdbc.url", "jdbc:h2:mem:"+persistenceUnitName+";DB_CLOSE_DELAY=-1");//IMPL differenrt DB for each PU to stop interactions
+            properties.put("jakarta.persistence.jdbc.url", "jdbc:h2:mem:"+persistenceUnitName+";DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=FALSE");//IMPL differenrt DB for each PU to stop interactions
             properties.put("jakarta.persistence.jdbc.driver", "org.h2.Driver");
             properties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
             //        properties.put(PersistenceUnitProperties.TARGET_DATABASE, "org.eclipse.persistence.platform.database.H2Platform");
