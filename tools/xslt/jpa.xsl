@@ -245,7 +245,7 @@
                   <xsl:variable name="tableName">
                       <xsl:apply-templates select=".." mode="tableName"/><xsl:text>_</xsl:text><xsl:value-of select="$name"/>
                   </xsl:variable>
-                  <xsl:call-template name="doEmbeddedAssociationOverrides">
+                  <xsl:call-template name="doEmbeddedAttributeOverrides">
                       <xsl:with-param name="nillable" select="true()"/>
                   </xsl:call-template>
       @jakarta.persistence.ElementCollection
@@ -253,7 +253,7 @@
       @jakarta.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
               </xsl:when>
               <xsl:when test="vf:findmapping(datatype/vodml-ref,'java')/@jpa-atomic">
-                  <xsl:call-template name="doEmbeddedAssociationOverrides">
+                  <xsl:call-template name="doEmbeddedAttributeOverrides">
                       <xsl:with-param name="nillable" select="true()"/>
                   </xsl:call-template>
       @jakarta.persistence.Basic( optional = <xsl:apply-templates select="." mode="nullable"/> )
@@ -268,7 +268,7 @@
               </xsl:when>
               <xsl:otherwise>
                   @jakarta.persistence.Embedded
-                      <xsl:call-template name="doEmbeddedAssociationOverrides">
+                      <xsl:call-template name="doEmbeddedAttributeOverrides">
                       <xsl:with-param name="nillable" >
                           <xsl:choose>
                               <xsl:when test="$isRdbSingleInheritance">true</xsl:when><!--IMPL perhaps this is too simplistic -->
@@ -288,9 +288,9 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template name="doEmbeddedAssociationOverrides">
+    <xsl:template name="doEmbeddedAttributeOverrides">
         <xsl:param name="nillable"/>
-<!--        <xsl:message>doEmbeddedAssociationOverrides: parentType=<xsl:value-of select="current()/parent::*/name()"/></xsl:message>-->
+<!--        <xsl:message>doEmbeddedAttributeOverrides: <xsl:value-of select="current()/name"/> parentType=<xsl:value-of select="current()/parent::*/name()"/></xsl:message>-->
         <xsl:if test="current()/parent::objectType">
         <xsl:variable name="attovers" as="xsd:string*">
 

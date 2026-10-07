@@ -833,6 +833,7 @@
     <!-- beginning of attribute override code for datatypes -->
     <!-- IMPL this code is still template based rather than function based - it does return a new structure representing the datatypes subtrees though, so templates probably best -->
     <xsl:template match="dataType" mode="attrovercols2" >
+        <xsl:param name="parentname" as="xsd:string" select="'shouldnothappen'"/> <!-- IMPL anywhere it is used this should be set - but there seemed to be some cases that required the default - therefore this is a bit of a hack    -->
 <!--        <xsl:message>attrovercols2: Processing dataType: <xsl:value-of select="vf:asvodmlref(current())"/></xsl:message>-->
         <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
         <dt v="{$vodml-ref}" n="{name}" poly="{extends and vf:dtypeHierarchyUsedPolymorphically($vodml-ref)}" abstr="{@abstract = 'true'}">
@@ -840,6 +841,9 @@
 <!--            <xsl:apply-templates select="(attribute|reference, vf:baseTypes(vf:asvodmlref(current()))/(attribute|reference))" mode="attrovercols2"/> -->
 
         <xsl:choose>
+            <xsl:when test="vf:hasMapping($vodml-ref,'java') and vf:findmapping($vodml-ref,'java')/@jpa-atomic">
+                <xsl:attribute name="f" select="$parentname"/>
+            </xsl:when>
             <xsl:when test="extends and vf:dtypeHierarchyUsedPolymorphically($vodml-ref)" >
                 <xsl:variable name="theBase" select="vf:baseTypeId($vodml-ref)"/>
                 <xsl:apply-templates select="($models/key('ellookup',$theBase)/(attribute|reference),vf:subTypes($theBase)/(attribute|reference))" mode="attrovercols2"/>
@@ -866,7 +870,7 @@
     </xsl:template>
 
     <xsl:template match="attribute" mode="attrovercols2" >
-<!--        <xsl:message>attrovercols2: Processing attribute: <xsl:value-of select="name"/></xsl:message>-->
+<!--        <xsl:message>attrovercols2: Processing attribute: <xsl:value-of select="concat(name,' (',datatype/vodml-ref,')')"/></xsl:message>-->
         <att v="{vf:asvodmlref(current())}" c="{name}">
 
             <xsl:variable name="type" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
@@ -875,9 +879,9 @@
             <xsl:if test="$type/name() = 'dataType' and not(current()/parent::objectType[not(vf:noTableInComposition(vf:asvodmlref(.)))])">
                 <xsl:attribute name="f" select="name"/>
             </xsl:if>
-            <xsl:apply-templates select="$type" mode="attrovercols2">
-                <xsl:with-param name="parentname" select="name"/>
-            </xsl:apply-templates>
+               <xsl:apply-templates select="$type" mode="attrovercols2">
+                    <xsl:with-param name="parentname" select="name"/>
+                </xsl:apply-templates>
         </att>
     </xsl:template>
     <xsl:template match="reference" mode="attrovercols2" >
@@ -895,7 +899,7 @@
                 <xsl:choose>
                     <xsl:when test="vf:hasMapping(vf:asvodmlref(current()),'java')">
                         <xsl:variable name="pmap" select="vf:findmapping(vf:asvodmlref(current()),'java')"/>
-                        <xsl:choose><!--TODO - the idea that a type is "atomic" needs to be set higher in the mapping - generally unified -->
+                        <xsl:choose><!--TODO - the idea that a type is "atomic" needs to be set higher in the mapping - at attribute level - generally unified -->
                             <xsl:when test="$pmap/@jpa-atomic">
                                 <xsl:attribute name="atomic" select="true()"/>
                                 <xsl:attribute name="f" select="$parentname"/>
@@ -908,22 +912,8 @@
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:when>
-                    <xsl:otherwise> <!-- TODO this needs to be checked -->
-                        <xsl:choose>
-                            <xsl:when test="extends">
-                                <att f="value" type="{current()/extends/vodml-ref}" extends="{true()}">
-                                    <xsl:attribute name="f" select="'value'"/>
-                                    <xsl:apply-templates select="$models/key('ellookup',current()/extends/vodml-ref)" mode="attrovercols2">
-                                        <xsl:with-param name="parentname" select="$parentname"/>
-                                    </xsl:apply-templates>
-                                </att>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <att f="value" type="{$type}">
-                                    <xsl:attribute name="nullable" select="number(multiplicity/minOccurs) = 0"/>
-                                </att>
-                            </xsl:otherwise>
-                        </xsl:choose>
+                    <xsl:otherwise> <!-- this covers extends case really -->
+                        <xsl:attribute name="f" select="concat($parentname, '.value')"/>
                     </xsl:otherwise>
                 </xsl:choose>
     </xsl:template>

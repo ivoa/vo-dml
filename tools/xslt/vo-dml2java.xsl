@@ -1084,7 +1084,7 @@ package <xsl:value-of select="$path"/>;
 
         <xsl:if test="$do_jpa">
             @jakarta.persistence.Embedded
-        <xsl:call-template name="doEmbeddedAssociationOverrides">
+        <xsl:call-template name="doEmbeddedAttributeOverrides">
             <xsl:with-param name="nillable" >true</xsl:with-param><!--TODO think if it is possible to do better with nillable value-->
         </xsl:call-template>
 
