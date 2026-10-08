@@ -337,6 +337,7 @@ public abstract class AbstractBaseValidation {
             properties.put("jakarta.persistence.schema-generation.database.action", "drop-and-create");
             properties.put("jakarta.persistence.schema-generation.scripts.action", "drop-and-create");
             properties.put("jakarta.persistence.jdbc.user", "");
+            properties.put("hibernate.timezone.default_storage", "NORMALIZE_UTC");
             //        properties.put(PersistenceUnitProperties.CACHE_SHARED_, "false");
 
         }

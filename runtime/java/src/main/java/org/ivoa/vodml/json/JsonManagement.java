@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 
+
 import org.ivoa.vodml.ModelDescription;
 
 /**
@@ -39,24 +40,23 @@ public class JsonManagement {
      * @return the objectmapper.
      */
     static public ObjectMapper jsonMapper(ModelDescription md) {
-                    final TimeZone utc = TimeZone.getTimeZone("UTC");
+            final TimeZone utc = TimeZone.getTimeZone("UTC");
             final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"); //FIXME Jackson seems to ignore the date format to get desired Z
             df.setTimeZone(utc);
            
             PolymorphicTypeValidator sv = BasicPolymorphicTypeValidator.builder().allowIfBaseType("org.ivoa.dm").build();
             DefaultTyping app;
             return  JsonMapper.builder()
-                      .visibility(PropertyAccessor.FIELD, Visibility.ANY)
-                      .visibility(PropertyAccessor.GETTER, Visibility.NONE)
-                      
-                      .defaultTimeZone(utc)
-                      .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                      .configure(SerializationFeature.WRITE_DATES_WITH_ZONE_ID, true)
-                      .defaultDateFormat(df)
-                      .configure(SerializationFeature.WRAP_ROOT_VALUE, false)
-                      .configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, false)  
-                      .handlerInstantiator(new VodmlHandlerInstantiator(md))
-                      .build().setSerializationInclusion(Include.NON_NULL)
+                  .visibility(PropertyAccessor.FIELD, Visibility.ANY)
+                  .visibility(PropertyAccessor.GETTER, Visibility.NONE)
+                  .findAndAddModules()
+                  .defaultTimeZone(utc)
+                  .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                  .configure(SerializationFeature.WRITE_DATES_WITH_ZONE_ID, false)
+                  .configure(SerializationFeature.WRAP_ROOT_VALUE, false)
+                  .configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, false)
+                  .handlerInstantiator(new VodmlHandlerInstantiator(md))
+                  .build().setDefaultPropertyInclusion(Include.NON_NULL)
                       .setDateFormat(new StdDateFormat().withColonInTimeZone(true));
 
     }

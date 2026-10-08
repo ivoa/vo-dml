@@ -12,6 +12,10 @@ import org.ivoa.dm.sample.SampleModel;
 import org.ivoa.dm.sample.catalog.inner.SourceCatalogue;
 import org.ivoa.vodml.stdtypes.Unit;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -58,8 +62,8 @@ public class CatalogExample {
                           fl -> {
                               fl.bandName = "C-Band";
                               fl.spectralLocation = new RealQuantity(5.0, GHz);
-                              fl.dataValidityFrom = new GregorianCalendar(2020, 0, 1).getTime();
-                              fl.dataValidityTo = new GregorianCalendar(2025, 0, 1,20,12,16).getTime();
+                              fl.dataValidityFrom = LocalDate.of(2020, 1, 1).atStartOfDay(ZoneId.systemDefault());
+                              fl.dataValidityTo = LocalDateTime.of(2025, 1, 1,20,12,16).atZone(ZoneId.systemDefault());
                               fl.description = "radio band";
                               fl.name = fl.bandName;
                           }),
@@ -67,8 +71,8 @@ public class CatalogExample {
                           fl -> {
                               fl.bandName = "L-Band";
                               fl.spectralLocation = new RealQuantity(1.5, GHz);
-                              fl.dataValidityFrom = new GregorianCalendar(2020, 0, 1).getTime();
-                              fl.dataValidityTo = new GregorianCalendar(2025, 0, 1,13,12).getTime();
+                              fl.dataValidityFrom =  LocalDate.of(2020, 1, 1).atStartOfDay(ZoneId.systemDefault());
+                              fl.dataValidityTo =  LocalDateTime.of(2025, 1, 1,13,12).atZone(ZoneId.systemDefault());
                               fl.description = "radio band";
                               fl.name = fl.bandName;
                           }));

@@ -206,9 +206,8 @@
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:choose>
-                            <xsl:when test="$type/name = 'datetime'">
+                            <xsl:when test="$type/name = 'datetime'"> <!-- actually do not need any special annotations for DateTime in Modern JPA -->
         @jakarta.persistence.Basic( optional = <xsl:apply-templates select="." mode="nullable"/> )
-        @jakarta.persistence.Temporal( jakarta.persistence.TemporalType.TIMESTAMP )
         @jakarta.persistence.Column( name = "<xsl:apply-templates select="." mode="columnName"/>", nullable = <xsl:apply-templates select="." mode="nullable"/> )
                             </xsl:when>
                             <xsl:when test="vf:findmapping(datatype/vodml-ref,'java')/@jpa-atomic">
