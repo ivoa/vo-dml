@@ -155,4 +155,5 @@
     * The generated Pydantic code requires the VO-DML tools [python runtime](../runtime/python) at runtime.
   * Added option to the site docs generation to generate a sphinx site rather than a mkdocs site.
 * 0.7.1
-  * 
+  * fix some problems with @embedded datatype support in Java.
+  * make java.time.ZonedDateTime the default for datetime in Java (instead of java.util.Date)
