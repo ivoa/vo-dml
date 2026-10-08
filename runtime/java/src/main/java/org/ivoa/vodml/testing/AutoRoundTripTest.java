@@ -52,7 +52,7 @@ public abstract class AutoRoundTripTest <M extends VodmlModel<M>> extends Abstra
     
     @Test
     @Order(20)
-    void testXmlRoundTrip() throws JAXBException, TransformerConfigurationException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException, IOException {
+    void testXmlRoundTrip() throws JAXBException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
         
         M model = createModel();
         RoundTripResult<M> result = roundtripXML(model);

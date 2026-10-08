@@ -107,8 +107,18 @@
                     select="." mode="required"/>)
             </xsl:when>
             <xsl:otherwise>
-    @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required =<xsl:apply-templates
-                    select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+                <xsl:choose>
+                    <xsl:when test="vf:JavaType(datatype/vodml-ref) = 'java.time.ZonedDateTime'"><!-- TODO this would perhaps better implemented with a generic method to add an adapter in the binding -->
+                        @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required =<xsl:apply-templates
+                            select="." mode="required"/>) <!-- note that the type has been left out - allows conversion to string -->
+                        @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(value = org.ivoa.vodml.jaxb.ZonedDateTimeAdapter.class)
+                    </xsl:when>
+                    <xsl:otherwise>
+                        @jakarta.xml.bind.annotation.XmlElement( name = "<xsl:value-of select="name"/>", required =<xsl:apply-templates
+                            select="." mode="required"/>, type = <xsl:value-of select="$type"/>.class)
+                    </xsl:otherwise>
+                </xsl:choose>
+
             </xsl:otherwise>
         </xsl:choose>
         <!-- IMPL the test against the type actually being referredTo is a bit of a hack to allow CAOM to work as it has uuid natural keys which are not valid NCName -

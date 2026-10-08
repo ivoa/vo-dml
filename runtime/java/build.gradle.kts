@@ -15,7 +15,7 @@ dependencies {
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.0")
 //    implementation("org.glassfish.jaxb:jaxb-runtime:2.3.6")
     implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.22.3")
     implementation("com.networknt:json-schema-validator:1.5.4")
     implementation("org.hibernate.orm:hibernate-core:7.2.6.Final")
     
