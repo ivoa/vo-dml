@@ -805,9 +805,11 @@
                  <xsl:when test="$jtype=('String','org.ivoa.vodml.stdtypes.Unit')">VARCHAR</xsl:when><!-- IMPL - should really have more general mechanism in place -->
                  <xsl:when test="$jtype=('Double', 'double')">DOUBLE</xsl:when>
                  <xsl:when test="$jtype=('Integer','int')">INTEGER</xsl:when>
+                 <xsl:when test="$jtype=('Long','long')">BIGINT</xsl:when>
                  <xsl:when test="$jtype=('Boolean','boolean')">INTEGER</xsl:when>
                  <xsl:when test="$jtype=('java.math.BigDecimal')">INTEGER</xsl:when>
                  <xsl:when test="$jtype=('java.util.Date')">TIMESTAMP</xsl:when>
+                 <xsl:when test="$jtype=('java.time.ZonedDateTime')">TIMESTAMP</xsl:when>
                  <!--TODO this is incomplete -->
                  <xsl:otherwise>
                      <xsl:message  select="concat('WARNING: cannot determine RDB type for ',$vodml-ref, ' jtype=',$jtype)"/>
