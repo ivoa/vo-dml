@@ -1,5 +1,8 @@
+import com.nwalsh.gradle.saxon.SaxonXsltTask
+
 plugins {
     id("net.ivoa.vo-dml.vodmltools") version "0.7.1"
+    id("com.nwalsh.gradle.saxon.saxon-gradle") version "0.10.7"
 //    id ("com.diffplug.spotless") version "5.17.1"
     `maven-publish`
 //    id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
@@ -13,7 +16,7 @@ version = "1.0-SNAPSHOT"
 
 vodml {
     vodmlDir.set(file("vo-dml"))
-    bindingFiles.setFrom(file("vo-dml/ivoa_base.vodml-binding.xml"))
+    bindingFiles.setFrom(file(if (findProperty("useAltBinding") == "true")  "vo-dml/ivoa_base-alt.vodml-binding.xml" else "vo-dml/ivoa_base.vodml-binding.xml"))
     outputPythonDir.set(layout.projectDirectory.dir("../../tools/gradletooling/sample/pythontest/generated")) // FIXME when this is eventually packaged it should be local to this project, but for now this is just to allow testing of the generated code in the python test project
 
 }
@@ -37,6 +40,9 @@ dependencies {
 
 tasks.withType<Jar> {
     exclude("**/persistence.xml")
+    if (findProperty("useAltBinding") == "true") {
+        archiveClassifier.set("alt")
+    }
     duplicatesStrategy = DuplicatesStrategy.INCLUDE  //IMPL bugfix - see https://stackoverflow.com/questions/67265308/gradle-entry-classpath-is-a-duplicate-but-no-duplicate-handling-strategy-has-b
 }
 //publishing - IMPL would be nice to factor this out in some way....
@@ -63,6 +69,7 @@ publishing {
                     fromResolutionResult()
                 }
             }
+
             pom {
                 name.set("VO-DML IVOA Base Model")
                 description.set("The code generated from the IVOA base model that is included in most other models")
@@ -85,6 +92,7 @@ publishing {
                     developerConnection.set("scm:git:ssh://github.com/ivoa/vo-dml.git")
                     url.set("https://github.com/ivoa/vo-dml")
                 }
+
             }
         }
     }
@@ -125,6 +133,19 @@ signing {
         useGpgCmd()
         sign(publishing.publications["mavenJava"])
     }
+}
+
+tasks.register<SaxonXsltTask>("altBinding") {
+    input(file("vo-dml/ivoa_base.vodml-binding.xml"))
+    output(file("vo-dml/ivoa_base-alt.vodml-binding.xml"))
+    stylesheet(file("bindingTransform.xslt"))
+}
+
+tasks.named("vodmlJavaGenerate") {
+    dependsOn("altBinding")
+}
+tasks.named("vodmlSchema") {
+    dependsOn("altBinding")
 }
 //do not generate extra load on Nexus with new staging repository if signing fails
 //tasks.withType<io.github.gradlenexus.publishplugin.InitializeNexusStagingRepository>().configureEach{

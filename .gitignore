@@ -26,3 +26,4 @@ tools/gradletooling/gradle-plugin/bin/
 /runtime/python/dist/
 /runtime/python/*.egg-info/
 .pytest_cache/
+/models/ivoa/vo-dml/ivoa_base-alt.vodml-binding.xml
