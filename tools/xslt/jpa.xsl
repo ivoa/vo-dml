@@ -364,9 +364,9 @@
       <xsl:otherwise>
           <xsl:choose>
               <xsl:when test="xsd:int(multiplicity/maxOccurs) != 1">
-                  <!-- TODO should not really leave join table naming to JPA - should be explicit-->
                   <!-- require manual management of references - do not remove referenced entity : do not cascade delete -->
 @jakarta.persistence.ManyToMany( cascade = {  jakarta.persistence.CascadeType.REFRESH } )
+@jakarta.persistence.JoinTable( name = "<xsl:value-of select="concat(vf:rdbTableName(vf:asvodmlref($this/parent::*)), '_', vf:rdbTableName($this/datatype/vodml-ref))"/>", schema="<xsl:value-of select="vf:schemaName($themodelname)"/>")
               </xsl:when>
               <xsl:otherwise>
                   <!-- require manual management of references - do not remove referenced entity : do not cascade delete -->
