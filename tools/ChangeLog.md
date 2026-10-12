@@ -157,3 +157,5 @@
 * 0.7.1
   * fix some problems with @embedded datatype support in Java.
   * make java.time.ZonedDateTime the default for datetime in Java (instead of java.util.Date)
+* 0.7.2
+  * make sure that Join tables appear in same schema if this is specified
