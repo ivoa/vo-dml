@@ -149,7 +149,8 @@ TODO similarly the schema should be appended for table names - however this has 
        </columns>
        <fkeys>
            <xsl:apply-templates select="reference" mode="fkey"/>
-           <xsl:apply-templates select="$models//composition[datatype/vodml-ref=$vodml-ref]" mode="fkey"/>
+           <xsl:apply-templates select="composition[number(multiplicity/maxOccurs) = 1]" mode="fkey"/>
+           <xsl:apply-templates select="$models//composition[datatype/vodml-ref=$vodml-ref and number(multiplicity/maxOccurs) != 1]" mode="fkey"/>
            <xsl:if test="vf:isRdbSingleTable($thisModelName)">
                <xsl:apply-templates select="vf:subTypes($vodml-ref)/reference" mode="fkey"/>
                <!-- TODO need to do the composition back refs too? -->
@@ -170,7 +171,7 @@ TODO similarly the schema should be appended for table names - however this has 
                </foreignKey>
 
            </xsl:if>
-           <xsl:apply-templates select="attribute[vf:isDataType(.)]" mode="dtyperef"/>
+           <xsl:apply-templates select="attribute[vf:isDataType(.)]" mode="dtyperef"/> <!-- FIXME - this does not look right -->
            <xsl:apply-templates select="composition[vf:noTableInComposition(datatype/vodml-ref)]" mode="dtyperef"/>
 
        </fkeys>
@@ -426,8 +427,21 @@ TODO similarly the schema should be appended for table names - however this has 
         </xsl:apply-templates>
     </xsl:template>
 
-    <xsl:template match="composition" mode="defn">
-    <!-- do nothing if called - it all happens for the type being composed -->
+    <xsl:template match="composition[number(multiplicity/maxOccurs) != 1]" mode="defn">
+        <!-- do nothing -the composed type has the fkey -->
+    </xsl:template>
+    <xsl:template match="composition[number(multiplicity/maxOccurs) = 1 and not(vf:noTableInComposition(datatype/vodml-ref))]" mode="defn">
+        <column>
+            <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
+            <column_name>{vf:tapcolumnName($vodml-ref)}</column_name>
+            <xsl:comment>single composition of {datatype/vodml-ref}</xsl:comment>
+            <datatype>{vf:rdbKeyType(datatype/vodml-ref)}</datatype>
+            <description>{description}</description>
+            <utype>{$vodml-ref}</utype>
+            <indexed>false</indexed><!-- IMPL or true?! -->
+            <principal>false</principal><!-- TODO need a way of actually specifying this -->
+            <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
+        </column>
     </xsl:template>
 
     <xsl:template match="reference[not($models/key('ellookup',current()/datatype/vodml-ref)/attribute/constraint[ends-with(@xsi:type,':NaturalKey') and position='0'])]" mode="fkey">
@@ -487,9 +501,8 @@ TODO similarly the schema should be appended for table names - however this has 
         </foreignKey>
     </xsl:template>
 
-    <xsl:template match="composition" mode="fkey">
-        <xsl:if test="number(multiplicity/maxOccurs) != 1"> <!-- IMPL keys not created for OneToOne? -->
-            <xsl:variable name="thisModelName" select="current()/ancestor-or-self::vo-dml:model/name"/>
+    <xsl:template match="composition[number(multiplicity/maxOccurs) != 1]" mode="fkey">
+        <xsl:variable name="thisModelName" select="current()/ancestor-or-self::vo-dml:model/name"/>
         <foreignKey>
             <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
             <xsl:variable name="this" select="current()"/>
@@ -527,12 +540,47 @@ TODO similarly the schema should be appended for table names - however this has 
             </columns>
 
         </foreignKey>
-        </xsl:if>
     </xsl:template>
-    <xsl:template match="composition" mode="fkeyColumn">
+
+    <xsl:template match="composition[number(multiplicity/maxOccurs) = 1]" mode="fkey">
+        <message>firing foreign key template for single composition</message>
+        <!-- in this case the foreign key is to the target of the composition -->
+        <xsl:variable name="thisModelName" select="current()/ancestor-or-self::vo-dml:model/name"/>
+        <foreignKey>
+            <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
+            <xsl:variable name="this" select="current()"/>
+            <xsl:variable name="target" select="$models/key('ellookup',current()/datatype/vodml-ref)"/>
+            <xsl:variable name="target-vodml-ref" select="current()/datatype/vodml-ref"/>
+
+            <key_id>{vf:tapFkeyID($vodml-ref)}</key_id>
+            <xsl:comment>forward reference to {datatype/vodml-ref} as single composition in {$vodml-ref} </xsl:comment>
+            <target_table>{vf:tapTableName(current()/datatype/vodml-ref)}</target_table>
+            <description>foreign key for {datatype/vodml-ref} as single composition in {$vodml-ref} </description>
+            <utype>{$vodml-ref}</utype> <!-- IMPL not sure is this is the appropriate utype -->
+            <columns>
+                <xsl:if test="$target/attribute/constraint[ends-with(@xsi:type,':NaturalKey') and position='0']">
+                    <xsl:variable name="containers" select="vf:ContainerHierarchyInOwnModel(current()/datatype/vodml-ref)"/>
+                    <xsl:for-each select="reverse($containers)">
+                        <xsl:variable name="nk" select="$models/key('ellookup',current())/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]"/>
+                        <fKColumn>
+                            <from_column>{concat(vf:schemaName($thisModelName),'.',vf:rdbTableName($vodml-ref),'.',$nk/name)}</from_column>
+                            <target_column>{concat(vf:schemaName($thisModelName),'.',vf:rdbTableName($target-vodml-ref),'.',$nk/name)}</target_column>
+                        </fKColumn>
+                    </xsl:for-each>
+                </xsl:if>
+                <fKColumn>
+                    <from_column>{vf:tapcolumnName($vodml-ref)}</from_column>
+                    <target_column>{vf:tapTargetColumnName(current()/datatype/vodml-ref)}</target_column>
+                </fKColumn>
+            </columns>
+
+        </foreignKey>
+    </xsl:template>
+
+
+    <xsl:template match="composition[number(multiplicity/maxOccurs) != 1]" mode="fkeyColumn">
         <xsl:variable name="this" select="current()"/>
         <xsl:variable name="thisModelName" select="current()/ancestor-or-self::vo-dml:model/name"/>
-        <xsl:if test="number(multiplicity/maxOccurs) != 1" > <!-- IMPL fkeys not created for OneToOne -->
             <!-- thing that we are pointing to is the parent of the composition -->
             <xsl:variable name="vodml-ref" select="vf:asvodmlref(current()/parent::*)"/>
 
@@ -563,7 +611,6 @@ TODO similarly the schema should be appended for table names - however this has 
                 <principal>false</principal><!-- TODO need a way of actually specifying this -->
                 <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
             </column>
-        </xsl:if>
         </xsl:if>
     </xsl:template>
 
