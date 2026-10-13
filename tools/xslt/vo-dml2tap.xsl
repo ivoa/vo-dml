@@ -95,9 +95,9 @@ TODO similarly the schema should be appended for table names - however this has 
                  <xsl:comment>primary key (surrogate)</xsl:comment>
                  <datatype>BIGINT</datatype>
                  <description>primary key for {vf:rdbTableName($vodml-ref)}</description>
-                 <indexed>true</indexed>
-                 <principal>false</principal>
-                 <std>true</std> <!--IMPL if generated from VO-DML - should be a standard -->
+                 <indexed>1</indexed>
+                 <principal>0</principal>
+                 <std>1</std> <!--IMPL if generated from VO-DML - should be a standard -->
              </column>
            </xsl:if>
            <xsl:apply-templates select="$models//composition[datatype/vodml-ref=$vodml-ref]" mode="fkeyColumn"/>
@@ -110,9 +110,9 @@ TODO similarly the schema should be appended for table names - however this has 
                                 <datatype>VARCHAR</datatype>
                                 <description>discriminator column for {$vodml-ref} sub-types</description>
                                 <utype>{$vodml-ref}</utype>
-                                <indexed>false</indexed>
-                                <principal>false</principal>
-                                <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
+                                <indexed>0</indexed>
+                                <principal>0</principal>
+                                <std>1</std><!--IMPL if generated from VO-DML - should be a standard -->
                             </column>
                            <xsl:apply-templates select="(attribute|reference|composition),vf:subTypes($vodml-ref)/(attribute|reference|composition)" mode="defn"/>
 
@@ -134,9 +134,9 @@ TODO similarly the schema should be appended for table names - however this has 
                                <xsl:comment>primary/join key for subtype</xsl:comment>
                                <datatype>{vf:rdbKeyType($vodml-ref)}</datatype>
                                <description>primary/join key for {vf:rdbTableName($vodml-ref)}</description>
-                               <indexed>true</indexed>
-                               <principal>false</principal>
-                               <std>true</std> <!--IMPL if generated from VO-DML - should be a standard -->
+                               <indexed>1</indexed>
+                               <principal>0</principal>
+                               <std>1</std> <!--IMPL if generated from VO-DML - should be a standard -->
                            </column>
                            <xsl:apply-templates select="(attribute|reference|composition)" mode="defn"/>
                        </xsl:when>
@@ -189,9 +189,9 @@ TODO similarly the schema should be appended for table names - however this has 
             <datatype>{vf:rdbTapType(datatype/vodml-ref)}</datatype>
             <description>{description}</description>
             <utype>{$vodml-ref}</utype>
-            <indexed>{count(constraint[ends-with(@xsi:type,':NaturalKey')])> 0}</indexed>
-            <principal>false</principal><!-- TODO need a way of actually specifying this -->
-            <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
+            <indexed>{if (count(constraint[ends-with(@xsi:type,':NaturalKey')])> 0) then 1 else 0}</indexed>
+            <principal>0</principal><!-- TODO need a way of actually specifying this -->
+            <std>1</std><!--IMPL if generated from VO-DML - should be a standard -->
         </column>
     </xsl:template>
 
@@ -210,9 +210,9 @@ TODO similarly the schema should be appended for table names - however this has 
                 <datatype>{vf:rdbTapType($nk/datatype/vodml-ref)}</datatype>
                 <description>{$nk/description}</description>
                 <utype>{vf:asvodmlref($nk)}</utype>
-                <indexed>true</indexed>
-                <principal>false</principal><!-- TODO need a way of actually specifying this -->
-                <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
+                <indexed>1</indexed>
+                <principal>0</principal><!-- TODO need a way of actually specifying this -->
+                <std>1</std><!--IMPL if generated from VO-DML - should be a standard -->
             </column>
 
         </xsl:for-each>
@@ -225,9 +225,9 @@ TODO similarly the schema should be appended for table names - however this has 
             <datatype>{vf:rdbTapType(current()/datatype/vodml-ref)}</datatype>
             <description>{description}</description>
             <utype>{$vodml-ref}</utype>
-            <indexed>true</indexed>
-            <principal>false</principal><!-- TODO need a way of actually specifying this -->
-            <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
+            <indexed>1</indexed>
+            <principal>0</principal><!-- TODO need a way of actually specifying this -->
+            <std>1</std><!--IMPL if generated from VO-DML - should be a standard -->
         </column>
     </xsl:template>
 
@@ -289,9 +289,9 @@ TODO similarly the schema should be appended for table names - however this has 
             </xsl:choose>
         <!-- TODO would perhaps like to include datatype description too -->
             <utype>{$top-vodml-ref}</utype> <!--FIXME almost certainly not the "correct" UType - but UTypes are broken -->
-            <indexed>{count($top-el/constraint[ends-with(@xsi:type,':NaturalKey')])> 0}</indexed>
-            <principal>false</principal><!-- TODO need a way of actually specifying this -->
-            <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
+            <indexed>{if (count($top-el/constraint[ends-with(@xsi:type,':NaturalKey')])> 0) then 1 else 0}</indexed>
+            <principal>0</principal><!-- TODO need a way of actually specifying this -->
+            <std>1</std><!--IMPL if generated from VO-DML - should be a standard -->
         </column>
     </xsl:template>
     <xsl:template match="dt[not(*)]" mode="dtypeexpandcols">
@@ -305,9 +305,9 @@ TODO similarly the schema should be appended for table names - however this has 
             <datatype>{vf:rdbTapType(@v)}</datatype>
             <description>{$top-el/description}</description><!-- TODO would perhaps like to include datatype description too -->
             <utype>{@v}</utype> <!--FIXME almost certainly not the "correct" UType - but UTypes are broken -->
-            <indexed>{count($top-el/constraint[ends-with(@xsi:type,':NaturalKey')])> 0}</indexed>
-            <principal>false</principal><!-- TODO need a way of actually specifying this -->
-            <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
+            <indexed>{if (count($top-el/constraint[ends-with(@xsi:type,':NaturalKey')])> 0) then 1 else 0}</indexed>
+            <principal>0</principal><!-- TODO need a way of actually specifying this -->
+            <std>1</std><!--IMPL if generated from VO-DML - should be a standard -->
         </column>
     </xsl:template>
 
@@ -322,9 +322,9 @@ TODO similarly the schema should be appended for table names - however this has 
             <datatype>{vf:rdbKeyType(@type)}</datatype>
             <description>{$top-el/description}</description><!-- TODO would perhaps like to include datatype description too -->
             <utype>{@v}</utype>
-            <indexed>true</indexed>
-            <principal>false</principal><!-- TODO need a way of actually specifying this -->
-            <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
+            <indexed>1</indexed>
+            <principal>0</principal><!-- TODO need a way of actually specifying this -->
+            <std>1</std><!--IMPL if generated from VO-DML - should be a standard -->
         </column>
     </xsl:template>
 
@@ -362,9 +362,9 @@ TODO similarly the schema should be appended for table names - however this has 
             <datatype>VARCHAR</datatype>
             <description>discriminator for {vf:baseTypeId(@type)} hierarchy</description><!-- TODO would perhaps like to include datatype description too -->
             <utype/> <!--FIXME almost certainly not the "correct" UType - but UTypes are broken -->
-            <indexed>true</indexed><!-- IMPL probably should be -->
-            <principal>false</principal><!-- TODO need a way of actually specifying this -->
-            <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
+            <indexed>1</indexed><!-- IMPL probably should be -->
+            <principal>0</principal><!-- TODO need a way of actually specifying this -->
+            <std>1</std><!--IMPL if generated from VO-DML - should be a standard -->
         </column>
     </xsl:template>
     <xsl:template match="att[dt[@poly='false']]" mode="dtypedescrim">
@@ -380,9 +380,9 @@ TODO similarly the schema should be appended for table names - however this has 
         <datatype>{vf:rdbKeyType(datatype/vodml-ref)}</datatype>
         <description>{description}</description>
         <utype>{$vodml-ref}</utype>
-        <indexed>false</indexed><!-- IMPL or true?! -->
-        <principal>false</principal><!-- TODO need a way of actually specifying this -->
-        <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
+        <indexed>0</indexed><!-- IMPL or true?! -->
+        <principal>0</principal><!-- TODO need a way of actually specifying this -->
+        <std>1</std><!--IMPL if generated from VO-DML - should be a standard -->
         </column>
     </xsl:template>
 
@@ -399,9 +399,9 @@ TODO similarly the schema should be appended for table names - however this has 
                 <datatype>{vf:rdbTapType($nk/datatype/vodml-ref)}</datatype>
                 <description>{concat($nk/description,' of ',$this/description)}</description>
                 <utype>{$vodml-ref}</utype><!--wrong -->
-                <indexed>false</indexed><!-- IMPL or true?! -->
-                <principal>false</principal><!-- TODO need a way of actually specifying this -->
-                <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
+                <indexed>0</indexed><!-- IMPL or true?! -->
+                <principal>0</principal><!-- TODO need a way of actually specifying this -->
+                <std>1</std><!--IMPL if generated from VO-DML - should be a standard -->
             </column>
         </xsl:for-each>
         <!-- original column -->
@@ -411,9 +411,9 @@ TODO similarly the schema should be appended for table names - however this has 
             <datatype>{vf:rdbKeyType(datatype/vodml-ref)}</datatype>
             <description>{description}</description>
             <utype>{$vodml-ref}</utype>
-            <indexed>false</indexed><!-- IMPL or true?! -->
-            <principal>false</principal><!-- TODO need a way of actually specifying this -->
-            <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
+            <indexed>0</indexed><!-- IMPL or true?! -->
+            <principal>0</principal><!-- TODO need a way of actually specifying this -->
+            <std>1</std><!--IMPL if generated from VO-DML - should be a standard -->
         </column>
     </xsl:template>
 
@@ -438,9 +438,9 @@ TODO similarly the schema should be appended for table names - however this has 
             <datatype>{vf:rdbKeyType(datatype/vodml-ref)}</datatype>
             <description>{description}</description>
             <utype>{$vodml-ref}</utype>
-            <indexed>false</indexed><!-- IMPL or true?! -->
-            <principal>false</principal><!-- TODO need a way of actually specifying this -->
-            <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
+            <indexed>0</indexed><!-- IMPL or true?! -->
+            <principal>0</principal><!-- TODO need a way of actually specifying this -->
+            <std>1</std><!--IMPL if generated from VO-DML - should be a standard -->
         </column>
     </xsl:template>
 
@@ -594,9 +594,9 @@ TODO similarly the schema should be appended for table names - however this has 
                         <datatype>{vf:rdbTapType($nk/datatype/vodml-ref)}</datatype>
                         <description>foreign key column for {$vodml-ref} composition of {$this/datatype/vodml-ref} composite key</description>
                         <utype>{vf:asvodmlref($nk)}</utype>
-                        <indexed>false</indexed><!-- IMPL or true?! -->
-                        <principal>false</principal><!-- TODO need a way of actually specifying this -->
-                        <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
+                        <indexed>0</indexed><!-- IMPL or true?! -->
+                        <principal>0</principal><!-- TODO need a way of actually specifying this -->
+                        <std>1</std><!--IMPL if generated from VO-DML - should be a standard -->
                     </column>
 
                 </xsl:for-each>
@@ -607,9 +607,9 @@ TODO similarly the schema should be appended for table names - however this has 
                 <datatype>{vf:rdbKeyType($vodml-ref)}</datatype>
                 <description>foreign key column for {$vodml-ref} composition of {datatype/vodml-ref}</description>
                 <utype>{$vodml-ref}</utype>
-                <indexed>false</indexed><!-- IMPL or true?! -->
-                <principal>false</principal><!-- TODO need a way of actually specifying this -->
-                <std>true</std><!--IMPL if generated from VO-DML - should be a standard -->
+                <indexed>0</indexed><!-- IMPL or true?! -->
+                <principal>0</principal><!-- TODO need a way of actually specifying this -->
+                <std>1</std><!--IMPL if generated from VO-DML - should be a standard -->
             </column>
         </xsl:if>
     </xsl:template>
