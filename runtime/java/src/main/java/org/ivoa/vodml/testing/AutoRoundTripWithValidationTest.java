@@ -27,17 +27,22 @@ public abstract class AutoRoundTripWithValidationTest<M extends VodmlModel<M>> e
 
    @Test
    @Order(40)
-    void validationTest() throws JAXBException {
-        final M model = createModel(); 
-        //model.management().writeXMLSchema();
-        
-        ValidationResult vr = validateModel(model);
-        if(!vr.isOk)
-        {
-            vr.printValidationErrors(System.out);
-        }
-        assertTrue(vr.isOk, "model instance is not valid");
-    }
+   void validationTest() throws JAXBException {
+      final M model = createModel();
+      //model.management().writeXMLSchema();
+
+      if(model.management().hasReferences())
+      {
+         model.processReferences();
+      }
+
+      ValidationResult vr = validateModel(model);
+      if(!vr.isOk)
+      {
+         vr.printValidationErrors(System.out);
+      }
+      assertTrue(vr.isOk, "model instance is not valid");
+   }
 }
 
 
