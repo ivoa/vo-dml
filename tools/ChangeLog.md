@@ -161,4 +161,4 @@
   * make sure that Join tables appear in same schema if this is specified
   * TAPschema generation fixes.
     * deal with the case of composition multiplicity=1 properly
-    * replace type of std, indexed and principal with integer instead of boolean
+    * replace type of std, indexed and principal with integer type instead of boolean
