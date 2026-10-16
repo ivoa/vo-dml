@@ -315,6 +315,13 @@
         ', column = @jakarta.persistence.Column(name=',$dq,string-join(current()/ancestor-or-self::att/@c,'_'),$dq,
         ',nullable = ',boolean(current()/ancestor-or-self::*[@nullable][position() = 1]/@nullable) or boolean(current()/ancestor-or-self::*[last()]/@nullable),' ))')"/>
     </xsl:template>
+    <xsl:template match="dt[not(*)]" mode="doAttributeOverride"><!-- IMPL avoid doing two attribute overrides for same property name at the same level - the model could legitimately have such naming, but @AttributeOverride cannot cope, so in reality the model would need changing -->
+        <xsl:param name="nillable"/>
+
+        <xsl:sequence select="concat('@jakarta.persistence.AttributeOverride(name=',$dq, string-join(current()/ancestor-or-self::att/@f,'.'),$dq,
+        ', column = @jakarta.persistence.Column(name=',$dq,string-join(current()/ancestor-or-self::att/@c,'_'),$dq,
+        ',nullable = ',boolean(current()/ancestor-or-self::*[@nullable][position() = 1]/@nullable) or boolean(current()/ancestor-or-self::*[last()]/@nullable),' ))')"/>
+    </xsl:template>
 
     <xsl:template match="ref" mode="doAssocOverride">
         <xsl:value-of select="concat('@jakarta.persistence.AssociationOverride(name=',$dq,string-join((current()/@f,current()/ancestor::att/@f),'.'),$dq,
