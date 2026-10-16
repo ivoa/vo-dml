@@ -2,8 +2,8 @@
 <!--
 This will produce a tap schema representation of the data model database serialization
 
-FIXME This is not yet complete
-* subsetting rules not done
+TODO This is not yet complete
+* subsetting probably only works for simple cases
 * Utype needs proper definition
 
 
@@ -81,6 +81,7 @@ TODO similarly the schema should be appended for table names - however this has 
    <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
    <xsl:variable name="thisModelName" select="current()/ancestor-or-self::vo-dml:model/name"/>
    <xsl:if test="not(extends and vf:isRdbSingleTable($thisModelName))">
+       <xsl:message>Processing objectType: {name}</xsl:message>
    <table>
      <table_name>{vf:tapTableName($vodml-ref)}</table_name>
        <table_type>table</table_type>
@@ -126,7 +127,7 @@ TODO similarly the schema should be appended for table names - however this has 
                <xsl:otherwise> <!-- joined table mode -->
                    <xsl:choose>
                        <xsl:when test="vf:hasSubTypes($vodml-ref)  and not(extends)"> <!-- base type-->
-                           <xsl:apply-templates select="(attribute|reference|composition)" mode="defn"/>
+                           <xsl:apply-templates select="(attribute[not(vf:isSubSetted(vf:asvodmlref(.)))]|reference|composition|constraint[ends-with(@xsi:type,':SubsettedRole')])" mode="defn"/>
                        </xsl:when>
                        <xsl:when test="extends">
                            <column>
@@ -138,10 +139,10 @@ TODO similarly the schema should be appended for table names - however this has 
                                <principal>0</principal>
                                <std>1</std> <!--IMPL if generated from VO-DML - should be a standard -->
                            </column>
-                           <xsl:apply-templates select="(attribute|reference|composition)" mode="defn"/>
+                           <xsl:apply-templates select="(attribute[not(vf:isSubSetted(vf:asvodmlref(.)))]|reference|composition|constraint[ends-with(@xsi:type,':SubsettedRole')])" mode="defn"/>
                        </xsl:when>
                        <xsl:otherwise>
-                           <xsl:apply-templates select="(attribute|reference|composition)" mode="defn"/>
+                           <xsl:apply-templates select="(attribute[not(vf:isSubSetted(vf:asvodmlref(.)))]|reference|composition|constraint[ends-with(@xsi:type,':SubsettedRole')])" mode="defn"/>
                        </xsl:otherwise>
                    </xsl:choose>
                </xsl:otherwise>
@@ -232,13 +233,13 @@ TODO similarly the schema should be appended for table names - however this has 
     </xsl:template>
 
 
-    <xsl:template match="attribute[vf:isDataType(.)]" mode="defn" >
+    <xsl:template match="attribute[vf:isDataType(.)]|constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="defn" >
         <xsl:variable name="vodml-ref" select="vf:asvodmlref(current())"/>
 
         <xsl:variable name="atv">
             <xsl:apply-templates select="current()" mode="attrovercols2"/>             
         </xsl:variable>
-<!--        <xsl:message>**** <xsl:copy-of select="$atv" copy-namespaces="no"/></xsl:message>-->
+        <xsl:message>**** <xsl:copy-of select="$atv" copy-namespaces="no"/></xsl:message>
 
         <xsl:apply-templates select="$atv/att" mode="dtypedescrim">
             <xsl:with-param name="tableName" select="vf:rdbTableName(vf:asvodmlref(current()/parent::*))"/>
@@ -249,6 +250,8 @@ TODO similarly the schema should be appended for table names - however this has 
         </xsl:apply-templates>
 
     </xsl:template>
+
+
     <xsl:template match="attribute[vf:isDataType(.)]" mode="dtyperef" >
         <xsl:variable name="atv">
             <xsl:apply-templates select="current()" mode="attrovercols2"/>

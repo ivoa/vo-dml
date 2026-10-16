@@ -415,13 +415,16 @@ note - only define functions in here as it is included in the schematron rules
     <!-- is the member subsetted - for it to be truly subsetted from a type point of view (not just semantic)it needs to be subtyped too-->
     <xsl:function name="vf:isSubSetted" as="xsd:boolean">
         <xsl:param name="vodml-ref" as="xsd:string"/>
+
         <xsl:choose>
             <xsl:when test="$models/key('ellookup',$vodml-ref)">
 
                 <!--note that comparison below ignores vodml namespace prefix - slightly dangerous, but only slightly -->
                 <!-- also note that the datatype checking is just done on not exact equivalence, not if strictly a subtype -->
-                <xsl:value-of select="count($models//*[constraint[ends-with(@xsi:type,':SubsettedRole') and
+                <xsl:sequence select="count($models//*[constraint[ends-with(@xsi:type,':SubsettedRole') and
                           role[vodml-ref = $vodml-ref] and datatype[vodml-ref != $models/key('ellookup',$vodml-ref)/datatype/vodml-ref ]]])> 0"/>
+
+
             </xsl:when>
             <xsl:otherwise>
                 <xsl:message terminate="yes">type '<xsl:value-of select="$vodml-ref"/>' not in considered models</xsl:message>

@@ -862,8 +862,14 @@
     <xsl:template match="objectType[vf:noTableInComposition(vf:asvodmlref(.))]" mode="attrovercols2" >
         <dt v="{vf:asvodmlref(current())}" n="{name}"  isObjectType="true">
             <xsl:apply-templates select="(attribute|reference, vf:baseTypes(vf:asvodmlref(current()))/(attribute|reference))" mode="attrovercols2"/> <!-- this takes care of dataType inheritance should work https://hibernate.atlassian.net/browse/HHH-12790 -->
-            <!-- TODO perhaps should do the same as for DataTypes above for polymorphism -->
+
         </dt>
+    </xsl:template>
+    <xsl:template match="objectType[not(vf:noTableInComposition(vf:asvodmlref(.)))]" mode="attrovercols2" >
+        <ot v="{vf:asvodmlref(current())}" n="{name}" >
+            <xsl:apply-templates select="(attribute|reference, vf:baseTypes(vf:asvodmlref(current()))/(attribute|reference))" mode="attrovercols2"/> <!-- this takes care of dataType inheritance should work https://hibernate.atlassian.net/browse/HHH-12790 -->
+
+        </ot>
     </xsl:template>
     <xsl:template match="composition[vf:noTableInComposition(datatype/vodml-ref)]" mode="attrovercols2" >
         <att v="{vf:asvodmlref(current())}" c="{name}" isComposition="true">
@@ -929,7 +935,7 @@
 
 
     <xsl:template match="constraint[ends-with(@xsi:type,':SubsettedRole')]"  mode="attrovercols2">
-        <att c="{tokenize(role/vodml-ref,'\.')[last()]}">
+        <att  v="{vf:asvodmlref(current())}" c="{tokenize(role/vodml-ref,'\.')[last()]}" subsets="{datatype/vodml-ref}">
            <xsl:apply-templates select="$models/key('ellookup',current()/datatype/vodml-ref)" mode="attrovercols2"/>
         </att>
     </xsl:template>

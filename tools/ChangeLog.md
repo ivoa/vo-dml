@@ -162,3 +162,4 @@
   * TAPschema generation fixes.
     * deal with the case of composition multiplicity=1 properly
     * replace type of std, indexed and principal with integer type instead of boolean
+    * initial support for subsetting in TAP schema
