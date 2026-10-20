@@ -1,7 +1,7 @@
 import com.nwalsh.gradle.saxon.SaxonXsltTask
 
 plugins {
-    id("net.ivoa.vo-dml.vodmltools") version "0.7.2"
+    id("net.ivoa.vo-dml.vodmltools") version "0.7.3"
     id("com.nwalsh.gradle.saxon.saxon-gradle") version "0.10.7"
 //    id ("com.diffplug.spotless") version "5.17.1"
     `maven-publish`
