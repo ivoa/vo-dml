@@ -67,15 +67,18 @@ further processing by mkdocs to produce complete model documentation.
             <xsl:text>
 ### Overview diagram
 
-The whole model is represented in a model diagram below
-            </xsl:text>
-            <!-- IMPL should create temp file name -->
-            <xsl:result-document encoding="UTF-8" indent="no" omit-xml-declaration="true" method="xml"
-                                 href="/tmp/test.svg">
-                <xsl:apply-templates select="document($graphviz_svg)" mode="svg"/>
-            </xsl:result-document>
-            <xsl:value-of select="unparsed-text('/tmp/test.svg')"/>
+The whole model is represented in a model diagram below.
 
+</xsl:text>
+<!-- IMPL should create temp file name -->
+<xsl:result-document encoding="UTF-8" indent="no" omit-xml-declaration="true" method="xml"
+                     href="/tmp/test.svg">
+    <xsl:apply-templates select="document($graphviz_svg)" mode="svg"/>
+</xsl:result-document>
+<xsl:value-of select="unparsed-text('/tmp/test.svg')"/>
+<xsl:text>
+
+</xsl:text>
         </xsl:if>
 
         <xsl:if test="//package">
@@ -196,7 +199,8 @@ The whole model is represented in a model diagram below
         <xsl:if test="name() != 'primitiveType'">
             <xsl:apply-templates select="current()" mode="mermdiag"/>
 
-            <xsl:text>## Members
+            <xsl:text>
+## Members
 
 | name | type | mult | description |
 |-----------|------|------|-------------|

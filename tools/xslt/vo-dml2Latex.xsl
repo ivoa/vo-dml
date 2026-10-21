@@ -18,7 +18,7 @@ for possible ways to make images with links
   
   <xsl:import href="common.xsl"/>
   <xsl:import href="utype.xsl"/>
-  
+  <xsl:variable name="nl" select="'&#10;'"/>
   <xsl:output method="text" encoding="UTF-8" indent="no" />
 
   <xsl:strip-space elements="*" />
