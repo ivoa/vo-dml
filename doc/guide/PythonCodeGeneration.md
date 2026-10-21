@@ -2,6 +2,8 @@ Python Code Generation
 ======================
 _NB The python code generation should currently be regarded as alpha quality in that it does not serialize model instances to something that is interoperable with the Java generated code. Indeed it is not yet guaranteed to be representing the VO-DML model fully._
 
+There is an alternative of [Pydantic code generation](PydanticCodeGeneration.md) which has the lower interoperability aim with other languages of XML and JSON serialization. It has the advantage over the "full" python generation of being completely functional for those serializations.
+
 ## Using
 
 The command
