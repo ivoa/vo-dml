@@ -164,3 +164,4 @@
     * replace type of std, indexed and principal with integer type instead of boolean
     * initial support for subsetting in TAP schema
 * 0.7.3
+  * fix regressions

@@ -3,3 +3,8 @@
 ./*.sql
 /site/
 /docs/schema/
+/docs/*.graphml
+/docs/*.tex
+/docs/*.gvd
+/docs/*.svg
+/docs/*.html
