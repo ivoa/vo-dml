@@ -239,7 +239,7 @@ TODO similarly the schema should be appended for table names - however this has 
         <xsl:variable name="atv">
             <xsl:apply-templates select="current()" mode="attrovercols2"/>             
         </xsl:variable>
-        <xsl:message>**** <xsl:copy-of select="$atv" copy-namespaces="no"/></xsl:message>
+<!--        <xsl:message>**** <xsl:copy-of select="$atv" copy-namespaces="no"/></xsl:message>-->
 
         <xsl:apply-templates select="$atv/att" mode="dtypedescrim">
             <xsl:with-param name="tableName" select="vf:rdbTableName(vf:asvodmlref(current()/parent::*))"/>
