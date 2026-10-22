@@ -66,7 +66,7 @@ class SourceCatalogueTest extends AbstractTest {
     // now read back
     em.getTransaction().begin();
     List<SourceCatalogue> cats =
-        em.createNamedQuery("SourceCatalogue.findById", SourceCatalogue.class)
+        em.createNamedQuery("org.ivoa.dm.sample.catalog.inner.SourceCatalogue.findById", SourceCatalogue.class)
             .setParameter("id", id)
             .getResultList();
     example.checkModel(cats);

@@ -96,7 +96,7 @@ public class LifeCycleDetailedTest extends AbstractTest {
     // now read back
     em.getTransaction().begin();
     List<ATest2> ats =
-        em.createNamedQuery("ATest2.findById", ATest2.class).setParameter("id", id).getResultList();
+        em.createNamedQuery("org.ivoa.dm.lifecycle.ATest2.findById", ATest2.class).setParameter("id", id).getResultList();
     em.getTransaction().commit();
     dumpDbData(em, "lifecycle_dump.sql");
   }
@@ -149,7 +149,7 @@ public class LifeCycleDetailedTest extends AbstractTest {
     // flush any existing entities
     em.clear();
     em.getEntityManagerFactory().getCache().evictAll();
-    ATest2 atest2in = em.createNamedQuery("ATest2.findById", ATest2.class).setParameter("id", id).getSingleResult();
+    ATest2 atest2in = em.createNamedQuery("org.ivoa.dm.lifecycle.ATest2.findById", ATest2.class).setParameter("id", id).getSingleResult();
     assertNotNull(atest2in);
     em.getTransaction().begin();
     atest2in.delete(em); //IMPL

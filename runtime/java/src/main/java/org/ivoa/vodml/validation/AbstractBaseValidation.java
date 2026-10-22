@@ -193,7 +193,7 @@ public abstract class AbstractBaseValidation {
 
         // now read back
         @SuppressWarnings("unchecked")
-        T r = (T) em.createNamedQuery(entity.getClass().getSimpleName()+".findById", entity.getClass())
+        T r = (T) em.createNamedQuery(entity.getClass().getName()+".findById", entity.getClass())
                 .setParameter("id", id).getSingleResult();
         
         return new RoundTripResult<T>(true, r);

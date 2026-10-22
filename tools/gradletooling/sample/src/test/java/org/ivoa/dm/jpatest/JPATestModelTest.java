@@ -107,7 +107,7 @@ class JpatestModelTest extends AbstractTest {
     // now read back
     em.getTransaction().begin();
     List<Parent> par =
-        em.createNamedQuery("Parent.findById", Parent.class).setParameter("id", id).getResultList();
+        em.createNamedQuery("org.ivoa.dm.jpatest.Parent.findById", Parent.class).setParameter("id", id).getResultList();
     em.getTransaction().commit();
     assertEquals(1, par.size());
     assertEquals("top level ref", par.get(0).rval.sval);
@@ -134,7 +134,7 @@ class JpatestModelTest extends AbstractTest {
 
     // now read back
     Parent par =
-        em.createNamedQuery("Parent.findById", Parent.class)
+        em.createNamedQuery("org.ivoa.dm.jpatest.Parent.findById", Parent.class)
             .setParameter("id", id)
             .getResultList()
             .get(0);
@@ -166,7 +166,7 @@ class JpatestModelTest extends AbstractTest {
     em.getEntityManagerFactory().getCache().evictAll();
 
     Parent par2 =
-        em.createNamedQuery("Parent.findById", Parent.class)
+        em.createNamedQuery("org.ivoa.dm.jpatest.Parent.findById", Parent.class)
             .setParameter("id", id)
             .getResultList()
             .get(0);

@@ -86,14 +86,14 @@
   @jakarta.persistence.DiscriminatorValue( "<xsl:value-of select="vf:utype(vf:asvodmlref(.))"/>" )
   </xsl:if>
   @jakarta.persistence.NamedQueries( {
-    @jakarta.persistence.NamedQuery( name = "<xsl:value-of select="$className"/>.findById", query = "SELECT o FROM <xsl:value-of select="$className"/> o WHERE o.<xsl:value-of select="$idname"/> = :id")
+    @jakarta.persistence.NamedQuery( name = "<xsl:value-of select="concat(vf:QualifiedJavaType($vodml-ref),'.findById')"/>", query = "SELECT o FROM <xsl:value-of select="$className"/> o WHERE o.<xsl:value-of select="$idname"/> = :id")
   <xsl:if test="$hasName">
-,     @jakarta.persistence.NamedQuery( name = "<xsl:value-of select="$className"/>.findByName", query = "SELECT o FROM <xsl:value-of select="$className"/> o WHERE o.name = :name")
+,     @jakarta.persistence.NamedQuery( name = "<xsl:value-of select="concat(vf:QualifiedJavaType($vodml-ref),'.findByName')"/>", query = "SELECT o FROM <xsl:value-of select="$className"/> o WHERE o.name = :name")
   </xsl:if>
   } )
       <xsl:if test="reference[multiplicity/maxOccurs != 1]|composition[multiplicity/maxOccurs != 1]">
           @jakarta.persistence.NamedEntityGraph(
-             name="<xsl:value-of select="concat($className,'_loadAll')"/>",
+             name="<xsl:value-of select="concat($themodelname,'_',$className,'_loadAll')"/>",
              attributeNodes = {
                <xsl:for-each select="reference[multiplicity/maxOccurs != 1]|composition[multiplicity/maxOccurs != 1]">
                    @jakarta.persistence.NamedAttributeNode(value="<xsl:value-of select='vf:javaMemberName(name)'/>")<xsl:if test="position() != last()">,</xsl:if>
