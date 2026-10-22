@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
       
 
@@ -1332,32 +1332,37 @@ XML was produced in the previous (ant based) versions of this tooling, and as su
 <p>The schema for the serializations can be created with the <code>gradle vodmlSchema</code> command (<a href="../Transformers/#schema">more detail</a>).</p>
 <h2 id="xml">XML</h2>
 <p>For the <a href="https://github.com/ivoa/vo-dml/tree/main/models/sample/test/serializationExample.vodsl">small example model</a>, the overall model object will produce xml like</p>
-<p><div class="highlight"><pre><span></span><code><span class="nt">&lt;ser:myModelModel</span><span class="w"> </span><span class="na">xmlns:ser=</span><span class="s">&quot;http://ivoa.net/vodml/sample/serialization&quot;</span><span class="w"> </span><span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><span class="w"> </span><span class="nt">&gt;</span>
+<p><div class="highlight"><pre><span></span><code><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><span class="nt">&lt;ser:MyModelModel</span><span class="w"> </span><span class="na">xmlns:ser=</span><span class="s">&quot;http://ivoa.net/vodml/sample/serialization&quot;</span><span class="w"> </span><span class="na">xmlns:coord=</span><span class="s">&quot;http://notstc/coords/v1&quot;</span><span class="w"> </span><span class="na">xmlns:c1vdt=</span><span class="s">&quot;http://ivoa.net/dm/sample/c1vdt&quot;</span><span class="w"> </span><span class="na">xmlns:filt=</span><span class="s">&quot;http://ivoa.net/dm/sample/filter/v1&quot;</span><span class="w"> </span><span class="na">xmlns:jpat=</span><span class="s">&quot;http://ivoa.net/dm/sample/jpatest&quot;</span><span class="w"> </span><span class="na">xmlns:simp=</span><span class="s">&quot;http://ivoa.net/dm/sample/sample/v1&quot;</span><span class="w"> </span><span class="na">xmlns:life=</span><span class="s">&quot;http://ivoa.net/vodml/sample/lifecycle&quot;</span><span class="w"> </span><span class="na">xmlns:ivoa=</span><span class="s">&quot;http://ivoa.net/vodml/ivoa&quot;</span><span class="nt">&gt;</span>
 <span class="w">    </span><span class="nt">&lt;refs&gt;</span>
-<span class="w">        </span><span class="nt">&lt;refa</span><span class="w"> </span><span class="na">_id=</span><span class="s">&quot;MyModel-Refa_1000&quot;</span><span class="nt">&gt;</span>
-<span class="w">            </span><span class="nt">&lt;val&gt;</span>a<span class="w"> </span>value<span class="nt">&lt;/val&gt;</span>
+<span class="w">        </span><span class="nt">&lt;refa</span><span class="w"> </span><span class="na">_id=</span><span class="s">&quot;MyModel-Refa_1048&quot;</span><span class="nt">&gt;</span>
+<span class="w">            </span><span class="nt">&lt;val&gt;</span>urn:value<span class="nt">&lt;/val&gt;</span>
 <span class="w">        </span><span class="nt">&lt;/refa&gt;</span>
 <span class="w">        </span><span class="nt">&lt;refb&gt;</span>
 <span class="w">            </span><span class="nt">&lt;name&gt;</span>naturalkey<span class="nt">&lt;/name&gt;</span>
-<span class="w">            </span><span class="nt">&lt;val&gt;</span>another<span class="w"> </span>val<span class="nt">&lt;/val&gt;</span>
+<span class="w">            </span><span class="nt">&lt;val&gt;</span>ivo:val<span class="nt">&lt;/val&gt;</span>
 <span class="w">        </span><span class="nt">&lt;/refb&gt;</span>
 <span class="w">    </span><span class="nt">&lt;/refs&gt;</span>
 <span class="w">    </span><span class="nt">&lt;someContent&gt;</span>
-<span class="w">        </span><span class="nt">&lt;zval&gt;</span>some<span class="nt">&lt;/zval&gt;</span>
-<span class="w">        </span><span class="nt">&lt;zval&gt;</span>z<span class="nt">&lt;/zval&gt;</span>
-<span class="w">        </span><span class="nt">&lt;zval&gt;</span>values<span class="nt">&lt;/zval&gt;</span>
-<span class="w">        </span><span class="nt">&lt;con</span><span class="w"> </span><span class="na">xsi:type=</span><span class="s">&quot;ser:Dcont&quot;</span><span class="w"> </span><span class="nt">&gt;</span>
-<span class="w">            </span><span class="nt">&lt;bname&gt;</span>dval<span class="nt">&lt;/bname&gt;</span>
-<span class="w">            </span><span class="nt">&lt;dval&gt;</span>a<span class="w"> </span>D<span class="nt">&lt;/dval&gt;</span>
-<span class="w">        </span><span class="nt">&lt;/con&gt;</span>
-<span class="w">        </span><span class="nt">&lt;con</span><span class="w"> </span><span class="na">xsi:type=</span><span class="s">&quot;ser:Econt&quot;</span><span class="w"> </span><span class="nt">&gt;</span>
-<span class="w">            </span><span class="nt">&lt;bname&gt;</span>eval<span class="nt">&lt;/bname&gt;</span>
-<span class="w">            </span><span class="nt">&lt;evalue&gt;</span>cube<span class="nt">&lt;/evalue&gt;</span>
-<span class="w">        </span><span class="nt">&lt;/con&gt;</span>
-<span class="w">        </span><span class="nt">&lt;ref1&gt;</span>MyModel-Refa_1000<span class="nt">&lt;/ref1&gt;</span>
+<span class="w">        </span><span class="nt">&lt;ref1&gt;</span>MyModel-Refa_1048<span class="nt">&lt;/ref1&gt;</span>
 <span class="w">        </span><span class="nt">&lt;ref2&gt;</span>naturalkey<span class="nt">&lt;/ref2&gt;</span>
+<span class="w">        </span><span class="nt">&lt;zvals&gt;</span>
+<span class="w">            </span><span class="nt">&lt;zval&gt;</span>some<span class="nt">&lt;/zval&gt;</span>
+<span class="w">            </span><span class="nt">&lt;zval&gt;</span>z<span class="nt">&lt;/zval&gt;</span>
+<span class="w">            </span><span class="nt">&lt;zval&gt;</span>values<span class="nt">&lt;/zval&gt;</span>
+<span class="w">        </span><span class="nt">&lt;/zvals&gt;</span>
+<span class="w">        </span><span class="nt">&lt;con&gt;</span>
+<span class="w">            </span><span class="nt">&lt;baseC</span><span class="w"> </span><span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><span class="w"> </span><span class="na">xsi:type=</span><span class="s">&quot;ser:Dcont&quot;</span><span class="nt">&gt;</span>
+<span class="w">                </span><span class="nt">&lt;bname&gt;</span>dval<span class="nt">&lt;/bname&gt;</span>
+<span class="w">                </span><span class="nt">&lt;dval&gt;</span>N1<span class="nt">&lt;/dval&gt;</span>
+<span class="w">            </span><span class="nt">&lt;/baseC&gt;</span>
+<span class="w">            </span><span class="nt">&lt;baseC</span><span class="w"> </span><span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><span class="w"> </span><span class="na">xsi:type=</span><span class="s">&quot;ser:Econt&quot;</span><span class="nt">&gt;</span>
+<span class="w">                </span><span class="nt">&lt;bname&gt;</span>eval<span class="nt">&lt;/bname&gt;</span>
+<span class="w">                </span><span class="nt">&lt;evalue&gt;</span>cube<span class="nt">&lt;/evalue&gt;</span>
+<span class="w">            </span><span class="nt">&lt;/baseC&gt;</span>
+<span class="w">        </span><span class="nt">&lt;/con&gt;</span>
+<span class="w">        </span><span class="nt">&lt;uri&gt;</span>urn:uri<span class="nt">&lt;/uri&gt;</span>
 <span class="w">    </span><span class="nt">&lt;/someContent&gt;</span>
-<span class="nt">&lt;/ser:myModelModel&gt;</span>
+<span class="nt">&lt;/ser:MyModelModel&gt;</span>
 </code></pre></div>
 Note that because the integer parts of the id might have come from database indices, which 
 typically are only unique per table, then the string part of the id is made up from the part of the vodml-id of the type.</p>
@@ -1368,32 +1373,34 @@ as a reference to the object if the data model is known. An <code>_id</code> pro
 <p><div class="highlight"><pre><span></span><code><span class="p">{</span>
 <span class="w">  </span><span class="nt">&quot;MyModelModel&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;refs&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;MyModel:Refa&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;_id&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;val&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a value&quot;</span>
+<span class="w">      </span><span class="nt">&quot;refa&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;_id&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">1049</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;val&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;urn:value&quot;</span>
 <span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="p">],</span>
-<span class="w">      </span><span class="nt">&quot;MyModel:Refb&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;refb&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;naturalkey&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;val&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;another val&quot;</span>
+<span class="w">        </span><span class="nt">&quot;val&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ivo:val&quot;</span>
 <span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="p">]</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;content&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;@type&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MyModel:SomeContent&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;someContent&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;_id&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;zval&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">&quot;some&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;z&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;values&quot;</span><span class="w"> </span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;ref1&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">1049</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;ref2&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;naturalkey&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;con&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;@type&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MyModel:Dcont&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;_id&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;bname&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dval&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;dval&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a D&quot;</span>
+<span class="w">        </span><span class="nt">&quot;MyModel:types.Dcont&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;_id&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;bname&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dval&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;dval&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;N1&quot;</span>
+<span class="w">        </span><span class="p">}</span>
 <span class="w">      </span><span class="p">},</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;@type&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MyModel:Econt&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;_id&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;bname&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;eval&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;evalue&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cube&quot;</span>
+<span class="w">        </span><span class="nt">&quot;MyModel:types.Econt&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;_id&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;bname&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;eval&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;evalue&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cube&quot;</span>
+<span class="w">        </span><span class="p">}</span>
 <span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="p">],</span>
-<span class="w">      </span><span class="nt">&quot;ref1&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;ref2&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;naturalkey&quot;</span>
+<span class="w">      </span><span class="nt">&quot;uri&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;urn:uri&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;zvals&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">&quot;some&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;z&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;values&quot;</span><span class="w"> </span><span class="p">]</span>
 <span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="p">]</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
@@ -1467,7 +1474,7 @@ in the binding file for the model.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tabs", "content.action.edit"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>
