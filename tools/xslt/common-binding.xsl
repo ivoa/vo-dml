@@ -707,6 +707,11 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
+    <xsl:function name="vf:hasRdbTableNameOverride" as="xsd:boolean">
+    <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=substring-before($vodml-ref,':')]/rdb/rdbmap[@vodml-id=substring-after($vodml-ref,':')]/tableName) > 0"/>
+    </xsl:function>
+
     <xsl:function name="vf:rdbIDColumnName" as="xsd:string"> <!-- TODO - is there a usecase for this being different from rdbJoinTargetColumnName? it misses out natural keys.... -->
         <xsl:param name="vodml-ref" as="xsd:string"/> <!-- the objectType -->
         <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>

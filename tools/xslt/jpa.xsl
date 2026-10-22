@@ -64,8 +64,18 @@
         <xsl:otherwise>_id</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
+    <xsl:variable name="entityName">
+        <xsl:choose>
+            <xsl:when test="vf:hasRdbTableNameOverride($vodml-ref)">
+                <xsl:value-of select="vf:rdbTableName($vodml-ref)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$className"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
 
-  @jakarta.persistence.Entity
+  @jakarta.persistence.Entity( name = "<xsl:value-of select="$entityName"/>")
   <xsl:if test="not($isRdbSingleInheritance) or ($isRdbSingleInheritance and not(extends))">
   @jakarta.persistence.Table( name = "<xsl:value-of select="vf:rdbTableName($vodml-ref)"/>" ,schema="<xsl:value-of select="$RdbSchemaName"/>" )
   </xsl:if>
@@ -85,10 +95,11 @@
     <xsl:if test="$extMod or $hasChild and not(@abstract)">
   @jakarta.persistence.DiscriminatorValue( "<xsl:value-of select="vf:utype(vf:asvodmlref(.))"/>" )
   </xsl:if>
+
   @jakarta.persistence.NamedQueries( {
-    @jakarta.persistence.NamedQuery( name = "<xsl:value-of select="concat(vf:QualifiedJavaType($vodml-ref),'.findById')"/>", query = "SELECT o FROM <xsl:value-of select="$className"/> o WHERE o.<xsl:value-of select="$idname"/> = :id")
+    @jakarta.persistence.NamedQuery( name = "<xsl:value-of select="concat(vf:QualifiedJavaType($vodml-ref),'.findById')"/>", query = "SELECT o FROM <xsl:value-of select="$entityName"/> o WHERE o.<xsl:value-of select="$idname"/> = :id")
   <xsl:if test="$hasName">
-,     @jakarta.persistence.NamedQuery( name = "<xsl:value-of select="concat(vf:QualifiedJavaType($vodml-ref),'.findByName')"/>", query = "SELECT o FROM <xsl:value-of select="$className"/> o WHERE o.name = :name")
+,     @jakarta.persistence.NamedQuery( name = "<xsl:value-of select="concat(vf:QualifiedJavaType($vodml-ref),'.findByName')"/>", query = "SELECT o FROM <xsl:value-of select="$entityName"/> o WHERE o.name = :name")
   </xsl:if>
   } )
       <xsl:if test="reference[multiplicity/maxOccurs != 1]|composition[multiplicity/maxOccurs != 1]">
