@@ -18,7 +18,14 @@ for possible ways to make images with links
   
   <xsl:import href="common.xsl"/>
   <xsl:import href="utype.xsl"/>
+  <xsl:variable name="sq"><xsl:text>'</xsl:text></xsl:variable>
+  <xsl:variable name="dq"><xsl:text>"</xsl:text></xsl:variable>
+  <!--    <xsl:variable name="dq" select="'&quot;'"/>-->
   <xsl:variable name="nl" select="'&#10;'"/>
+  <xsl:variable name="cr" select="'&#13;'"/>
+  <xsl:variable name='lt'><xsl:text disable-output-escaping="yes">&lt;</xsl:text></xsl:variable>
+  <xsl:variable name='gt'><xsl:text disable-output-escaping="yes">&gt;</xsl:text></xsl:variable>
+
   <xsl:output method="text" encoding="UTF-8" indent="no" />
 
   <xsl:strip-space elements="*" />
