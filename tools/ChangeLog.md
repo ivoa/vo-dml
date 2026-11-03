@@ -165,3 +165,5 @@
     * initial support for subsetting in TAP schema
 * 0.7.3
   * fix regressions
+* 0.7.4
+  * 
