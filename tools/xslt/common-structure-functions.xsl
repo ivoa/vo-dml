@@ -107,9 +107,6 @@ note - only define functions in here as it is included in the schematron rules
         <xsl:param name="vodml-ref" as="xsd:string"/>
         <xsl:choose>
             <xsl:when test="$models/key('ellookup',$vodml-ref)">
-                <xsl:variable name="el" as="element()">
-                    <xsl:copy-of select="$models/key('ellookup',$vodml-ref)" />
-                </xsl:variable>
                 <xsl:choose>
                     <xsl:when test="count($models//extends[vodml-ref = $vodml-ref])> 0">
                         <xsl:for-each select="$models//*[extends/vodml-ref = $vodml-ref]">
@@ -123,8 +120,34 @@ note - only define functions in here as it is included in the schematron rules
                 <xsl:message terminate="yes">type <xsl:value-of select="$vodml-ref"/> not in considered models</xsl:message>
             </xsl:otherwise>
         </xsl:choose>
-
     </xsl:function>
+
+
+    <xsl:function name="vf:nonLeafSubTypeIds" as="xsd:string*">
+        <xsl:param name="vodml-ref" as="xsd:string"/>
+        <xsl:choose>
+            <xsl:when test="$models/key('ellookup',$vodml-ref)">
+                <xsl:choose>
+                    <xsl:when test="count($models//extends[vodml-ref = $vodml-ref])> 0">
+                        <xsl:for-each select="$models//*[extends/vodml-ref = $vodml-ref]">
+                            <xsl:variable name="this" select="vf:asvodmlref(current())"/>
+                            <!--                            <xsl:message><xsl:value-of select="concat('subtype of ',$vodml-ref, ' is ', name)" /></xsl:message>-->
+                            <xsl:if test="count($models//extends[vodml-ref = $this]) > 0">
+                                <xsl:sequence select="($this,vf:nonLeafSubTypeIds($this))"/>
+                            </xsl:if>
+                        </xsl:for-each>
+                    </xsl:when>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">type <xsl:value-of select="$vodml-ref"/> not in considered models</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
+
+
+
 
     <!-- tis this type the base of an inheritance hierarcy -->
     <xsl:function name="vf:isBaseType" as="xsd:boolean">
@@ -681,14 +704,35 @@ note - only define functions in here as it is included in the schematron rules
         -->
         <xsl:variable name="name" select="$models/key('ellookup',$vodml-ref)/ancestor-or-self::vo-dml:model/name"/>
         <xsl:variable name="modelsInScope" select="($name,vf:importedModelNames($name))"/>
-        <xsl:variable name="typeTree" select="(reverse(vf:baseTypeIds($vodml-ref)),$vodml-ref,vf:subTypeIds($vodml-ref))"/>
-<!--        <xsl:message>dtype polymorphism=<xsl:value-of select="$vodml-ref"/>  tree=<xsl:value-of select="string-join($typeTree,',')"/></xsl:message>-->
-       <!-- TODO - need to actually work out the cases where polymorphism required
-        really need to establish whether only leaf types are used-->
+        <xsl:variable name="baseids" select="vf:baseTypeIds($vodml-ref)"/>
+        <xsl:variable name="subids" select="vf:subTypeIds($vodml-ref)"/>
+
+       <!--  polymorphism not required when only leaf types are used-->
         <xsl:choose>
-            <xsl:when test="vf:typeRole($vodml-ref)='dataType' and count(vf:baseTypeIds($typeTree[last()]))> 1"> <!--FIXME this is a very crude heuristic - essentially going polymorphic if more than one level of inheritance on the last subtype
-             found, but even this might not resent the deepest subtype if a wide tree...-->
-                <xsl:sequence select="true()"/>
+            <xsl:when test="vf:typeRole($vodml-ref)='dataType' and not((count($baseids)> 1 or count($subids) > 1 ))">
+                <xsl:sequence select="false()"/> <!-- no descendants or ancestors, so no polymorphism -->
+            </xsl:when>
+            <xsl:when test="vf:typeRole($vodml-ref)='dataType' and ((count($baseids)> 1 or count($subids) > 1 ))">
+                <xsl:variable name="baseid">
+                    <xsl:choose>
+                        <xsl:when test="count($baseids) > 0">
+                            <xsl:value-of select="$baseids[last()]"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="$vodml-ref"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:variable name="nonleaf" select="vf:nonLeafSubTypeIds($baseid)"/>
+<!--                <xsl:message>dtype polymorphism=<xsl:value-of select="$vodml-ref"/>  base=<xsl:value-of select="$baseid"/> sub=<xsl:value-of select="count($subids)"/> non-leaf=<xsl:value-of select="string-join($nonleaf,',')"/> poly=<xsl:value-of select="count($models//datatype/vodml-ref=($baseid,$nonleaf))"/></xsl:message>-->
+                <xsl:choose>
+                    <xsl:when test="count($models//datatype/vodml-ref=($baseid,$nonleaf)) > 0">
+                        <xsl:sequence select="true()"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="false()"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:sequence select="false()"/>
