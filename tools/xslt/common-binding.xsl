@@ -712,7 +712,11 @@
         <xsl:sequence select="count($mapping/bnd:mappedModels/model[name=substring-before($vodml-ref,':')]/rdb/rdbmap[@vodml-id=substring-after($vodml-ref,':')]/tableName) > 0"/>
     </xsl:function>
 
-    <xsl:function name="vf:rdbIDColumnName" as="xsd:string"> <!-- TODO - is there a usecase for this being different from rdbJoinTargetColumnName? it misses out natural keys.... -->
+    <!-- TODO - rdbIDColumnName rdbJoinColumnName rdbJoinTargetColumnName need refactoring to make use clearer
+        ATM they are used in different ways with different multiplicities - would be better if there were
+        and rdbKeyName and rdbForeignKeyName functions that could be used in all cases with the composition or reference as the argument
+    -->
+    <xsl:function name="vf:rdbIDColumnName" as="xsd:string">
         <xsl:param name="vodml-ref" as="xsd:string"/> <!-- the objectType -->
         <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
         <xsl:choose>
@@ -755,7 +759,7 @@
                         <xsl:sequence select="$mapping/bnd:mappedModels/model[name=$modelName]/rdb/rdbmap[@vodml-id=substring-after($el/datatype/vodml-ref,':')]/@joinColumnName"/>
                     </xsl:when>
                     <xsl:when test="$parent/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
-                        <xsl:value-of select="$parent/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"/>
+                        <xsl:value-of select="concat(upper-case($parent/name),'_',$parent/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name)"/>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:value-of select="concat(upper-case($parent/name),'_ID')"/>
