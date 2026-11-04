@@ -380,6 +380,7 @@ note that this schema is substantially different from the era when this code was
           </xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>
+      <xsl:attribute name="minOccurs"><xsl:value-of select="multiplicity/minOccurs"/></xsl:attribute>
       <xsd:complexType>
       <xsd:sequence>
         <xsd:element>
@@ -438,6 +439,7 @@ note that this schema is substantially different from the era when this code was
       <xsl:attribute name="name" >
         <xsl:value-of select="name"/>
       </xsl:attribute>
+      <xsl:attribute name="minOccurs"><xsl:value-of select="multiplicity/minOccurs"/></xsl:attribute>
       <xsd:complexType>
         <xsd:sequence>
           <xsd:element>
@@ -490,6 +492,7 @@ note that this schema is substantially different from the era when this code was
       <xsl:attribute name="name" >
         <xsl:value-of select="name"/>
       </xsl:attribute>
+      <xsl:attribute name="minOccurs"><xsl:value-of select="multiplicity/minOccurs"/></xsl:attribute>
       <xsd:complexType>
         <xsd:sequence>
           <xsd:element>
