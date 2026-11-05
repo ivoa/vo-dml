@@ -629,7 +629,7 @@ TODO similarly the schema should be appended for table names - however this has 
         <xsl:param name="vodml-ref" as="xsd:string" />
         <xsl:variable name="el" select="$models/key('ellookup',$vodml-ref)"/>
         <xsl:variable name="thisModelName" select="$el/ancestor-or-self::vo-dml:model/name"/>
-        <xsl:sequence select="concat(vf:schemaName($thisModelName),'.',vf:rdbTableName(vf:asvodmlref($el/parent::*)),'.',$el/name)"/>
+        <xsl:sequence select="concat(vf:schemaName($thisModelName),'.',vf:rdbTableName(vf:asvodmlref($el/parent::*)),'.',vf:rdbColumnName($el))"/>
     </xsl:function>
     <!-- make a reference to a column -->
     <xsl:function name="vf:tapTargetColumnName" as="xsd:string" >
@@ -642,7 +642,7 @@ TODO similarly the schema should be appended for table names - however this has 
     <xsl:function name="vf:tapJoinColumnName" as="xsd:string" >
         <xsl:param name="comp" as="element()"/><!-- the composition/reference -->
         <xsl:variable name="thisModelName" select="$comp/ancestor-or-self::vo-dml:model/name"/>
-        <xsl:sequence select="concat(vf:schemaName($thisModelName),'.',vf:rdbTableName($comp/datatype/vodml-ref),'.',vf:rdbJoinColumnName($comp))"/>
+        <xsl:sequence select="concat(vf:schemaName($thisModelName),'.',vf:rdbTableName($comp/datatype/vodml-ref),'.',vf:rdbColumnName($comp))"/>
     </xsl:function>
 
     <xsl:function name="vf:tapFkeyID" as="xsd:string" > <!-- generate unique FK id -->
