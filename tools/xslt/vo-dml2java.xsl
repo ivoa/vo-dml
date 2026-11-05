@@ -735,15 +735,18 @@
           <xsl:choose>
               <xsl:when test="count($containers) > 0 and $models/key('ellookup',$containers[1])/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
 
-                  /** Composite key for <xsl:value-of select="vf:capitalize(name)"/>.  */
-                  public static class  <xsl:value-of select="concat(vf:capitalize(name),'_PK')"/>{
+                  /** Composite key for <xsl:value-of select="vf:capitalize(name)"/>.
+                  */
+                  public  record  <xsl:value-of select="concat(vf:capitalize(name),'_PK')"/>(
                   <xsl:for-each select="reverse($containers)">
                       <xsl:variable name="nk" select="$models/key('ellookup',current())/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]"/>
                       <xsl:variable name="nktype" select="vf:JavaKeyType(current())"/>
-                      <xsl:value-of select="concat($nktype,' ',$nk/name)"/>;
+                      /** <xsl:value-of select="normalize-space($nk/description/text())"/> */
+                      <xsl:value-of select="concat($nktype,' ',$nk/name)"/>,
                   </xsl:for-each>
-                  <xsl:value-of select="concat(vf:JavaKeyType($vodml-ref),' ',current()/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name)"/>;
-                  }
+                      /** <xsl:value-of select="normalize-space(current()/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/description/text())"/> */
+                  <xsl:value-of select="concat(vf:JavaKeyType($vodml-ref),' ',current()/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name)"/>
+                    ) implements java.io.Serializable {}
 
                   <xsl:for-each select="reverse($containers)">
                       /** additional key to parent of composition(s). */
