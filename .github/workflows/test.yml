@@ -61,6 +61,6 @@ jobs:
         run : |
           ./gradlew :sample:vodmlDoc  
 
-      - name: Test doc production for sample model with Gradle
+      - name: Test site production for sample model with Gradle
         run : |
           ./gradlew :sample:vodmlSite
