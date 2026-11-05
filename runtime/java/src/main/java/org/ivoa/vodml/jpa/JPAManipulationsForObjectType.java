@@ -4,6 +4,7 @@ package org.ivoa.vodml.jpa;
  */
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NamedQuery;
 
 /**
  * Interface to implement some common manipulations in JPA.
@@ -23,6 +24,14 @@ public interface JPAManipulationsForObjectType <ID> extends JPAManipulations {
     * @param em the entity manager
     */
    void delete(EntityManager em);
+
+
+   /**
+    * Return the NamedQuery that finds an entity by its ID.
+    * The named query is expected to have a parameter ID.
+    * @return the name of the NamedQuery.
+    */
+   String getFindByIdNamedQuery();
 
 
 }

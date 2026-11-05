@@ -765,10 +765,17 @@
           </xsl:choose>
 
       </xsl:if>
-<!-- 
-      /** serial uid = last modification date of the UML model */
-      private static final long serialVersionUID = LAST_MODIFICATION_DATE;
- -->
+      <xsl:if test="name()='objectType'">
+          @Override
+          public String getFindByIdNamedQuery(){
+          return "<xsl:value-of select="concat($vodml-ref,'.findById')"/>";
+          }
+      </xsl:if>
+
+      <!--
+            /** serial uid = last modification date of the UML model */
+            private static final long serialVersionUID = LAST_MODIFICATION_DATE;
+       -->
       <xsl:variable name="localdefs" select="vf:javaLocalDefines($vodml-ref)"/>
       <xsl:apply-templates select="attribute|reference|composition|constraint[ends-with(@xsi:type,':SubsettedRole')]" mode="declare" />
 

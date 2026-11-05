@@ -97,9 +97,9 @@
   </xsl:if>
 
   @jakarta.persistence.NamedQueries( {
-    @jakarta.persistence.NamedQuery( name = "<xsl:value-of select="concat(vf:QualifiedJavaType($vodml-ref),'.findById')"/>", query = "SELECT o FROM <xsl:value-of select="$entityName"/> o WHERE o.<xsl:value-of select="$idname"/> = :id")
+    @jakarta.persistence.NamedQuery( name = "<xsl:value-of select="concat($vodml-ref,'.findById')"/>", query = "SELECT o FROM <xsl:value-of select="$entityName"/> o WHERE o.<xsl:value-of select="$idname"/> = :id")
   <xsl:if test="$hasName">
-,     @jakarta.persistence.NamedQuery( name = "<xsl:value-of select="concat(vf:QualifiedJavaType($vodml-ref),'.findByName')"/>", query = "SELECT o FROM <xsl:value-of select="$entityName"/> o WHERE o.name = :name")
+,     @jakarta.persistence.NamedQuery( name = "<xsl:value-of select="concat($vodml-ref,'.findByName')"/>", query = "SELECT o FROM <xsl:value-of select="$entityName"/> o WHERE o.name = :name")
   </xsl:if>
   } )
       <xsl:if test="reference[multiplicity/maxOccurs != 1]|composition[multiplicity/maxOccurs != 1]">
