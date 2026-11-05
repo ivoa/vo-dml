@@ -759,7 +759,7 @@
                         <xsl:sequence select="$mapping/bnd:mappedModels/model[name=$modelName]/rdb/rdbmap[@vodml-id=substring-after($el/datatype/vodml-ref,':')]/@joinColumnName"/>
                     </xsl:when>
                     <xsl:when test="$parent/attribute/constraint[ends-with(@xsi:type,':NaturalKey')]">
-                        <xsl:value-of select="concat(upper-case($parent/name),'_',$parent/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name)"/>
+                        <xsl:value-of select="$parent/attribute[ends-with(constraint/@xsi:type,':NaturalKey')]/name"/>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:value-of select="concat(upper-case($parent/name),'_ID')"/>

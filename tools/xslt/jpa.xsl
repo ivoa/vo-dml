@@ -467,7 +467,7 @@
                   </xsl:otherwise>
               </xsl:choose>
           </xsl:if> <!--IMPL putting in nullable consrtaint below makes stuff go wrong in hibernate -->
-@jakarta.persistence.JoinColumn( name="<xsl:value-of select="vf:rdbJoinColumnName(current())"/>", referencedColumnName = "<xsl:value-of select="vf:rdbJoinTargetColumnName($this/datatype/vodml-ref)"/>"
+@jakarta.persistence.JoinColumn( name="<xsl:value-of select="vf:rdbJoinColumnName(current())"/>", referencedColumnName = "<xsl:value-of select="vf:rdbJoinTargetColumnName(vf:asvodmlref($parent))"/>"
           )
 @org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
       </xsl:otherwise>
