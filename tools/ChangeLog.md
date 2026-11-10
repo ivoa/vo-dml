@@ -167,3 +167,5 @@
   * fix regressions
 * 0.7.4
   * bug fixes related to tapschema
+* 0.7.5
+  * 
