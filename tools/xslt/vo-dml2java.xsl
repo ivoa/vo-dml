@@ -767,6 +767,9 @@
       </xsl:if>
       <xsl:if test="name()='objectType'">
           @Override
+          @jakarta.persistence.Transient
+          @jakarta.xml.bind.annotation.XmlTransient
+          @com.fasterxml.jackson.annotation.JsonIgnore
           public String getFindByIdNamedQuery(){
           return "<xsl:value-of select="concat($vodml-ref,'.findById')"/>";
           }
