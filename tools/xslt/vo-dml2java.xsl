@@ -820,6 +820,9 @@
           * @return the id
           */
           @Override
+          @jakarta.persistence.Transient
+          @jakarta.xml.bind.annotation.XmlTransient
+          @com.fasterxml.jackson.annotation.JsonIgnore
           public <xsl:value-of select="$nktype"/> getId() {
           return <xsl:value-of select="$nk/name"/>;
           }</xsl:if>
