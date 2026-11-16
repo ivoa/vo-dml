@@ -25,6 +25,7 @@ nav:
       - Introduction: modelling/modellingIntro.md
       - VODSL : modelling/VODSL.md
       - Eclipse Editor: modelling/EclipseVODSL.md
+      - VSCode Extension: modelling/VSCodeVODSL.md
       - UML : modelling/UML.md
       - Generation from other sources : modelling/TransformingToVODML.md
   - Model Design:

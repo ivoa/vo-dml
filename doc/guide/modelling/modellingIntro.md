@@ -5,12 +5,13 @@ Authoring Ecosystem
 -------------------
 
 
-![](../images/ecosystem.png)
+![](../images/ecosystem.jpg)
 
 Although VO-DML/XML is the standard serialization of VO-DML models, and it is possible to create VO-DML directly
 by editing in a text editor (and the [model schema](https://github.com/ivoa/vo-dml/tree/main/xsd/vo-dml-v1.0.xsd) might be helpful in guiding this editing), it is generally easier to model using either
 
-* [VODSL](VODSL.md)
+* [VODSL](VODSL.md) Although it is possible to edit VODSL with any plain text editor, an [Eclipse plug-in](EclipseVODSL.md) and a [VSCode extension](VSCodeVODSL.md) have been created, that allow VODSL source to be edited whilst taking advantage of the all the features of the IDE that make understanding an navigating the code easier.
+
 * [UML](UML.md)
 
 
